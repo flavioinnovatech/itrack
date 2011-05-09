@@ -46,6 +46,7 @@ a {
 #content h2{
 	font-size: 18px;
 	font-weight: bold;
+	margin-top:20px;
 }
 
 #content input{
@@ -53,8 +54,12 @@ a {
 }
 
 #config{
-	margin-left: 30px;
-	margin-top: 50px;
+	margin-left: 200px;
+	margin-top: 30px;
+}
+
+#config input.color {
+	margin-top:5px;
 }
 
 #toolbar{

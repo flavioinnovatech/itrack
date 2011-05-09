@@ -133,6 +133,7 @@ INSTALLED_APPS = (
     'accounts',
     'system',
     'signals',
+		'themes',
 )
 
 # A sample logging configuration. The only tangible logging
