@@ -108,7 +108,7 @@ ROOT_URLCONF = 'itrack.urls'
 
 TEMPLATE_DIRS = (
 		PROJECT_ROOT_PATH,
-  #  "/home/leandro/infotrack-git/itrack/",
+    "/home/leandro/infotrack-git/itrack/",
     
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.

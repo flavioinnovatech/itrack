@@ -15,7 +15,11 @@ urlpatterns = patterns('',
 		url(r'^accounts/profile/$', 'main.views.index'),
     url(r'^themes/$', 'themes.views.index'),
 		url(r'^grid/$', 'grid.views.index'),
+<<<<<<< HEAD
+		url(r'^system/$','system.views.index'),
+=======
 		url(r'^rastreamento/veicular$', 'rastreamento.views.index'),
 		
+>>>>>>> e7d6d47417893efdc15632e5977e73047a436a03
 		
 )
