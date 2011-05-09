@@ -1,5 +1,11 @@
 {% block content %}
 
+<link rel="stylesheet" href="/media/css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="/media/css/master.css" type="text/css" media="screen" />
+
+<div id="login" align="center">
+	<img src="/media/img/logo.png">
+
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
@@ -21,4 +27,5 @@
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
+</div>
 {% endblock %}
