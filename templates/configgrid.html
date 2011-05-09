@@ -1,0 +1,79 @@
+{% extends "infotrack.html" %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" media="screen" href="/media/css/jquery.checkboxtree.css" />
+<script src="/media/js/jquery.checkboxtree.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+   $('.selector').checkboxTree();
+});
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<h1>Grid</h1>
+
+<div id="config">
+	<ul id=".selector">
+	    <li><input type="checkbox"><label>Node 1</label>
+	        <ul>
+	            <li><input type="checkbox"><label>Node 1.1</label>
+	                <ul>
+	                    <li><input type="checkbox"><label>Node 1.1.1</label>
+	                </ul>
+	        </ul>
+	        <ul>
+	            <li><input type="checkbox"><label>Node 1.2</label>
+	                <ul>
+	                    <li><input type="checkbox"><label>Node 1.2.1</label>
+	                    <li><input type="checkbox"><label>Node 1.2.2</label>
+	                    <li><input type="checkbox"><label>Node 1.2.3</label>
+	                        <ul>
+	                            <li><input type="checkbox"><label>Node 1.2.3.1</label>
+	                            <li><input type="checkbox"><label>Node 1.2.3.2</label>
+	                        </ul>
+	                    <li><input type="checkbox"><label>Node 1.2.4</label>
+	                    <li><input type="checkbox"><label>Node 1.2.5</label>
+	                    <li><input type="checkbox"><label>Node 1.2.6</label>
+	                </ul>
+	        </ul>
+	    <li><input type="checkbox"><label>Node 2</label>
+	        <ul>
+	            <li><input type="checkbox"><label>Node 2.1</label>
+	                <ul>
+	                    <li><input type="checkbox"><label>Node 2.1.1</label>
+	                </ul>
+	            <li><input type="checkbox"><label>Node 2.2</label>
+	                <ul>
+	                    <li><input type="checkbox"><label>Node 2.2.1</label>
+	                    <li><input type="checkbox"><label>Node 2.2.2</label>
+	                    <li><input type="checkbox"><label>Node 2.2.3</label>
+	                        <ul>
+	                            <li><input type="checkbox"><label>Node 2.2.3.1</label>
+	                            <li><input type="checkbox"><label>Node 2.2.3.2</label>
+	                        </ul>
+	                    <li><input type="checkbox"><label>Node 2.2.4</label>
+	                    <li><input type="checkbox"><label>Node 2.2.5</label>
+	                    <li><input type="checkbox"><label>Node 2.2.6</label>
+	                </ul>
+	        </ul>
+	</ul>
+</div>
+
+<div id="config">
+		<li><h2>Funcionalidades:</h2>
+			<ul>
+				<li><input type="checkbox" name="vehicle" value="Car" />Alertas</li>
+				<li><input type="checkbox" name="vehicle" value="Car" />Comandos</li>
+			</ul>
+		</li>
+</div>
+
+<div id="config">
+	<h2>Equipamentos:</h2>
+	
+</div>
+{% endblock %}
