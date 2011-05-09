@@ -5,21 +5,24 @@ from django.contrib.auth.models import User
 from itrack.equipments.models import Equipment
 
 class System(Site):
-   users = models.ManyToManyField(User)
-   administrator = models.ForeignKey(User,related_name='usuarios')
-   parent = models.ForeignKey('self')
-   equipments = models.ManyToManyField(Equipment)
+    class Meta:
+        permissions = (("can_create", "Pode criar subsistemas"),)
+
+    users = models.ManyToManyField(User)
+    administrator = models.ForeignKey(User,related_name='usuarios')
+    parent = models.ForeignKey('self')
+    equipments = models.ManyToManyField(Equipment)
 
 
-   parent.null = True
-   parent.blank = True
-   def __unicode__(self):
-      return self.name
+    parent.null = True
+    parent.blank = True
+    def __unicode__(self):
+        return self.name
       
 
 class Settings(models.Model):
     
-    settings = models.ForeignKey(System)
+    system = models.ForeignKey(System)
     
     title = models.CharField(max_length=200)
     logo = models.ImageField(upload_to='static/img/')
