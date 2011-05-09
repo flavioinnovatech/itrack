@@ -15,7 +15,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'infotrack.db',                      # Or path to database file if using sqlite3.
+        'NAME': 'itrack.db',                      # Or path to database file if using sqlite3.
         'USER': 'root',                      # Not used with sqlite3.
         'PASSWORD': 'infotrack',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -108,7 +108,8 @@ ROOT_URLCONF = 'itrack.urls'
 
 TEMPLATE_DIRS = (
 		PROJECT_ROOT_PATH,
-    "/home/leandro/infotrack-git/itrack/"
+    "/home/leandro/infotrack-git/itrack/",
+    
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
