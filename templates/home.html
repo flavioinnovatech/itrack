@@ -71,6 +71,16 @@
 							<li><a href="#">Recursos</a></li>
 							<li><a href="/themes">Temas</a></li>
 							<li><a href="#">Usuários</a></li>
+							{% for grp in user.groups.all %}
+							    {% if grp.name  == "administradores" %}
+							        <li><a href="{% url system.views.index %}"> Sistemas </a></li>
+							    {% endif %}
+                             {% if grp.name  == "infotrack" %}
+							        <li><a href="#"> Equipamentos </a></li>
+							    {% endif %}
+							    
+					        {% endfor %}
+							
 						</ul>
 					</li>
 					<li><a href="#">Ajuda</a></li>
