@@ -21,6 +21,8 @@
 		<div id="topContainer">
 			<div class="centerContainer">
 				<a href="#" title="Titulo Dinamico" class="logo fl"><img src="/media/img/logo.png" alt="Titulo Dinamico" /></a>
+				{% for item in system %} Logado como {{user.username}} em {{item.domain}} {% endfor %}
+				
 			</div> <!-- end centerContainer -->
 		</div> <!-- end topContainer -->
 
