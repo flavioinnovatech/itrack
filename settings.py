@@ -1,4 +1,7 @@
 # Django settings for infotrack project.
+import os
+
+PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -104,6 +107,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'itrack.urls'
 
 TEMPLATE_DIRS = (
+		PROJECT_ROOT_PATH,
     "/home/leandro/infotrack-git/itrack/"
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
