@@ -1,9 +1,12 @@
 {% extends "templates/base.html" %}
 
 {% block content %}
+<div id="config">
+	{{ vector }}
 
-    <p> Página de administração de sistemas</p>
-    <p> Aqui você pode: <br /></p>
+	<h1>Sistemas</h1>
+
+    <h2>Sistemas filhos:</h2>
     <ul>
         <li> <a href="#">Criar um subsistema </a></li>
         <li> <a href="#">Apagar um subsistema </a></li>
@@ -14,5 +17,5 @@
         <li>  <a href="#">Apagar usuários do seu sistema </a></li>
         <li>  <a href="#">Editar usuários do seu sistema </a></li>
     </ul>
-
+</div>
 {% endblock %}
