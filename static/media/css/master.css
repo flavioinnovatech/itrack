@@ -39,7 +39,7 @@ a {
 #content h1{
 	font-size: 30px;
 	font-weight: bold;
-	margin-top: 25px;
+	margin-top: 20px;
 	
 }
 
@@ -51,15 +51,20 @@ a {
 
 #content input{
 	margin-right: 5px;
+	
 }
 
 #config{
 	margin-left: 200px;
-	margin-top: 30px;
+	margin-top: 20px;
 }
 
-#config input.color {
+#config input {
 	margin-top:5px;
+}
+
+#config li {
+	padding-left:15px;
 }
 
 #toolbar{

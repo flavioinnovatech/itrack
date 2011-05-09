@@ -6,7 +6,6 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-   $('.selector').checkboxTree();
 });
 
 </script>
@@ -19,62 +18,51 @@ $(document).ready(function() {
 
 
 	<ul id=".selector">
-	    <li><input type="checkbox"><label>Node 1</label>
+			<h2>Api dos mapas:</h2>
+	    <li><input type="checkbox"><label>Google</label>
 	        <ul>
-	            <li><input type="checkbox"><label>Node 1.1</label>
-	                <ul>
-	                    <li><input type="checkbox"><label>Node 1.1.1</label>
-	                </ul>
+	            <li><input type="checkbox"><label>Mapa</label>
 	        </ul>
 	        <ul>
-	            <li><input type="checkbox"><label>Node 1.2</label>
-	                <ul>
-	                    <li><input type="checkbox"><label>Node 1.2.1</label>
-	                    <li><input type="checkbox"><label>Node 1.2.2</label>
-	                    <li><input type="checkbox"><label>Node 1.2.3</label>
-	                        <ul>
-	                            <li><input type="checkbox"><label>Node 1.2.3.1</label>
-	                            <li><input type="checkbox"><label>Node 1.2.3.2</label>
-	                        </ul>
-	                    <li><input type="checkbox"><label>Node 1.2.4</label>
-	                    <li><input type="checkbox"><label>Node 1.2.5</label>
-	                    <li><input type="checkbox"><label>Node 1.2.6</label>
-	                </ul>
 	        </ul>
-	    <li><input type="checkbox"><label>Node 2</label>
+	    <li><input type="checkbox"><label>MapLink</label>
 	        <ul>
-	            <li><input type="checkbox"><label>Node 2.1</label>
-	                <ul>
-	                    <li><input type="checkbox"><label>Node 2.1.1</label>
-	                </ul>
-	            <li><input type="checkbox"><label>Node 2.2</label>
-	                <ul>
-	                    <li><input type="checkbox"><label>Node 2.2.1</label>
-	                    <li><input type="checkbox"><label>Node 2.2.2</label>
-	                    <li><input type="checkbox"><label>Node 2.2.3</label>
-	                        <ul>
-	                            <li><input type="checkbox"><label>Node 2.2.3.1</label>
-	                            <li><input type="checkbox"><label>Node 2.2.3.2</label>
-	                        </ul>
-	                    <li><input type="checkbox"><label>Node 2.2.4</label>
-	                    <li><input type="checkbox"><label>Node 2.2.5</label>
-	                    <li><input type="checkbox"><label>Node 2.2.6</label>
-	                </ul>
+	            <li><input type="checkbox"><label>Mapa</label>
+	                
+	            <li><input type="checkbox"><label>Geocode Reverso</label>
+	        </ul>
+		  <li><input type="checkbox"><label>Multispectral</label>
+					<ul>
+	            <li><input type="checkbox"><label>Mapa</label>
+	                
+	            <li><input type="checkbox"><label>Geocode Reverso</label>
+							<li><input type="checkbox"><label>Cerca eletrônica</label>
 	        </ul>
 	</ul>
 </div>
 
 <div id="config">
-		<li><h2>Funcionalidades:</h2>
-			<ul>
-				<li><input type="checkbox" name="vehicle" value="Car" />Alertas</li>
-				<li><input type="checkbox" name="vehicle" value="Car" />Comandos</li>
-			</ul>
-		</li>
-</div>
-
-<div id="config">
 	<h2>Equipamentos:</h2>
 	
+	<div style="border: 1px solid; margin-top:5px">
+		<li><input type="checkbox"><label>Equipamento tipo 1</label>
+        <ul>
+            <li><input type="checkbox"><label>Equip 1</label>
+        </ul>
+        <ul>
+						<li><input type="checkbox"><label>Equip 2</label>
+        </ul>
+    <li><input type="checkbox"><label>Equipamento tipo 3</label>
+        <ul>
+            <li><input type="checkbox"><label>Equip 3</label>
+                
+            <li><input type="checkbox"><label>Equip 4</label>
+        </ul>
+	  
+	</div>
+	<br/>
+	<input type="submit" value="Salvar"/> ou cancelar
+
 </div>
+
 {% endblock %}
