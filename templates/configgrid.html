@@ -1,4 +1,4 @@
-{% extends "infotrack.html" %}
+{% extends "templates/home.html" %}
 
 {% block head %}
 <link rel="stylesheet" type="text/css" media="screen" href="/media/css/jquery.checkboxtree.css" />
@@ -14,9 +14,10 @@ $(document).ready(function() {
 {% endblock %}
 
 {% block content %}
+<div id="config">
 <h1>Grid</h1>
 
-<div id="config">
+
 	<ul id=".selector">
 	    <li><input type="checkbox"><label>Node 1</label>
 	        <ul>

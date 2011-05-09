@@ -23,6 +23,7 @@ class System(Site):
 class Settings(models.Model):
     
     system = models.ForeignKey(System)
+    system.default = 1
     
     title = models.CharField(max_length=200)
     logo = models.ImageField(upload_to='static/img/')
