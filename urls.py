@@ -11,10 +11,19 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', login , { 'template_name' : 'accounts/templates/login.html' } ),
     url(r'^accounts/logout/$', logout_then_login),
     url(r'^admin/', include(admin.site.urls)),
-		url(r'^media/(.*)$', 'django.views.static.serve', {'document_root' : settings.MEDIA_ROOT}),
-		url(r'^accounts/profile/$', 'main.views.index'),
+    url(r'^media/(.*)$', 'django.views.static.serve', {'document_root' : settings.MEDIA_ROOT}),
+	url(r'^accounts/profile/$', 'main.views.index'),
     url(r'^themes/$', 'themes.views.index'),
+
+	url(r'^grid/$', 'grid.views.index'),
+	url(r'^system/$','system.views.index'),
+	url(r'^rastreamento/veicular$', 'rastreamento.views.index'),
+	url(r'^rastreamento/portatil$', 'rastreamento.views.index'),
+		
+		
+
 		url(r'^grid/$', 'grid.views.index'),
 		url(r'^system/$','system.views.index'),
 		url(r'^rastreamento/veicular$', 'rastreamento.views.index'),		
+
 )
