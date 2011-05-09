@@ -1,7 +1,7 @@
 from django.db import models
-from infotrack.equipments.models import  Equipment
+from itrack.equipments.models import  Equipment
 from django.contrib.auth.models import User
-from infotrack.system.models import System
+from itrack.system.models import System
 
 class Alert(models.Model):
     name = models.CharField(max_length=200)

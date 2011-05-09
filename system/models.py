@@ -2,7 +2,7 @@ from django.db import models
 
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
-from infotrack.equipments.models import Equipment
+from itrack.equipments.models import Equipment
 
 class Settings(models.Model):
     title = models.CharField(max_length=200)

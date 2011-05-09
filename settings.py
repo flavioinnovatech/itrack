@@ -101,10 +101,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'infotrack.urls'
+ROOT_URLCONF = 'itrack.urls'
 
 TEMPLATE_DIRS = (
-    "/home/leandro/infotrack-git/infotrack/"
+    "/home/leandro/infotrack-git/itrack/"
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -127,7 +127,7 @@ INSTALLED_APPS = (
     'equipments',
     'accounts',
     'system',
-    'signals'
+    'signals',
 )
 
 # A sample logging configuration. The only tangible logging

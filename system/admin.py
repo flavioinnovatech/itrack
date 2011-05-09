@@ -1,4 +1,4 @@
-from infotrack.system.models import System, Settings
+from itrack.system.models import System, Settings
 from django.contrib import admin
 
 admin.site.register(System)

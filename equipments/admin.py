@@ -1,4 +1,4 @@
-from infotrack.equipments.models import CustomField, Equipment, CustomFieldData
+from itrack.equipments.models import CustomField, Equipment, CustomFieldData
 from django.contrib import admin
 
 admin.site.register(CustomField)
