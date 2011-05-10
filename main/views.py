@@ -6,5 +6,5 @@ from itrack.system.models import System
 def index(request):
     user_system = System.objects.filter(users__username__exact=request.user.username)
     
-    return render_to_response('templates/home.html',{ 'user' : request.user, 'system':user_system})
+    return render_to_response('templates/base.html',{ 'user' : request.user, 'system':user_system})
 

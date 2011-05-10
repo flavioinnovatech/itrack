@@ -10,7 +10,9 @@ def index(request):
 	for item in user_system:
 	    temp = item.id
 	
-	user_settings = Settings.objects.filter(system=temp)
+	user_settings = Settings.objects.filter(system=4)
 
+	for item in user_settings:
+	    temp = item.color_submenu_hover
 
 	return render_to_response("templates/themes.html",{ 'user' : request.user, 'system':user_system, 'settings':temp})
