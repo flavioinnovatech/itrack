@@ -12,10 +12,8 @@ def index(request):
 	
 	user_settings = Settings.objects.filter(system=4)
 
-<<<<<<< HEAD
 	for item in user_settings:
 	    temp = item.color_submenu_hover
 
-=======
->>>>>>> 9932996c476ba4065bc30b09dfce42c160060f91
+
 	return render_to_response("templates/themes.html",{ 'user' : request.user, 'system':user_system, 'settings':temp})
