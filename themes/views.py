@@ -12,5 +12,4 @@ def index(request):
 	
 	user_settings = Settings.objects.filter(system=temp)
 
-
 	return render_to_response("templates/themes.html",{ 'user' : request.user, 'system':user_system, 'settings':temp})
