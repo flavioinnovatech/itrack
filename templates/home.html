@@ -72,7 +72,7 @@
 							<li><a href="#">Usuários</a></li>
 							{% for grp in user.groups.all %}
 							    {% if grp.name  == "administradores" %}
-							        <li><a href="{% url system.views.index %}"> Sistemas </a></li>
+							        <li><a href="{%     url system.views.index %}"> Sistemas </a></li>
 							    {% endif %}
                              {% if grp.name  == "infotrack" %}
 							        <li><a href="#"> Equipamentos </a></li>
