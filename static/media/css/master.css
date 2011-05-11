@@ -38,15 +38,14 @@ a {
 
 #content h1{
 	font-size: 30px;
-	font-weight: bold;
-	margin-top: 20px;
-	
+	font-weight: bold;	
+	margin-bottom:20px;
 }
 
 #content h2{
 	font-size: 18px;
 	font-weight: bold;
-	margin-top:20px;
+	text-align:right;
 }
 
 #content input{
@@ -55,7 +54,7 @@ a {
 }
 
 #config{
-	margin-left: 200px;
+	margin-left: 300px;
 	margin-top: 20px;
 }
 
@@ -64,7 +63,13 @@ a {
 }
 
 #config li {
-	padding-left:15px;
+	padding-left:20px;
+}
+
+#config td {
+	min-width:150px;
+	vertical-align:text-top;
+	padding-left:10px;
 }
 
 #toolbar{
