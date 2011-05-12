@@ -18,12 +18,12 @@ urlpatterns = patterns('',
 	url(r'^accounts/profile/$', 'main.views.index'),
     url(r'^themes/$', 'themes.views.index'),
 
-	url(r'^grid/$', 'grid.views.index'),
-	url(r'^system/$','system.views.index'),
+    url(r'^grid/$', 'grid.views.index'),
+    url(r'^system/$','system.views.index'),
+    url(r'^system/create/$','system.views.create_system'),
+	
 	url(r'^rastreamento/veicular$', 'rastreamento.views.index'),
 	url(r'^rastreamento/portatil$', 'rastreamento.views.index'),
-		
-		
 
 		url(r'^grid/$', 'grid.views.index'),
 		url(r'^system/$','system.views.index'),
@@ -31,5 +31,6 @@ urlpatterns = patterns('',
 		
 		(r'^mudarcor/$', 'themes.views.mudarcor'),	
 		(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
+
 
 )
