@@ -4,92 +4,139 @@
 {% block head %}
 <script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
 <script type="text/javascript">
-	
-	$(document).ready(function(){
-		$.ajaxSetup({ 
-		     beforeSend: function(xhr, settings) {
-		         function getCookie(name) {
-		             var cookieValue = null;
-		             if (document.cookie && document.cookie != '') {
-		                 var cookies = document.cookie.split(';');
-		                 for (var i = 0; i < cookies.length; i++) {
-		                     var cookie = jQuery.trim(cookies[i]);
-		                     // Does this cookie string begin with the name we want?
-		                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
-		                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-		                     break;
-		                 }
-		             }
-		         }
-		         return cookieValue;
-		         }
-		         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-		             // Only send the token to relative URLs i.e. locally.
-		             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-		         }
-		     } 
-		});
+
+function my_js_callback(data){
+  if(data==Dajaxice.EXCEPTION){
+    alert('Error! Something happens!');
+  }
+  else{
+		$("body").css('background-color',data.message);
+  }
+}
+
+
+$(document).ready(function(){
+	$.ajaxSetup({ 
+		beforeSend: function(xhr, settings) {
+			function getCookie(name) {
+				var cookieValue = null;
+				if (document.cookie && document.cookie != '') {
+					var cookies = document.cookie.split(';');
+					for (var i = 0; i < cookies.length; i++) {
+						var cookie = jQuery.trim(cookies[i]);
+						// Does this cookie string begin with the name we want?
+						if (cookie.substring(0, name.length + 1) == (name + '=')) {
+							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+				return cookieValue;
+			}
+			if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+				// Only send the token to relative URLs i.e. locally.
+				xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+			}
+		} 
 	});
 	
+	$("#color1").change(function(){
+		cor = $("#color1").css('background-color');
+		Dajaxice.themes.myexample(my_js_callback, {'text':cor});
+	});
+	
+
+});
+
 </script>
 {% endblock %}
 
 {% block content %}
+
+{% load dajaxice_templatetags %}
+{% dajaxice_js_import %}
+
 {{ settings }}
 <div id="config">
+	<input name="rand" value="Get message from server!" id="rand" onclick="Dajaxice.themes.myexample(my_js_callback);" type="button">
+	<table width="100%" cellpadding="0">
+		<tbody>
+			<tr>
+				<td>
+					<h1>Temas</h1>
+				</td>
+				<td>
+					
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h2>Fundo do site:</h2>
+				</td>
+				<td>
+					<input class="color" id="color1" value="{{ color1 }}">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h2>Fundo da tabela:</h2>
+				</td>
+				<td>
+					<input class="color">
+				</td>
+			</tr>
+		</tbody>
+	</table>
 
-	<h1>Temas</h1>
 	
-	<h2>Fundo do site:</h2>
-	<input class="color">
-	
+
 	<h2>Fundo da tabela:</h2>
-	<input class="color">
 	
+
 	<h2>Gradiente inicial menu:</h2>
 	<input class="color">
-	
+
 	<h2>Gradiente final menu: </h2>
 	<input class="color">
-	
+
 	<h2>Gradiente inicial submenu:</h2>
 	<input class="color">
-	
+
 	<h2>Gradiente final submenu: </h2>
 	<input class="color">
-	
+
 	<h2>Submenu hover: </h2>
 	<input class="color">
-	
+
 	<h2>Fonte do menu: </h2>
 	<input class="color">
-	
+
 	<h2>Fonte do menu hover: </h2>
 	<input class="color">
-	
+
 	<h2>Fonte do submenu: </h2>
 	<input class="color">
-	
+
 	<h2>Fonte do submenu hover: </h2>
 	<input class="color">
-	
+
 	<h2>Cor de fundo da linha da tabela: </h2>
 	<input class="color">
-	
+
 	<h2>Cor de fundo da linha da tabela hover: </h2>
 	<input class="color">
-	
+
 	<h2>Cabeçalho da tabela hover: </h2>
 	<input class="color">
-	
+
 	<h2>Fonte padrão: </h2>
 	<input class="color">
-	
+
 	<h2>Fonte padrão do link: </h2>
 	<input class="color">
-	
+
 	<br/>
 	<input type="submit" value="Salvar"/> ou cancelar
-	
+
 </div>
 {% endblock %}

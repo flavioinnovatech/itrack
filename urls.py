@@ -6,6 +6,9 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
+from dajaxice.core import dajaxice_autodiscover
+dajaxice_autodiscover()
+
 urlpatterns = patterns('',
     url(r'^$', 'main.views.index'),
     url(r'^accounts/login/$', login , { 'template_name' : 'accounts/templates/login.html' } ),
@@ -24,6 +27,9 @@ urlpatterns = patterns('',
 
 		url(r'^grid/$', 'grid.views.index'),
 		url(r'^system/$','system.views.index'),
-		url(r'^rastreamento/veicular$', 'rastreamento.views.index'),		
+		url(r'^rastreamento/veicular$', 'rastreamento.views.index'),	
+		
+		(r'^mudarcor/$', 'themes.views.mudarcor'),	
+		(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 
 )
