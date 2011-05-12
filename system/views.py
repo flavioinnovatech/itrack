@@ -56,7 +56,7 @@ def index(request):
 
     #code = makelist(vector)
     #print code
-    return render_to_response("system/templates/home.html",{ 'user' : request.user, 'system':system, 'vector': vector})
+    return render_to_response("system/templates/home.html",locals())
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)

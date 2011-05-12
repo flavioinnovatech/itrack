@@ -4,7 +4,7 @@ from itrack.system.models import System
 
 @login_required
 def index(request):
-    user_system = System.objects.filter(users__username__exact=request.user.username)
+    system = System.objects.filter(users__username__exact=request.user.username)
     
-    return render_to_response('templates/base.html',{ 'user' : request.user, 'system':user_system})
+    return render_to_response('templates/base.html',locals())
 
