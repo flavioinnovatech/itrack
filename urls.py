@@ -29,7 +29,6 @@ urlpatterns = patterns('',
 		url(r'^system/$','system.views.index'),
 		url(r'^rastreamento/veicular$', 'rastreamento.views.index'),	
 		
-		(r'^mudarcor/$', 'themes.views.mudarcor'),	
 		(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 
 

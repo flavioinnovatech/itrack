@@ -13,14 +13,8 @@ def index(request):
 	user_settings = Settings.objects.filter(system=4)
 
 	for item in user_settings:
-	    color1 = item.color_submenu_hover
+	    color_submenu_hover = item.color_submenu_hover
 
 
-	return render_to_response("templates/themes.html",{ 'user' : request.user, 'system':user_system, 'color1':color1})
+	return render_to_response("templates/themes.html",{ 'user' : request.user, 'system':user_system, 'color_submenu_hover':color_submenu_hover})
 	
-def mudarcor(request):
-	#color = Color.objects.get(id=1)
-	color.headerbgcolor = request.REQUEST.__getitem__("cor")
-	print color.headerbgcolor
-	#color.save()
-	return HttpResponse(color.headerbgcolor)
