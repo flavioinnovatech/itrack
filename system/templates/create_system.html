@@ -9,16 +9,16 @@ function my_js_callback(data){
     alert('Error! Something happens!');
   }
   else{
-		$("body").css('background-color',data.message);
+		alert('ae');
+		//$("body").css('background-color',data.message);
   }
 }
 
 
 $(document).ready(function(){
 	$("#color_site_background").change(function(){
-		cor = $("#color_site_background").css('background-color');
-		Dajaxice.system.myexample(my_js_callback, {'text':cor});
-	});
+		$("body").css('background-color',$("#color_site_background").css('background-color'));
+});
 	
 
 });
