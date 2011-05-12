@@ -30,6 +30,24 @@ def findChild(parent):
 		vector.append(v)
 	return vector
 			
+
+def makelist(vector):
+	
+	for item in vector:
+		#if (item != "S"):
+			#print "Item :"
+		#print item
+		if (isinstance(item,list)):
+			# Achou novo vetor dentro de vetor
+			print "filhos"
+			print item
+			makelist(item)
+		else:
+			print "pai:"
+			print item
+			code = 1
+			#return code
+
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def index(request):
@@ -41,6 +59,9 @@ def index(request):
         vector = findChild(parent)
     else:
         vector = []
+
+    code = makelist(vector)
+    #print code
     return render_to_response("system/templates/home.html",{ 'user' : request.user, 'system':user_system, 'vector': vector})
 
 @login_required

@@ -1,12 +1,30 @@
 {% extends "templates/base.html" %}
 
 {% block content %}
+{{ vector }}
+
 <div id="config">
-	{{ vector }}
+	<table width="100%" cellpadding="0">
+		<tbody>
+			<tr>
+				<td>
+					<h1>Sistemas</h1>
+				</td>
+				<td>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h2>Sistemas filhos:</h2>
+				</td>
+				<td valign="top">
 
-	<h1>Sistemas</h1>
-
-    <h2>Sistemas filhos:</h2>
+					
+				</td>
+			</tr>
+		</tbody>
+	</table>
+    
     <ul>
         <li> <a href="{% url system.views.create_system %}">Criar um subsistema </a></li>
         <li> <a href="#">Apagar um subsistema </a></li>

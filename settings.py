@@ -92,7 +92,7 @@ SECRET_KEY = '5cx!b$g%1l#*lm(=y^@s_3*ol$m0o5@h1tgss1r3lk)3$_-(wz'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -126,6 +126,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
      'django.contrib.admin',
      'django_evolution',
+     'dajaxice',
+     'dajax',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'main',
@@ -158,3 +160,5 @@ LOGGING = {
         },
     }
 }
+
+DAJAXICE_MEDIA_PREFIX="dajaxice"
