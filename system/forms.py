@@ -1,3 +1,6 @@
+from django.forms import ModelForm, TextInput
+from itrack.system.models import System,Settings
+
 class SystemForm(ModelForm):
 	    class Meta:
 	        model = System
