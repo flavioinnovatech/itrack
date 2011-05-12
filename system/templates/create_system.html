@@ -1,7 +1,34 @@
 {% extends "templates/base.html" %}
 
+{% block head %}
+<script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
+<script type="text/javascript">
+
+function my_js_callback(data){
+  if(data==Dajaxice.EXCEPTION){
+    alert('Error! Something happens!');
+  }
+  else{
+		$("body").css('background-color',data.message);
+  }
+}
+
+
+$(document).ready(function(){
+	$("#color_site_background").change(function(){
+		cor = $("#color_site_background").css('background-color');
+		Dajaxice.system.myexample(my_js_callback, {'text':cor});
+	});
+	
+
+});
+
+</script>
+{% endblock %}
+
 {% block content %}
-{{ message }}
+{% load dajaxice_templatetags %}
+{% dajaxice_js_import %}
 <div id="form_system">
     <form method="post" enctype="multipart/form-data">
        {% csrf_token %}
