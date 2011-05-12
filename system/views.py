@@ -1,7 +1,18 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response
-from itrack.system.models import System
+from itrack.system.models import System, Settings
+from django.forms import ModelForm
+from django.forms.models import modelform_factory
+from django.http import HttpResponseRedirect
+from django.template.context import RequestContext
 
+class SystemForm(ModelForm):
+	    class Meta:
+	        model = System
+
+class SettingsForm(ModelForm):
+    class Meta:
+            model = Settings
 
 def findChild(parent):
 	vector = []
@@ -19,25 +30,14 @@ def findChild(parent):
 		vector.append(v)
 	return vector
 			
-
-
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def index(request):
     parent = []
-    print '"'+request.user.username+'"'
-    for x in System.objects.all():
-        print '"'+x.name+'"'+" : "+'"'+x.administrator.username+'"'
-        if x.administrator.username == request.user.username:
-            print "Yes!"
-        else:
-            print "No: "+x.administrator.username,request.user.username
     user_system = System.objects.filter(administrator__username=request.user.username)
-    print user_system
     for item in user_system:
         parent = item.name
     if parent != []:
-        print "entrou no findChild"
         vector = findChild(parent)
     else:
         vector = []
@@ -45,17 +45,27 @@ def index(request):
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
-def create_system_form(request):
-	user_system = System.objects.filter(users__username__exact=request.user.username)
-	#TO-DO: criar o form
-	return render_to_response("system/templates/create_form.html",{ 'user' : request.user, 'system':user_system})
-		
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def create_system(request):
-	user_system = System.objects.filter(users__username__exact=request.user.username)
-		#TO-DO: pegar o request.POST dos dados do sistema, criar um objeto e salvar no banco de dados
-	return render_to_response("system/templates/create_form.html",{ 'user' : request.user, 'system':user_system})
+    user_system = System.objects.filter(users__username__exact=request.user.username)
+    
+    if request.method == 'POST':
+        
+        form_sett = SettingsForm(request.POST)
+        form_sys = SystemForm(request.POST)
+        
+        print form_sys       
+        #if form_sys.is_valid() and form_sett.is_valid:
+        #    form_sys.settings = form_sett
+        #    form_sys.save()
+        return HttpResponseRedirect('/system/')
+    else:
+        form_sys = modelform_factory(System)
+        form_sett = modelform_factory(Settings)
+        
+
+        return render_to_response("system/templates/create_system.html",locals(),context_instance=RequestContext(request),)
+		
+
 
 
 
