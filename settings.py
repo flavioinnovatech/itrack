@@ -114,7 +114,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-AUTH_PROFILE_MODULE = 'main.UserProfile'
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 INSTALLED_APPS = (
     'django.contrib.auth',

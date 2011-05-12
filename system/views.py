@@ -46,8 +46,8 @@ def makelist(vector):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def index(request):
     parent = []
-    user_system = System.objects.filter(administrator__username=request.user.username)
-    for item in user_system:
+    system = System.objects.filter(administrator__username=request.user.username)
+    for item in system:
         parent = item.name
     if parent != []:
         vector = findChild(parent)
@@ -56,18 +56,17 @@ def index(request):
 
     #code = makelist(vector)
     #print code
-    return render_to_response("system/templates/home.html",{ 'user' : request.user, 'system':user_system, 'vector': vector})
+    return render_to_response("system/templates/home.html",{ 'user' : request.user, 'system':system, 'vector': vector})
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def create_system(request):
-    user_system = System.objects.filter(users__username__exact=request.user.username)
+    system = System.objects.filter(users__username__exact=request.user.username)
     
     if request.method == 'POST':
         
         form_sett = SettingsForm(request.POST,request.FILES)
-        for x in form_sett:
-            print x.errors
+
         if form_sett.is_valid():
             message = "O sistema foi criado com sucesso."
             print form_sett.cleaned_data['system']
@@ -81,7 +80,7 @@ def create_system(request):
         return render_to_response('system/templates/home.html',locals())
     else:
         form_sys = SystemForm()
-        form_sett = SettingsForm(auto_id="color")
+        form_sett = SettingsForm()
 
         return render_to_response("system/templates/create_system.html",locals(),context_instance=RequestContext(request),)
 		
