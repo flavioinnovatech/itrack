@@ -66,15 +66,33 @@ def create_system(request):
     if request.method == 'POST':
         
         form_sett = SettingsForm(request.POST,request.FILES)
+        form_sys = SystemForm(request.POST)
+        
+        for selected_system in system:
+            selected_system = selected_system
+        
+        if form_sys.is_valid():
+            new_sys = form_sys.save(commit=False)
+            new_sys.parent_id = selected_system.id
 
+            new_sys.save()
+            form_sys.save_m2m()
+            
         if form_sett.is_valid():
-            message = "O sistema foi criado com sucesso."
-            print form_sett.cleaned_data['system']
+            new_setting = form_sett.save(commit=False)
+            new_setting.system_id = new_sys.id
+            new_setting.title = new_sys.name
+            
+            print new_setting.__dict__
+            new_setting.save()
+            message = "Sistema criado com sucesso."
         else:
             message =  "Form invalido."    
             return render_to_response('system/templates/create_system.html',locals(),context_instance=RequestContext(request),)
         print message
-        form_sys = SystemForm(request.POST)
+        
+
+        
        
 
         return render_to_response('system/templates/home.html',locals())
