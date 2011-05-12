@@ -9,10 +9,12 @@ from django.template.context import RequestContext
 class SystemForm(ModelForm):
 	    class Meta:
 	        model = System
+	        exclude = ('parent')
 
 class SettingsForm(ModelForm):
     class Meta:
             model = Settings
+            exclude = ('title','system')
 
 def findChild(parent):
 	vector = []
@@ -60,7 +62,7 @@ def index(request):
     else:
         vector = []
 
-    code = makelist(vector)
+    #code = makelist(vector)
     #print code
     return render_to_response("system/templates/home.html",{ 'user' : request.user, 'system':user_system, 'vector': vector})
 
@@ -71,18 +73,23 @@ def create_system(request):
     
     if request.method == 'POST':
         
-        form_sett = SettingsForm(request.POST)
+        form_sett = SettingsForm(request.POST,request.FILES)
+        for x in form_sett:
+            print x.errors
+        if form_sett.is_valid():
+            message = "O sistema foi criado com sucesso."
+            print form_sett.cleaned_data['system']
+        else:
+            message =  "Form invalido."    
+            return render_to_response('system/templates/create_system.html',locals(),context_instance=RequestContext(request),)
+        print message
         form_sys = SystemForm(request.POST)
-        
-        print form_sys       
-        #if form_sys.is_valid() and form_sett.is_valid:
-        #    form_sys.settings = form_sett
-        #    form_sys.save()
-        return HttpResponseRedirect('/system/')
+       
+
+        return render_to_response('system/templates/home.html',locals())
     else:
-        form_sys = modelform_factory(System)
-        form_sett = modelform_factory(Settings)
-        
+        form_sys = SystemForm
+        form_sett = SettingsForm
 
         return render_to_response("system/templates/create_system.html",locals(),context_instance=RequestContext(request),)
 		
