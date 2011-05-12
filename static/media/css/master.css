@@ -34,6 +34,8 @@ a {
 	margin-top:5px;
 	position: absolute;
 	z-index:-1;
+	width:960px;
+	height:100%;
 }
 
 #content h1{
@@ -43,7 +45,7 @@ a {
 }
 
 #content h2{
-	font-size: 18px;
+	font-size: 13px;
 	font-weight: bold;
 	text-align:right;
 }
@@ -54,7 +56,8 @@ a {
 }
 
 #config{
-	margin-left: 300px;
+  margin:auto;
+	//margin-left: 300px;
 	margin-top: 20px;
 }
 
