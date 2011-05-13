@@ -76,7 +76,7 @@ a {
 	padding-top:20px;
 }
 
-#config #id_users,#selecionados {
+#config #id_users,#selecionados,#id_equipments,#selecionados2 {
   height: 100px;
   width: 75px;
 }
