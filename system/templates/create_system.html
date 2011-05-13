@@ -17,8 +17,13 @@ function my_js_callback(data){
 
 $(document).ready(function(){
   
-  $("#id_users").ready(function() {
-    $("#teste").html('ae');
+  $('#add').click(function() {
+    $('#selecionados option:selected');
+    return !$('#id_users option:selected').remove().appendTo('#selecionados');
+  });
+  
+  $('#remove').click(function() {  
+    return !$('#selecionados option:selected').remove().appendTo('#id_users');  
   });
   
 	$("#color_site_background").change(function(){
@@ -47,7 +52,13 @@ $(document).ready(function(){
           <h2>{{ field.label_tag }}</h2>
         </td>
         <td>
-         {{ field }} {% if "Users" in field.label_tag  %} <a id="add" class="jjexample" href="#">add &gt;&gt;</a> <select multiple="multiple"><option>ae</option></select> {% endif %} {{ field.errors }}
+         {{ field }} 
+          {% if "Users" in field.label_tag  %} <select id="selecionados" multiple="multiple"></select> <br/> 
+            <a id="add" class="jjexample" href="#" style="padding-left: 20px;">add &gt;&gt;</a>
+            <a id="remove" class="jjexample" href="#" style="padding-left: 20px;"><< remove</a>  
+            
+          {% endif %} 
+        {{ field.errors }}
         </td>
       </tr>
         {% endfor %}

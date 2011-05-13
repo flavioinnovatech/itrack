@@ -5,9 +5,7 @@ class SystemForm(ModelForm):
 	    class Meta:
 	        model = System
 	        exclude = ('parent')
-	        widgets = {
-	          'users': SelectMultiple(attrs={'style':'height:80px;'}),
-	        }
+
 
 
 class SettingsForm(ModelForm):
