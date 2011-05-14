@@ -1,10 +1,12 @@
-from django.forms import ModelForm, TextInput
+from django.forms import *
 from itrack.system.models import System,Settings
 
 class SystemForm(ModelForm):
 	    class Meta:
 	        model = System
 	        exclude = ('parent')
+
+
 
 class SettingsForm(ModelForm):
     class Meta:

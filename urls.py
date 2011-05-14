@@ -11,7 +11,7 @@ dajaxice_autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'main.views.index'),
-    url(r'^accounts/login/$', login , { 'template_name' : 'accounts/templates/login.html' } ),
+    url(r'^accounts/login/$', 'accounts.views.login' ),
     url(r'^accounts/logout/$', logout_then_login),
     
     url(r'^admin/', include(admin.site.urls)),

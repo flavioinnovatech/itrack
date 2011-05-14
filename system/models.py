@@ -73,7 +73,10 @@ class Settings(models.Model):
     color_table_header.default = "#cccccc"
     color_site_font.default = "#000000"
     color_link.default = "#333333"
-
+    
+    css = models.TextField()
+    css.default = "body {background-color:#E0E0E0}"
+    
     map_google = models.BooleanField()
     map_multspectral = models.BooleanField()
     map_maplink = models.BooleanField()
