@@ -83,19 +83,15 @@ def create_system(request):
             new_setting.system_id = new_sys.id
             new_setting.title = new_sys.name
             
-            print new_setting.__dict__
             new_setting.save()
             message = "Sistema criado com sucesso."
+            return render_to_response('system/templates/home.html',locals())
+            
         else:
             message =  "Form invalido."    
             return render_to_response('system/templates/create_system.html',locals(),context_instance=RequestContext(request),)
-        print message
-        
 
-        
-       
 
-        return render_to_response('system/templates/home.html',locals())
     else:
         form_sys = SystemForm()
         form_sett = SettingsForm()

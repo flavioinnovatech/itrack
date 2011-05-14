@@ -1,0 +1,26 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+<div id="form_system">
+    <form method="post">
+       {% csrf_token %}
+    
+        {% for field in form_user %}
+	    <div class="fieldWrapper">
+        {{ field.errors }}
+        {{ field.label_tag }}: {{ field }}
+        </div>
+        {% endfor %}
+	     
+	     {% for field in form_profile %}
+	    <div class="fieldWrapper">
+        {{ field.errors }}
+        {{ field.label_tag }}: {{ field }}
+        </div>
+        {% endfor %}
+
+	    <input type="submit" value="Registrar"/>
+    </form>
+</div>
+   
+{% endblock %}
