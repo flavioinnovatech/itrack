@@ -1,0 +1,24 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+
+{{ message }}
+
+<div id="config">
+	<table width="100%" cellpadding="0">
+		<tbody>
+			<tr>
+				<td>
+					<h1>Gerenciamento de usuários</h1>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+    
+    <ul>
+        <li>  <a href="{% url accounts.views.create_user %}">Criar usuários do seu sistema</a></li>
+        <li>  <a href="#">Apagar usuários do seu sistema </a></li>
+        <li>  <a href="#">Editar usuários do seu sistema </a></li>
+    </ul>
+</div>
+{% endblock %}
