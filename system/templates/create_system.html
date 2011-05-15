@@ -45,16 +45,23 @@ $(document).ready(function(){
 </script>
 {% endblock %}
 
+
 {% block content %}
 {% load dajaxice_templatetags %}
 {% dajaxice_js_import %}
-
 <form method="post" enctype="multipart/form-data">
 {% csrf_token %}
 
 <div id="config">
   <table cellpadding="0">
     <tbody>
+      <tr>
+        <td colspan="2">
+          <div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix">
+            <span class="ui-jqgrid-title">Sistema</span>
+          </div>
+        </td>
+      </tr>
       {% for field in form_sys %}
       
         <tr>
@@ -62,8 +69,8 @@ $(document).ready(function(){
 
 	    <tr class="ui-widget-content jqgrow ui-row-ltr">  
         <td>          
-
           <h2>{{ field.label_tag }}</h2>
+          <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
         </td>
         
         <td>
@@ -82,7 +89,7 @@ $(document).ready(function(){
            <a id="remove2" class="jjexample" href="#" style="padding-left: 20px;"><< remove</a>
           {% endif%}
           
-          <p>{{ field.help_text }} </p>
+          
         </td>
       </tr>
       <tr><td></td> </tr>
@@ -99,17 +106,19 @@ $(document).ready(function(){
 	        {{ field }}
 	      </td>
 	      <tr>
-	        {{field.help_text}}
+	        {{ field.help_text}}
+	       
 	      </tr>
       </tr>
         {% endfor %}
       <tr>
         <td colspan="2">
-          <p align="center"><input type="submit" value="Registrar" /></p>
+          
         </td>
       </tr>
       </tbody>
 		</table>
+		<p align="center"><input type="submit" value="Registrar" /></p>
 			
 	    
     </form>

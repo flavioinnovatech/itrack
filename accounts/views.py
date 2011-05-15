@@ -4,10 +4,12 @@ from django.shortcuts import render_to_response
 from itrack.accounts.models import UserProfile
 from django.contrib.auth.models import User
 from django.template.context import Context,RequestContext
-#from itrack.accounts.forms import UserProfileForm, UserForms
+from itrack.accounts.forms import UserProfileForm, UserForms
 from django.http import HttpResponseRedirect
 from itrack.system.models import System, Settings
 from django.contrib.auth import authenticate,login
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)

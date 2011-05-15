@@ -1,5 +1,6 @@
-from django.db import models
+# -*- coding: utf-8 -*- 
 
+from django.db import models
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 from itrack.equipments.models import Equipment
@@ -47,9 +48,9 @@ class Settings(models.Model):
     
     color_table_line_hover = models.CharField(max_length=50, verbose_name = 'Cor da linha da tabela selecionada')
     color_table_line_font_hover = models.CharField(max_length=50, verbose_name = 'Cor da fonte da linha da tabela selecionada')
-    color_table_header = models.CharField(max_length=50, verbose_name = 'Cor do cabecalho da tabela')
-    color_site_font = models.CharField(max_length=50, verbose_name = 'Cor padrao do texto')
-    color_link = models.CharField(max_length=50,  verbose_name = 'Cor padrao dos links')
+    color_table_header = models.CharField(max_length=50, verbose_name = u'Cor do cabeçalho da tabela')
+    color_site_font = models.CharField(max_length=50, verbose_name = u'Cor padrão do texto')
+    color_link = models.CharField(max_length=50,  verbose_name = u'Cor padrão dos links')
 
     color_site_background.default = "#e0e0e0"
     color_table_background.default = "#ffffff"
