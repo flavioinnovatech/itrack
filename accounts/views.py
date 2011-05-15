@@ -15,23 +15,25 @@ def login(request):
         # Correct password, and the user is marked "active"
         auth.login(request, user)
         
-        request.session['system'] = System.objects.filter(users__username__exact=request.user.username)
-        system = request.session['system']
+        system = System.objects.filter(users__username__exact=request.user.username)
         
         for item in system:
           system_id = item
+          domain = item.domain
         
         user_settings = Settings.objects.filter(system=system_id)
         
-        print user_settings
-
       	for item in user_settings:
       	    css = item.css
         
-        print item.css
+        request.session['system'] = system_id
+        request.session['css'] = css
+        request.session['domain'] = domain
+        
+        print domain
         
         # Redirect to a success page.
-        return render_to_response("templates/base.html",locals())
+        return render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
     else:
         # Show an error page
         return HttpResponseRedirect("/")

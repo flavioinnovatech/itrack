@@ -6,7 +6,7 @@
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 		
 		<style type="text/css">
-		{{ css }}
+		{{ request.session.css  }}
 		</style>
 		
 		<link rel="stylesheet" href="/media/css/reset.css" type="text/css" media="screen" />
@@ -25,7 +25,7 @@
 		<div id="topContainer">
 			<div class="centerContainer">
 				<a href="#" title="Titulo Dinamico" class="logo fl"><img src="/media/img/logo.png" alt="Titulo Dinamico" /></a>
-				<div id="logindata" align="right" style="top: 0pt;position: absolute;width:920px">{% for item in system %} {{request.user}} / {{item.domain}} {% endfor %} </div>
+				<div id="logindata" align="right" style="top: 0pt;position: absolute;width:920px"> {{request.user}} / {{request.session.domain}} </div>
 				
 			</div> <!-- end centerContainer -->
 		</div> <!-- end topContainer -->
