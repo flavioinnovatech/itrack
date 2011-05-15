@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response
 from itrack.accounts.models import UserProfile
 from django.contrib.auth.models import User
-from django.template.context import Context,loader,RequestContext
-from itrack.accounts.forms import UserProfileForm, UserForm
+from django.template.context import Context,RequestContext
+#from itrack.accounts.forms import UserProfileForm, UserForms
 from django.http import HttpResponseRedirect
 from itrack.system.models import System, Settings
 from django.contrib.auth import authenticate,login
@@ -59,5 +59,5 @@ def login(request):
         # Show an error page
         return HttpResponseRedirect("/")
   else:
-    return render_to_response('accounts/templates/login.html',context_instance=RequestContext(request))
+    return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))
 
