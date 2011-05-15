@@ -28,28 +28,28 @@ class Settings(models.Model):
     title = models.CharField(max_length=200)
     logo = models.ImageField(upload_to='static/img/')
     
-    color_site_background = models.CharField(max_length=50)
-    color_table_background = models.CharField(max_length=50)
+    color_site_background = models.CharField(max_length=50, verbose_name='Cor de fundo do site')
+    color_table_background = models.CharField(max_length=50, verbose_name='cor de fundo das tabelas')
     
-    color_menu_gradient_final = models.CharField(max_length=50) 
-    color_menu_gradient_inicial = models.CharField(max_length=50)
-    color_menu_gradient_final_hover = models.CharField(max_length=50)
-    color_menu_gradient_inicial_hover = models.CharField(max_length=50)
+    color_menu_gradient_final = models.CharField(max_length=50, verbose_name = 'Cor inicial do degrade do menu') 
+    color_menu_gradient_inicial = models.CharField(max_length=50, verbose_name= 'Cor final do degrade do menu')
+    color_menu_gradient_final_hover = models.CharField(max_length=50, verbose_name = 'Cor final do degrade do menu selecionado')
+    color_menu_gradient_inicial_hover = models.CharField(max_length=50,  verbose_name = 'Cor inicial do degrade do menu selecionado')
     
-    color_submenu_gradient_final = models.CharField(max_length=50) 
-    color_submenu_gradient_inicial = models.CharField(max_length=50)
-    color_submenu_hover = models.CharField(max_length=50)
+    color_submenu_gradient_final = models.CharField(max_length=50, verbose_name = 'Cor final do degrade do submenu') 
+    color_submenu_gradient_inicial = models.CharField(max_length=50, verbose_name = 'Cor inicial do degrade do submenu')
+    color_submenu_hover = models.CharField(max_length=50, verbose_name = 'Cor do degrade do submenu selecionado')
     
-    color_menu_font = models.CharField(max_length=50) 
-    color_menu_font_hover = models.CharField(max_length=50)
-    color_submenu_font = models.CharField(max_length=50)
-    color_submenu_font_hover = models.CharField(max_length=50)
+    color_menu_font = models.CharField(max_length=50, verbose_name = 'Cor da fonte do menu') 
+    color_menu_font_hover = models.CharField(max_length=50, verbose_name = 'Cor da fonte do menu selecionado')
+    color_submenu_font = models.CharField(max_length=50, verbose_name = 'Cor da fonte do submenu')
+    color_submenu_font_hover = models.CharField(max_length=50, verbose_name = 'Cor da fonte do submenu selecionado')
     
-    color_table_line_hover = models.CharField(max_length=50)
-    color_table_line_font_hover = models.CharField(max_length=50)
-    color_table_header = models.CharField(max_length=50)
-    color_site_font = models.CharField(max_length=50)
-    color_link = models.CharField(max_length=50)
+    color_table_line_hover = models.CharField(max_length=50, verbose_name = 'Cor da linha da tabela selecionada')
+    color_table_line_font_hover = models.CharField(max_length=50, verbose_name = 'Cor da fonte da linha da tabela selecionada')
+    color_table_header = models.CharField(max_length=50, verbose_name = 'Cor do cabecalho da tabela')
+    color_site_font = models.CharField(max_length=50, verbose_name = 'Cor padrao do texto')
+    color_link = models.CharField(max_length=50,  verbose_name = 'Cor padrao dos links')
 
     color_site_background.default = "#e0e0e0"
     color_table_background.default = "#ffffff"

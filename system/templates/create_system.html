@@ -56,19 +56,18 @@ $(document).ready(function(){
   <table cellpadding="0">
     <tbody>
       {% for field in form_sys %}
-<<<<<<< HEAD
-	    <tr>  
-        <tr><td>{{ field.errors }} <td></tr>
+      
+        <tr>
         <td>
-                
-=======
+
 	    <tr class="ui-widget-content jqgrow ui-row-ltr">  
         <td>          
->>>>>>> b2c221e11a7332856f1700c0bd0980ff59f64817
+
           <h2>{{ field.label_tag }}</h2>
         </td>
         
         <td>
+        <p>{{ field.errors }} </p>
          {{ field }} 
           {% if "Users" in field.label_tag  %} 
             <select id="selecionados" multiple="multiple"></select> <br/> 
@@ -82,15 +81,17 @@ $(document).ready(function(){
            <a id="add2" class="jjexample" href="#" style="padding-left: 20px;">add &gt;&gt;</a>
            <a id="remove2" class="jjexample" href="#" style="padding-left: 20px;"><< remove</a>
           {% endif%}
+          
+          <p>{{ field.help_text }} </p>
         </td>
       </tr>
-      <tr><td>{{ field.help_text }}</td> </tr>
+      <tr><td></td> </tr>
       
         {% endfor %}
       
 	     
 	     {% for field in form_sett %}
-	    <tr>
+	    <tr class="ui-widget-content jqgrow ui-row-ltr">
 	      <td>
 	        <h2>{{ field.label_tag }}</h2>
 	      </td>
