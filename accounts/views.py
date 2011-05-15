@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from itrack.accounts.models import UserProfile
 from django.contrib.auth.models import User
 from django.template.context import Context,RequestContext
-#from itrack.accounts.forms import UserProfileForm, UserForms
+from itrack.accounts.forms import UserProfileForm, UserForm
 from django.http import HttpResponseRedirect
 from itrack.system.models import System, Settings
 from django.contrib.auth import authenticate,login
@@ -61,3 +61,9 @@ def login(request):
   else:
     return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
+def index(request):
+    
+    
+    return render_to_response("accounts/templates/home.html",locals())

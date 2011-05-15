@@ -1,25 +1,17 @@
 {% extends "templates/base.html" %}
 
 {% block content %}
-{{ vector }}
+
 
 
 {{ message }}
-
-{% if form_sett.errors %}
-    <ol>
-    {% for error in form.errors %}
-        <li><strong>{{ error|escape }}</strong></li>
-    {% endfor %}
-    </ol>
-{% endif %}
 
 <div id="config">
 	<table width="100%" cellpadding="0">
 		<tbody>
 			<tr>
 				<td>
-					<h1>Sistemas</h1>
+					<h1>Gerenciamento de sistemas</h1>
 				</td>
 				<td>
 				</td>
@@ -27,6 +19,8 @@
 			<tr>
 				<td>
 					<h2>Sistemas filhos:</h2>
+					{{vector }}
+					{{ vector|unordered_list}}
 				</td>
 				<td valign="top">
 
