@@ -52,18 +52,9 @@ a {
 	margin: 5px 5px 5px 5px;  
 }
 
-#content input{
-	margin-right: 5px;
-	
-}
-
 #config{
   margin:auto;
 	//margin-left: 300px;
-}
-
-#config input {
-	margin-top:5px;
 }
 
 #config li {
@@ -71,9 +62,9 @@ a {
 }
 
 #config td {
-	//min-width:200px;
-	vertical-align:top;
-	//padding-right:5px;
+  text-align:center;
+	vertical-align:center;
+	//padding-top:5px;
 }
 
 #config table {
@@ -81,7 +72,17 @@ a {
 }
 
 #config table {
-  margin: 0 auto;
+  margin: auto;
+}
+
+#config table input,textarea,select {
+  margin:5px;
+  width:90%;
+}
+
+#config #help {
+  font-size:90%;
+  text-align:center;
 }
 
 #config #id_users,#selecionados,#id_equipments,#selecionados2 {
