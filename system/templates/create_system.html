@@ -57,9 +57,12 @@ $(document).ready(function(){
     <tbody>
       {% for field in form_sys %}
 	    <tr>  
-        <td>          
+        <tr><td>{{ field.errors }} <td></tr>
+        <td>
+                
           <h2>{{ field.label_tag }}</h2>
         </td>
+        
         <td>
          {{ field }} 
           {% if "Users" in field.label_tag  %} 
@@ -74,9 +77,10 @@ $(document).ready(function(){
            <a id="add2" class="jjexample" href="#" style="padding-left: 20px;">add &gt;&gt;</a>
            <a id="remove2" class="jjexample" href="#" style="padding-left: 20px;"><< remove</a>
           {% endif%}
-        {{ field.errors }}
         </td>
       </tr>
+      <tr><td>{{ field.help_text }}</td> </tr>
+      
         {% endfor %}
       
 	     
@@ -88,6 +92,9 @@ $(document).ready(function(){
 	      <td>
 	        {{ field }}
 	      </td>
+	      <tr>
+	        {{field.help_text}}
+	      </tr>
       </tr>
         {% endfor %}
       <tr>
