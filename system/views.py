@@ -9,20 +9,17 @@ from itrack.system.forms import SystemForm, SettingsForm
 
 
 def findChild(parent):
-	vector = []
-	vector.append(parent)
-	
-	if (System.objects.filter(parent__name=parent).count() == 0):
-		return parent
-	else:
-		v = []
-		for x in System.objects.filter(parent__name=parent):
-			n = x.name
-			
-			el = findChild(n)
-			v.append(el)
-		vector.append(v)
-	return vector
+    if (System.objects.filter(parent__name=parent).count() == 0):
+		return []
+    else:
+        u=[]
+        for x in System.objects.filter(parent__name=parent):
+            n = x.name
+            u.append(n)
+            el = findChild(n)
+            if el != []:
+                u.append(el)
+        return u
 			
 
 def makelist(vector):
@@ -49,8 +46,11 @@ def index(request):
     system = System.objects.filter(administrator__username=request.user.username)
     for item in system:
         parent = item.name
+    vector = []
     if parent != []:
-        vector = findChild(parent)
+        childs = findChild(parent)
+        vector.append(parent)
+        vector.append(childs)
     else:
         vector = []
 
