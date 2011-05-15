@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^$', 'main.views.index'),
     url(r'^accounts/login/$', 'accounts.views.login' ),
     url(r'^accounts/logout/$', logout_then_login),
+    
     url(r'^admin/', include(admin.site.urls)),
     url(r'^media/(.*)$', 'django.views.static.serve', {'document_root' : settings.MEDIA_ROOT}),
 	url(r'^accounts/profile/$', 'main.views.index'),
@@ -24,6 +25,7 @@ urlpatterns = patterns('',
 	
 	url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 	url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
+	url(r'^accounts/create/$', 'accounts.views.create_user'),
 
 
 	
