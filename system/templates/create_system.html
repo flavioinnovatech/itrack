@@ -53,13 +53,18 @@ $(document).ready(function(){
 {% csrf_token %}
 
 <div id="config">
-  <table width="100%" cellpadding="0">
+  <table cellpadding="0">
     <tbody>
       {% for field in form_sys %}
+<<<<<<< HEAD
 	    <tr>  
         <tr><td>{{ field.errors }} <td></tr>
         <td>
                 
+=======
+	    <tr class="ui-widget-content jqgrow ui-row-ltr">  
+        <td>          
+>>>>>>> b2c221e11a7332856f1700c0bd0980ff59f64817
           <h2>{{ field.label_tag }}</h2>
         </td>
         
