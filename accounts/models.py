@@ -10,6 +10,6 @@ class UserProfile(models.Model):
     city = models.CharField(max_length=50)
 
     def __unicode__(self):
-      return self.user.username
+      return self.profile.username
       
     profile.default = 1

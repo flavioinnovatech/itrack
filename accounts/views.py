@@ -89,4 +89,17 @@ def index(request):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def edit(request,offset):
   
-  return 1
+  if request.method == 'POST':
+    
+    return render_to_response("accounts/templates/edit.html",locals())
+    
+  else:
+    #display the edit form
+    user = User.objects.get(pk=int(offset))
+    #profile = UserProfile.objects.get(system__id=int(offset))
+    
+    
+    form_user = UserForm(instance = user)
+    form_profile = UserProfileForm()
+    
+    return render_to_response("accounts/templates/edit.html",locals())

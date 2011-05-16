@@ -110,13 +110,16 @@ def edit(request,offset):
             
             form_sett = SettingsForm(request.POST,request.FILES,instance=settings)
             form_sys = SystemForm(request.POST,instance=system)       
-
-            print form_sys
             
             if form_sys.is_valid() and form_sett.is_valid():
                 new_sys = form_sys.save()
-                new_setting = form_sett.save()
+                new_setting = form_sett.save(commit=False)
                 
+                new_setting.css = '#topContainer .centerContainer{ background-image: url('+new_setting.logo.url+');}'
+                print new_setting.css
+                #for item in post:
+                  #css = item.css
+                new_setting.save()
                 message =  "Sistema editado com sucesso."    
                 return render_to_response('system/templates/home.html',locals(),)
             else:

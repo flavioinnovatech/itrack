@@ -1,3 +1,7 @@
+#topContainer .centerContainer {
+  height:100px;
+}
+
 body {
 	font: normal .8em/1.5em Arial, Helvetica, sans-serif;
 	
