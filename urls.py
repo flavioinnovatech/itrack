@@ -28,7 +28,9 @@ url(r'^system/edit/(\d+)/$','system.views.edit'),
 
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
+
 url(r'^accounts/create/$', 'accounts.views.create_user'),
+url(r'^accouts/edit/(\d+)/$','accounts.views.edit'),
 
 
 

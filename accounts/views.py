@@ -84,3 +84,9 @@ def index(request):
     users = User.objects.filter(system=system)
     
     return render_to_response("accounts/templates/home.html",locals())
+    
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
+def edit(request,offset):
+  
+  return 1
