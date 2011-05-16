@@ -7,28 +7,102 @@
 
 <script type="text/javascript">
 
-jQuery(document).ready(function(){ 
+$(document).ajaxSend(function(event, xhr, settings) {
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function safeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+});
+
+jQuery(document).ready(function(){
+
+//////////// Função que pega os ids dos usuários selecionados e manda pro ajax deletar
+$('#delete').click(function(){
+  
+  var rows = $('#list4').jqGrid('getGridParam', 'selarrrow');
+
+  var i = 0;
+  selected = new Array();
+  while(rows[i]) {
+    selected[i] =  { "id" : $('#list4').getCell(rows[i],'id') };
+    i++;
+  }
+  
+  //objeto = [ selected.join(",") ];
+  //alert (objeto); 
+  
+  if (selected.length == 0) { 
+      alert('Selecione pelo menos um usuário.'); 
+  }
+  
+  else {
+    $.post("{% url accounts.ajax.delete %}", selected[0],
+    function(data) {
+      alert("Data Loaded: " + data);
+    });
+ }
+  
+});  
+  
 var i = 0;
 data = new Array()
 var mydata = [
 {% for user in users %}
-  {user : '{{user}}'},
+  {id:'{{user.id}}',user : '{{user}}'},
 {% endfor  %}
 ];
 
-function formateadorLink(cellvalue, options, rowObject) {
-  return "<a href={% url accounts.views.index %}"+ cellvalue + ">" + cellvalue + "</a>";
+cell_id = new Array();
+function formateadorLink2(cellvalue, options, rowObject) {
+  cell_id[options.rowId] = cellvalue;
+  return cellvalue;
 }
-        
+
+function formateadorLink(cellvalue, options, rowObject) {
+  return "<a href=/accounts/edit/"+ cell_id[options.rowId] + ">" + cellvalue + "</a>";
+}
+
 jQuery("#list4").jqGrid({ 
 	datatype: "local",
   width: 600,
   height: "auto",
 	colNames:[
+	'id',
 	'Usuários'
 	], 
-	colModel:[  
-	{name:'user',sorttype:"text",align:"center",resizable:false, formatter: formateadorLink}
+	colModel:[
+	{name:'id',sorttype:"text",align:"center",resizable:false, formatter: formateadorLink2,hidden: true},
+	{name:'user',id:'id',sorttype:"text",align:"center",resizable:false, formatter: formateadorLink}
 	], 
 	beforeSelectRow: function(rowid, e) { return true; },
 	multiselect: true,
@@ -47,7 +121,6 @@ jQuery("#list4").jqGrid({
    					{id:"2",invdate:"2007-10-02",name:"test2"}];
 	
   $("#gbox_list4").css("margin", "0 auto");
- // $(".ui-jqgrid-bdiv").css('height', "auto");
 
 });
 
@@ -63,17 +136,15 @@ jQuery("#list4").jqGrid({
 {% endblock %}
 
 
+{% csrf_token %}
 
 <div id="config">
 	<table id="list4"></table> 
 	  <div align="center" style="margin-top:10px;" id="actions">
      
             <a href="{% url accounts.views.create_user %}">Criar usuários do seu sistema</a>
-          <a href="#">Apagar usuários do seu sistema </a>
-            <a href="#">Editar usuários do seu sistema </a>
-    
-      </div>
-   
+          <a id="delete" href="#">Apagar usuários selecionados do seu sistema </a>    
+      </div>   
 </div>
 
 {% endblock %}

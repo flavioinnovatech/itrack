@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect
 from itrack.system.models import System, Settings, User
 from django.contrib.auth import authenticate,login
 from http403project.http import Http403
+from django.core.context_processors import csrf
 
 
 @login_required
@@ -96,13 +97,14 @@ def login(request):
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def index(request):
-    
+    c = {}
+    c.update(csrf(request))
     system = request.session['system']
     
     #TO-DO pegar usarios pelo ID do sistema
     users = User.objects.filter(system=system)
     
-    return render_to_response("accounts/templates/home.html",locals())
+    return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
     
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
