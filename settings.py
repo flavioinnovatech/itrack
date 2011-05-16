@@ -101,6 +101,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'http403project.http.Http403Middleware',
+
 )
 
 ROOT_URLCONF = 'itrack.urls'

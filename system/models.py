@@ -28,6 +28,7 @@ class Settings(models.Model):
     
     title = models.CharField(max_length=200)
     logo = models.ImageField(upload_to='static/img/')
+    logo.default = '/media/static/img/logo.png'
     
     color_site_background = models.CharField(max_length=50, verbose_name='Cor de fundo do site')
     color_table_background = models.CharField(max_length=50, verbose_name='cor de fundo das tabelas')

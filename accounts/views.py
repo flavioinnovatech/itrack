@@ -49,19 +49,22 @@ def login(request):
         auth.login(request, user)
         
         system = System.objects.filter(users__username__exact=request.user.username)
-        
+        print system
         for item in system:
           system_id = item.id
           domain = item.domain
+          system_name = item.name
         
-        user_settings = Settings.objects.filter(system=system_id)
-        
+        user_settings = Settings.objects.filter(system__id=system_id)
+        print user_settings
       	for item in user_settings:
       	    css = item.css
         
         request.session['system'] = system_id
         request.session['css'] = css
         request.session['domain'] = domain
+                
+        request.session['system_name'] = system_name
                 
         # Redirect to a success page.
         return render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
