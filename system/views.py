@@ -119,7 +119,7 @@ def edit(request,offset):
                 print new_setting.css
                 #for item in post:
                   #css = item.css
-                new_setting.save()
+                form_sett.save()
                 message =  "Sistema editado com sucesso."    
                 return render_to_response('system/templates/home.html',locals(),)
             else:

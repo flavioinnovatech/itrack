@@ -31,7 +31,7 @@ url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
 
 url(r'^accounts/create/$', 'accounts.views.create_user'),
 url(r'^accounts/edit/(\d+)/$','accounts.views.edit'),
-
+url(r'^accounts/delete/(\d+)/$','accounts.views.delete'),
 
 
 
