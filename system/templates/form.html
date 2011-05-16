@@ -1,48 +1,16 @@
 {% extends "templates/base.html" %}
 
 {% block head %}
+
+<link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
 <script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+<script type="text/javascript" src="/media/js/jsi18n.js"></script>
 
-function my_js_callback(data){
-  if(data==Dajaxice.EXCEPTION){
-    alert('Error! Something happens!');
-  }
-  else{
-		alert('ae');
-		//$("body").css('background-color',data.message);
-  }
-}
-
-
-$(document).ready(function(){
-  
-  $('#add').click(function() {
-    $('#selecionados option:selected');
-    return !$('#id_users option:selected').remove().appendTo('#selecionados');
-  });
-  
-  $('#remove').click(function() {  
-    return !$('#selecionados option:selected').remove().appendTo('#id_users');  
-  });
-  
-  $('#add2').click(function() {
-    $('#selecionados2 option:selected');
-    return !$('#id_equipments option:selected').remove().appendTo('#selecionados2');
-  });
-  
-  $('#remove2').click(function() {  
-    return !$('#selecionados2 option:selected').remove().appendTo('#id_equipments');  
-  });
-  
-	$("#color_site_background").change(function(){
-		$("body").css('background-color',$("#color_site_background").css('background-color'));
-  });
-	
-
-});
-
-</script>
 {% endblock %}
 
 
@@ -77,20 +45,7 @@ $(document).ready(function(){
         
         <td>
         <p>{{ field.errors }} </p>
-         {{ field }} 
-          {% if "Users" in field.label_tag  %} 
-            <select id="users_selected" multiple="multiple"></select> <br/> 
-            <a id="add" class="jjexample" href="#" style="padding-left: 20px;">add &gt;&gt;</a>
-            <a id="remove" class="jjexample" href="#" style="padding-left: 20px;"><< remove</a>  
-            
-          {% endif %} 
-          
-          {% if "Equipments" in field.label_tag  %}
-           <select id="equipments_selected" multiple="multiple"></select> <br/> 
-           <a id="add2" class="jjexample" href="#" style="padding-left: 20px;">add &gt;&gt;</a>
-           <a id="remove2" class="jjexample" href="#" style="padding-left: 20px;"><< remove</a>
-          {% endif%}
-          
+         {{ field }}          
           
         </td>
       </tr>
@@ -108,6 +63,7 @@ $(document).ready(function(){
 	      	{% if "Logo" in field.label_tag  %}
                 <p><img src ="/media/{{ field.value }}" width="150px">  </p>
             {% endif %} 
+            <p>{{ field.errors }} </p>
 	        {{ field }}
 	      </td>
 	      <tr>

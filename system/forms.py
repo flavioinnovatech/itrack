@@ -1,19 +1,24 @@
 from django.forms import *
-from itrack.system.models import System,Settings
-from django.contrib.auth.models import User
 from django.contrib.admin.widgets import *
+from itrack.system.models import System,Settings
+from itrack.equipments.models import Equipment
+from django.contrib.auth.models import User
+
+
 
 class SystemForm(ModelForm):
-	    class Meta:
-	        model = System
-	        exclude = ('parent')
-            my_field = forms.ModelMultipleChoiceField(queryset=User.objects.all(), widget=FilteredSelectMultiple("verbose name", is_stacked=False))
+    def get_system_id():
+        return system_id
+    class Meta:
+        model = System
+        exclude = ('parent','users')
+    equipments = forms.ModelMultipleChoiceField(queryset=Equipment.objects.all(), widget=FilteredSelectMultiple("verbose name", is_stacked=False))
 
 
 class SettingsForm(ModelForm):
     class Meta:
             model = Settings
-            exclude = ('title','system')
+            exclude = ('title','system','css')
             widgets = {
                 'color_site_background' : TextInput(attrs={'class':'color'}),
                 'color_table_background' : TextInput(attrs={'class':'color'}),
