@@ -61,11 +61,19 @@ def login(request):
         # Correct password, and the user is marked "active"
         auth.login(request, user)
         
-        system = System.objects.filter(users__username__exact=request.user.username)
-        for item in system:
-          system_id = item.id
-          domain = item.domain
-          system_name = item.name
+        #searches first in the administrators
+        try:
+            system = System.objects.get(administrator__username = request.user.username)
+            system_id = system.id
+            domain = system.domain
+            system_name = system.name
+        except:
+        #if the user is not an admin, search in the users     
+            system = System.objects.filter(users__username__exact=request.user.username)
+            for item in system:
+                system_id = item.id
+                domain = item.domain
+                system_name = item.name
         
         user_settings = Settings.objects.filter(system__id=system_id)
       	for item in user_settings:

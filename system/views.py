@@ -12,7 +12,7 @@ from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from itrack.system.forms import SystemForm, SettingsForm
 from http403project.http import Http403
-
+from django.db.models import Q
 
 #creates the list of childs for the system with id = 'parent'
 def findChild(parent):
@@ -45,7 +45,9 @@ def isChild(system,childs):
 
 #renders the HTML to edit childs
 def render_system_html(childs,rendered_list=""):
-    rendered_list+="<ul>"
+    if childs == []: 
+        return ""
+    rendered_list+="<ul class=\"childs\">"
     for x in childs:
         if  type(x).__name__ == "list":
         #if its a list, execute recursively inside it
@@ -72,7 +74,7 @@ def index(request):
         vector.append(childs)
         
         vector_html = render_system_html(childs)
-
+        
     return render_to_response("system/templates/home.html",locals())
 
 @login_required
@@ -112,10 +114,10 @@ def create(request):
 
     else:
         form_sys = SystemForm()
-
+        sysadm = User.objects.get(username=request.user.username)
         print form_sys.fields
         form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
-        form_sys.fields["administrator"].queryset = User.objects.filter(system = request.session["system"])
+        form_sys.fields["administrator"].queryset = User.objects.filter(Q(system = request.session["system"])|Q(username = sysadm))
         form_sett = SettingsForm()
 
         return render_to_response("system/templates/create.html",locals(),context_instance=RequestContext(request),)
@@ -155,17 +157,25 @@ def edit(request,offset):
                 return render_to_response('system/templates/home.html',locals(),)
             else:
                 message =  "Form invalido."    
-                return HttpResponseRedirect("/system")
+                return HttpResponseRedirect("/system/")
             
         else:
             #display the edit form
+        
             system = System.objects.get(pk=int(offset))
             settings = Settings.objects.get(system__id=int(offset))
+            system_parent = system.parent_id
+            system_admin = system.administrator_id
+            
+            if system_parent == None:
+                system_parent = system.id
+                system_admin = system.administrator.id
+
             
             form_sys = SystemForm(instance = system)
             form_sett = SettingsForm(instance = settings)
-            form_sys.fields["equipments"].queryset = Equipment.objects.filter(system =int(offset))
-            form_sys.fields["administrator"].queryset = User.objects.filter(system = int(offset))
+            form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
+            form_sys.fields["administrator"].queryset = User.objects.filter(Q(system = system_parent)|Q(pk=system_admin))
             sysname = system.name
             return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         
