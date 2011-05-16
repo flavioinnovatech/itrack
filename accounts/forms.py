@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class UserProfileForm(ModelForm):
 	    class Meta:
 	        model = UserProfile
-	        exclude = ('user')
+	        exclude = ('profile')
 
 class UserForm(ModelForm):
     class Meta:

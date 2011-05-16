@@ -90,6 +90,18 @@ a {
   width: 75px;
 }
 
+#config ul.errorlist {
+  color:red;
+  border:1px dashed #FFF;
+  border-radius: 4px 4px 4px 4px;
+  background-color:white;
+  max-width:90%;
+  margin:0 auto;
+  min-width:50px;
+  margin-top:5px;
+  margin-bottom:5px;
+}
+
 #toolbar{
 	position: fixed;
 	bottom: 0px;
