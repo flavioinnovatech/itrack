@@ -12,8 +12,8 @@ class SystemForm(ModelForm):
     class Meta:
         model = System
         exclude = ('parent','users')
-    equipments = forms.ModelMultipleChoiceField(queryset=Equipment.objects.all(), widget=FilteredSelectMultiple("verbose name", is_stacked=False))
-
+    equipments = forms.ModelMultipleChoiceField(queryset=Equipment.objects.all(), widget=FilteredSelectMultiple("equipamentos", is_stacked=False))
+    equipments.verbose_name = "Equipamentos"
 
 class SettingsForm(ModelForm):
     class Meta:

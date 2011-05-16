@@ -10,9 +10,9 @@ class System(Site):
         permissions = (("can_create", "Pode criar subsistemas"),)
 
     users = models.ManyToManyField(User)
-    administrator = models.ForeignKey(User,related_name='usuarios')
-    parent = models.ForeignKey('self')
-    equipments = models.ManyToManyField(Equipment)
+    administrator = models.ForeignKey(User,related_name='usuarios',verbose_name="Administrador")
+    parent = models.ForeignKey('self',verbose_name="Sistema pai")
+    equipments = models.ManyToManyField(Equipment,verbose_name="Equipamentos")
 
 
     parent.null = True

@@ -112,9 +112,10 @@ def create(request):
 
     else:
         form_sys = SystemForm()
-        #form_sys.fields["users"].queryset = User.objects.all()
+
         print form_sys.fields
-        #form_sys.fields["equipments"].queryset = Equipment.objects.get(system__id= request.session["system"]) 
+        form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
+        form_sys.fields["administrator"].queryset = User.objects.filter(system = request.session["system"])
         form_sett = SettingsForm()
 
         return render_to_response("system/templates/create.html",locals(),context_instance=RequestContext(request),)
@@ -138,7 +139,9 @@ def edit(request,offset):
                 new_sys = form_sys.save()
                 new_setting = form_sett.save(commit=False)
                 
+                print new_setting.logo.url
                 new_setting.css = '#topContainer .centerContainer{ background-image: url('+new_setting.logo.url+');}'
+                
                 print new_setting.css
                 #for item in post:
                   #css = item.css
@@ -157,7 +160,7 @@ def edit(request,offset):
             form_sys = SystemForm(instance = system)
             form_sett = SettingsForm(instance = settings)
             form_sys.fields["equipments"].queryset = Equipment.objects.filter(system =int(offset))
-            
+            form_sys.fields["administrator"].queryset = User.objects.filter(system = int(offset))
             sysname = system.name
             return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         

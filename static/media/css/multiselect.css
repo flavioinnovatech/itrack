@@ -7,7 +7,7 @@ float: left;
 }
 
 .selector select {
-width: 270px;
+width: 240px;
 height: 8em;
 }
 
@@ -26,19 +26,19 @@ font-size:11px;
 
 .selector .selector-available h2 {
 
-background: #a6a077 url(/images/admin/nav-bg.gif) bottom left repeat-x;
+background: #666 url(/images/admin/nav-bg.gif) bottom left repeat-x;
 color: white;
 }
 .selector .selector-chosen h2 {
-background: #A29A63 url(/images/admin/default-bg.gif) repeat-x scroll left top;
+background: #666 url(/images/admin/default-bg.gif) repeat-x scroll left top;
 color: white;
 }
 
 
 .selector .selector-filter {
 background: white;
-border: 1px solid #ccc;
-border-width: 0 1px;
+
+
 padding: 3px;
 color: #999;
 font-size: 10px;
@@ -47,7 +47,7 @@ text-align: left;
 }
 
 .selector .selector-chosen .selector-filter {
-padding: 4px 5px;
+padding: 8px 5px;
 }
 
 .selector .selector-available input {
