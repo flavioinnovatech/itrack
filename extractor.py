@@ -7,7 +7,7 @@ import select
 import tty 
 import termios
 
-TCP_IP = '192.168.1.107'
+TCP_IP = '192.168.0.151'
 TCP_PORT = 5000
 BUFFER_SIZE = 20000
 USERNAME = "extractor"

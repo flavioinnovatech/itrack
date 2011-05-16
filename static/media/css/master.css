@@ -53,7 +53,7 @@ a {
 	//font-size: 11px;
 	font-weight: bold;
 	text-align:center;
-	margin: 5px 5px 5px 5px;  
+	margin: 10px 0 0;  
 }
 
 #config{
@@ -81,7 +81,7 @@ a {
 
 #config table input,textarea,select {
   margin:5px;
-  width:90%;
+  width:80%;
 }
 
 #config #help {
@@ -273,4 +273,9 @@ html[xmlns] #nav {
 }
 * html #nav {
 	height: 1%;
+}
+
+.childs{
+
+padding-left:45px;
 }

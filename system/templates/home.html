@@ -19,8 +19,12 @@
 			<tr class="ui-widget-content jqgrow ui-row-ltr">
 				<td>
 					<h1>Sistemas filhos:</h1>
+					{% if vector_html != "" %}
 					<p> A identação indica a hierarquia dos sistemas. </p>
-					{{ vector_html|safe }}            
+					{{ vector_html|safe }}   
+					{% else %}
+					<p> Este sistema não possui nenhum filho. </p>
+					{% endif %}         
 				</td>
 			</tr>
 		</tbody>
