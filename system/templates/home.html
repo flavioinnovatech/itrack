@@ -32,9 +32,9 @@
 	</table>
     
     <ul>
-        <li> <a href="{% url system.views.create_system %}">Criar um subsistema </a></li>
+        <li> <a href="{% url system.views.create %}">Criar um subsistema </a></li>
         <li> <a href="#">Apagar um subsistema </a></li>
-        <li> <a href="#">Editar um subsistema </a></li>
+        <li> <a href="{% url system.views.edit request 1 %}">Editar um subsistema </a></li>
         <li> <a href="#">Ver um subsistema </a> </li>
         <br />
         <li>  <a href="{% url accounts.views.create_user %}">Criar usuários do seu sistema</a></li>

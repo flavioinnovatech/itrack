@@ -10,6 +10,7 @@ from django.template.context import RequestContext
 from itrack.system.forms import SystemForm, SettingsForm
 from http403project.http import Http403
 
+
 #creates the list of childs for the system with id = 'parent'
 def findChild(parent):
     if (System.objects.filter(parent__id=parent).count() == 0):
@@ -56,7 +57,7 @@ def index(request):
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
-def create_system(request):
+def create(request):
     system = System.objects.filter(users__username__exact=request.user.username)
     
     if request.method == 'POST':

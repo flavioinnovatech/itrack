@@ -1,11 +1,13 @@
 from django.forms import *
 from itrack.system.models import System,Settings
+from django.contrib.auth.models import User
+from django.contrib.admin.widgets import *
 
 class SystemForm(ModelForm):
 	    class Meta:
 	        model = System
 	        exclude = ('parent')
-
+            my_field = forms.ModelMultipleChoiceField(queryset=User.objects.all(), widget=FilteredSelectMultiple("verbose name", is_stacked=False))
 
 
 class SettingsForm(ModelForm):
