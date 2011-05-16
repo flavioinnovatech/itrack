@@ -126,12 +126,6 @@ a {
 	
 	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
 	-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
-
-	background: #8b8b8b; /* for non-css3 browsers */
-	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#a9a9a9', endColorstr='#7a7a7a'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, from(#a9a9a9), to(#7a7a7a)); /* for webkit browsers */
-	background: -moz-linear-gradient(top,  #a9a9a9,  #7a7a7a); /* for firefox 3.6+ */
-
 	border: solid 1px #6d6d6d;
 }
 #nav li {
@@ -152,6 +146,29 @@ a {
 	-webkit-border-radius: 1.6em;
 	-moz-border-radius: 1.6em;
 	text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+}
+
+#actions a{
+  padding:  6px 13px;
+  margin-left:5px;
+  -webkit-border-radius: 1.6em;
+	-moz-border-radius: 1.6em;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+	text-decoration:none;
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebebeb', endColorstr='#a1a1a1'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#ebebeb), to(#a1a1a1)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #ebebeb,  #a1a1a1); /* for firefox 3.6+ */
+}
+
+#loginstatus{
+  -webkit-border-radius: 0.6em;
+	-moz-border-radius: 0.6em;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+	text-decoration:none;
+	padding:  6px 13px;
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebebeb', endColorstr='#a1a1a1'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#ebebeb), to(#a1a1a1)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #ebebeb,  #a1a1a1); /* for firefox 3.6+ */
 }
 /* main level link hover */
 #nav .current a, #nav li:hover > a {

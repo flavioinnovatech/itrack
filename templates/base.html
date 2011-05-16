@@ -26,7 +26,7 @@
 		<div id="topContainer">
 			<div class="centerContainer">
 				<a href="#" title="Titulo Dinamico" class="logo fl"></a>
-				<div id="logindata" align="right" style="top: 0pt;position: absolute;width:920px"> {{request.user}} / {{request.session.domain}} </div>
+ 				<div id="loginstatus" align="right" style="top: 0pt;float:right;width:auto; height:40px;"><p> Usuário: {{request.user}} </p><p> Sistema: {{request.session.domain}}</p></div>
 				
 			</div> <!-- end centerContainer -->
 		</div> <!-- end topContainer -->
@@ -72,7 +72,7 @@
 					</li>
 					<li><a href="#">Configurações</a>
 						<ul>
-							<li><a href="/grid">Grid</a></li>
+							<li><a href="#">Grid</a></li>
 							<li><a href="#">Recursos</a></li>
 							
 							{% for grp in request.user.groups.all %}

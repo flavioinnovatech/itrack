@@ -17,8 +17,7 @@
 {% block content %}
 {% load dajaxice_templatetags %}
 {% dajaxice_js_import %}
-{% block form_title %}
-{% endblock form_title %}
+
 <form method="post" enctype="multipart/form-data">
 {% csrf_token %}
 
@@ -28,7 +27,7 @@
       <tr>
         <td colspan="2">
           <div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix">
-            <span class="ui-jqgrid-title">Sistema</span>
+            <span class="ui-jqgrid-title">{% block form_title %}{% endblock form_title %}</span>
           </div>
         </td>
       </tr>
