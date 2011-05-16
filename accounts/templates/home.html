@@ -15,10 +15,11 @@ var mydata = [
   {user : '{{user}}'},
 {% endfor  %}
 ];
-  
-  alert (mydata.length);
-  
 
+function formateadorLink(cellvalue, options, rowObject) {
+  return "<a href={% url accounts.views.index %}"+ cellvalue + ">" + cellvalue + "</a>";
+}
+        
 jQuery("#list4").jqGrid({ 
 	datatype: "local",
   width: 600,
@@ -27,14 +28,15 @@ jQuery("#list4").jqGrid({
 	'Usuários'
 	], 
 	colModel:[  
-	{name:'user',sorttype:"text",align:"center",resizable:false}
+	{name:'user',sorttype:"text",align:"center",resizable:false, formatter: formateadorLink}
 	], 
 	beforeSelectRow: function(rowid, e) { return true; },
 	multiselect: true,
 	loadonce: true,
 	//altRows: true,
-	toolbar: [true,"both"],
-	caption: "Gerenciamento de usuários" }); 
+	caption: "Gerenciamento de usuários"
+
+}); 
 	
    for(var i=0;i<=mydata.length;i++) {
           jQuery("#list4").jqGrid('addRowData',i+1,mydata[i]); 
