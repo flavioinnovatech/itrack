@@ -4,37 +4,33 @@
 
 
 
-{{ message }}
 
-<div id="config">
-	<table width="100%" cellpadding="0">
+
+<div id="config"><p align="center" style="padding:5px;">{{ message }}</p>
+	<table cellpadding="0" class="ui-jqgrid-btable">
 		<tbody>
 			<tr>
 				<td>
-					<h2>Gerenciamento de sistemas</h2>
-				</td>
-				<td>
-				</td>
+          <div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix">
+            <span class="ui-jqgrid-title">Gerenciamento de sistemas</span>
+          </div>
+        </td>
 			</tr>
-			<tr>
+			<tr class="ui-widget-content jqgrow ui-row-ltr">
 				<td>
 					<h1>Sistemas filhos:</h1>
 					<p> A identação indica a hierarquia dos sistemas. </p>
-					{{ vector_html|safe }}
-                    
-				</td>
-				<td valign="top">
-
-					
+					{{ vector_html|safe }}            
 				</td>
 			</tr>
 		</tbody>
 	</table>
     
-    <ul>
-        <li> <a href="{% url system.views.create %}">Criar um subsistema </a></li>
-        <li> <a href="{% url system.views.edit request.session.system %}">Editar o seu subsistema </a></li>
+    <div align="center" style="margin-top:10px;" id="actions">
+        <a href="{% url system.views.create %}">Criar um subsistema </a>
+         <a href="{% url system.views.edit request.session.system %}">Editar o seu sistema </a>
 
-    </ul>
+    </div>
+    
 </div>
 {% endblock %}

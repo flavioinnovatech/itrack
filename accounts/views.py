@@ -68,7 +68,6 @@ def login(request):
           system_name = item.name
         
         user_settings = Settings.objects.filter(system__id=system_id)
-        print user_settings
       	for item in user_settings:
       	    css = item.css
         

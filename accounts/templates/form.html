@@ -1,26 +1,8 @@
 {% extends "templates/base.html" %}
 
-{% block head %}
-
-<link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
-<script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
-<script type="text/javascript" src="/static/admin/js/core.js"></script>
-<script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
-<script type="text/javascript" src="/static/admin/js/actions.js"></script>
-<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
-<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
-<script type="text/javascript" src="/media/js/jsi18n.js"></script>
-
-{% endblock %}
-
-
 {% block content %}
-{% load dajaxice_templatetags %}
-{% dajaxice_js_import %}
-
 <form method="post" enctype="multipart/form-data">
 {% csrf_token %}
-
 <div id="config">
   <table cellpadding="0">
     <tbody>
@@ -31,8 +13,7 @@
           </div>
         </td>
       </tr>
-      {% for field in form_sys %}
-      
+      {% for field in form_user %}
         <tr>
         <td>
 
@@ -44,7 +25,19 @@
         
         <td>
         <p>{{ field.errors }} </p>
-         {{ field }}          
+         {{ field }} 
+          {% if "Users" in field.label_tag  %} 
+            <select id="selecionados" multiple="multiple"></select> <br/> 
+            <a id="add" class="jjexample" href="#" style="padding-left: 20px;">add &gt;&gt;</a>
+            <a id="remove" class="jjexample" href="#" style="padding-left: 20px;"><< remove</a>  
+            
+          {% endif %} 
+          
+          {% if "Equipments" in field.label_tag  %}
+           <select id="selecionados2" multiple="multiple"></select> <br/> 
+           <a id="add2" class="jjexample" href="#" style="padding-left: 20px;">add &gt;&gt;</a>
+           <a id="remove2" class="jjexample" href="#" style="padding-left: 20px;"><< remove</a>
+          {% endif%}
           
         </td>
       </tr>
@@ -53,16 +46,12 @@
         {% endfor %}
       
 	     
-	     {% for field in form_sett %}
+	     {% for field in form_profile %}
 	    <tr class="ui-widget-content jqgrow ui-row-ltr">
 	      <td>
 	        <h2>{{ field.label_tag }}</h2>
 	      </td>
 	      <td>
-	      	{% if "Logo" in field.label_tag  %}
-                <p><img src ="/media/{{ field.value }}" width="150px">  </p>
-            {% endif %} 
-            <p>{{ field.errors }} </p>
 	        {{ field }}
 	      </td>
 	      <tr>
@@ -78,7 +67,7 @@
       </tr>
       </tbody>
 		</table>
-		<p align="center"><input type="submit" value="Registrar" /></p>
+		<p align="center"><input type="submit" value="Registrar"  /></p>
 			
 	    
     </form>
