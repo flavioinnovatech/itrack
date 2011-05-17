@@ -7,6 +7,14 @@
 
 <script type="text/javascript">
 
+function confirmBox() {
+
+if (confirm("Deseja apagar os usuários selecionados?")) {
+
+location.href="pagina5.htm";}
+
+}
+
 ////////////////// Função para habiliar o POST
 $(document).ajaxSend(function(event, xhr, settings) {
     function getCookie(name) {
@@ -50,30 +58,45 @@ jQuery(document).ready(function(){
 //////////// Função que pega os ids dos usuários selecionados e manda pro ajax deletar
 $('#delete').click(function(){
   
-  var rows = $('#list4').jqGrid('getGridParam', 'selarrrow');
+  if (confirm("Deseja apagar o(s) usuário(s) selecionado(s)?")) {
   
-  var example = {
-    id : Array()
-  };
-
-  var i = 0;
-  selected = new Array();
-  while(rows[i]) {
-    example.id[i] = $('#list4').getCell(rows[i],'id');
-    selected[i] =  { "id" : $('#list4').getCell(rows[i],'id') };
-    i++;
-  }
-
-  if (selected.length == 0) { 
-      alert('Selecione pelo menos um usuário.'); 
-  }
+    var rows = $('#list4').jqGrid('getGridParam', 'selarrrow');
   
-  else {
-    $.post("{% url accounts.ajax.delete %}",  example,
-    function(data) {
-      alert("Data Loaded: " + data);
-    });
- }
+    var example = {
+      usuarios : []
+    };
+
+    var i = 0;
+    selected = new Array();
+    while(rows[i]) {
+      selected[i] =  { "id" : $('#list4').getCell(rows[i],'id') };
+      i++;
+    }
+  
+    i = 0;
+    while (selected[i]) {
+      example.usuarios[i] = selected[i];
+      i++;
+    }
+    
+    if (selected.length == 0) { 
+        alert('Selecione pelo menos um usuário.'); 
+    }
+    
+    /////// Realiza o POST
+    else {
+      $.post("{% url accounts.ajax.delete %}",  example,
+      function(data) {
+        if (data == 'sucesso') {
+          alert('Usuário(s) apagado(s) com sucesso.');
+          location.href="/accounts/"
+        }
+        else if (data == 'falhou'){
+          alert('Não é possível se apagar.');
+        }
+      });
+    }
+  }
   
 });  
   
