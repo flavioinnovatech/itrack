@@ -7,7 +7,7 @@ import select
 import tty 
 import termios
 
-TCP_IP = '192.168.0.151'
+TCP_IP = '192.168.1.119'
 TCP_PORT = 5000
 BUFFER_SIZE = 20000
 USERNAME = "extractor"
@@ -76,9 +76,11 @@ print ">> Trying to connect to the server",TCP_IP + ":" + str(TCP_PORT)+"."
 
 #creating and connecting trough the TCP socket
 
+#suporte@quantatec.com.br
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.settimeout(20)
-s.connect((TCP_IP, TCP_PORT))
+s.connect(TCP_IP, TCP_PORT)
 s.send(ack_msg)
 
 #sending the auth message, receiving the response and sending an ack message

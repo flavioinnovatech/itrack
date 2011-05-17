@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response
 from itrack.system.models import System, Settings
 from django.contrib.auth.models import User
+from itrack.accounts.models import UserProfile
 from itrack.equipments.models import Equipment
 from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
@@ -59,6 +60,18 @@ def render_system_html(childs,rendered_list=""):
     rendered_list+="</ul>"
     return rendered_list
 
+#serializes the recursive list from findChild
+def serializeChild(childs,ser_list=[]):
+    if childs == []: 
+        return []
+    for x in childs:
+        if  type(x).__name__ == "list":
+        #if its a list, execute recursively inside it
+            serializeChild(x,ser_list)
+        else:
+        #if its a number, append it
+            ser_list.append(x)           
+    return ser_list
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
@@ -181,6 +194,32 @@ def edit(request,offset):
         
     else:
         raise Http403(u'Você não tem permissão para editar este sistema.')
-        
 
+def removeUsers(system_id):
+    pass
+            
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
+def delete(request,offset):
+#raise an Http 403 error in case the system is not parent of the 'offset' system
+    childs = findChild(request.session['system'])
+    if isChild(int(offset),childs):
+        if request.method == 'POST':
+            ids = serializeChild(findChild(int(offset)),[])
+            childs = System.objects.filter(pk__in=ids)
+            for sys in childs:
+                user_list = User.objects.filter(system=sys.id)
+                print user_list
+                for usr in user_list:
+                    UserProfile.objects.get(profile=usr).delete()
+                    usr.delete()
+        else:
+            
+            ids = serializeChild(findChild(int(offset)),[])
+            childs = System.objects.filter(pk__in=ids)
 
+            return render_to_response("system/templates/delete.html",locals(),context_instance=RequestContext(request))
+    
+            
+    else:
+        raise Http403(u'Você não tem permissão para apagar este sistema.')

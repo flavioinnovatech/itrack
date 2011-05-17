@@ -25,6 +25,7 @@ url(r'^themes/$', 'themes.views.index'),
 url(r'^system/$','system.views.index'),
 url(r'^system/create/$','system.views.create'),
 url(r'^system/edit/(\d+)/$','system.views.edit'),
+url(r'^system/delete/(\d+)/$','system.views.delete'),
 
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
