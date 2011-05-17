@@ -7,6 +7,7 @@
 
 <script type="text/javascript">
 
+////////////////// Função para habiliar o POST
 $(document).ajaxSend(function(event, xhr, settings) {
     function getCookie(name) {
         var cookieValue = null;
@@ -50,23 +51,25 @@ jQuery(document).ready(function(){
 $('#delete').click(function(){
   
   var rows = $('#list4').jqGrid('getGridParam', 'selarrrow');
+  
+  var example = {
+    id : Array()
+  };
 
   var i = 0;
   selected = new Array();
   while(rows[i]) {
+    example.id[i] = $('#list4').getCell(rows[i],'id');
     selected[i] =  { "id" : $('#list4').getCell(rows[i],'id') };
     i++;
   }
-  
-  //objeto = [ selected.join(",") ];
-  //alert (objeto); 
-  
+
   if (selected.length == 0) { 
       alert('Selecione pelo menos um usuário.'); 
   }
   
   else {
-    $.post("{% url accounts.ajax.delete %}", selected[0],
+    $.post("{% url accounts.ajax.delete %}",  example,
     function(data) {
       alert("Data Loaded: " + data);
     });
