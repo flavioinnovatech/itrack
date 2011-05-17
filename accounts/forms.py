@@ -11,6 +11,7 @@ class UserProfileForm(ModelForm):
 class UserForm(ModelForm):
     class Meta:
             model = User
-            exclude = ('is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined')
+
+            exclude = ('is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined','groups','permissions')
             
     password = forms.CharField(widget=forms.PasswordInput(render_value=True),max_length=100)
