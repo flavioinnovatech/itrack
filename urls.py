@@ -25,6 +25,7 @@ url(r'^themes/$', 'themes.views.index'),
 url(r'^system/$','system.views.index'),
 url(r'^system/create/$','system.views.create'),
 url(r'^system/edit/(\d+)/$','system.views.edit'),
+url(r'^system/delete/(\d+)/$','system.views.delete'),
 
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
@@ -32,8 +33,7 @@ url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
 url(r'^accounts/create/$', 'accounts.views.create_user'),
 url(r'^accounts/edit/(\d+)/$','accounts.views.edit'),
 url(r'^accounts/delete/(\d+)/$','accounts.views.delete'),
-
-
+url(r'^accounts/ajax/delete/$','accounts.ajax.delete'),
 
 (r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 

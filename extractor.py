@@ -3,11 +3,13 @@ import sys
 import socket
 import elementtree.ElementTree as ET
 
+
 TCP_IP = '192.168.1.119' 	# the server IP address
 TCP_PORT = 5000			# the server port
 BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
 USERNAME = "extractor"		# the user that will log on CPR
 PASSWORD = "extractor"		# the password for this user 
+
 
 # Messages that will be sent to CPR: the ACK and the first auth message
 authentication_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"1\" /><Data User=\""+USERNAME+"\" Password=\""+PASSWORD+"\" /></Package>"
@@ -68,9 +70,13 @@ print " \n\n\t\tWelcome to Infotrack CPR extractor script .\n\n"
 print ">> Trying to connect to the server",TCP_IP + ":" + str(TCP_PORT)+"."
 
 #creating and connecting trough the TCP socket
+
+#suporte@quantatec.com.br
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.settimeout(10)
-s.connect((TCP_IP, TCP_PORT))
+s.settimeout(20)
+s.connect(TCP_IP, TCP_PORT)
+
 s.send(ack_msg)
 
 #sending the auth message, receiving the response and sending an ack message

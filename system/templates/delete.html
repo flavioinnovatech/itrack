@@ -1,0 +1,43 @@
+{% extends "templates/base.html" %}
+
+{%block content%}
+<div id="config"><p align="center" style="padding:5px;">{{ message }}</p>
+	<table cellpadding="0" class="ui-jqgrid-btable">
+		<tbody>
+			<tr>
+				<td>
+          <div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix">
+            <span class="ui-jqgrid-title">Gerenciamento de sistemas</span>
+          </div>
+        </td>
+			</tr>
+			<tr class="ui-widget-content jqgrow ui-row-ltr">
+				<td>
+					<h2>Confirmar remoção:</h2>
+					    <p> Tem certeza que deseja remover o sistema {{main_system}}? Todos os usuários de cada sistema removido também serão removidos no processo.</p>
+					    
+					    {% if childs  %}
+					    <p>
+					        
+					        Removendo este sistema, você também estará deletando os seus sistemas filhos listados abaixo:
+					        <ul>
+					        {{ childs }}
+					        {% for s in childs %}
+					            <li>{{s}}</li>
+					        {% endfor %}
+					        </ul>
+					    </p>
+					    {% endif %}
+					    
+					    <form action='.' method='post'>{% csrf_token %}
+                            <input type="submit" value="Remover" /> <input type="button" value="Cancelar" onClick="history.back();"/>
+                        </form>
+					    
+					         
+				</td>
+			</tr>
+		</tbody>
+	</table>
+    
+</div>
+{% endblock %}
