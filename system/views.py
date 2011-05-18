@@ -154,15 +154,12 @@ def edit(request,offset):
                 new_sys = form_sys.save()
                 new_setting = form_sett.save(commit=False)
                 
-                print new_setting.__dict__
-                
                 new_setting.css = ' #topContainer .centerContainer{ background: url(/media/'+new_setting.logo.name+') no-repeat;}'
                 new_setting.css = new_setting.css + ' body {background-color:#'+new_setting.color_site_background+';}'
                 new_setting.css = new_setting.css + ' #nav {background: #8b8b8b; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_menu_gradient_inicial+', endColorstr=#'+new_setting.color_menu_gradient_final+');}'
                 new_setting.css = new_setting.css + ' #nav {background: -moz-linear-gradient(top,  #'+new_setting.color_menu_gradient_inicial+',  #'+new_setting.color_menu_gradient_final+');}'
                 #	background: -webkit-gradient(linear, left top, left bottom, from(#a9a9a9), to(#7a7a7a)); /* for webkit browsers */
 
-                print new_setting.css
 
                 new_setting.save()
                 request.session['css'] = new_setting.css

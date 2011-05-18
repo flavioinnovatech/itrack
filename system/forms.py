@@ -1,9 +1,10 @@
 from django.forms import *
+from django.http import HttpResponseRedirect
 from django.contrib.admin.widgets import *
 from itrack.system.models import System,Settings
 from itrack.equipments.models import Equipment
 from django.contrib.auth.models import User
-
+from django.contrib.formtools.wizard import FormWizard
 
 
 class SystemForm(ModelForm):
@@ -40,3 +41,7 @@ class SettingsForm(ModelForm):
                 'color_link': TextInput(attrs={'class':'color'}),
             }
             
+class SystemWizard(FormWizard):
+    def done(self,request,form_list):
+    
+        return HttpResponseRedirect('/system/')
