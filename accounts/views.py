@@ -133,7 +133,7 @@ def edit(request,offset):
     if user in users:
       form_user = UserForm(instance = user)
       form_profile = UserProfileForm(instance = profile)
-      form = UserCompleteForm(instance = user,profile)
+      form = UserCompleteForm(instance = user)
       return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
       
     else:

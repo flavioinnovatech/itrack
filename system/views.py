@@ -93,44 +93,12 @@ def index(request):
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def create(request):
-    #system = System.objects.filter(users__username__exact=request.user.username)
+        system = request.session["system"]
     
-    #if request.method == 'POST':
-        
-        
-    #    form_sett = SettingsForm(request.POST,request.FILES)
-    #   form_sys = SystemForm(request.POST)
-        
-    #    for selected_system in system:
-    #        selected_system = selected_system
-        
-    #    if form_sys.is_valid():
-    #        new_sys = form_sys.save(commit=False)
-    #        new_sys.parent_id = selected_system.id
-
-    #        new_sys.save()
-    #        form_sys.save_m2m()
-            
-    #    if form_sett.is_valid():
-    #        new_setting = form_sett.save(commit=False)
-    #        new_setting.system_id = new_sys.id
-    #        new_setting.title = new_sys.name
-    #        new_setting.save()
-
-    #        message = "Sistema criado com sucesso."
-    #        return render_to_response('system/templates/home.html',locals())
-            
-    #    else:
-    #        message =  "Form invalido."    
-    #        return render_to_response('system/templates/create.html',locals(),context_instance=RequestContext(request),)
-
-
-    #else:
-        #form_sys = SystemForm()
         sysadm = User.objects.get(pk=request.user.id)
         
 
-        SystemForm.declared_fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
+        #SystemForm.declared_fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
         #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
         #form_sys.fields["administrator"].queryset = User.objects.filter(Q(system = request.session["system"])|Q(username = sysadm))
         #form_sett = SettingsForm()
@@ -162,6 +130,7 @@ def edit(request,offset):
             if form_sys.is_valid() and form_sett.is_valid():
                 new_sys = form_sys.save()
                 new_setting = form_sett.save(commit=False)
+              
                 
                 new_setting.css = ' #topContainer .centerContainer{ background: url(/media/'+new_setting.logo.name+') no-repeat;}'
                 new_setting.css = new_setting.css + ' body {background-color:#'+new_setting.color_site_background+';}'
@@ -205,17 +174,14 @@ def edit(request,offset):
             
             if request.session["system"] == int(offset) and system_parent != None:
                 #if the system being edited is the admin own system, disable the equipment field, unless he is the root admin
-                del form_sys.fields["equipments"]
+                #del form_sys.fields["equipments"]
+                pass
             else:
-                form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
+                if system_parent == None:
+                    system_parent = system.id
+                    system_admin = system.administrator.id
+                #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
             
-            if system_parent == None:
-                system_parent = system.id
-                system_admin = system.administrator.id
-
-           
-                
-           
             sysname = system.name
             return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         

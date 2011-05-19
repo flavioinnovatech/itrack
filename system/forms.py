@@ -4,9 +4,8 @@ from django.forms import *
 from django.http import HttpResponseRedirect
 from django.contrib.admin.widgets import *
 from itrack.system.models import System,Settings
-from itrack.equipments.models import Equipment
 from django.contrib.formtools.wizard import FormWizard
-from itrack.accounts.forms import UserCompleteForm
+from itrack.accounts.forms import UserCompleteForm, UserForm, UserProfileForm
 
 
 # this class is used to solve the problem of not being able to derive multiple ModelForm classes with getting all the attrs from the
@@ -17,9 +16,9 @@ from itrack.accounts.forms import UserCompleteForm
 class SystemForm(ModelForm):
     class Meta:
         model = System
-        exclude = ('parent','users','administrator')
-    equipments = forms.ModelMultipleChoiceField(queryset=Equipment.objects.all(), widget=FilteredSelectMultiple("Equipamentos", is_stacked=False))
-    equipments.label = "Equipamentos"
+        exclude = ('parent','users','administrator','available_fields')
+    #equipments = forms.ModelMultipleChoiceField(queryset=Equipment.objects.all(), widget=FilteredSelectMultiple("Equipamentos", is_stacked=False))
+    #equipments.label = "Equipamentos"
     
 
 
@@ -53,11 +52,45 @@ class SystemWizard(FormWizard):
         return 'system/templates/create_wizard.html'
 
     def done(self,request,form_list):
+        
         form_data = {}
         for form in form_list:
             for field, value in form.cleaned_data.iteritems():
                 form_data[field] = value
+                print field,":",value
+        
+        form_usr = UserForm(form_data)
+        form_profile = UserProfileForm(form_data)
+        form_sys = SystemForm(form_data)
+        form_sett = SettingsForm(form_data)
+        
+        if form_usr.is_valid():
+            new_user = form_usr.save()
             
-        print form_data
-        print request.FILES
+        if form_profile.is_valid():
+            new_profile = form_profile.save(commit=False)
+            new_profile.profile_id = new_user.id
+            new_profile.save()
+
+        sys_id = request.session["system"] 
+        system = System.objects.get(pk=sys_id) 
+        system.users.add(new_user)
+
+        new_user.groups.add(1)
+        
+        if form_sys.is_valid():
+            new_sys = form_sys.save(commit=False)
+            new_sys.parent_id = system.id
+            new_sys.administrator_id = new_user.id
+
+            new_sys.save()
+            form_sys.save_m2m()
+
+        if form_sett.is_valid():
+            new_setting = form_sett.save(commit=False)
+            new_setting.system_id = new_sys.id
+            new_setting.title = new_sys.name
+            new_setting.save()
+    
+
         return HttpResponseRedirect('/system/create/finish/')

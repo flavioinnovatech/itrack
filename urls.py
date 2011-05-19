@@ -31,6 +31,10 @@ url(r'^system/edit/(\d+)/$','system.views.edit'),
 url(r'^system/delete/(\d+)/$','system.views.delete'),
 url(r'^system/create/finish/$','system.views.finish'),
 
+url(r'^equipment/$','equipments.views.index'),
+#url(r'^equipment/associations/(\d+)/$','equipments.views.associations'),
+
+
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
 
