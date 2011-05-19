@@ -6,7 +6,15 @@
     => Password com bug no hash
     => Passar o código que grava css para a view de criar (está no de editar)
     => Restringir logins que não tem sistema
+      => SMURF:
+        => Aparentemente funciona, testei aqui        
+        
     => Mensagens de erro na tela de login
+      => SMURF:
+        => Hardcoded mode - existe algum jeito mais automático de se fazer usando validação do form?
+        => Funciona quando usuário e senha não correspondem (semelhante ao django tutorial)
+        => não valida ainda tamanho de senha nem de username
+      
     => Integrar o app de equipamentos com o grid
     => Interligar os checkboxes do settings habilitando os mapas
     => Exibir imagem de logo padrão caso não tenha nenhuma no servidor
