@@ -50,9 +50,7 @@ a {
 }
 
 #content h2{
-	//font-size: 11px;
 	font-weight: bold;
-	text-align:center;
 	margin: 10px 0 0;  
 }
 
@@ -257,7 +255,99 @@ html[xmlns] #nav {
 	height: 1%;
 }
 
-.childs{
+#child-wrapper{
+    margin:10px;
+    padding-left:10px;
+    padding-bottom:30px;
+}
 
-padding-left:45px;
+.childs{
+    padding-left:25px;
+   
+}
+.childs li{
+     list-style:square;
+}
+
+.main-form{
+	-webkit-border-radius: 9px;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+	-moz-border-radius: 9px;
+    width:850px;
+    margin: 15px 40px;
+    background:#fff;
+    padding: 20px;
+    min-height:400px;
+}
+.main-form h1{
+    font-size: 28px;
+    font-weight:bold;
+    padding:10px 5px;
+    
+
+}
+.main-form h2{
+    font-size:16px;
+    text-align:left;
+    padding:0px 0px 15px 5px;
+
+}
+
+.main-form em{
+    font-size:14px;
+    color:#888;
+    padding-left:30px;
+}
+
+.main-form form{
+    margin-top:20px;
+    width: 600px;
+    margin-left:100px;
+}
+
+.item-left{
+    float:left;
+    text-align:right;
+    font-weight:bold;
+    width:200px;
+    padding:10px;
+}
+
+.item-left #help{
+    font-weight:normal;
+    font-style:oblique;
+    color:#888;
+    font-size:10px;
+    line-height:10px;
+}
+
+.item-right{
+    float:left;
+    text-align:left
+    margin:40px;
+}
+.item-right .errorlist{
+    color:red;
+    padding-left:10px;
+}
+.item-right .field{
+    padding:10px;
+}
+.field input{
+    width:350px;
+    border: 1px solid #aaa;
+}
+hr{
+    clear:both;
+}
+
+.clear{
+    clear:both;
+}
+
+.submit {
+    padding:10px;
+    margin:10px;
+    float:right;
 }
