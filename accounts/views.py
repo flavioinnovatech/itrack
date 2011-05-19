@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from django.http import HttpResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response
@@ -91,7 +91,8 @@ def login(request):
         return render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
     else:
         # Show an error page
-        return HttpResponseRedirect("/")
+        erro = u"Usuário ou senha inexistentes."
+        return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))
   else:
     return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))
 
