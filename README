@@ -5,6 +5,9 @@
     => Arrumar o delete do system
     => Password com bug no hash
     => Passar o código que grava css para a view de criar (está no de editar)
+      => SMURF:
+        => Ainda não funciona para a customização das tabelas, falta adicionar mais atributos na classe Settings
+        
     => Restringir logins que não tem sistema
       => SMURF:
         => Aparentemente funciona, testei aqui        
