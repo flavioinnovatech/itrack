@@ -17,9 +17,9 @@ def delete(request):
     
     # Usuario nao pode se auto deletar
     system = request.session['system']    
-    users = User.objects.filter(system=system)
+    users = request.session['username']
     print users
-    if (user in users):
+    if (user == users):
       return HttpResponse('falhou')
            
     else:

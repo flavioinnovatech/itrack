@@ -24,11 +24,21 @@ def create_user(request):
         form_profile = UserProfileForm(request.POST)
           
         if ( form_user.is_valid() and form_profile.is_valid() ):
-          
           system_id = request.session['system']
           system = System.objects.get(pk=int(system_id))
           
+          new_user = form_user.save(commit=False)
+          
+          # Aplica o Hash na senha
+          #new_user.password = set_password(new_user.password)
           new_user = form_user.save()
+          user = User.objects.get(username__exact=new_user)
+          password = user.password
+
+          user.set_password(password)
+          user.save()
+
+                    
           new_profile = form_profile.save(commit=False)
           new_profile.profile_id = new_user.id
           new_profile.save()
@@ -84,6 +94,7 @@ def login(request):
         request.session['system'] = system_id
         request.session['css'] = css
         request.session['domain'] = domain
+        request.session['username'] = username
                 
         request.session['system_name'] = system_name
                 

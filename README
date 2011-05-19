@@ -4,6 +4,8 @@
     => Retrabalhar todo o app de equipamentos
     => Arrumar o delete do system
     => Password com bug no hash
+      => SMURF:
+        -> Sucesso extremo YUHUL!
     => Passar o código que grava css para a view de criar (está no de editar)
       => SMURF:
         => Ainda não funciona o css stylying para a customização das tabelas, falta adicionar mais atributos na classe Settings

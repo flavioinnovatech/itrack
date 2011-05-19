@@ -279,6 +279,7 @@ html[xmlns] #nav {
     background:#fff;
     padding: 20px;
     min-height:400px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 .main-form h1{
     font-size: 28px;
