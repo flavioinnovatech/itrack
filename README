@@ -1,6 +1,6 @@
 @TO-DO's:
 
-    => Change password inteiro precisa ser feiro
+    => Change password inteiro precisa ser feito (enviar email )
     => Retrabalhar todo o app de equipamentos
     => Arrumar o delete do system
     => Password com bug no hash
@@ -9,6 +9,9 @@
         => Ainda não funciona o css stylying para a customização das tabelas, falta adicionar mais atributos na classe Settings
         
     => Restringir logins que não tem sistema
+<<<<<<< HEAD
+    => Mensagens de erro na tela de login (usuário incorreto nao exibe nada)
+=======
       => SMURF:
         => Aparentemente funciona, testei aqui        
         
@@ -18,8 +21,9 @@
         => Funciona quando usuário e senha não correspondem (semelhante ao django tutorial)
         => não valida ainda tamanho de senha nem de username - NAO PRECISA YUHUL!
       
+>>>>>>> ed53ca81d053fdf5f58fd6143100358c903a6acc
     => Integrar o app de equipamentos com o grid
     => Interligar os checkboxes do settings habilitando os mapas
     => Exibir imagem de logo padrão caso não tenha nenhuma no servidor
     => Arrumar bug de upload funcionando só na segunda edição
-    => Planejar telas de Alertas e Comandos, bem como o CRUD
+    => Planejar telas de Alertas e Comandos, bem como o CRUD delas

@@ -206,6 +206,7 @@ def delete(request,offset):
                 for usr in user_list:
                     UserProfile.objects.get(profile=usr).delete()
                     usr.delete()
+                    
         else:
             
             ids = serializeChild(findChild(int(offset)),[])
