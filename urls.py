@@ -1,6 +1,9 @@
+from django.shortcuts import render_to_response
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib.auth.views import login,logout,logout_then_login
 from django.conf import settings
+from itrack.system.forms import UserCompleteForm, SettingsForm, SystemForm, SystemWizard
+
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -26,6 +29,7 @@ url(r'^system/$','system.views.index'),
 url(r'^system/create/$','system.views.create'),
 url(r'^system/edit/(\d+)/$','system.views.edit'),
 url(r'^system/delete/(\d+)/$','system.views.delete'),
+url(r'^system/create/finish/$','system.views.finish'),
 
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),

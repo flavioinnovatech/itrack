@@ -153,9 +153,20 @@ jQuery("#list4").jqGrid({
 </script>
 {% endblock  %}
 
+
+
 {% block content %}
 
-{{ message }}
+<div id="config">
+    <div class="main-form">
+	<table id="list4"></table> 
+	  <div align="center" style="margin-top:10px;" id="actions">
+     
+            <a href="{% url accounts.views.create_user %}">Criar usuários do seu sistema</a>
+          <a id="delete" href="#">Apagar usuários selecionados do seu sistema </a>    
+      </div>   
+      </div>
+</div>
 
 {% block dialog %}
 
@@ -164,13 +175,6 @@ jQuery("#list4").jqGrid({
 
 {% csrf_token %}
 
-<div id="config">
-	<table id="list4"></table> 
-	  <div align="center" style="margin-top:10px;" id="actions">
-     
-            <a href="{% url accounts.views.create_user %}">Criar usuários do seu sistema</a>
-          <a id="delete" href="#">Apagar usuários selecionados do seu sistema </a>    
-      </div>   
-</div>
+
 
 {% endblock %}

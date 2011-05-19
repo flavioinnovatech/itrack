@@ -11,7 +11,7 @@ from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
-from itrack.system.forms import SystemForm, SettingsForm
+from itrack.system.forms import SystemForm, SettingsForm, UserCompleteForm, SystemWizard
 from http403project.http import Http403
 from django.db.models import Q
 
@@ -93,48 +93,57 @@ def index(request):
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def create(request):
-    system = System.objects.filter(users__username__exact=request.user.username)
+    #system = System.objects.filter(users__username__exact=request.user.username)
     
-    if request.method == 'POST':
+    #if request.method == 'POST':
         
         
-        form_sett = SettingsForm(request.POST,request.FILES)
-        form_sys = SystemForm(request.POST)
+    #    form_sett = SettingsForm(request.POST,request.FILES)
+    #   form_sys = SystemForm(request.POST)
         
-        for selected_system in system:
-            selected_system = selected_system
+    #    for selected_system in system:
+    #        selected_system = selected_system
         
-        if form_sys.is_valid():
-            new_sys = form_sys.save(commit=False)
-            new_sys.parent_id = selected_system.id
+    #    if form_sys.is_valid():
+    #        new_sys = form_sys.save(commit=False)
+    #        new_sys.parent_id = selected_system.id
 
-            new_sys.save()
-            form_sys.save_m2m()
+    #        new_sys.save()
+    #        form_sys.save_m2m()
             
-        if form_sett.is_valid():
-            new_setting = form_sett.save(commit=False)
-            new_setting.system_id = new_sys.id
-            new_setting.title = new_sys.name
-            new_setting.save()
+    #    if form_sett.is_valid():
+    #        new_setting = form_sett.save(commit=False)
+    #        new_setting.system_id = new_sys.id
+    #        new_setting.title = new_sys.name
+    #        new_setting.save()
 
-            message = "Sistema criado com sucesso."
-            return render_to_response('system/templates/home.html',locals())
+    #        message = "Sistema criado com sucesso."
+    #        return render_to_response('system/templates/home.html',locals())
             
-        else:
-            message =  "Form invalido."    
-            return render_to_response('system/templates/create.html',locals(),context_instance=RequestContext(request),)
+    #    else:
+    #        message =  "Form invalido."    
+    #        return render_to_response('system/templates/create.html',locals(),context_instance=RequestContext(request),)
 
 
-    else:
-        form_sys = SystemForm()
-        sysadm = User.objects.get(username=request.user.username)
-        print form_sys.fields
-        form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
-        form_sys.fields["administrator"].queryset = User.objects.filter(Q(system = request.session["system"])|Q(username = sysadm))
-        form_sett = SettingsForm()
+    #else:
+        #form_sys = SystemForm()
+        sysadm = User.objects.get(pk=request.user.id)
+        
 
-        return render_to_response("system/templates/create.html",locals(),context_instance=RequestContext(request),)
-		
+        SystemForm.declared_fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
+        #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
+        #form_sys.fields["administrator"].queryset = User.objects.filter(Q(system = request.session["system"])|Q(username = sysadm))
+        #form_sett = SettingsForm()
+        
+        #return render_to_response("system/templates/create.html",locals(),context_instance=RequestContext(request),)
+        
+        wiz = SystemWizard([UserCompleteForm,SystemForm,SettingsForm])
+        return wiz(context=RequestContext(request), request=request, extra_context=locals())
+
+    
+def finish(request):
+    return render_to_response('system/templates/create_finish.html',locals())
+	
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def edit(request,offset):
@@ -175,11 +184,6 @@ def edit(request,offset):
                 new_setting.css = new_setting.css + '#nav ul{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
                 new_setting.css = new_setting.css + '#nav ul a:hover {background-color: #'+new_setting.color_submenu_hover+' !important; color:#'+new_setting.color_submenu_font_hover+' !important;}'
                 
-                
-                
-                
-                print new_setting.css
-
                 new_setting.save()
                 request.session['css'] = new_setting.css
                 message =  "Sistema editado com sucesso."    
@@ -196,15 +200,22 @@ def edit(request,offset):
             system_parent = system.parent_id
             system_admin = system.administrator_id
             
+            form_sys = SystemForm(instance = system)
+            form_sett = SettingsForm(instance = settings)
+            
+            if request.session["system"] == int(offset) and system_parent != None:
+                #if the system being edited is the admin own system, disable the equipment field, unless he is the root admin
+                del form_sys.fields["equipments"]
+            else:
+                form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
+            
             if system_parent == None:
                 system_parent = system.id
                 system_admin = system.administrator.id
 
-            
-            form_sys = SystemForm(instance = system)
-            form_sett = SettingsForm(instance = settings)
-            form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
-            form_sys.fields["administrator"].queryset = User.objects.filter(Q(system = system_parent)|Q(pk=system_admin))
+           
+                
+           
             sysname = system.name
             return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         

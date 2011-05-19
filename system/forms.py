@@ -1,20 +1,27 @@
+# -*- coding: utf-8 -*-
+
 from django.forms import *
 from django.http import HttpResponseRedirect
 from django.contrib.admin.widgets import *
 from itrack.system.models import System,Settings
 from itrack.equipments.models import Equipment
-from django.contrib.auth.models import User
 from django.contrib.formtools.wizard import FormWizard
+from itrack.accounts.forms import UserCompleteForm
+
+
+# this class is used to solve the problem of not being able to derive multiple ModelForm classes with getting all the attrs from the
+# parent classes
+
 
 
 class SystemForm(ModelForm):
-    def get_system_id():
-        return system_id
     class Meta:
         model = System
-        exclude = ('parent','users')
-    equipments = forms.ModelMultipleChoiceField(queryset=Equipment.objects.all(), widget=FilteredSelectMultiple("equipamentos", is_stacked=False))
-    equipments.verbose_name = "Equipamentos"
+        exclude = ('parent','users','administrator')
+    equipments = forms.ModelMultipleChoiceField(queryset=Equipment.objects.all(), widget=FilteredSelectMultiple("Equipamentos", is_stacked=False))
+    equipments.label = "Equipamentos"
+    
+
 
 class SettingsForm(ModelForm):
     class Meta:
@@ -42,6 +49,15 @@ class SettingsForm(ModelForm):
             }
             
 class SystemWizard(FormWizard):
+    def get_template(self,step):
+        return 'system/templates/create_wizard.html'
+
     def done(self,request,form_list):
-    
-        return HttpResponseRedirect('/system/')
+        form_data = {}
+        for form in form_list:
+            for field, value in form.cleaned_data.iteritems():
+                form_data[field] = value
+            
+        print form_data
+        print request.FILES
+        return HttpResponseRedirect('/system/create/finish/')

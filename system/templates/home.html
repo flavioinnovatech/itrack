@@ -1,31 +1,25 @@
 {% extends "templates/base.html" %}
 
 {% block content %}
-<div id="config"><p align="center" style="padding:5px;">{{ message }}</p>
-	<table cellpadding="0" class="ui-jqgrid-btable">
-		<tbody>
-			<tr>
-				<td>
-          <div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix">
-            <span class="ui-jqgrid-title">Gerenciamento de sistemas</span>
-          </div>
-        </td>
-			</tr>
-			<tr class="ui-widget-content jqgrow ui-row-ltr">
-				<td>
-					<h1>Sistemas filhos:</h1>
+<div class="main-form">
+            <h1>Gerenciamento de sistemas</h1>
+            <hr />
+	            
 					{% if vector_html != "" %}
-					<p> A identação indica a hierarquia dos sistemas. </p>
+					<h2>Sistemas filhos:</h2>
+					<em> A identação indica a hierarquia dos sistemas. </em>
+					<div id="child-wrapper">
 					{{ vector_html|safe }}   
+					</div>
 					{% else %}
-					<p> Este sistema não possui nenhum filho. </p>
+					<em> Este sistema não possui nenhum filho. </em>
 					{% endif %}         
 				</td>
 			</tr>
 		</tbody>
 	</table>
-    
-    <div align="center" style="margin-top:10px;" id="actions">
+    <hr/>
+    <div align="center" style="margin-top:30px;" id="actions">
         <a href="{% url system.views.create %}">Criar um subsistema </a>
          <a href="{% url system.views.edit request.session.system %}">Editar o seu sistema </a>
 

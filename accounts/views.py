@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response
 from itrack.accounts.models import UserProfile
 from django.contrib.auth.models import User
 from django.template.context import Context,RequestContext
-from itrack.accounts.forms import UserProfileForm, UserForm
+from itrack.accounts.forms import UserProfileForm, UserForm, UserCompleteForm
 from django.http import HttpResponseRedirect
 from itrack.system.models import System, Settings, User
 from django.contrib.auth import authenticate,login
@@ -47,6 +47,7 @@ def create_user(request):
     else:
         form_user = UserForm()
         form_profile = UserProfileForm()
+        form = UserCompleteForm()
 
         return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
         
@@ -132,7 +133,7 @@ def edit(request,offset):
     if user in users:
       form_user = UserForm(instance = user)
       form_profile = UserProfileForm(instance = profile)
-    
+      form = UserCompleteForm(instance = user,profile)
       return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
       
     else:
