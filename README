@@ -6,7 +6,7 @@
     => Password com bug no hash
     => Passar o código que grava css para a view de criar (está no de editar)
       => SMURF:
-        => Ainda não funciona para a customização das tabelas, falta adicionar mais atributos na classe Settings
+        => Ainda não funciona o css stylying para a customização das tabelas, falta adicionar mais atributos na classe Settings
         
     => Restringir logins que não tem sistema
       => SMURF:
@@ -14,9 +14,9 @@
         
     => Mensagens de erro na tela de login
       => SMURF:
-        => Hardcoded mode - existe algum jeito mais automático de se fazer usando validação do form?
+        => Hardcoded mode - existe algum jeito mais automático de se fazer usando validação do form? - NAO PRECISA YUHUL!
         => Funciona quando usuário e senha não correspondem (semelhante ao django tutorial)
-        => não valida ainda tamanho de senha nem de username
+        => não valida ainda tamanho de senha nem de username - NAO PRECISA YUHUL!
       
     => Integrar o app de equipamentos com o grid
     => Interligar os checkboxes do settings habilitando os mapas
