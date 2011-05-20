@@ -11,7 +11,7 @@ from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
-from itrack.system.forms import SystemForm, SettingsForm, UserCompleteForm, SystemWizard
+from itrack.system.forms import SystemForm, SettingsForm, UserCompleteForm, SystemWizard, change_css
 from http403project.http import Http403
 from django.db.models import Q
 
@@ -97,20 +97,15 @@ def create(request):
     
         sysadm = User.objects.get(pk=request.user.id)
         
-
-        #SystemForm.declared_fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
-        #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = request.session["system"]) 
-        #form_sys.fields["administrator"].queryset = User.objects.filter(Q(system = request.session["system"])|Q(username = sysadm))
-        #form_sett = SettingsForm()
-        
-        #return render_to_response("system/templates/create.html",locals(),context_instance=RequestContext(request),)
-        
         wiz = SystemWizard([UserCompleteForm,SystemForm,SettingsForm])
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 
     
 def finish(request):
     return render_to_response('system/templates/create_finish.html',locals())
+    
+def editfinish(request):
+    return render_to_response('system/templates/edit_finish.html',locals())
 	
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
@@ -136,9 +131,8 @@ def edit(request,offset):
                 
                 request.session['css'] = new_setting.css
                 message =  "Sistema editado com sucesso."    
-                return HttpResponseRedirect("/system/finish/")
-                #message =  "Form invalido."    
-                #return HttpResponseRedirect("/system/")
+                return HttpResponseRedirect("/system/edit/finish/")
+
             
         else:
             #display the edit form
@@ -167,9 +161,9 @@ def edit(request,offset):
     else:
         raise Http403(u'Você não tem permissão para editar este sistema.')
 
-def removeUsers(system_id):
-    pass
-            
+def deletefinish(request):
+    return render_to_response("system/templates/delete_finish.html",locals())
+
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def delete(request,offset):
@@ -179,13 +173,20 @@ def delete(request,offset):
         if request.method == 'POST':
             ids = serializeChild(findChild(int(offset)),[])
             childs = System.objects.filter(pk__in=ids)
+            print childs
             for sys in childs:
                 user_list = User.objects.filter(system=sys.id)
                 print user_list
                 for usr in user_list:
                     UserProfile.objects.get(profile=usr).delete()
                     usr.delete()
-                    
+                sys.administrator.delete()
+                print "deletou"
+            sys = System.objects.get(pk=int(offset))
+            sys.administrator.delete()
+            #sys.delete()
+                
+            return HttpResponseRedirect("/system/delete/finish")
         else:
             
             ids = serializeChild(findChild(int(offset)),[])
@@ -197,27 +198,5 @@ def delete(request,offset):
     else:
         raise Http403(u'Você não tem permissão para apagar este sistema.')
 
-def change_css(new_setting):
-  new_setting.css = ' #topContainer .centerContainer{ background: url(/media/'+new_setting.logo.name+') no-repeat;}'
-  new_setting.css = new_setting.css + ' body {background-color:#'+new_setting.color_site_background+';}'
-  
-  #Menu
-  new_setting.css = new_setting.css + ' #nav {background: '+new_setting.color_menu_gradient_final+'; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_menu_gradient_inicial+', endColorstr=#'+new_setting.color_menu_gradient_final+');}'
-  new_setting.css = new_setting.css + ' #nav {background: -moz-linear-gradient(top,  #'+new_setting.color_menu_gradient_inicial+',  #'+new_setting.color_menu_gradient_final+');}'
-  new_setting.css = new_setting.css + '#nav {background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_menu_gradient_inicial+'), to(#'+new_setting.color_menu_gradient_final+'));}'
-  new_setting.css = new_setting.css + "#nav .current a, #nav li:hover > a {background-color: #"+new_setting.color_menu_gradient_final_hover+";}"
-  new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_menu_gradient_inicial_hover+', endColorstr=#'+new_setting.color_menu_gradient_final_hover+');}'
-  new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {background: -moz-linear-gradient(top,  #'+new_setting.color_menu_gradient_inicial_hover+',  #'+new_setting.color_menu_gradient_final_hover+');}'
-  new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_menu_gradient_inicial_hover+'), to(#'+new_setting.color_menu_gradient_final_hover+'));}'
-  new_setting.css = new_setting.css + '#nav a {color: #'+new_setting.color_menu_font+';}'
-  new_setting.css = new_setting.css + '#nav a:hover {color: #'+new_setting.color_menu_font_hover+';}'
-  
-  #Submenu
-  new_setting.css = new_setting.css + '#nav ul{background-color:#'+new_setting.color_submenu_gradient_final+';}'
-  new_setting.css = new_setting.css + ' #nav ul{filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_submenu_gradient_inicial+', endColorstr=#'+new_setting.color_submenu_gradient_final+');}'
-  new_setting.css = new_setting.css + ' #nav ul {background: -moz-linear-gradient(top,  #'+new_setting.color_submenu_gradient_inicial+',  #'+new_setting.color_submenu_gradient_final+');}'
-  new_setting.css = new_setting.css + '#nav ul{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
-  new_setting.css = new_setting.css + '#nav ul a:hover {background-color: #'+new_setting.color_submenu_hover+' !important; color:#'+new_setting.color_submenu_font_hover+' !important;}'
-  return new_setting
 
   

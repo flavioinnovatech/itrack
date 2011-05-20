@@ -5,7 +5,7 @@
             <h1>Permissões de Equipamentos</h1>
             <hr />
 	            
-					{% if vector_html != "" %}
+					{% if vector_html %}
 					<h2>Sistemas filhos:</h2>
 					<div id="child-wrapper">
 					<ul class="childs">
@@ -15,16 +15,16 @@
 					</ul>
 					</div>
 					{% else %}
+					<div style="height:50px"></div>
 					<em> Este sistema não possui nenhum filho. </em>
+					
 					{% endif %}         
 				</td>
 			</tr>
-		</tbody>
-	</table>
+	
+    <div style="height:50px"></div>
     <hr/>
     <div align="center" style="margin-top:30px;" id="actions">
-        <a href="{% url system.views.create %}">Criar um subsistema </a>
-         <a href="{% url system.views.edit request.session.system %}">Editar o seu sistema </a>
 
     </div>
     
