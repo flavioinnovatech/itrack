@@ -32,7 +32,10 @@
 		<div id="topContainer">
 			<div class="centerContainer">
 				<a href="#" title="Titulo Dinamico" class="logo fl"></a>
- 				<div id="loginstatus" align="right" style="top: 0pt;float:right;width:auto; height:40px;"><p> Usuário: {{request.user}} </p><p> Sistema: {{request.session.domain}}</p></div>
+ 				<div id="loginstatus" align="right" style="top: 0pt;float:right;width:auto; height:40px;">
+ 				  <p> Usuário: <a href="{% url accounts.views.edit request.session.user_id %}"> {{request.user}}</a></p>
+ 				  <p> Sistema: {{request.session.domain}}</p>
+ 				</div>
 				
 			</div> <!-- end centerContainer -->
 		</div> <!-- end topContainer -->

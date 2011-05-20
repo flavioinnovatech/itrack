@@ -91,12 +91,15 @@ def login(request):
         user_settings = Settings.objects.filter(system__id=system_id)
       	for item in user_settings:
       	    css = item.css
+      	    
+      	user = User.objects.get(username__exact=username)
+        user_id = user.id
         
         request.session['system'] = system_id
         request.session['css'] = css
         request.session['domain'] = domain
         request.session['username'] = username
-                
+        request.session['user_id'] = user_id
         request.session['system_name'] = system_name
                 
         # Redirect to a success page.
