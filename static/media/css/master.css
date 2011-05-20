@@ -4,7 +4,6 @@
 
 body {
 	font: normal .8em/1.5em Arial, Helvetica, sans-serif;
-	
 	margin: 10px auto;
 	width: 960px;	
 	
@@ -17,12 +16,33 @@ a {
 	margin-top:15%;
 }
 
+#login label {
+  float: right;
+  font-weight:bold;
+  font-size:12px;
+}
+
 #login input {
-	margin-left: 5px;
+	margin: 5px;
+	border: 1px solid #AAAAAA;
 }
 
 #login img{
 	margin-bottom: 10px;
+}
+
+#login .forgot {
+  font-size:11px;
+  margin-top:5px;
+}
+
+.login-button {
+  background: -moz-linear-gradient(center top , #EBEBEB, #A1A1A1) repeat scroll 0 0 transparent;
+  border-radius: 1em 1em 1em 1em;
+  margin-left: 5px;
+  padding: 6px 9px;
+  text-decoration: none;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
 .centerContainer {

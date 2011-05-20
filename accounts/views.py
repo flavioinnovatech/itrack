@@ -12,6 +12,7 @@ from itrack.system.models import System, Settings, User
 from django.contrib.auth import authenticate,login
 from http403project.http import Http403
 from django.core.context_processors import csrf
+from django.contrib.auth.views import password_reset
 
 
 @login_required

@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
-from django.conf.urls.defaults import patterns, include, url
-from django.contrib.auth.views import login,logout,logout_then_login
+from django.conf.urls.defaults import *
+from django.contrib.auth.views import login,logout,logout_then_login,password_reset
 from django.conf import settings
 from itrack.system.forms import UserCompleteForm, SettingsForm, SystemForm, SystemWizard
 
@@ -42,6 +42,11 @@ url(r'^accounts/create/$', 'accounts.views.create_user'),
 url(r'^accounts/edit/(\d+)/$','accounts.views.edit'),
 url(r'^accounts/delete/(\d+)/$','accounts.views.delete'),
 url(r'^accounts/ajax/delete/$','accounts.ajax.delete'),
+
+url(r'^accounts/password_reset/$', 'django.contrib.auth.views.password_reset', {'template_name':'accounts/templates/password_reset_form.html', 'email_template_name':'accounts/templates/password_reset_email.html'}),
+url(r'^password_reset/done/$', 'django.contrib.auth.views.password_reset_done', {'template_name':'userpanel/password_reset_done.html'}),
+url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm', {'template_name':'userpanel/password_reset_confirm.html'}),
+url(r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete', {'template_name':'userpanel/password_reset_complete.html'}),
 
 (r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 
