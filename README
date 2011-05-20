@@ -1,6 +1,9 @@
 @TO-DO's:
 
     => Change password inteiro precisa ser feito (enviar email )
+      => SMURF:
+        => Backend OK, mas necessita servidor smtp para teste (gmail fresco).
+        
     => Retrabalhar todo o app de equipamentos
     => Arrumar o delete do system
     => Password com bug no hash
