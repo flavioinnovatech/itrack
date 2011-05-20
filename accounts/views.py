@@ -81,12 +81,18 @@ def login(request):
             system_name = system.name
         except:
         #if the user is not an admin, search in the users     
-            system = System.objects.filter(users__username__exact=request.user.username)
+            system = System.objects.filter(users__username__exact=request.user.username)            
+            print system
+            #if the user doesn't have a system
+            if (len(system) == 0):
+              erro = u"Usuário não possui sistema associado."
+              return render_to_response("accounts/templates/login.html",locals(),context_instance=RequestContext(request),)
+            
             for item in system:
                 system_id = item.id
                 domain = item.domain
                 system_name = item.name
-        
+            
         user_settings = Settings.objects.filter(system__id=system_id)
       	for item in user_settings:
       	    css = item.css

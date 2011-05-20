@@ -2,13 +2,29 @@
     
     Nome                                                                                                            Status
     ===========================================     =====
-    Change password inteiro precisa ser feito (enviar email )                               Falta SMTP
-    Retrabalhar todo o app de equipamentos <-                                               
-    Arrumar o delete do system <-
-    Password com bug no hash                                                                             OK
-    Passar o código que grava css para a view de criar (está no de editar) <-
-    Restringir logins que não tem sistema                                                            OK
-    Interligar os checkboxes do settings habilitando os mapas
-    Arrumar bug de upload funcionando só na segunda edição                           OK
-    Planejar telas de Alertas e Comandos, bem como o CRUD delas
-    Integrar o app de equipamentos com o grid
+1    Change password inteiro precisa ser feito (enviar email )                               Falta SMTP
+2    Retrabalhar todo o app de equipamentos <-                                               
+3    Arrumar o delete do system <-
+4    Password com bug no hash                                                                             OK
+5    Passar o código que grava css para a view de criar (está no de editar) <-
+6    Restringir logins que não tem sistema                                                            OK
+7    Interligar os checkboxes do settings habilitando os mapas
+8    Arrumar bug de upload funcionando só na segunda edição                           OK
+9    Planejar telas de Alertas e Comandos, bem como o CRUD delas
+10   Integrar o app de equipamentos com o grid
+11   Estender o Settings para novas cores do jQGrid
+12   Adaptar o layout para o IE
+
+     Status
+     =========================================== 
+1    Falta SMTP e layout
+2   
+3    
+4    OK
+5    OK
+6    OK
+7
+8    OK
+9
+10
+    
