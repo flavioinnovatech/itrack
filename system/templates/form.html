@@ -60,7 +60,7 @@
 	      </td>
 	      <td>
 	      	{% if "Logo" in field.label_tag  %}
-                <p><img src ="/media/{{ field.value }}" width="150px">  </p>
+                <p><img src ="{{ field.value }}" width="150px">  </p>
             {% endif %} 
             <p>{{ field.errors }} </p>
 	        {{ field }}
