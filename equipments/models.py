@@ -19,20 +19,22 @@ class CustomFieldData(models.Model):
 class EquipmentType(models.Model):
     custom_field = models.ManyToManyField(CustomField)
     name = models.CharField(max_length=200)
-    system = models.ManyToManyField(System, verbose_name="Sistema")
+    
     def __unicode__(self):
         return self.name
 
-class AvaliableFields(models.Model):
-    custom_fields = models.ManyToManyField(CustomField)
-    equip_type = models.ForeignKey(EquipmentType)
+class AvailableFields(models.Model):
+    custom_fields = models.ManyToManyField(CustomField,verbose_name="Campos")
+    custom_fields.null = True
+    custom_fields.blank = True
+    equip_type = models.ForeignKey(EquipmentType, verbose_name = "Modelo")
     system = models.ForeignKey(System, verbose_name="Sistema")
     def __unicode__(self):
-        return self.system.name
+        return self.system.name+' | '+self.equip_type.name
     
 class Equipment(models.Model):
    name = models.CharField(max_length=200)
-   fields = models.ManyToManyField(CustomField)
+   system = models.ManyToManyField(System, verbose_name="Sistema")
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):

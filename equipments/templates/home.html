@@ -2,14 +2,17 @@
 
 {% block content %}
 <div class="main-form">
-            <h1>Gerenciamento de sistemas</h1>
+            <h1>Permissões de Equipamentos</h1>
             <hr />
 	            
 					{% if vector_html != "" %}
 					<h2>Sistemas filhos:</h2>
-					<em> A identação indica a hierarquia dos sistemas. </em>
 					<div id="child-wrapper">
-					{{ vector_html|safe }}   
+					<ul class="childs">
+					{% for elem in vector_html %}
+					    <li>{{elem.name}}: <a href = "{% url equipments.views.permissions elem.id %}"> Permissões</a>  <a href = "{% url equipments.views.associations elem.id %}">Equipamentos </a></li>
+					{% endfor %}
+					</ul>
 					</div>
 					{% else %}
 					<em> Este sistema não possui nenhum filho. </em>

@@ -3,10 +3,10 @@
     Nome                                                                                                            Status
     ===========================================     =====
     Change password inteiro precisa ser feito (enviar email )                               Falta SMTP
-    Retrabalhar todo o app de equipamentos <-                                               
+    Retrabalhar todo o app de equipamentos                                                      OK                                               
     Arrumar o delete do system <-
     Password com bug no hash                                                                             OK
-    Passar o código que grava css para a view de criar (está no de editar) <-
+    Passar o código que grava css para a view de criar (está no de editar)          OK
     Restringir logins que não tem sistema                                                            OK
     Interligar os checkboxes do settings habilitando os mapas
     Arrumar bug de upload funcionando só na segunda edição                           OK

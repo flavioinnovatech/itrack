@@ -89,4 +89,4 @@ class SystemWizard(FormWizard):
             new_setting.save()
     
 
-        return HttpResponseRedirect('/system/create/finish/')
+        return HttpResponseRedirect('/system/finish/')

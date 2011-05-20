@@ -1,0 +1,48 @@
+{% extends "templates/base.html" %}
+
+{% block head %}
+
+<link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
+<script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+<script type="text/javascript" src="/media/js/jsi18n.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+
+<div  class="main-form">
+
+<h1>Permissões de Sistema </h1>
+<hr />
+<h2>Equipamentos disponíveis para o sistema {{system_name}}</h2>
+<em>Selecione abaixo quais equipamentos do seu sistema terão visibilidade no subsistema {{system_name}} </em>
+
+<form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
+   {% for field in form.visible_fields %}
+        <div class="form-item">
+            <div class="item-left">          
+                  <p>{{ field.label_tag }}</p>
+                  <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
+            </div>
+            <div class="item-right">
+                <p class="errorlist">{{ field.errors }} </p>
+                 <p class="field">{{ field }} </p>          
+            </div>
+        </div>
+        <hr / >
+        {% endfor %}
+    </table>
+<input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
+{{ previous_fields|safe }}
+<input type="submit" value="Salvar" class="submit">
+<p class="clear">
+</form>
+
+</div>
+{% endblock %}

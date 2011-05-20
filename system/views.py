@@ -136,10 +136,9 @@ def edit(request,offset):
                 
                 request.session['css'] = new_setting.css
                 message =  "Sistema editado com sucesso."    
-                return render_to_response('system/templates/home.html',locals(),)
-            else:
-                message =  "Form invalido."    
-                return HttpResponseRedirect("/system/")
+                return HttpResponseRedirect("/system/finish/")
+                #message =  "Form invalido."    
+                #return HttpResponseRedirect("/system/")
             
         else:
             #display the edit form
