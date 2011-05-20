@@ -130,34 +130,8 @@ def edit(request,offset):
             if form_sys.is_valid() and form_sett.is_valid():
                 new_sys = form_sys.save()
                 new_setting = form_sett.save(commit=False)
-                
-                #print new_setting.logo.__dict__
-                
-
-                
                 new_setting.save()
-                                
-                new_setting.css = ' #topContainer .centerContainer{ background: url('+new_setting.logo.url+') no-repeat;}'
-                new_setting.css = new_setting.css + ' body {background-color:#'+new_setting.color_site_background+';}'
-                
-                #Menu
-                new_setting.css = new_setting.css + ' #nav {background: '+new_setting.color_menu_gradient_final+'; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_menu_gradient_inicial+', endColorstr=#'+new_setting.color_menu_gradient_final+');}'
-                new_setting.css = new_setting.css + ' #nav {background: -moz-linear-gradient(top,  #'+new_setting.color_menu_gradient_inicial+',  #'+new_setting.color_menu_gradient_final+');}'
-                new_setting.css = new_setting.css + '#nav {background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_menu_gradient_inicial+'), to(#'+new_setting.color_menu_gradient_final+'));}'
-                new_setting.css = new_setting.css + "#nav .current a, #nav li:hover > a {background-color: #"+new_setting.color_menu_gradient_final_hover+";}"
-                new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_menu_gradient_inicial_hover+', endColorstr=#'+new_setting.color_menu_gradient_final_hover+');}'
-                new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {background: -moz-linear-gradient(top,  #'+new_setting.color_menu_gradient_inicial_hover+',  #'+new_setting.color_menu_gradient_final_hover+');}'
-                new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_menu_gradient_inicial_hover+'), to(#'+new_setting.color_menu_gradient_final_hover+'));}'
-                new_setting.css = new_setting.css + '#nav a {color: #'+new_setting.color_menu_font+';}'
-                new_setting.css = new_setting.css + '#nav a:hover {color: #'+new_setting.color_menu_font_hover+';}'
-                
-                #Submenu
-                new_setting.css = new_setting.css + '#nav ul{background-color:#'+new_setting.color_submenu_gradient_final+';}'
-                new_setting.css = new_setting.css + ' #nav ul{filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_submenu_gradient_inicial+', endColorstr=#'+new_setting.color_submenu_gradient_final+');}'
-                new_setting.css = new_setting.css + ' #nav ul {background: -moz-linear-gradient(top,  #'+new_setting.color_submenu_gradient_inicial+',  #'+new_setting.color_submenu_gradient_final+');}'
-                new_setting.css = new_setting.css + '#nav ul{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
-                new_setting.css = new_setting.css + '#nav ul a:hover {background-color: #'+new_setting.color_submenu_hover+' !important; color:#'+new_setting.color_submenu_font_hover+' !important;}'
-                
+                new_setting  = change_css(new_setting)              
                 new_setting.save()
                 
                 print "file.name: ",new_setting.logo.file.name
@@ -226,3 +200,28 @@ def delete(request,offset):
             
     else:
         raise Http403(u'Você não tem permissão para apagar este sistema.')
+
+def change_css(new_setting):
+  new_setting.css = ' #topContainer .centerContainer{ background: url(/media/'+new_setting.logo.name+') no-repeat;}'
+  new_setting.css = new_setting.css + ' body {background-color:#'+new_setting.color_site_background+';}'
+  
+  #Menu
+  new_setting.css = new_setting.css + ' #nav {background: '+new_setting.color_menu_gradient_final+'; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_menu_gradient_inicial+', endColorstr=#'+new_setting.color_menu_gradient_final+');}'
+  new_setting.css = new_setting.css + ' #nav {background: -moz-linear-gradient(top,  #'+new_setting.color_menu_gradient_inicial+',  #'+new_setting.color_menu_gradient_final+');}'
+  new_setting.css = new_setting.css + '#nav {background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_menu_gradient_inicial+'), to(#'+new_setting.color_menu_gradient_final+'));}'
+  new_setting.css = new_setting.css + "#nav .current a, #nav li:hover > a {background-color: #"+new_setting.color_menu_gradient_final_hover+";}"
+  new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_menu_gradient_inicial_hover+', endColorstr=#'+new_setting.color_menu_gradient_final_hover+');}'
+  new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {background: -moz-linear-gradient(top,  #'+new_setting.color_menu_gradient_inicial_hover+',  #'+new_setting.color_menu_gradient_final_hover+');}'
+  new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_menu_gradient_inicial_hover+'), to(#'+new_setting.color_menu_gradient_final_hover+'));}'
+  new_setting.css = new_setting.css + '#nav a {color: #'+new_setting.color_menu_font+';}'
+  new_setting.css = new_setting.css + '#nav a:hover {color: #'+new_setting.color_menu_font_hover+';}'
+  
+  #Submenu
+  new_setting.css = new_setting.css + '#nav ul{background-color:#'+new_setting.color_submenu_gradient_final+';}'
+  new_setting.css = new_setting.css + ' #nav ul{filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_submenu_gradient_inicial+', endColorstr=#'+new_setting.color_submenu_gradient_final+');}'
+  new_setting.css = new_setting.css + ' #nav ul {background: -moz-linear-gradient(top,  #'+new_setting.color_submenu_gradient_inicial+',  #'+new_setting.color_submenu_gradient_final+');}'
+  new_setting.css = new_setting.css + '#nav ul{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
+  new_setting.css = new_setting.css + '#nav ul a:hover {background-color: #'+new_setting.color_submenu_hover+' !important; color:#'+new_setting.color_submenu_font_hover+' !important;}'
+  return new_setting
+
+  

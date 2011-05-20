@@ -94,7 +94,7 @@ function codeLatLng() {
 		center: latlng,
 		mapTypeId: 'roadmap'
 	}
-	map = new google.maps.Map(document.getElementById("dialog"), myOptions);
+	map = new google.maps.Map(document.getElementById("pop"), myOptions);
 
 	var input = "-22.896359,-47.060092";
 	var latlngStr = input.split(",",2); 
@@ -118,8 +118,10 @@ function codeLatLng() {
 			alert("Geocoder failed due to: " + status);
 		}
 	});
+  
+  document.getElementById('pop').style.display='block';
 
-	$("#dialog").dialog({height: $(window).height()},{ width : ($(window).width() - 25)},{ closeText: 'X' }); 
+	//$("#dialog").dialog({height: $(window).height()},{ width : ($(window).width() - 25)},{ closeText: 'X' }); 
 	$(".ui-icon").css("background-image", "none");
 	$(".ui-icon").css("text-indent", "0");
 }
@@ -140,6 +142,13 @@ function mapa_multi() {
 
 {% block content %}
 <table id="list4"></table> 
+
+<div id="pop">
+<a href="#" onclick="document.getElementById('pop').style.display='none';">[Fechar]</a>
+<br />
+	Agora coloque o estilo dessa div.
+
+</div>
 {% endblock %}
 
 {% block toolbar %}
