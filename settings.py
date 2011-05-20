@@ -1,5 +1,6 @@
 # Django settings for infotrack project.
 import os
+import smtplib
 
 PROJECT_ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -7,7 +8,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+     #('smurf', 'fabiothiroki@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -161,4 +162,10 @@ LOGGING = {
     }
 }
 
-DAJAXICE_MEDIA_PREFIX="dajaxice"
+DAJAXICE_MEDIA_PREFIX="dajaxice" 
+
+EMAIL_HOST=""
+EMAIL_PORT= ""
+EMAIL_HOST_USER=''
+EMAIL_HOST_PASSWORD=''
+EMAIL_USER_TLS=True

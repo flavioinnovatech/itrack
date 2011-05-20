@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-
+from django.http import HttpResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response
 from itrack.accounts.models import UserProfile
 from django.contrib.auth.models import User
 from django.template.context import Context,RequestContext
-from itrack.accounts.forms import UserProfileForm, UserForm
+from itrack.accounts.forms import UserProfileForm, UserForm, UserCompleteForm
 from django.http import HttpResponseRedirect
 from itrack.system.models import System, Settings, User
 from django.contrib.auth import authenticate,login
 from http403project.http import Http403
 from django.core.context_processors import csrf
+from django.contrib.auth.views import password_reset
 
 
 @login_required
@@ -24,11 +25,20 @@ def create_user(request):
         form_profile = UserProfileForm(request.POST)
           
         if ( form_user.is_valid() and form_profile.is_valid() ):
-          
           system_id = request.session['system']
           system = System.objects.get(pk=int(system_id))
           
+          new_user = form_user.save(commit=False)
+          
+          # Aplica o Hash na senha
           new_user = form_user.save()
+          user = User.objects.get(username__exact=new_user)
+          password = user.password
+
+          user.set_password(password)
+          user.save()
+
+                    
           new_profile = form_profile.save(commit=False)
           new_profile.profile_id = new_user.id
           new_profile.save()
@@ -47,6 +57,7 @@ def create_user(request):
     else:
         form_user = UserForm()
         form_profile = UserProfileForm()
+        form = UserCompleteForm()
 
         return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
         
@@ -79,18 +90,23 @@ def login(request):
         user_settings = Settings.objects.filter(system__id=system_id)
       	for item in user_settings:
       	    css = item.css
+      	    
+      	user = User.objects.get(username__exact=username)
+        user_id = user.id
         
         request.session['system'] = system_id
         request.session['css'] = css
         request.session['domain'] = domain
-                
+        request.session['username'] = username
+        request.session['user_id'] = user_id
         request.session['system_name'] = system_name
                 
         # Redirect to a success page.
         return render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
     else:
         # Show an error page
-        return HttpResponseRedirect("/")
+        erro = u"Usuário ou senha inexistentes."
+        return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))
   else:
     return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))
 
@@ -132,7 +148,7 @@ def edit(request,offset):
     if user in users:
       form_user = UserForm(instance = user)
       form_profile = UserProfileForm(instance = profile)
-    
+      form = UserCompleteForm(instance = user)
       return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
       
     else:

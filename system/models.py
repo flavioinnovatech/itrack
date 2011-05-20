@@ -3,17 +3,17 @@
 from django.db import models
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
-from itrack.equipments.models import Equipment
+
 
 class System(Site):
     class Meta:
         permissions = (("can_create", "Pode criar subsistemas"),)
 
     users = models.ManyToManyField(User)
+    users.null = True
+    users.blank = True
     administrator = models.ForeignKey(User,related_name='usuarios',verbose_name="Administrador")
     parent = models.ForeignKey('self',verbose_name="Sistema pai")
-    equipments = models.ManyToManyField(Equipment,verbose_name="Equipamentos")
-
 
     parent.null = True
     parent.blank = True

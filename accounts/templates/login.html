@@ -1,4 +1,5 @@
 {% block content %}
+{% load url from future %}
 
 <link rel="stylesheet" href="/media/css/reset.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="/media/css/master.css" type="text/css" media="screen" />
@@ -6,29 +7,41 @@
 <div id="login" align="center">
 	<img src="/media/img/logo.png">
 
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
-
-<form method="post" action=".">
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
 <form action='.' method='post'>{% csrf_token %}
-    <label for="username">User name:</label>
-    <input type="text" name="username" value="" id="username">
-    <label for="password">Password:</label>
-    <input type="password" name="password" value="" id="password">
-
-    <input type="submit" value="login" />
-    <input type="hidden" name="next" value="{{ next|escape }}" />
-  <form action='.' method='post'>
+  <table>
+    <tr>
+      <td>
+        <div>
+        <label for="username">Usuário:</label>
+        </div>
+      </td>
+      <td>
+        <div>
+          <p>
+          <input  type="text" name="username" value="" id="username">
+          </p>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div>
+        <label for="password">Senha:</label>
+        </div>
+      </td>
+      <td>
+        <div class="item-right">
+        <input type="password" name="password" value="" id="password">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <p align="center"><input class="login-button" type="submit" value="Entrar" /> </p>
+        <p align="center" class="forgot"><a href="">Esqueci minha senha</a></p>
+        <input type="hidden" name="next" value="{{ next|escape }}" />
+      </td>
+    </tr>
+    </table>
 </div>
 {% endblock %}

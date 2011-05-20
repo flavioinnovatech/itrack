@@ -22,16 +22,20 @@ margin-bottom: 5px;
 border: 1px solid #ccc;
 font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
 font-size:11px;
+text-align:center;
+margin-left:auto;
+margin-right:auto;
 }
 
 .selector .selector-available h2 {
 
-background: #666 url(/images/admin/nav-bg.gif) bottom left repeat-x;
+background: #666  bottom left repeat-x;
 color: white;
 }
 .selector .selector-chosen h2 {
-background: #666 url(/images/admin/default-bg.gif) repeat-x scroll left top;
+background: #666  repeat-x scroll left top;
 color: white;
+
 }
 
 
@@ -44,10 +48,11 @@ color: #999;
 font-size: 10px;
 margin: 0;
 text-align: left;
+
 }
 
 .selector .selector-chosen .selector-filter {
-padding: 8px 5px;
+padding: 3px 5px;
 }
 
 .selector .selector-available input {
@@ -58,7 +63,7 @@ width: 230px;
 float: left;
 width: 22px;
 height: 50px;
-background: url(/admin/chooser-bg.gif) top center no-repeat;
+background: url(media/admin/chooser-bg.gif) top center no-repeat;
 margin: 8em 3px 0 3px;
 padding: 0;
 }
@@ -82,21 +87,19 @@ text-indent: -3000px;
 }
 
 .selector-add {
-background: url(/images/admin/selector-add.gif) top center no-repeat;
+background: url(/media/images/admin/selector-add.gif) top center no-repeat;
 margin-bottom: 2px;
 }
 
 .selector-remove {
-background: url(/images/admin/selector-remove.gif) top center no-repeat;
+background: url(/media/images/admin/selector-remove.gif) top center no-repeat;
 }
 
 a.selector-chooseall, a.selector-clearall {
 display: block;
 width: 6em;
-text-align: left;
 margin-left: auto;
 margin-right: auto;
-font-weight: bold;
 color: #666;
 padding: 3px 0 3px 18px;
 }
@@ -107,11 +110,11 @@ color: #036;
 
 a.selector-chooseall {
 width: 7em;
-background: url(/images/admin/selector-addall.gif) left center no-repeat;
+background: url(/media/images/admin/selector-addall.gif) left center no-repeat;
 }
 
 a.selector-clearall {
-background: url(/images/admin/selector-removeall.gif) left center no-repeat;
+background: url(/media/images/admin/selector-removeall.gif) left center no-repeat;
 }
 
 .selector select {
