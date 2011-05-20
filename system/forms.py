@@ -8,19 +8,10 @@ from django.contrib.formtools.wizard import FormWizard
 from itrack.accounts.forms import UserCompleteForm, UserForm, UserProfileForm
 
 
-# this class is used to solve the problem of not being able to derive multiple ModelForm classes with getting all the attrs from the
-# parent classes
-
-
-
 class SystemForm(ModelForm):
     class Meta:
         model = System
         exclude = ('parent','users','administrator','available_fields')
-    #equipments = forms.ModelMultipleChoiceField(queryset=Equipment.objects.all(), widget=FilteredSelectMultiple("Equipamentos", is_stacked=False))
-    #equipments.label = "Equipamentos"
-    
-
 
 class SettingsForm(ModelForm):
     class Meta:
@@ -59,10 +50,12 @@ class SystemWizard(FormWizard):
                 form_data[field] = value
                 print field,":",value
         
+        print request.FILES
+        
         form_usr = UserForm(form_data)
         form_profile = UserProfileForm(form_data)
         form_sys = SystemForm(form_data)
-        form_sett = SettingsForm(form_data)
+        form_sett = SettingsForm(form_data,request.FILES)
         
         if form_usr.is_valid():
             new_user = form_usr.save()
@@ -74,7 +67,7 @@ class SystemWizard(FormWizard):
 
         sys_id = request.session["system"] 
         system = System.objects.get(pk=sys_id) 
-        system.users.add(new_user)
+        
 
         new_user.groups.add(1)
         

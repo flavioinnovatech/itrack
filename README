@@ -5,7 +5,7 @@
         => Backend OK, mas necessita servidor smtp para teste (gmail fresco).
         
     => Retrabalhar todo o app de equipamentos
-    => Arrumar o delete do system
+    => Arrumar o delete do system <-
     => Password com bug no hash
       => SMURF:
         -> Sucesso extremo YUHUL!
@@ -16,15 +16,10 @@
     => Restringir logins que não tem sistema
       => SMURF:
         => Aparentemente funciona, testei aqui
-        
-    => Mensagens de erro na tela de login
-      => SMURF:
-        => Hardcoded mode - existe algum jeito mais automático de se fazer usando validação do form? - NAO PRECISA YUHUL!
-        => Funciona quando usuário e senha não correspondem (semelhante ao django tutorial)
-        => não valida ainda tamanho de senha nem de username - NAO PRECISA YUHUL!
-      
-    => Integrar o app de equipamentos com o grid
+              
+
     => Interligar os checkboxes do settings habilitando os mapas
-    => Exibir imagem de logo padrão caso não tenha nenhuma no servidor
-    => Arrumar bug de upload funcionando só na segunda edição
+    => Arrumar bug de upload funcionando só na segunda edição --- OK
     => Planejar telas de Alertas e Comandos, bem como o CRUD delas
+    
+    => Integrar o app de equipamentos com o grid

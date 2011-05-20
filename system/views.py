@@ -130,9 +130,14 @@ def edit(request,offset):
             if form_sys.is_valid() and form_sett.is_valid():
                 new_sys = form_sys.save()
                 new_setting = form_sett.save(commit=False)
-              
                 
-                new_setting.css = ' #topContainer .centerContainer{ background: url(/media/'+new_setting.logo.name+') no-repeat;}'
+                #print new_setting.logo.__dict__
+                
+
+                
+                new_setting.save()
+                                
+                new_setting.css = ' #topContainer .centerContainer{ background: url('+new_setting.logo.url+') no-repeat;}'
                 new_setting.css = new_setting.css + ' body {background-color:#'+new_setting.color_site_background+';}'
                 
                 #Menu
@@ -154,6 +159,10 @@ def edit(request,offset):
                 new_setting.css = new_setting.css + '#nav ul a:hover {background-color: #'+new_setting.color_submenu_hover+' !important; color:#'+new_setting.color_submenu_font_hover+' !important;}'
                 
                 new_setting.save()
+                
+                print "file.name: ",new_setting.logo.file.name
+                print "url: ", new_setting.logo.url
+                
                 request.session['css'] = new_setting.css
                 message =  "Sistema editado com sucesso."    
                 return render_to_response('system/templates/home.html',locals(),)
