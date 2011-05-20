@@ -57,7 +57,10 @@ class SystemWizard(FormWizard):
         form_sett = SettingsForm(form_data,request.FILES)
         
         if form_usr.is_valid():
-            new_user = form_usr.save()
+            new_user = form_usr.save(commit=False)
+            new_user.set_password(form_data["password"])
+            new_user.save()
+            
             
         if form_profile.is_valid():
             new_profile = form_profile.save(commit=False)

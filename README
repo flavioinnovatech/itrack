@@ -1,25 +1,14 @@
 @TO-DO's:
-
-    => Change password inteiro precisa ser feito (enviar email )
-      => SMURF:
-        => Backend OK, mas necessita servidor smtp para teste (gmail fresco).
-        
-    => Retrabalhar todo o app de equipamentos
-    => Arrumar o delete do system <-
-    => Password com bug no hash
-      => SMURF:
-        -> Sucesso extremo YUHUL!
-    => Passar o código que grava css para a view de criar (está no de editar)
-      => SMURF:
-        => Ainda não funciona o css stylying para a customização das tabelas, falta adicionar mais atributos na classe Settings
-        
-    => Restringir logins que não tem sistema
-      => SMURF:
-        => Aparentemente funciona, testei aqui
-              
-
-    => Interligar os checkboxes do settings habilitando os mapas
-    => Arrumar bug de upload funcionando só na segunda edição --- OK
-    => Planejar telas de Alertas e Comandos, bem como o CRUD delas
     
-    => Integrar o app de equipamentos com o grid
+    Nome                                                                                                            Status
+    ===========================================     =====
+    Change password inteiro precisa ser feito (enviar email )                               Falta SMTP
+    Retrabalhar todo o app de equipamentos <-                                               
+    Arrumar o delete do system <-
+    Password com bug no hash                                                                             OK
+    Passar o código que grava css para a view de criar (está no de editar) <-
+    Restringir logins que não tem sistema                                                            OK
+    Interligar os checkboxes do settings habilitando os mapas
+    Arrumar bug de upload funcionando só na segunda edição                           OK
+    Planejar telas de Alertas e Comandos, bem como o CRUD delas
+    Integrar o app de equipamentos com o grid

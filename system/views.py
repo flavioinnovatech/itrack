@@ -126,9 +126,6 @@ def edit(request,offset):
                 new_setting  = change_css(new_setting)              
                 new_setting.save()
                 
-                print "file.name: ",new_setting.logo.file.name
-                print "url: ", new_setting.logo.url
-                
                 request.session['css'] = new_setting.css
                 message =  "Sistema editado com sucesso."    
                 return render_to_response('system/templates/home.html',locals(),)
