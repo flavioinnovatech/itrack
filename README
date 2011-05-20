@@ -9,9 +9,6 @@
         => Ainda não funciona para a customização das tabelas, falta adicionar mais atributos na classe Settings
         
     => Restringir logins que não tem sistema
-<<<<<<< HEAD
-    => Mensagens de erro na tela de login (usuário incorreto nao exibe nada)
-=======
       => SMURF:
         => Aparentemente funciona, testei aqui        
         
@@ -21,7 +18,6 @@
         => Funciona quando usuário e senha não correspondem (semelhante ao django tutorial)
         => não valida ainda tamanho de senha nem de username
       
->>>>>>> ed53ca81d053fdf5f58fd6143100358c903a6acc
     => Integrar o app de equipamentos com o grid
     => Interligar os checkboxes do settings habilitando os mapas
     => Exibir imagem de logo padrão caso não tenha nenhuma no servidor
