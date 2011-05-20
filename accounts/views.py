@@ -31,7 +31,6 @@ def create_user(request):
           new_user = form_user.save(commit=False)
           
           # Aplica o Hash na senha
-          #new_user.password = set_password(new_user.password)
           new_user = form_user.save()
           user = User.objects.get(username__exact=new_user)
           password = user.password
