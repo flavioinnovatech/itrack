@@ -387,7 +387,7 @@ hr{
 }
 
 #pop{
-  z-index:99999999;
+  z-index:9999999999999999999999999;
   display:none;
   position:absolute;
   top:0;
@@ -399,4 +399,22 @@ hr{
 
 input[type="text"], input[type="password"] {
   height:25px;
+  border: 1px solid #aaa;
+  border-radius: 0.6em 0.6em 0.6em 0.6em;
 }
+
+.table-button {
+  font-color:#555555;
+  background-color: #E2E2E2;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+  border: 1px solid #;
+  font-size: 11px;
+  padding: 3px;
+  text-decoration: none;
+  border-radius: 5px 5px 5px 5px;
+  background: -moz-linear-gradient(center top , #FFFFFF, #CFCFCF) repeat scroll 0 0 transparent;
+  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CFCFCF'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CFCFCF)); /* for webkit browsers */
+}
+
+

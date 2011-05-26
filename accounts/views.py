@@ -48,11 +48,7 @@ def create_user(request):
           
           users = User.objects.filter(system=system)
                 
-<<<<<<< HEAD
-          return HttpResponseRedirect('/accounts/templates/create_finish.html')
-=======
           return HttpResponseRedirect("/accounts/create/finish")
->>>>>>> 173568564a0eede706ad0e7cb58bb3c2a577a29c
         else:
           form = UserCompleteForm(request.POST)
           return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
@@ -136,7 +132,7 @@ def index(request):
     
     for item in users:
       print item.__dict__
-      rendered_list+=u"<tr style='width:5%;'><td>"+item.username+": </td><td><a href=\"/accounts/edit/"+str(item.id)+"/\">Editar</a>  <a href=\"/accounts/delete/"+str(item.id)+"/\">Apagar</a></td></tr>"
+      rendered_list+=u"<tr style='width:5%;' ><td style='width:50%;'>"+item.username+": </td><td><a class='table-button' href=\"/accounts/edit/"+str(item.id)+"/\">Editar</a>  <a class='table-button' href=\"/accounts/delete/"+str(item.id)+"/\">Apagar</a></td></tr>"
     
     return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
     

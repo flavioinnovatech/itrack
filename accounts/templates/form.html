@@ -10,26 +10,38 @@
 <h2>Dados de cadastro</h2>
 <em>Informe os dados necessários para o cadastro do usuário no sistema.</em>
 {% endblock %}
-<form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
+<table>
+
     {% for field in form %}
+    <tr>
+      <td>
         <div class="form-item">
             <div class="item-left">          
                   <p>{{ field.label_tag }}</p>
                   <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
             </div>
+            </td>
+            <td>
             <div class="item-right">
                 <p class="errorlist">{{ field.errors }} </p>
                  <p class="field">{{ field }} </p>          
             </div>
+            </td>
+          </tr>
         </div>
-        <hr / >
     {% endfor %}
     </table>
 <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
 {{ previous_fields|safe }}
-<input type="submit" value="Prosseguir" class="submit">
+<div align="center" style="margin-top:10px;" id="actions">
+  <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
+  
+      <a href="#" onClick="parentNode.submit();">Confirmar</a>
+      <a onClick="history.back();">Cancelar</a>
+      </form>
+      
+  </div>
 <p class="clear">
-</form>
 
 </div>
 {% endblock %}
