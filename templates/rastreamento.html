@@ -184,7 +184,7 @@ function mapa_multi() {
 	<ul>
 		<li><a class="normal" href="#tabs-1">Grid</a></li>
 		<li><a class="fullscreen" href="#tabs-1">Grid tela cheia</a></li>
-		<li><a class="fullscreen" href="#tabs-3" onClick="codeLatLng();">Google</a></li>
+		{%if map_google %}<li><a class="fullscreen" href="#tabs-3" onClick="codeLatLng();">Google</a></li>{% endif %}
 		<li><a class="normal" href="#tabs-4">Sair do modo tela cheia</a></li>
 	</ul>
 	<div id="tabs-1">
