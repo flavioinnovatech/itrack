@@ -50,7 +50,7 @@ def create_user(request):
           #TO-DO pegar usarios pelo ID do sistema
           users = User.objects.filter(system=system)
                 
-          return render_to_response('accounts/templates/home.html',locals(),context_instance=RequestContext(request),)
+          return HttpResponseRedirect('/accounts/templates/create_finish.html')
         else:
           return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
 
@@ -125,6 +125,11 @@ def index(request):
     
     #TO-DO pegar usarios pelo ID do sistema
     users = User.objects.filter(system=system)
+    rendered_list = ""
+    
+    for item in users:
+      print item.__dict__
+      rendered_list+=u"<tr style='width:5%;'><td>"+item.username+": </td><td><a href=\"/accounts/edit/"+str(item.id)+"/\">Editar</a>  <a href=\"/accounts/delete/"+str(item.id)+"/\">Apagar</a></td></tr>"
     
     return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
     
@@ -165,21 +170,24 @@ def edit(request,offset):
 def delete(request,offset):
   if request.method == 'POST':
     
-    message = u"Tem certeza que quer deletar?"
+    user = User.objects.get(pk=int(offset))
+    profile = UserProfile.objects.get(profile=int(offset))
+    
+    profile.delete()
+    user.delete()
+    
     system = request.session['system']
     
     #TO-DO pegar usarios pelo ID do sistema
     users = User.objects.filter(system=system)
     
-    return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
+    return render_to_response("accounts/templates/delete_finish.html",locals(),context_instance=RequestContext(request))
     
   else:
-    #display the edit form
     user = User.objects.get(pk=int(offset))
     profile = UserProfile.objects.get(profile=int(offset))
     
     system = request.session['system']
-    
     users = User.objects.filter(system=system)
     
     if user in users:
