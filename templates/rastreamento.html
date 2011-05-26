@@ -21,7 +21,7 @@ jQuery(document).ready(function(){
 var mydata = [ {id:"1",invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
 
 for(var i=2;i<=50;i++) {
-	mydata[i] = [ {id:i,invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
+	//mydata[i] = [ {id:i,invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
 }
 
 var h = 25 + 5 * mydata.length;
@@ -33,33 +33,11 @@ jQuery("#list4").jqGrid({
 	width: 960,
 	colNames:[
 	'Veículo',
-	'Modelo', 
-	'Placa', 
-	'Km/h',
-	'Data',
-	'Endereço',
-	'Cidade',
-	'UF',
-	'Ignição',
-	'Status Motor',
-	'GPS',
-	'Pânico',
-	'Bateria'
+	'Modelo'
 	], 
 	colModel:[ 
 	{name:'id',index:'id', sorttype:"int"}, 
-	{name:'invdate',index:'invdate', sorttype:"date"},
-	{name:'name',index:'name'},
-	{name:'amount',index:'amount', align:"center",sorttype:"float"}, 
-	{name:'tax',index:'tax', align:"center",sorttype:"float"},
-	{name:'total',index:'total',align:"center",sorttype:"float"},
-	{name:'note',index:'note',sortable:false},
-	{name:'note',index:'note',sortable:false},
-	{name:'note',index:'note',sortable:false},
-	{name:'note',index:'note',sortable:false},
-	{name:'note',index:'note',sortable:false},
-	{name:'note',index:'note',sortable:false},
-	{name:'note',index:'note',sortable:false}
+	{name:'invdate',index:'invdate', sorttype:"date"}
 	], 
 	multiselect: true, 
 	caption: "Rastreamento veicular" }); 

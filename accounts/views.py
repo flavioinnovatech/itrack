@@ -82,7 +82,7 @@ def login(request):
         except:
         #if the user is not an admin, search in the users     
             system = System.objects.filter(users__username__exact=request.user.username)            
-            print system
+
             #if the user doesn't have a system
             if (len(system) == 0):
               erro = u"Usuário não possui sistema associado."
