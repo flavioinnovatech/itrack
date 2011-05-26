@@ -52,7 +52,7 @@ def index(request):
     for item in childs:
         system = System.objects.get(pk=item)
         print system.__dict__
-        rendered_list+=u"<tr style='width:5%;' ><td style='width:50%;'>"+system.name+": </td><td style='text-align:center;'><a class='table-button' href=\"/equipment/permissions/"+str(system.id)+"/\">Editar</a>  <a class='table-button' href=\"/equipment/associations/"+str(system.id)+"/\">Equipamentos</a></td></tr>"
+        rendered_list+=u"<tr style='width:5%;' ><td style='width:50%;'>"+system.name+": </td><td style='text-align:center;'><a class='table-button' href=\"/equipment/permissions/"+str(system.id)+u"/\">Permissões</a>  <a class='table-button' href=\"/equipment/associations/"+str(system.id)+"/\">Equipamentos</a></td></tr>"
         vector_html.append({'name':System.objects.get(pk=item).name, 'id': item})
     
     return render_to_response("equipments/templates/home.html",locals())
@@ -76,7 +76,7 @@ def permissions(request,offset):
                     for form in formset.cleaned_data:
                         form["equip_type"] = EquipmentType.objects.get(name = form["equip_type"])
                         AvailableFields.objects.filter(Q(system=int(offset))&Q(equip_type=form["equip_type"])).delete()
-                        
+                        print 'asdadas'
                         av = AvailableFields()
                         av.system = System.objects.get(pk=int(offset))
                         av.equip_type = form["equip_type"]

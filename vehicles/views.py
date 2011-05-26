@@ -20,10 +20,10 @@ def index(request):
         print Vehicle.objects.filter(equipment=1)
         try:
             v = Vehicle.objects.get(equipment__id=item.id)
-            rendered_list+=u"<tr style='width:5%;'><td>"+item.name+": </td><td>"+str(v.license_plate)+"</td><td><a href=\"/vehicles/edit/"+str(v.id)+"/\">Editar</a>  <a href=\"/vehicles/delete/"+str(v.id)+"/\">Apagar</a></td></tr>"
+            rendered_list+=u"<tr style='width:5%;'><td>"+item.name+": </td><td>"+str(v.license_plate)+"</td><td><a class='table-button' href=\"/vehicles/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/vehicles/delete/"+str(v.id)+"/\">Apagar</a></td></tr>"
         except:
-            v_str = "<td><a href=\"/vehicles/create/"+str(item.id)+"/\">Criar veiculo</a></td>"
-            rendered_list+=u"<tr style='width:5%;'><td>"+item.name+": </td><td>"+v_str+"</td><td></td></tr>"
+            v_str = "<a class='table-button' href=\"/vehicles/create/"+str(item.id)+"/\">Criar veiculo</a>"
+            rendered_list+=u"<tr style='width:5%;'><td style='width:40%;'>"+item.name+": </td><td style='width:40%;'></td><td>"+v_str+"</td><td></td></tr>"
     
     return render_to_response("vehicles/templates/index.html",locals(),context_instance=RequestContext(request))
 
