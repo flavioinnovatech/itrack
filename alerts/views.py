@@ -17,9 +17,12 @@ def index(request):
     equipments = Equipment.objects.filter(system = system_id)
     rendered_list = ""
     for item in equipments:
-      v = Alert.objects.get(equipment=item.id)
-      print v.__dict__
-      rendered_list+=u"<tr style='width:5%;'><td>"+v.name+": </td><td>"+item.name+"</td><td>"+str(v.time_start)+"</td><td>"+str(v.time_end)+"</td><td><a class='table-button' href=\"/alerts/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/alerts/delete/"+str(v.id)+"/\">Apagar</a></td></tr>"
+      try:
+        v = Alert.objects.get(equipment=item.id)
+        print v.__dict__
+        rendered_list+=u"<tr style='width:5%;'><td>"+v.name+": </td><td>"+item.name+"</td><td>"+str(v.time_start)+"</td><td>"+str(v.time_end)+"</td><td><a class='table-button' href=\"/alerts/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/alerts/delete/"+str(v.id)+"/\">Apagar</a></td></tr>"
+      except:
+        pass
 
     
     return render_to_response("alerts/templates/index.html",locals(),context_instance=RequestContext(request))
