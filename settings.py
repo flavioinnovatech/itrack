@@ -137,7 +137,9 @@ INSTALLED_APPS = (
     'system',
 	'themes',
 	'vehicles',
-	'alerts'
+	 'command',
+	 'alerts',
+
 )
 
 # A sample logging configuration. The only tangible logging
