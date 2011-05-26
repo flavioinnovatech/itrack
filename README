@@ -13,8 +13,8 @@
 9    Planejar telas de Alertas e Comandos, bem como o CRUD delas
 10  Integrar o app de equipamentos com o grid
 11  Grid em tela cheia
-12  Permissões: não mostrar caso não haja permissões
-13  Títulos corretos em cada página
+12  Títulos corretos em cada página
+13  Permissões: não mostrar caso não haja permissões
 14  Permissões: separar entradas saidas, fisicas virtuais
 15  Permissões: custom fields com nomes editáveis
 16  Veículos: Planejar telas e CRUD
@@ -42,7 +42,7 @@ Status
 14
 15
 16
-17
+17   OK
 18
 19   
 20
