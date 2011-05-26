@@ -22,7 +22,7 @@ def index(request):
             v = Vehicle.objects.get(equipment__id=item.id)
             rendered_list+=u"<tr style='width:5%;'><td>"+item.name+": </td><td>"+str(v.license_plate)+"</td><td><a href=\"/vehicles/edit/"+str(v.id)+"/\">Editar</a>  <a href=\"/vehicles/delete/"+str(v.id)+"/\">Apagar</a></td></tr>"
         except:
-            v_str = "<a href=\"/vehicles/create/"+str(item.id)+"/\">Criar veiculo</a>"
+            v_str = "<td><a href=\"/vehicles/create/"+str(item.id)+"/\">Criar veiculo</a></td>"
             rendered_list+=u"<tr style='width:5%;'><td>"+item.name+": </td><td>"+v_str+"</td><td></td></tr>"
     
     return render_to_response("vehicles/templates/index.html",locals(),context_instance=RequestContext(request))
