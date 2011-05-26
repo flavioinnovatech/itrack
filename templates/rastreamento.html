@@ -34,6 +34,7 @@ jQuery(document).ready(function(){
     
     normal = 0;
     
+    $('#menuContainer').css("z-index","0");
     $('#tabs').css("width","100%");
     $('#tabs').css("height","100%");
     $('#tabs').css("top","0");
@@ -41,7 +42,7 @@ jQuery(document).ready(function(){
   });
   
   $('.normal').click(function() {
-   
+   $('#menuContainer').css("z-index","2");
     $('#tabs').css("width","960px");
     $('#tabs').css("height",height);
     $('#tabs').css("top",top);
