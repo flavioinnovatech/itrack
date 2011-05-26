@@ -57,6 +57,7 @@ url(r'^vehicles/edit/finish/$','vehicles.views.edit_finish'),
 url(r'^vehicles/delete/(\d+)/$','vehicles.views.delete'),
 url(r'^vehicles/delete/finish/$','vehicles.views.delete_finish'),
 
+
 url(r'^commands/$', 'command.views.index'),
 url(r'^commands/create/(\d+)/$','command.views.create'),
 url(r'^commands/create/finish/$','command.views.create_finish'),
@@ -64,6 +65,15 @@ url(r'^commands/edit/(\d+)/$','command.views.edit'),
 url(r'^commands/edit/finish/$','command.views.edit_finish'),
 url(r'^commands/delete/(\d+)/$','command.views.delete'),
 url(r'^commands/delete/finish/$','command.views.delete_finish'),
+
+url(r'^alerts/$', 'alerts.views.index'),
+url(r'^alerts/create/(\d+)/$','alerts.views.create'),
+url(r'^alerts/create/finish/$','alerts.views.create_finish'),
+url(r'^alerts/edit/(\d+)/$','alerts.views.edit'),
+url(r'^alerts/edit/finish/$','alerts.views.edit_finish'),
+url(r'^alerts/delete/(\d+)/$','alerts.views.delete'),
+url(r'^alerts/delete/finish/$','alerts.views.delete_finish'),
+
 
 
 url(r'^accounts/password_reset/$', 'django.contrib.auth.views.password_reset', {'template_name':'accounts/templates/password_reset_form.html', 'email_template_name':'accounts/templates/password_reset_email.html'}),

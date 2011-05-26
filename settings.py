@@ -139,6 +139,7 @@ INSTALLED_APPS = (
 	'vehicles',
 	 'command',
 	 'alerts',
+
 )
 
 # A sample logging configuration. The only tangible logging
