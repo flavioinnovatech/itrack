@@ -90,7 +90,7 @@ def permissions(request,offset):
             
             formset = AvailableFieldsFormset()
             for form,equip in zip(formset,equip_types):
-                form.fields["custom_fields"].queryset = CustomField.objects.filter(Q(availablefields__system = parent) & Q(availablefields__equip_type = equip))
+                form.fields["custom_fields"].queryset = CustomField.objects.filter(Q(availablefields__system = parent) & Q(availablefields__equip_type = equip)).order_by('type')
             
                 
                 form.fields["custom_fields"].initial = CustomField.objects.filter(Q(availablefields__system = int(offset)) & Q(availablefields__equip_type = equip))
@@ -138,7 +138,7 @@ def associations(request,offset):
             form.fields["equipments"].label = ""
             form.fields["equipments"].initial = Equipment.objects.filter(system=int(offset))
 
-            form.fields["equipments"].queryset = Equipment.objects.filter(system=parent)
+            form.fields["equipments"].queryset = Equipment.objects.filter(system=parent).order_by('type')
             return render_to_response("equipments/templates/associations.html",locals(),context_instance=RequestContext(request))
     else:
         raise Http403(u'Você não tem permissão para editar este sistema.')

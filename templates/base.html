@@ -95,6 +95,7 @@
 							{% for grp in request.user.groups.all %}
 							    {% if grp.name  == "administradores" %}
 							        <li><a href="{% url equipments.views.index %}">Equipamentos</a></li>
+							        <li><a href="{% url vehicles.views.index %}">Veículos</a></li>
 							        <li><a href="{% url accounts.views.index %}">Usuários</a></li>
 							        <li><a href="{% url system.views.index %}"> Sistemas </a></li>
 							    {% endif %}
