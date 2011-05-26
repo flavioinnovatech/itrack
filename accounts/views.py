@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response
@@ -81,12 +81,18 @@ def login(request):
             system_name = system.name
         except:
         #if the user is not an admin, search in the users     
-            system = System.objects.filter(users__username__exact=request.user.username)
+            system = System.objects.filter(users__username__exact=request.user.username)            
+            print system
+            #if the user doesn't have a system
+            if (len(system) == 0):
+              erro = u"Usuário não possui sistema associado."
+              return render_to_response("accounts/templates/login.html",locals(),context_instance=RequestContext(request),)
+            
             for item in system:
                 system_id = item.id
                 domain = item.domain
                 system_name = item.name
-        
+            
         user_settings = Settings.objects.filter(system__id=system_id)
       	for item in user_settings:
       	    css = item.css
@@ -102,7 +108,7 @@ def login(request):
         request.session['system_name'] = system_name
                 
         # Redirect to a success page.
-        return render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
+        return HttpResponseRedirect("/rastreamento/veicular")#render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
     else:
         # Show an error page
         erro = u"Usuário ou senha inexistentes."
@@ -144,8 +150,8 @@ def edit(request,offset):
     system = request.session['system']
     
     users = User.objects.filter(system=system)
-    
-    if user in users:
+        
+    if user in users or user.username == request.user.username:
       form_user = UserForm(instance = user)
       form_profile = UserProfileForm(instance = profile)
       form = UserCompleteForm(instance = user)

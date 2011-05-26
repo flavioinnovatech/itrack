@@ -10,6 +10,11 @@
 <form action='.' method='post'>{% csrf_token %}
   <table>
     <tr>
+      <td colspan="2">
+        <p align="center"><label><font color="#FF0000">{{erro}}</font></label></p>
+      </td>
+    </tr>
+    <tr>
       <td>
         <div>
         <label for="username">Usuário:</label>

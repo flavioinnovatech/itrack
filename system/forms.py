@@ -89,7 +89,9 @@ class SystemWizard(FormWizard):
             new_setting  = change_css(new_setting)              
             new_setting.save()
 
-        return HttpResponseRedirect('/system/create/finish/')
+
+        return HttpResponseRedirect('/system/finish/')
+
 
 def change_css(new_setting):
           new_setting.css = ' #topContainer .centerContainer{ background: url(/media/'+new_setting.logo.name+') no-repeat;}'
@@ -112,4 +114,17 @@ def change_css(new_setting):
           new_setting.css = new_setting.css + ' #nav ul {background: -moz-linear-gradient(top,  #'+new_setting.color_submenu_gradient_inicial+',  #'+new_setting.color_submenu_gradient_final+');}'
           new_setting.css = new_setting.css + '#nav ul{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
           new_setting.css = new_setting.css + '#nav ul a:hover {background-color: #'+new_setting.color_submenu_hover+' !important; color:#'+new_setting.color_submenu_font_hover+' !important;}'
+          
+          # Login Status
+          new_setting.css = new_setting.css + '#loginstatus {background-color:#'+new_setting.color_submenu_gradient_final+';}'
+          new_setting.css = new_setting.css + '#loginstatus{progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_submenu_gradient_inicial+', endColorstr=#'+new_setting.color_submenu_gradient_final+');}'
+          new_setting.css = new_setting.css + ' #loginstatus {background: -moz-linear-gradient(top,  #'+new_setting.color_submenu_gradient_inicial+',  #'+new_setting.color_submenu_gradient_final+');}'
+          new_setting.css = new_setting.css + '#loginstatus{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
+          
+          # Botoes
+          new_setting.css = new_setting.css + '#actions a {background-color:#'+new_setting.color_submenu_gradient_final+';}'
+          new_setting.css = new_setting.css + '#loginstatus{progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_submenu_gradient_inicial+', endColorstr=#'+new_setting.color_submenu_gradient_final+');}'
+          new_setting.css = new_setting.css + ' #actions a {background: -moz-linear-gradient(top,  #'+new_setting.color_submenu_gradient_inicial+',  #'+new_setting.color_submenu_gradient_final+');}'
+          new_setting.css = new_setting.css + '#actions a{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
+          
           return new_setting

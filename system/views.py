@@ -103,6 +103,9 @@ def create(request):
     
 def finish(request):
     return render_to_response('system/templates/create_finish.html',locals())
+    
+def editfinish(request):
+    return render_to_response('system/templates/edit_finish.html',locals())
 	
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
@@ -128,10 +131,8 @@ def edit(request,offset):
                 
                 request.session['css'] = new_setting.css
                 message =  "Sistema editado com sucesso."    
-                return render_to_response('system/templates/home.html',locals(),)
-            else:
-                message =  "Form invalido."    
-                return HttpResponseRedirect("/system/")
+                return HttpResponseRedirect("/system/edit/finish/")
+
             
         else:
             #display the edit form
@@ -160,9 +161,9 @@ def edit(request,offset):
     else:
         raise Http403(u'Você não tem permissão para editar este sistema.')
 
-def removeUsers(system_id):
-    pass
-            
+def deletefinish(request):
+    return render_to_response("system/templates/delete_finish.html",locals())
+
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def delete(request,offset):
@@ -172,13 +173,20 @@ def delete(request,offset):
         if request.method == 'POST':
             ids = serializeChild(findChild(int(offset)),[])
             childs = System.objects.filter(pk__in=ids)
+            print childs
             for sys in childs:
                 user_list = User.objects.filter(system=sys.id)
                 print user_list
                 for usr in user_list:
                     UserProfile.objects.get(profile=usr).delete()
                     usr.delete()
-                    
+                sys.administrator.delete()
+                print "deletou"
+            sys = System.objects.get(pk=int(offset))
+            sys.administrator.delete()
+            #sys.delete()
+                
+            return HttpResponseRedirect("/system/delete/finish")
         else:
             
             ids = serializeChild(findChild(int(offset)),[])
