@@ -1,3 +1,5 @@
+# -*- coding:utf8 -*-
+
 from django.db import models
 from itrack.system.models import System
 
@@ -40,5 +42,6 @@ class Equipment(models.Model):
    def __unicode__(self):
       return self.name
 
-   
+
+    
 

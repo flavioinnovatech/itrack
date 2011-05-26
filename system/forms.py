@@ -93,9 +93,6 @@ class SystemWizard(FormWizard):
 
         return HttpResponseRedirect('/system/finish/')
 
-    def process_step(self, request, form, step):
-             print form
-             print form.__dict__
 
 
 def change_css(new_setting):

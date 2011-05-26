@@ -10,18 +10,18 @@
 6    Restringir logins que não tem sistema                                                            
 7    Arrumar bug de upload funcionando só na segunda edição  
 8    Interligar os checkboxes do settings habilitando os mapas                         
-9    Planejar telas de Alertas e Comandos, bem como o CRUD delas
-10  Integrar o app de equipamentos com o grid
+9    Mapas disponíveis permissíveis
+10  Usuários: celular e email obrigatórios
 11  Grid em tela cheia
 12  Títulos corretos em cada página
 13  Permissões: não mostrar caso não haja permissões
 14  Permissões: separar entradas saidas, fisicas virtuais
-15  Permissões: custom fields com nomes editáveis
+15  Tree table
 16  Veículos: Planejar telas e CRUD
-17  Usuários: celular e email obrigatórios
-18  Equipamentos: Separar por fabricante
-19  Mapas disponíveis permissíveis
-20  Tree table
+17  Equipamentos: Separar por fabricante
+18  Integrar o app de equipamentos com o grid
+19  Planejar telas de Alertas e Comandos, bem como o CRUD delas
+20  Permissões: custom fields com nomes editáveis
 
 Status
 =========================================== 
@@ -34,15 +34,15 @@ Status
 6    OK
 7    OK
 8    OK
-9
-10
-11
+9    OK
+10  OK
+11  OK, faltando resize na tabela
 12  OK
 13  OK
 14
-15
-16
-17   OK
+15  OK
+16  OK, faltando permissões
+17  
 18
-19   
-20  OK
+19  
+20  

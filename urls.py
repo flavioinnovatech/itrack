@@ -49,6 +49,14 @@ url(r'^accounts/ajax/delete/$','accounts.ajax.delete'),
 url(r'^accounts/edit/(\d+)/$','accounts.views.edit'),
 url(r'^accounts/edit/finish/$','accounts.views.edit_finish'),
 
+url(r'^vehicles/$', 'vehicles.views.index'),
+url(r'^vehicles/create/(\d+)/$','vehicles.views.create'),
+url(r'^vehicles/create/finish/$','vehicles.views.create_finish'),
+url(r'^vehicles/edit/(\d+)/$','vehicles.views.edit'),
+url(r'^vehicles/edit/finish/$','vehicles.views.edit_finish'),
+url(r'^vehicles/delete/(\d+)/$','vehicles.views.delete'),
+url(r'^vehicles/delete/finish/$','vehicles.views.delete_finish'),
+
 
 url(r'^accounts/password_reset/$', 'django.contrib.auth.views.password_reset', {'template_name':'accounts/templates/password_reset_form.html', 'email_template_name':'accounts/templates/password_reset_email.html'}),
 url(r'^password_reset/done/$', 'django.contrib.auth.views.password_reset_done', {'template_name':'userpanel/password_reset_done.html'}),

@@ -37,7 +37,7 @@
 
 <table>
 <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
-    {% for field in form %}
+    {% for field in form.visible_fields %}
         <tr>
           <td>
         <div class="form-item">

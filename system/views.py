@@ -118,13 +118,32 @@ def index(request):
 def create(request):
         system = request.session["system"]
     
+        class ModifiedSettingsForm(SettingsForm):
+            pass
+        
+        print ModifiedSettingsForm.__dict__
+        
         sysadm = User.objects.get(pk=request.user.id)
+        settings_parent = Settings.objects.get(system=system)
         
-        ModifiedSettingsForm = SettingsForm
+        print settings_parent
+        print settings_parent.map_google
+        print settings_parent.map_maplink
+        print settings_parent.map_multspectral
+        
+        if not settings_parent.map_google:
+            print "aqui!"
+            ModifiedSettingsForm.base_fields["map_google"].widget = HiddenInput()
+        if not settings_parent.map_multspectral:
+            ModifiedSettingsForm.base_fields["map_maplink"].widget = HiddenInput()
+            print "aqui!"
+        if not settings_parent.map_maplink:
+            ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
+        
+
         
         
-        
-        wiz = SystemWizard([UserCompleteForm,SystemForm,SettingsForm])
+        wiz = SystemWizard([UserCompleteForm,SystemForm,ModifiedSettingsForm])
         print wiz.__dict__
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 

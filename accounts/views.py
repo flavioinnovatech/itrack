@@ -49,6 +49,7 @@ def create_user(request):
           users = User.objects.filter(system=system)
                 
           return HttpResponseRedirect("/accounts/create/finish")
+
         else:
           form = UserCompleteForm(request.POST)
           return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
