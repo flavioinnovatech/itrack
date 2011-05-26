@@ -192,6 +192,7 @@ def edit(request,offset):
             form_sys = SystemForm(instance = system)
             form_sett = SettingsForm(instance = settings)
             
+            
             if request.session["system"] == int(offset)  and system_parent != None:
                 #if the system being edited is the admin own system, disable the equipment field, unless he is the root admin
                 #del form_sys.fields["equipments"]
