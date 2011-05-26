@@ -76,15 +76,20 @@
 					</li>
 					<li><a href="#">Comandos</a>
 						<ul>
-							<li><a href="#">Enviar comando</a></li>
-							<li><a href="#">Histórico de comandos</a></li>
+							{% for grp in request.user.groups.all %}
+							    {% if grp.name  == "administradores" %}
+							        <li><a href="{% url command.views.index %}">Administração</a></li>
+							    {% endif %}
+							 {%endfor%}
 						</ul>
 					</li>
 					<li><a href="#">Alertas</a>
 						<ul>
-							<li><a href="#">Agendar monitoramento</a></li>
-							<li><a href="#">Histórico de monitoramento</a></li>
-							<li><a href="#">Notificação</a></li>
+							{% for grp in request.user.groups.all %}
+							    {% if grp.name  == "administradores" %}
+							        <li><a href="{% url alerts.views.index %}">Administração</a></li>
+							    {% endif %}
+							 {%endfor%}
 						</ul>
 					</li>
 					<li><a href="#">Configurações</a>
