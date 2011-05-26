@@ -157,7 +157,7 @@ def edit(request,offset):
             
             sysname = system.name
             wiz = SystemWizard([UserCompleteForm,SystemForm(instance = system),SettingsForm(instance = settings)])
-            return wiz(context=RequestContext(request), request=request, extra_context=locals())
+            #return wiz(context=RequestContext(request), request=request, extra_context=locals())
             return render_to_response("system/templates/create.html",locals(),context_instance=RequestContext(request),)
         
     else:
