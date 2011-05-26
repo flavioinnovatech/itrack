@@ -79,7 +79,7 @@ def render_system_html2(childs,father="",rendered_list=""):
       else:
       #if its a number, mount the url for the system
           # rendered_list+=System.objects.get(pk=x).name
-          rendered_list+="<tr id=\"node-"+System.objects.get(pk=x).name+"\" "+ childof +"><td>"+System.objects.get(pk=x).name+": <a href=\"/system/edit/"+str(x)+"/\"></td><td>Editar</a>  <a href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>\n"
+          rendered_list+="<tr style='width:5%;' id=\"node-"+System.objects.get(pk=x).name+"\" "+ childof +"><td>"+System.objects.get(pk=x).name+": </td><td><a href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
 
   return rendered_list    
 

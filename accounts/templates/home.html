@@ -1,7 +1,6 @@
 {% extends "templates/base.html" %}
 {%block title%}Infotrack - Usuários {% endblock %}
 {% block head %}
-<link rel="stylesheet" type="text/css" media="screen" href="/media/css/ui.jqgrid.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/media/css/jquery-ui-1.8.12.custom.css" />
 <script src="/media/js/jquery.jqGrid.min.js" type="text/javascript"></script>
 
@@ -55,99 +54,6 @@ $(document).ajaxSend(function(event, xhr, settings) {
 
 jQuery(document).ready(function(){
 
-//////////// Função que pega os ids dos usuários selecionados e manda pro ajax deletar
-$('#delete').click(function(){
-  
-  if (confirm("Deseja apagar o(s) usuário(s) selecionado(s)?")) {
-  
-    var rows = $('#list4').jqGrid('getGridParam', 'selarrrow');
-  
-    var example = {
-      usuarios : []
-    };
-
-    var i = 0;
-    selected = new Array();
-    while(rows[i]) {
-      selected[i] =  { "id" : $('#list4').getCell(rows[i],'id') };
-      i++;
-    }
-  
-    i = 0;
-    while (selected[i]) {
-      example.usuarios[i] = selected[i];
-      i++;
-    }
-    
-    if (selected.length == 0) { 
-        alert('Selecione pelo menos um usuário.'); 
-    }
-    
-    /////// Realiza o POST
-    else {
-      $.post("{% url accounts.ajax.delete %}",  example,
-      function(data) {
-        if (data == 'sucesso') {
-          alert('Usuário(s) apagado(s) com sucesso.');
-          location.href="/accounts/"
-        }
-        else if (data == 'falhou'){
-          alert('Não é possível se apagar.');
-        }
-      });
-    }
-  }
-  
-});  
-  
-var i = 0;
-data = new Array()
-var mydata = [
-{% for user in users %}
-  {id:'{{user.id}}',user : '{{user}}'},
-{% endfor  %}
-];
-
-cell_id = new Array();
-function formateadorLink2(cellvalue, options, rowObject) {
-  cell_id[options.rowId] = cellvalue;
-  return cellvalue;
-}
-
-function formateadorLink(cellvalue, options, rowObject) {
-  return "<a href=/accounts/edit/"+ cell_id[options.rowId] + ">" + cellvalue + "</a>";
-}
-
-jQuery("#list4").jqGrid({ 
-	datatype: "local",
-  width: 600,
-  height: "auto",
-	colNames:[
-	'id',
-	'Usuários'
-	], 
-	colModel:[
-	{name:'id',sorttype:"text",align:"center",resizable:false, formatter: formateadorLink2,hidden: true},
-	{name:'user',id:'id',sorttype:"text",align:"center",resizable:false, formatter: formateadorLink}
-	], 
-	beforeSelectRow: function(rowid, e) { return true; },
-	multiselect: true,
-	loadonce: true,
-	//altRows: true,
-	caption: ""
-
-}); 
-	
-   for(var i=0;i<=mydata.length;i++) {
-          jQuery("#list4").jqGrid('addRowData',i+1,mydata[i]); 
-       }
-		
-	   	var mydata = [
-   					{id:"1",invdate:"2007-10-01",name:"test"}, 
-   					{id:"2",invdate:"2007-10-02",name:"test2"}];
-	
-  $("#gbox_list4").css("margin", "0 auto");
-
 });
 
 </script>
@@ -161,11 +67,38 @@ jQuery("#list4").jqGrid({
     <div class="main-form">
         <h1>Gerenciamento de usuários</h1>
         <hr/>
-	<table id="list4"></table> 
+        
+        <h2>Usuários desse sistema:</h2>
+				<em>  </em>
+        
+        <div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><span class="ui-jqgrid-title"></span></div><div class="ui-state-default ui-jqgrid-hdiv"><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
+				  
+				  <thead>
+				    
+				    <tr role="rowheader" class="ui-jqgrid-labels">
+				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 50%;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Usuário</div></th>
+				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 453px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Ação</div></th></tr></thead></table></div></div><div class="ui-jqgrid-bdiv"><div style="margin-left:19px;"><div></div><table id="tree" cellspacing="0" cellpadding="0" border="0" id="list4" tabindex="1" role="grid" aria-multiselectable="true" aria-labelledby="gbox_list4" class="ui-jqgrid-btable" style="width:100%"><tbody>
+				      
+				      
+				  <tr style="height: auto; width:100%" role="row" class="jqgfirstrow">
+				  
+				  <td style="height: 0px; width: 20px;" role="gridcell"></td>
+				  
+				  <td style="height: 0px; width:20px" role="gridcell"></td>
+				  
+				  
+				  </tr>
+				  
+				  <tr class="ui-widget-content jqgrow ui-row-ltr" tabindex="-1" role="row" id="1">
+				    {% autoescape off %}  
+  					{{ rendered_list}} 
+  					{% endautoescape %}
+
+				  </tr></tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div>
+	
 	  <div align="center" style="margin-top:10px;" id="actions">
      
             <a href="{% url accounts.views.create_user %}">Criar usuários do seu sistema</a>
-          <a id="delete" href="#">Apagar usuários selecionados do seu sistema </a>    
       </div>   
       </div>
 </div>
