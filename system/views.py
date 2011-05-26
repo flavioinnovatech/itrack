@@ -156,7 +156,9 @@ def edit(request,offset):
                 #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
             
             sysname = system.name
-            return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
+            wiz = SystemWizard([UserCompleteForm,SystemForm(instance = system),SettingsForm(instance = settings)])
+            return wiz(context=RequestContext(request), request=request, extra_context=locals())
+            return render_to_response("system/templates/create.html",locals(),context_instance=RequestContext(request),)
         
     else:
         raise Http403(u'Você não tem permissão para editar este sistema.')
