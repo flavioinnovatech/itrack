@@ -19,14 +19,14 @@
 15  Tree table
 16  Veículos: Planejar telas e CRUD
 17  Equipamentos: Separar por fabricante
-18  Integrar o app de equipamentos com o grid
-19  Planejar telas de Alertas e Comandos, bem como o CRUD delas
+18  Planejar telas de Alertas e Comandos, bem como o CRUD delas
+19  Integrar o app de equipamentos com o grid
 20  Permissões: custom fields com nomes editáveis
 
 Status
 =========================================== 
 
-1    Falta SMTP e layout
+1    OK, Falta SMTP e layout
 2    OK
 3    OK
 4    OK
@@ -36,12 +36,12 @@ Status
 8    OK
 9    OK
 10  OK
-11  OK, faltando resize na tabela
+11  OK
 12  OK
 13  OK
 14  OK
 15  OK
-16  OK, faltando permissões
+16  OK, permissões*
 17  OK
 18
 19  

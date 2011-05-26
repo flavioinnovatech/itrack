@@ -162,7 +162,7 @@ def edit(request,offset):
     if isChild(int(offset),childs) or int(offset) == request.session['system']:
         if request.method == 'POST':
             #process the edit form
-            
+            print request.POST.__dict__
             system = System.objects.get(pk=int(offset))
             settings = Settings.objects.get(system__id=int(offset))
             

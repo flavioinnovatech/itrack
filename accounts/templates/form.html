@@ -10,6 +10,7 @@
 <h2>Dados de cadastro</h2>
 <em>Informe os dados necessários para o cadastro do usuário no sistema.</em>
 {% endblock %}
+<form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
 <table>
 
     {% for field in form %}
@@ -34,9 +35,9 @@
 <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
 {{ previous_fields|safe }}
 <div align="center" style="margin-top:10px;" id="actions">
-  <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
   
-      <a href="#" onClick="parentNode.submit();">Confirmar</a>
+  
+      <input type="Submit" value="Confirmar">
       <a onClick="history.back();">Cancelar</a>
       </form>
       

@@ -74,17 +74,24 @@ def permissions(request,offset):
                 
                 if formset.is_valid() or not formset.is_valid():
                     for form in formset.cleaned_data:
-                        form["equip_type"] = EquipmentType.objects.get(name = form["equip_type"])
-                        AvailableFields.objects.filter(Q(system=int(offset))&Q(equip_type=form["equip_type"])).delete()
-                        print 'asdadas'
-                        av = AvailableFields()
-                        av.system = System.objects.get(pk=int(offset))
-                        av.equip_type = form["equip_type"]
-                        av.save()
+                        try:
+                            form["equip_type"] = EquipmentType.objects.get(name = form["equip_type"])
+                            AvailableFields.objects.filter(Q(system=int(offset))&Q(equip_type=form["equip_type"])).delete()
+                            
+                            av = AvailableFields()
+                            av.system = System.objects.get(pk=int(offset))
+                            
+                            av.equip_type = form["equip_type"]
+                            av.save()
+                            
+                            for cf in form["custom_fields"]:
+                                av.custom_fields.add(cf)
+                            av.save()
+                        except KeyError:
+                            pass
                         
-                        for cf in form["custom_fields"]:
-                            av.custom_fields.add(cf)
-                        av.save()
+                        
+                        
                 return HttpResponseRedirect("/equipment/finish/")
         else:
             
