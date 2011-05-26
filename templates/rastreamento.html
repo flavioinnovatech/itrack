@@ -155,8 +155,9 @@ function mapa_multi() {
 <div id="toolbar">
 	<div class="centerContainer">
 Para os veículos selecionados:<br/>
-<input type="button" value="Mostrar no mapa (Google)" onclick="codeLatLng()">
-<input type="button" value="Mostrar no mapa (Multispectral)" onclick="mapa_multi()">
+{%if map_google %}<input type="button" value="Mostrar no mapa (Google)" onclick="codeLatLng()">{% endif %}
+{%if map_multispectral %}<input type="button" value="Mostrar no mapa (Multispectral)" onclick="mapa_multi()">{% endif %}
+{%if map_maplink %}<input type="button" value="Mostrar no mapa (Maplink)" onclick="mapa_maplink()">{% endif %}
 	</div> <!-- end centerContainer -->
 </div> <!-- end Toolbar -->
 
