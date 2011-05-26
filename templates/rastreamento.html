@@ -17,7 +17,85 @@
 
 
 <script type="text/javascript">
-jQuery(document).ready(function(){ 
+
+$('#tabs-1"').ready(function(){  
+  montartabela();
+});
+
+function montartabela(h,w) {
+  
+  /* ----------- JQGRID READY ----------- */ 
+
+  var mydata = [ {id:"1",invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
+
+  for(var i=2;i<=50;i++) {
+  	mydata[i] = [ {id:i,invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
+  }
+  
+  if (h == null && w == null) {
+
+  w = screen.availWidth;
+  h = screen.availHeight;
+  
+  jQuery("#list4").jqGrid({ 
+
+  	datatype: "local",
+  	height:h-500,
+  	width: 930,
+  	colNames:[
+  	'Veículo',
+  	'Modelo'
+  	], 
+  	colModel:[ 
+  	{name:'id',index:'id', sorttype:"int"}, 
+  	{name:'invdate',index:'invdate', sorttype:"date"}
+  	], 
+  	multiselect: true, 
+  	caption: "Rastreamento veicular" }); 
+
+  	for(var i=0;i<=mydata.length;i++) {
+  		jQuery("#list4").jqGrid('addRowData',i+1,mydata[i]); 
+  	}
+  	
+  }
+  
+  else {
+
+    
+    w = screen.availWidth;
+    h = screen.availHeight;
+    
+    jQuery("#list5").jqGrid({ 
+    	datatype: "local",
+    	height:h - 250,
+    	width: w - 50,
+    	colNames:[
+    	'Veículo',
+    	'Modelo'
+    	], 
+    	colModel:[ 
+    	{name:'id',index:'id', sorttype:"int"}, 
+    	{name:'invdate',index:'invdate', sorttype:"date"}
+    	], 
+    	multiselect: true, 
+    	caption: "Rastreamento veicular" }); 
+
+    	for(var i=0;i<=mydata.length;i++) {
+    		jQuery("#list4").jqGrid('addRowData',i+1,mydata[i]); 
+    	}
+    
+  }
+
+  /* --------- FIM JQGRID READY --------- */
+  
+  
+}
+
+
+jQuery(document).ready(function(){  
+  w = screen.availWidth;
+  h = screen.availHeight;  
+  
   document.body.style.overflow = "hidden";
   
   normal = 1;
@@ -49,42 +127,7 @@ jQuery(document).ready(function(){
     $('#tabs').css("left",left);
   });
 
-/* ----------- JQGRID READY ----------- */ 
-
-var mydata = [ {id:"1",invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
-
-for(var i=2;i<=50;i++) {
-	mydata[i] = [ {id:i,invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
-}
-
-var h = 25 + 5 * mydata.length;
-var h = 280;
-
-jQuery("#list4").jqGrid({ 
-	datatype: "local",
-	height:h,
-	width: 960,
-	colNames:[
-	'Veículo',
-	'Modelo'
-	], 
-	colModel:[ 
-	{name:'id',index:'id', sorttype:"int"}, 
-	{name:'invdate',index:'invdate', sorttype:"date"}
-	], 
-	multiselect: true, 
-	caption: "Rastreamento veicular" }); 
-
-	for(var i=0;i<=mydata.length;i++) {
-		jQuery("#list4").jqGrid('addRowData',i+1,mydata[i]); 
-	}
-
-/* --------- FIM JQGRID READY --------- */
-
-/* --------- MULTISPECTRAL READY --------- */
-
 });
-
 /* --------- GOOGLE MAPS--------- */
 
 var geocoder;
@@ -156,7 +199,10 @@ function mapa_multi() {
 			.addClass( "ui-corner-bottom" );
 	});
 	
-	
+	w = screen.availWidth;
+  h = screen.availHeight;
+  
+  
 	
 	</script>
 	
@@ -184,14 +230,19 @@ function mapa_multi() {
 <div id="tabs" class="tabs-bottom">
 	<ul>
 		<li><a class="normal" href="#tabs-1">Grid</a></li>
-		<li><a class="fullscreen" href="#tabs-1">Grid tela cheia</a></li>
+		<li><a onClick="montartabela(1,2)"  class="fullscreen" href="#tabs-2">Grid tela cheia</a></li>
 		{%if map_google %}<li><a class="fullscreen" href="#tabs-3" onClick="codeLatLng();">Google</a></li>{% endif %}
-		<li><a class="normal" href="#tabs-4">Sair do modo tela cheia</a></li>
+		{%if map_multispectral %}<li><a class="fullscreen" href="#" onClick="">Multispectral</a></li>{% endif %}
+		{%if map_maplink %}<li><a class="fullscreen" href="#" onClick="">Maplink</a></li>{% endif %}
+		
+		
 	</ul>
 	<div id="tabs-1">
 	<table id="list4"></table> 
 	</div>
-
+  <div id="tabs-2" style="z-index:-1">
+  <table id="list5"></table> 
+	</div>
 	<div id="tabs-3" style="z-index:-1">
 
 	</div>
