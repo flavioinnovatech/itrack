@@ -45,6 +45,7 @@ def isChild(system,childs):
     return is_child
 
 #renders the HTML to edit childs
+#Deprecated see v2 below
 def render_system_html(childs,rendered_list=""):
     if childs == []: 
         return ""
@@ -59,6 +60,28 @@ def render_system_html(childs,rendered_list=""):
     
     rendered_list+="</ul>"
     return rendered_list
+    
+def render_system_html2(childs,father="",rendered_list=""):
+  if childs == []: 
+    return ""
+  
+  if father != "":
+    childof = " class='child-of-node-"+father+"' "
+  else:
+    childof = ""
+  
+  for x in childs:
+      if  type(x).__name__ == "list":
+      #if its a list, execute recursively inside it
+          parentIndex = childs.index(x) - 1
+          father = System.objects.get(pk=childs[parentIndex]).name
+          rendered_list+= render_system_html2(x,father)
+      else:
+      #if its a number, mount the url for the system
+          # rendered_list+=System.objects.get(pk=x).name
+          rendered_list+="<tr id=\"node-"+System.objects.get(pk=x).name+"\" "+ childof +"><td>"+System.objects.get(pk=x).name+": <a href=\"/system/edit/"+str(x)+"/\"></td><td>Editar</a>  <a href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>\n"
+
+  return rendered_list    
 
 #serializes the recursive list from findChild
 def serializeChild(childs,ser_list=[]):
@@ -86,7 +109,7 @@ def index(request):
         vector.append(parent)
         vector.append(childs)
         
-        vector_html = render_system_html(childs)
+        vector_html = render_system_html2(childs)
         
     return render_to_response("system/templates/home.html",locals())
 
