@@ -1,3 +1,4 @@
+
 {% extends "templates/base.html" %}
 
 
@@ -17,13 +18,42 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function(){ 
+  document.body.style.overflow = "hidden";
+  
+  normal = 1;
+  $('.fullscreen').click(function() {
+    
+    if (normal == 1) {
+    
+    width = $('#tabs').css("width");
+    height= $('#tabs').css("height");
+    height = $('#tabs').css("height");
+    top =  $('#tabs').css("top");
+    left =  $('#tabs').css("left");
+    }
+    
+    normal = 0;
+    
+    $('#tabs').css("width","100%");
+    $('#tabs').css("height","100%");
+    $('#tabs').css("top","0");
+    $('#tabs').css("left","0");
+  });
+  
+  $('.normal').click(function() {
+   
+    $('#tabs').css("width","960px");
+    $('#tabs').css("height",height);
+    $('#tabs').css("top",top);
+    $('#tabs').css("left",left);
+  });
 
 /* ----------- JQGRID READY ----------- */ 
 
 var mydata = [ {id:"1",invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
 
 for(var i=2;i<=50;i++) {
-	//mydata[i] = [ {id:i,invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
+	mydata[i] = [ {id:i,invdate:"2007-10-01",name:"test",note:"note",amount:"200.00",tax:"10.00",total:"210.00"} ];
 }
 
 var h = 25 + 5 * mydata.length;
@@ -63,6 +93,7 @@ var marker;
 geocoder = new google.maps.Geocoder();
 
 function codeLatLng() {
+  
 	var geocoder;
 	var map;
 	var infowindow = new google.maps.InfoWindow();
@@ -74,8 +105,8 @@ function codeLatLng() {
 		center: latlng,
 		mapTypeId: 'roadmap'
 	}
-	map = new google.maps.Map(document.getElementById("pop"), myOptions);
-
+	map = new google.maps.Map(document.getElementById("tabs-3"), myOptions);
+  
 	var input = "-22.896359,-47.060092";
 	var latlngStr = input.split(",",2); 
 	var lat = parseFloat(latlngStr[0]);
@@ -99,7 +130,7 @@ function codeLatLng() {
 		}
 	});
   
-  document.getElementById('pop').style.display='block';
+  //document.getElementById('pop').style.display='block';
 
 	//$("#dialog").dialog({height: $(window).height()},{ width : ($(window).width() - 25)},{ closeText: 'X' }); 
 	$(".ui-icon").css("background-image", "none");
@@ -112,27 +143,65 @@ function mapa_multi() {
 	//jQuery(".ui-icon").css("background-image", "none");
 	//jQuery(".ui-icon").css("text-indent", "0");
 	
-
 }
 
-
 </script>
+
+<script>
+	$(function() {
+		$( "#tabs" ).tabs();
+		$( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
+			.removeClass( "ui-corner-all ui-corner-top" )
+			.addClass( "ui-corner-bottom" );
+	});
+	
+	
+	
+	</script>
+	
+	
+	
+	
+	<style>
+	#tabs { height: 73%; bottom:0;position: fixed; width:960px;z-index:0;} 
+	.tabs-bottom { position: relative; } 
+	.tabs-bottom .ui-tabs-panel { height: 100%; overflow: hidden; left:0;} 
+	.tabs-bottom .ui-tabs-nav { position: absolute !important; left: 0; bottom: 0; right:0; padding: 0 0.2em 0.2em 0; } 
+	.tabs-bottom .ui-tabs-nav li { margin-top: -2px !important; margin-bottom: 1px !important; border-top: none; border-bottom-width: 1px; }
+	.ui-tabs-selected { margin-top: -3px !important; }
+	</style>
 
 {% endblock %}
 
 {% block content %}
-<table id="list4"></table> 
 
-<div id="pop">
-<a href="#" onclick="document.getElementById('pop').style.display='none';">[Fechar]</a>
-<br />
-	Agora coloque o estilo dessa div.
 
-</div>
+
 {% endblock %}
 
 {% block toolbar %}
-<div id="toolbar">
+<div id="tabs" class="tabs-bottom">
+	<ul>
+		<li><a class="normal" href="#tabs-1">Grid</a></li>
+		<li><a class="fullscreen" href="#tabs-1">Grid tela cheia</a></li>
+		<li><a class="fullscreen" href="#tabs-3" onClick="codeLatLng();">Google</a></li>
+		<li><a class="normal" href="#tabs-4">Sair do modo tela cheia</a></li>
+	</ul>
+	<div id="tabs-1">
+	<table id="list4"></table> 
+	</div>
+
+	<div id="tabs-3" style="z-index:-1">
+
+	</div>
+	<div id="tabs-4">
+
+	</div>
+</div>
+
+
+
+<div >
 	<div class="centerContainer">
 Para os veículos selecionados:<br/>
 {%if map_google %}<input type="button" value="Mostrar no mapa (Google)" onclick="codeLatLng()">{% endif %}

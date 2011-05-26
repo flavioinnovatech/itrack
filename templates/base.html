@@ -21,13 +21,20 @@
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript">jQuery.noConflict();</script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"></script> 
-	
+	  <script src="/media/js/jquery.scrollfollow.js" type="text/javascript"></script> 
 		
 		{% block head %} {% endblock %}
 		
 	</head>
 	<body>
-		{% block dialogMap %}{% endblock %}
+		{% block fullscreen %}
+		  <div id="pop">
+      <a href="#" onclick="document.getElementById('pop').style.display='none';">[Fechar]</a>
+      <br />
+      	Agora coloque o estilo dessa div.
+
+        </div>
+		{% endblock %}
 		
 		<!-- Header/Logo -->
 		<div id="topContainer">

@@ -133,7 +133,7 @@ def index(request):
     
     for item in users:
       print item.__dict__
-      rendered_list+=u"<tr style='width:5%;'><td>"+item.username+": </td><td><a href=\"/accounts/edit/"+str(item.id)+"/\">Editar</a>  <a href=\"/accounts/delete/"+str(item.id)+"/\">Apagar</a></td></tr>"
+      rendered_list+=u"<tr style='width:5%;' ><td style='width:50%;'>"+item.username+": </td><td><a class='table-button' href=\"/accounts/edit/"+str(item.id)+"/\">Editar</a>  <a class='table-button' href=\"/accounts/delete/"+str(item.id)+"/\">Apagar</a></td></tr>"
     
     return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
     

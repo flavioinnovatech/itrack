@@ -56,7 +56,7 @@ def render_system_html(childs,rendered_list=""):
             rendered_list+= render_system_html(x)
         else:
         #if its a number, mount the url for the system
-            rendered_list+="<li>"+System.objects.get(pk=x).name+": <a href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
+            rendered_list+="<li>"+System.objects.get(pk=x).name+": <a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
     
     rendered_list+="</ul>"
     return rendered_list
@@ -66,7 +66,7 @@ def render_system_html2(childs,father="",rendered_list=""):
     return ""
   
   if father != "":
-    childof = " class='child-of-node-"+father+"' "
+    childof = " class='child-of-node-"+str(father)+"' "
   else:
     childof = ""
   
@@ -74,12 +74,12 @@ def render_system_html2(childs,father="",rendered_list=""):
       if  type(x).__name__ == "list":
       #if its a list, execute recursively inside it
           parentIndex = childs.index(x) - 1
-          father = System.objects.get(pk=childs[parentIndex]).name
+          father = System.objects.get(pk=childs[parentIndex]).id
           rendered_list+= render_system_html2(x,father)
       else:
       #if its a number, mount the url for the system
           # rendered_list+=System.objects.get(pk=x).name
-          rendered_list+="<tr style='width:5%;' id=\"node-"+System.objects.get(pk=x).name+"\" "+ childof +"><td>"+System.objects.get(pk=x).name+": </td><td><a href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
+          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+System.objects.get(pk=x).name+": </td><td style='text-align:center;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
 
   return rendered_list    
 
