@@ -36,6 +36,7 @@ url(r'^equipment/$','equipments.views.index'),
 url(r'^equipment/permissions/(\d+)/$','equipments.views.permissions'),
 url(r'^equipment/associations/(\d+)/$','equipments.views.associations'),
 url(r'^equipment/finish/$','equipments.views.finish'),
+url(r'^equipment/associations/finish/$','equipments.views.assoc_finish'),
 
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response
@@ -108,7 +108,7 @@ def login(request):
         request.session['system_name'] = system_name
                 
         # Redirect to a success page.
-        return render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
+        return HttpResponseRedirect("/rastreamento/veicular")#render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
     else:
         # Show an error page
         erro = u"Usuário ou senha inexistentes."

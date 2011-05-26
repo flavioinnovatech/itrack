@@ -97,6 +97,9 @@ def permissions(request,offset):
     
 def finish(request):
     return render_to_response('equipments/templates/finish.html',locals())
+
+def assoc_finish(request):
+    return render_to_response('equipments/templates/assoc_finish.html',locals())
     
 def associations(request,offset):
  #raise an Http 403 error in case the system is not parent of the 'offset' system
@@ -116,7 +119,7 @@ def associations(request,offset):
                     eq.system.add(system_name)
                     eq.save()
                 
-                return HttpResponseRedirect("/")
+                return HttpResponseRedirect("/equipment/associations/finish/")
         else:
             form = EquipmentsForm()
             form.fields["equipments"].label = ""
