@@ -114,7 +114,7 @@ def login(request):
         return HttpResponseRedirect("/rastreamento/veicular")#render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
     else:
         # Show an error page
-        erro = u"Usuário ou senha inexistentes."
+        erro = u"Usuário ou senha incorretos."
         return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))
   else:
     return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))

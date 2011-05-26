@@ -36,7 +36,8 @@ class SettingsForm(ModelForm):
                 'color_site_font': TextInput(attrs={'class':'color'}),
                 'color_link': TextInput(attrs={'class':'color'}),
             }
-            
+        
+        
 class SystemWizard(FormWizard):
     def get_template(self,step):
         return 'system/templates/create_wizard.html'
@@ -91,6 +92,10 @@ class SystemWizard(FormWizard):
 
 
         return HttpResponseRedirect('/system/finish/')
+
+    def process_step(self, request, form, step):
+             print form
+             print form.__dict__
 
 
 def change_css(new_setting):

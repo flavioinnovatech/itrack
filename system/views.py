@@ -120,7 +120,12 @@ def create(request):
     
         sysadm = User.objects.get(pk=request.user.id)
         
+        ModifiedSettingsForm = SettingsForm
+        
+        
+        
         wiz = SystemWizard([UserCompleteForm,SystemForm,SettingsForm])
+        print wiz.__dict__
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 
     
@@ -168,20 +173,31 @@ def edit(request,offset):
             form_sys = SystemForm(instance = system)
             form_sett = SettingsForm(instance = settings)
             
-            if request.session["system"] == int(offset) and system_parent != None:
+            if request.session["system"] == int(offset)  and system_parent != None:
                 #if the system being edited is the admin own system, disable the equipment field, unless he is the root admin
                 #del form_sys.fields["equipments"]
-                pass
+                del form_sett.fields["map_google"]
+                del form_sett.fields["map_maplink"]
+                del form_sett.fields["map_multspectral"]
             else:
+                    
                 if system_parent == None:
                     system_parent = system.id
                     system_admin = system.administrator.id
+                else:
+                    settings_parent_obj = Settings.objects.get(system = system_parent)
+                    if not settings_parent_obj.map_google:
+                        del form_sett.fields["map_google"]
+                    if not settings_parent_obj.map_multspectral:
+                        del form_sett.fields["map_maplink"]
+                    if not settings_parent_obj.map_maplink:
+                        del form_sett.fields["map_multspectral"]
                 #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
-            
+                
             sysname = system.name
             wiz = SystemWizard([UserCompleteForm,SystemForm(instance = system),SettingsForm(instance = settings)])
             #return wiz(context=RequestContext(request), request=request, extra_context=locals())
-            return render_to_response("system/templates/create.html",locals(),context_instance=RequestContext(request),)
+            return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         
     else:
         raise Http403(u'Você não tem permissão para editar este sistema.')
