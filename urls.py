@@ -42,9 +42,13 @@ url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
 
 url(r'^accounts/create/$', 'accounts.views.create_user'),
-url(r'^accounts/edit/(\d+)/$','accounts.views.edit'),
+url(r'^accounts/create/finish/$', 'accounts.views.create_finish'),
+
 url(r'^accounts/delete/(\d+)/$','accounts.views.delete'),
 url(r'^accounts/ajax/delete/$','accounts.ajax.delete'),
+url(r'^accounts/edit/(\d+)/$','accounts.views.edit'),
+url(r'^accounts/edit/finish/$','accounts.views.edit_finish'),
+
 
 url(r'^accounts/password_reset/$', 'django.contrib.auth.views.password_reset', {'template_name':'accounts/templates/password_reset_form.html', 'email_template_name':'accounts/templates/password_reset_email.html'}),
 url(r'^password_reset/done/$', 'django.contrib.auth.views.password_reset_done', {'template_name':'userpanel/password_reset_done.html'}),

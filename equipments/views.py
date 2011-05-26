@@ -15,7 +15,7 @@ from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from itrack.equipments.forms import AvailableFieldsForm,EquipmentsForm
 from http403project.http import Http403
-from django.db.models import Q
+from django.db.models import Q,Count
 
 
 
@@ -61,7 +61,9 @@ def permissions(request,offset):
     parent = request.session["system"]
     if (int(offset) in childs):
         system_name = System.objects.get(pk=int(offset))
+        
         equip_types = EquipmentType.objects.all()
+
         AvailableFieldsFormset = formset_factory(AvailableFieldsForm, extra=len(equip_types))        
         if request.method == 'POST':
                 formset = AvailableFieldsFormset(request.POST)
@@ -83,14 +85,21 @@ def permissions(request,offset):
         else:
             
             formset = AvailableFieldsFormset()
-            print formset.management_form
             for form,equip in zip(formset,equip_types):
                 form.fields["custom_fields"].queryset = CustomField.objects.filter(Q(availablefields__system = parent) & Q(availablefields__equip_type = equip))
+            
                 
-                form.fields["custom_fields"].initial = CustomField.objects.filter(Q(availablefields__system = int(offset)) & Q(availablefields__equip_type = equip))              
+                form.fields["custom_fields"].initial = CustomField.objects.filter(Q(availablefields__system = int(offset)) & Q(availablefields__equip_type = equip))
+       
                 
                 form.fields["custom_fields"].label = ""
                 form.fields["equip_type"].initial = EquipmentType.objects.get(pk=equip.id).name
+                if not form.fields["custom_fields"].queryset:
+                    print "aqui!"
+                    form.fields["custom_fields"].widget = HiddenInput()
+                    form.fields["equip_type"].widget = HiddenInput()
+                    
+
             return render_to_response("equipments/templates/permissions.html",locals(),context_instance=RequestContext(request)) 
     else:
         raise Http403(u'Você não tem permissão para editar este sistema.')
@@ -124,6 +133,7 @@ def associations(request,offset):
             form = EquipmentsForm()
             form.fields["equipments"].label = ""
             form.fields["equipments"].initial = Equipment.objects.filter(system=int(offset))
+
             form.fields["equipments"].queryset = Equipment.objects.filter(system=parent)
             return render_to_response("equipments/templates/associations.html",locals(),context_instance=RequestContext(request))
     else:

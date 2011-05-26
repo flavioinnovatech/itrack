@@ -29,7 +29,7 @@
 
 {{ formset.management_form }}
    {%for form in formset %} 
-        {% for field in form %}
+        {% for field in form.visible_fields %}
         <div class="form-item">
             <div class="item-left">          
                   <p>{{ field.label_tag }}</p>
