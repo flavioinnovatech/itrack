@@ -77,6 +77,10 @@ a {
 	margin: 5px 5px 5px 5px;
 }
 
+#content h1{
+  font-weight: bold;
+}
+
 #content h2{
 	font-weight: bold;
 	margin: 0px 0 0;  
@@ -368,7 +372,7 @@ html[xmlns] #nav {
 .item-right .field{
     padding:10px;
 }
-.field input[type="text"]{
+.field input[type="text"],input[type="password"]{
     width:350px;
     border: 1px solid #aaa;
     border-radius: 0.6em 0.6em 0.6em 0.6em;
