@@ -77,6 +77,10 @@ a {
 	margin: 5px 5px 5px 5px;
 }
 
+#content h1{
+  font-weight: bold;
+}
+
 #content h2{
 	font-weight: bold;
 	margin: 0px 0 0;  
@@ -105,7 +109,7 @@ a {
   margin: auto;
 }
 
-#config table input,textarea,select {
+#config table input,textarea {
   margin:5px;
   width:80%;
 }
@@ -173,7 +177,7 @@ a {
 	text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
 }
 
-#actions a{
+#actions a,input[type="submit"]{
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
   padding:  6px 13px;
   margin-left:5px;
@@ -184,6 +188,7 @@ a {
 	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebebeb', endColorstr='#a1a1a1'); /* for IE */
 	background: -webkit-gradient(linear, left top, left bottom, from(#ebebeb), to(#a1a1a1)); /* for webkit browsers */
 	background: -moz-linear-gradient(top,  #ebebeb,  #a1a1a1); /* for firefox 3.6+ */
+	border: 1px none;
 }
 
 #loginstatus{
@@ -367,7 +372,7 @@ html[xmlns] #nav {
 .item-right .field{
     padding:10px;
 }
-.field input{
+.field input[type="text"],input[type="password"]{
     width:350px;
     border: 1px solid #aaa;
     border-radius: 0.6em 0.6em 0.6em 0.6em;
@@ -403,6 +408,11 @@ input[type="text"], input[type="password"] {
   border-radius: 0.6em 0.6em 0.6em 0.6em;
 }
 
+#content select {
+  border: 1px solid #aaa;
+  height:100%;
+}
+
 .table-button {
   font-color:#555555;
   background-color: #E2E2E2;
@@ -421,3 +431,10 @@ input[type="text"], input[type="password"] {
   position:relative;
   z-index:1;
 }
+
+.ui-timepicker-div .ui-widget-header{ margin-bottom: 8px; }
+.ui-timepicker-div dl{ text-align: left; }
+.ui-timepicker-div dl dt{ height: 25px; }
+.ui-timepicker-div dl dd{ margin: -25px 0 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+

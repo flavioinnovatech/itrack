@@ -36,6 +36,8 @@ class SettingsForm(ModelForm):
                 'color_site_font': TextInput(attrs={'class':'color'}),
                 'color_link': TextInput(attrs={'class':'color'}),
             }
+            
+
         
         
 class SystemWizard(FormWizard):

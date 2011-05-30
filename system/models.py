@@ -85,3 +85,10 @@ class Settings(models.Model):
     
     def __unicode__(self):
         return self.title    
+        
+class SystemPermissions(models.Model):
+  
+  system = models.ForeignKey(System)
+  system.default = 1
+  
+  
