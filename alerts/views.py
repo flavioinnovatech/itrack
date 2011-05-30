@@ -1,5 +1,5 @@
 # -*- coding:utf8 -*-
-
+from django.contrib.auth.models import User
 from itrack.alerts.models import Alert,System
 from itrack.alerts.forms import AlertForm
 from itrack.equipments.models import Equipment
@@ -24,7 +24,6 @@ def index(request):
       except:
         pass
 
-    
     return render_to_response("alerts/templates/index.html",locals(),context_instance=RequestContext(request))
 
 
@@ -50,6 +49,7 @@ def create(request,offset):
         
     else:
         form = AlertForm()
+        form.fields['destinataries'].queryset=User.objects.filter(system=int(offset))
         return render_to_response("alerts/templates/create.html",locals(),context_instance=RequestContext(request),)
         
 def create_finish(request):
