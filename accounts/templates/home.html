@@ -63,7 +63,9 @@ jQuery(document).ready(function(){
   <script type="text/javascript">
 
   $(document).ready(function()  {
-    $("#tree").treeTable();
+    $("#tree").treeTable({
+    initialState: "expanded"
+    });
   });
 
   </script>
@@ -86,8 +88,10 @@ jQuery(document).ready(function(){
 				  <thead>
 				    
 				    <tr role="rowheader" class="ui-jqgrid-labels">
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 50%;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Usuário</div></th>
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 453px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Ação</div></th></tr></thead></table></div></div><div class="ui-jqgrid-bdiv"><div style="margin-left:19px;"><div></div><table id="tree" cellspacing="0" cellpadding="0" border="0" id="list4" tabindex="1" role="grid" aria-multiselectable="true" aria-labelledby="gbox_list4" class="ui-jqgrid-btable" style="width:100%"><tbody>
+				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 450px;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Usuário</div></th>
+				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 150px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Tipo</div></th>
+				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 350px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Ação</div></th>				      
+				      </tr></thead></table></div></div><div class="ui-jqgrid-bdiv"><div style="margin-left:19px;"><div></div><table id="tree" cellspacing="0" cellpadding="0" border="0" id="list4" tabindex="1" role="grid" aria-multiselectable="true" aria-labelledby="gbox_list4" class="ui-jqgrid-btable" style="width:100%"><tbody>
 				      
 				      
 				  <tr style="height: auto; width:100%" role="row" class="jqgfirstrow">
@@ -105,11 +109,7 @@ jQuery(document).ready(function(){
   					{% endautoescape %}
 
 				  </tr></tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div>
-	
-	  <div align="center" style="margin-top:10px;" id="actions">
-     
-            <a href="{% url accounts.views.create_user %}">Criar usuários do seu sistema</a>
-      </div>   
+	   
       </div>
 </div>
 

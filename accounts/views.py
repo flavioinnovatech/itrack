@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding:utf-8 -*-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -13,7 +13,8 @@ from django.contrib.auth import authenticate,login
 from http403project.http import Http403
 from django.core.context_processors import csrf
 from django.contrib.auth.views import password_reset
-from itrack.system.views import findChild, render_system_html2
+from itrack.system.views import findChild
+from django import forms
 
 
 
@@ -24,7 +25,7 @@ def render_user_html(childs,father="",rendered_list=""):
   if father != "":
     childof = " class='child-of-node-"+str(father)+"' "
   else:
-    childof = ""
+    childof = " class=''"
   
   for x in childs:
       if  type(x).__name__ == "list":
@@ -35,26 +36,55 @@ def render_user_html(childs,father="",rendered_list=""):
       else:
         #if its a number, mount the url for the system
         #and find the users from the system, and the main admin
-          a = User.objects.filter(system__administrator = x)
-          u = User.objects.filter(system=x)
-          print u,a
+          s = System.objects.get(pk=x)
+          us = User.objects.filter(system=x)
+          
+          list_users = []
+          list_users.append(s.administrator.id)
+          for u in us:
+            list_users.append(u.id)
+          
           # rendered_list+=System.objects.get(pk=x).name
-          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+System.objects.get(pk=x).name+": </td><td style='text-align:center;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
+          rendered_list+=u"<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:331px;font-weight:bold;text-align:left;'>"+System.objects.get(pk=x).name+" </td><td style='width:150px;text-align:left;padding-left:10px;'>Sistema</td><td style='width:340px;' style='text-align:center;'><a class='table-button' href=\"/accounts/create/"+str(x)+"/\">Criar novo usuario</a> </td></tr>"
+          
+          userfunc = lambda y: y.groups.filter(name='administradores').count() != 0
+          posifunc = lambda j,k: j[0] == k
+          
+          
+          for u in list_users:
+            
+            if userfunc(User.objects.get(pk=u)):
+                 usertype = "Administrador"
+            else:
+                 usertype = "Usuario"
+            
+            if posifunc(list_users,u):
+                erasebutton = ""
+            else:
+                erasebutton = "<a class='table-button' href=\"/accounts/delete/"+str(u)+"/\" style=\"margin-left:3px;\">&nbsp;Apagar&nbsp;</a>"
+              
+            rendered_list+=u"<tr style='width:5%;height:24px;'  class='child-of-node-"+str(x)+"'><td style='width:50%; text-align:left;'>"+User.objects.get(pk=u).username+" </td><td style='width:150px;text-align:left;padding-left:10px;'>"+usertype+"</td><td style='text-align:center;'><a class='table-button' href=\"/accounts/edit/"+str(u)+"/\">&nbsp;Editar&nbsp;</a>"+erasebutton+"</td></tr>"
 
   return rendered_list 
 
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
-def create_user(request):
+def create_user(request,offset):
     
     if request.method == 'POST':
         
         form_user = UserForm(request.POST)
         form_profile = UserProfileForm(request.POST)
-          
+        
+        try:
+            adm = request.POST['Administrador']
+        except:
+            adm = None
+        
+        
         if ( form_user.is_valid() and form_profile.is_valid() ):
-          system_id = request.session['system']
+          system_id = int(offset)
           system = System.objects.get(pk=int(system_id))
           
           new_user = form_user.save(commit=False)
@@ -66,6 +96,9 @@ def create_user(request):
 
           user.set_password(password)
           user.save()
+          if adm is not None:
+            print "aqui"
+            user.groups.add(1)
 
                     
           new_profile = form_profile.save(commit=False)
@@ -84,10 +117,10 @@ def create_user(request):
           return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
 
     else:
-        form_user = UserForm()
-        form_profile = UserProfileForm()
+        #form_user = UserForm()
+        #form_profile = UserProfileForm()
         form = UserCompleteForm()
-
+        form.fields["Administrador"] = forms.CharField(widget=forms.CheckboxInput(),help_text="Marque a caixa para atribuir privilégios administrativos ao usuário")
         return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
         
 def edit_finish(request):
@@ -167,7 +200,7 @@ def index(request):
       rendered_list+=u"<tr style='width:5%;' ><td style='width:50%;'>"+item.username+": </td><td><a class='table-button' href=\"/accounts/edit/"+str(item.id)+"/\">Editar</a>  <a class='table-button' href=\"/accounts/delete/"+str(item.id)+"/\">Apagar</a></td></tr>"
     
     
-    rendered_list = render_user_html(findChild(system))
+    rendered_list = render_user_html([system,findChild(system)])
     return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
     
 @login_required
@@ -231,7 +264,7 @@ def delete(request,offset):
     system = request.session['system']
     users = User.objects.filter(system=system)
     
-    if user in users:
+    if True == True: #user in users:
       return render_to_response("accounts/templates/delete.html",locals(),context_instance=RequestContext(request))
       
     else:
