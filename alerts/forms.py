@@ -10,7 +10,7 @@ from django.forms import *
 class AlertForm(ModelForm):
     class Meta:
         model = Alert
-        exclude = ('equipment','system')
+        exclude = ('system')
         widgets = {
             'time_start' : DateTimeInput(attrs={'class':'datepicker'}),
             'time_end': DateTimeInput(attrs={'class':'datepicker'}),
