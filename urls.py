@@ -61,8 +61,6 @@ url(r'^vehicles/delete/finish/$','vehicles.views.delete_finish'),
 url(r'^commands/$', 'command.views.index'),
 url(r'^commands/create/(\d+)/$','command.views.create'),
 url(r'^commands/create/finish/$','command.views.create_finish'),
-url(r'^commands/edit/(\d+)/$','command.views.edit'),
-url(r'^commands/edit/finish/$','command.views.edit_finish'),
 url(r'^commands/delete/(\d+)/$','command.views.delete'),
 url(r'^commands/delete/finish/$','command.views.delete_finish'),
 

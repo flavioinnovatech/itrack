@@ -13,6 +13,35 @@ from django.contrib.auth import authenticate,login
 from http403project.http import Http403
 from django.core.context_processors import csrf
 from django.contrib.auth.views import password_reset
+from itrack.system.views import findChild, render_system_html2
+
+
+
+def render_user_html(childs,father="",rendered_list=""):
+  if childs == []: 
+    return ""
+  
+  if father != "":
+    childof = " class='child-of-node-"+str(father)+"' "
+  else:
+    childof = ""
+  
+  for x in childs:
+      if  type(x).__name__ == "list":
+      #if its a list, execute recursively inside it
+          parentIndex = childs.index(x) - 1
+          father = System.objects.get(pk=childs[parentIndex]).id
+          rendered_list+= render_user_html(x,father)
+      else:
+        #if its a number, mount the url for the system
+        #and find the users from the system, and the main admin
+          a = User.objects.filter(system__administrator = x)
+          u = User.objects.filter(system=x)
+          print u,a
+          # rendered_list+=System.objects.get(pk=x).name
+          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+System.objects.get(pk=x).name+": </td><td style='text-align:center;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
+
+  return rendered_list 
 
 
 @login_required
@@ -128,13 +157,17 @@ def index(request):
     system = request.session['system']
     
     #TO-DO pegar usarios pelo ID do sistema
+    
     users = User.objects.filter(system=system)
+    
     rendered_list = ""
     
     for item in users:
-      print item.__dict__
+      
       rendered_list+=u"<tr style='width:5%;' ><td style='width:50%;'>"+item.username+": </td><td><a class='table-button' href=\"/accounts/edit/"+str(item.id)+"/\">Editar</a>  <a class='table-button' href=\"/accounts/delete/"+str(item.id)+"/\">Apagar</a></td></tr>"
     
+    
+    rendered_list = render_user_html(findChild(system))
     return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
     
 @login_required
