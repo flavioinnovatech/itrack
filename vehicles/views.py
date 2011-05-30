@@ -1,7 +1,7 @@
 # -*- coding:utf8 -*-
 
 from itrack.vehicles.models import Vehicle
-from itrack.vehicles.forms import VehicleForm
+from itrack.vehicles.forms import VehicleForm,SwapForm
 from itrack.equipments.models import Equipment
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
@@ -33,7 +33,7 @@ def create(request,offset):
     if request.method == 'POST':
         
         form = VehicleForm(request.POST)
-        if form.is_valid:
+        if form.is_valid():
             e = Equipment.objects.get(pk=int(offset))
             v = form.save(commit=False)
             v.equipment = e
@@ -53,7 +53,7 @@ def edit(request,offset):
     v = Vehicle.objects.get(pk=int(offset))
     if request.method == 'POST':    
         form = VehicleForm(request.POST,instance=v)
-        if form.is_valid:
+        if form.is_valid():
             e = Equipment.objects.get(pk=int(offset))
             v = form.save(commit=False)
             v.equipment = e
@@ -74,8 +74,6 @@ def edit_finish(request):
 def delete(request,offset):
   v = Vehicle.objects.get(pk=int(offset))
   if request.method == 'POST':
-    
-    
     v.delete()
     
     return HttpResponseRedirect("/vehicles/delete/finish")
@@ -87,5 +85,32 @@ def delete_finish(request):
     return render_to_response("vehicles/templates/delete_finish.html",locals())
 
 
+def swap(request,offset):
+  v = Vehicle.objects.get(pk=int(offset))
+  
+  if request.method == 'POST':
+    e = Equipment.objects.get(pk=request.POST["equipment"])
+    try:
+        v2 = Vehicle.objects.get(equipment = e)
+    except:
+        v2 = None
+        
+    if v2 != None:
+        e2 = Equipment.objects.get(vehicle=v)
+        v.equipment = e
+        v2.equipment = e2
+        v.save()
+        v2.save()
+        
+    else:
+        v.equipment = e
+        v.save()
+            
+    return HttpResponseRedirect("/vehicles/delete/finish")
+    
+  else:
+    form = SwapForm()
+    form.fields["equipment"].queryset = Equipment.objects.filter(system=request.session["system"])
+    return render_to_response("vehicles/templates/swap.html",locals(),context_instance=RequestContext(request))
         
 

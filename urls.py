@@ -56,6 +56,7 @@ url(r'^vehicles/edit/(\d+)/$','vehicles.views.edit'),
 url(r'^vehicles/edit/finish/$','vehicles.views.edit_finish'),
 url(r'^vehicles/delete/(\d+)/$','vehicles.views.delete'),
 url(r'^vehicles/delete/finish/$','vehicles.views.delete_finish'),
+url(r'^vehicles/swap/(\d+)/$','vehicles.views.swap'),
 
 
 url(r'^commands/$', 'command.views.index'),
