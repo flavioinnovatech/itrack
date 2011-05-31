@@ -109,7 +109,7 @@ def swap(request,offset):
         v.equipment = e
         v.save()
             
-    return HttpResponseRedirect("/vehicles/swap/finish")
+    return HttpResponseRedirect("/vehicles/delete/finish")
     
   else:
     form = SwapForm()
