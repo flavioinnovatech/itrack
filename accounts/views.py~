@@ -61,7 +61,7 @@ def render_user_html(childs,father="",rendered_list=""):
             if posifunc(list_users,u):
                 erasebutton = ""
             else:
-                erasebutton = "<a class='table-button' href=\"/accounts/delete/"+str(u)+"/\" style="margin-left:3px;">&nbsp;Apagar&nbsp;</a>"
+                erasebutton = "<a class='table-button' href=\"/accounts/delete/"+str(u)+"/\" style=\"margin-left:3px;\">&nbsp;Apagar&nbsp;</a>"
               
             rendered_list+=u"<tr style='width:5%;height:24px;'  class='child-of-node-"+str(x)+"'><td style='width:50%; text-align:left;'>"+User.objects.get(pk=u).username+" </td><td style='width:150px;text-align:left;padding-left:10px;'>"+usertype+"</td><td style='text-align:center;'><a class='table-button' href=\"/accounts/edit/"+str(u)+"/\">&nbsp;Editar&nbsp;</a>"+erasebutton+"</td></tr>"
 

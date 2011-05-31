@@ -16,8 +16,6 @@ from django.contrib.auth.views import password_reset
 from itrack.system.views import findChild
 from django import forms
 
-
-
 def render_user_html(childs,father="",rendered_list=""):
   if childs == []: 
     return ""
