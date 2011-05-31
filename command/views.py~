@@ -17,7 +17,7 @@ def index(request):
     for c in equipments:
         try:
             print ('a' if True else 'b')
-            rendered_list+=u"<tr style='width:5%;'><td style=\"width:100px\">"+c.equipment.name+": </td><td style=\"width:100px\">"+str(c.type)+"</td><td style=\"width:100px\">"+str(c.state)+"</td><td style=\"width:150px\">"+(str(c.time_sent) if (c.time_sent is not None) else "")+"</td><td style=\"width:150px\">"+ str(c.time_received)+"</td><td style=\"width:150px\">"+str(c.time_executed)+"</td><td> <a class='table-button'  href=\"/commands/delete/"+str(c.id)+"/\">Apagar</a></td></tr>"
+            rendered_list+=u"<tr style='width:5%;'><td style=\"width:100px\">"+c.equipment.name+" </td><td style=\"width:100px\">"+str(c.type)+"</td><td style=\"width:100px\">"+str(c.state)+"</td><td style=\"width:150px\">"+(str(c.time_sent) if (c.time_sent is not None) else "")+"</td><td style=\"width:150px\">"+(str(c.time_received) if (c.time_received is not None) else "")+"</td><td style=\"width:150px\">"+(str(c.time_executed) if (c.time_executed is not None) else "")+"</td><td> <a class='table-button'  href=\"/commands/delete/"+str(c.id)+"/\">Apagar</a></td></tr>"
         except:
             pass
     

@@ -91,4 +91,3 @@ class SystemPermissions(models.Model):
   system = models.ForeignKey(System)
   
   
-  

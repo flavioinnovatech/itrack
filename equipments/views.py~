@@ -129,9 +129,9 @@ def assoc_finish(request):
     
 def associations(request,offset):
  #raise an Http 403 error in case the system is not parent of the 'offset' system
-    childs = findDirectChild(request.session['system'])
+    childs = findChild(request.session['system'])
     parent = request.session["system"]
-    if (int(offset) in childs):
+    if (isChild(int(offset),childs)):
         system_name = System.objects.get(pk=int(offset))
         
         if request.method == 'POST':
