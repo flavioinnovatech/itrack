@@ -109,11 +109,7 @@ jQuery(document).ready(function(){
   					{% endautoescape %}
 
 				  </tr></tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div>
-	
-	  <div align="center" style="margin-top:10px;" id="actions">
-     
-            <a href="{% url accounts.views.create_user %}">Criar usuários do seu sistema</a>
-      </div>   
+	   
       </div>
 </div>
 

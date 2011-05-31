@@ -1,4 +1,5 @@
 from itrack.vehicles.models import Vehicle
+from itrack.equipments.models import Equipment
 from django.forms import *
 
 class VehicleForm(ModelForm):
@@ -7,4 +8,4 @@ class VehicleForm(ModelForm):
         exclude=['equipment']
         
 class SwapForm(Form):
-    equipment = ModelChoiceField()
+    equipment = ModelChoiceField(Equipment.objects.all)

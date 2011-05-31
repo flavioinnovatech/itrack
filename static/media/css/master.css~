@@ -70,7 +70,7 @@ a {
 	height:100%;
 }
 
-#content span{
+#content p{
 	//font-size: 15px;
 	font-weight: bold;	
 	margin-bottom:5px;
@@ -150,7 +150,7 @@ a {
 	padding: 7px 6px 0;
 	line-height: 100%;
 	border-radius: 2em;
-
+    min-width:890px;
 	-webkit-border-radius: 2em;
 	-moz-border-radius: 2em;
 	

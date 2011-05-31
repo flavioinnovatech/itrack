@@ -92,25 +92,32 @@ def swap(request,offset):
   v = Vehicle.objects.get(pk=int(offset))
   
   if request.method == 'POST':
-    e = Equipment.objects.get(pk=request.POST["equipment"])
-    try:
-        v2 = Vehicle.objects.get(equipment = e)
-    except:
-        v2 = None
-        
-    if v2 != None:
-        e2 = Equipment.objects.get(vehicle=v)
-        v.equipment = e
-        v2.equipment = e2
-        v.save()
-        v2.save()
-        
-    else:
-        v.equipment = e
-        v.save()
-            
-    return HttpResponseRedirect("/vehicles/swap/finish")
+    form = SwapForm(request.POST)
     
+    print "form:",form
+    if form.is_valid():
+  
+        e = Equipment.objects.get(pk=request.POST["equipment"])
+        try:
+            v2 = Vehicle.objects.get(equipment = e)
+        except:
+            v2 = None
+            
+        if v2 != None:
+            e2 = Equipment.objects.get(vehicle=v)
+            v.equipment = e
+            v2.equipment = e2
+            v.save()
+            v2.save()
+            
+        else:
+            v.equipment = e
+            v.save()
+            
+        return HttpResponseRedirect("/vehicles/swap/finish")
+    else:
+        form.fields["equipment"].queryset = Equipment.objects.filter(system=request.session["system"])
+        return render_to_response("vehicles/templates/swap.html",locals(),context_instance=RequestContext(request))
   else:
     form = SwapForm()
     form.fields["equipment"].queryset = Equipment.objects.filter(system=request.session["system"])
