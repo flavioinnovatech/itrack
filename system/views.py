@@ -56,7 +56,7 @@ def render_system_html(childs,rendered_list=""):
             rendered_list+= render_system_html(x)
         else:
         #if its a number, mount the url for the system
-            rendered_list+="<li>"+System.objects.get(pk=x).name+": <a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
+            rendered_list+="<li>"+System.objects.get(pk=x).name+" <a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
     
     rendered_list+="</ul>"
     return rendered_list
@@ -132,11 +132,9 @@ def create(request):
         print settings_parent.map_multspectral
         
         if not settings_parent.map_google:
-            print "aqui!"
             ModifiedSettingsForm.base_fields["map_google"].widget = HiddenInput()
         if not settings_parent.map_multspectral:
             ModifiedSettingsForm.base_fields["map_maplink"].widget = HiddenInput()
-            print "aqui!"
         if not settings_parent.map_maplink:
             ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
         

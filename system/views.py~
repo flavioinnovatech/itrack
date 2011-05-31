@@ -132,11 +132,9 @@ def create(request):
         print settings_parent.map_multspectral
         
         if not settings_parent.map_google:
-            print "aqui!"
             ModifiedSettingsForm.base_fields["map_google"].widget = HiddenInput()
         if not settings_parent.map_multspectral:
             ModifiedSettingsForm.base_fields["map_maplink"].widget = HiddenInput()
-            print "aqui!"
         if not settings_parent.map_maplink:
             ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
         
