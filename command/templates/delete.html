@@ -1,12 +1,12 @@
 {% extends "templates/base.html" %}
-
+{%  block title %}Infotrack - Remoção de comando{% endblock  %}
 {% block content  %}
 
 <div class="main-form">
-  <h1>Gerenciamento de Veículos</h1>
+  <h1>Histórico de comandos</h1>
   <hr />
-					<h2>Remoção de Veículo</h2>
-					<em> Tem certeza que deseja remover o veículo "{{ v.license_plate }}"? </em>
+					<h2>Remoção de Comando</h2>
+					<em> Tem certeza que deseja remover o comando "{{ c.type }}" do equipamento "{{ c.equipment.name }}"? </em>
 					
 					<div align="center" style="margin-top:10px;" id="actions">
             

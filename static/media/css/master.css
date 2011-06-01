@@ -409,9 +409,10 @@ input[type="text"], input[type="password"] {
   border-radius: 0.6em 0.6em 0.6em 0.6em;
 }
 
-#content select {
+.item-right select {
   border: 1px solid #aaa;
   height:100%;
+  width:350px;
 }
 
 .table-button {

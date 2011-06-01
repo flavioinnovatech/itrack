@@ -56,6 +56,7 @@ def delete(request,offset):
     return HttpResponseRedirect("/commands/delete/finish")
     
   else:
+      print c.__dict__
       return render_to_response("command/templates/delete.html",locals(),context_instance=RequestContext(request))
       
 def delete_finish(request):
