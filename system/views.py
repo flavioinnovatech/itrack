@@ -79,7 +79,7 @@ def render_system_html2(childs,father="",rendered_list=""):
       else:
       #if its a number, mount the url for the system
           # rendered_list+=System.objects.get(pk=x).name
-          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+System.objects.get(pk=x).name+": </td><td style='text-align:center;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
+          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+System.objects.get(pk=x).name+" </td><td style='text-align:center;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
 
   return rendered_list    
 
@@ -240,7 +240,7 @@ def delete(request,offset):
                     UserProfile.objects.get(profile=usr).delete()
                     usr.delete()
                 sys.administrator.delete()
-                print "deletou"
+
             sys = System.objects.get(pk=int(offset))
             sys.administrator.delete()
             #sys.delete()

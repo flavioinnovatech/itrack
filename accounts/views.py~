@@ -218,17 +218,17 @@ def edit(request,offset):
         new_user.set_password(new_user.password)
         new_user.save()
         new_profile = form_profile.save()
-        return HttpResponseRedirect ("/accounts/edit/finish")
+        return HttpResponseRedirect ("/system/edit/finish")
 
 
-    return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
+    return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request))
     
   else:
     
     system = request.session['system']
     users = User.objects.filter(system=system)
     
-        try:
+    try:
         s = System.objects.get(users__id=user.id)
     except:
         s = System.objects.get(administrator__id = user.id)
@@ -236,7 +236,7 @@ def edit(request,offset):
       form = UserCompleteForm(instance = user)
       form.initial = dict( form.initial.items() + profile.__dict__.items())
       
-      return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
+      return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request))
       
     else:
       raise Http403(u'Você não tem permissão para editar este usuário.')
@@ -257,7 +257,7 @@ def delete(request,offset):
     #TO-DO pegar usarios pelo ID do sistema
     users = User.objects.filter(system=system)
     
-    return render_to_response("accounts/templates/delete_finish.html",locals(),context_instance=RequestContext(request))
+    return render_to_response("system/templates/delete_finish.html",locals(),context_instance=RequestContext(request))
     
   else:
     user = User.objects.get(pk=int(offset))

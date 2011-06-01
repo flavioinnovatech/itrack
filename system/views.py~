@@ -56,7 +56,7 @@ def render_system_html(childs,rendered_list=""):
             rendered_list+= render_system_html(x)
         else:
         #if its a number, mount the url for the system
-            rendered_list+="<li>"+System.objects.get(pk=x).name+": <a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
+            rendered_list+="<li>"+System.objects.get(pk=x).name+" <a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
     
     rendered_list+="</ul>"
     return rendered_list
@@ -240,7 +240,7 @@ def delete(request,offset):
                     UserProfile.objects.get(profile=usr).delete()
                     usr.delete()
                 sys.administrator.delete()
-                print "deletou"
+
             sys = System.objects.get(pk=int(offset))
             sys.administrator.delete()
             #sys.delete()
