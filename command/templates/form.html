@@ -11,18 +11,25 @@
 <em>Informe os dados necessários para o cadastro do usuário no sistema.</em>
 {% endblock %}
 <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
+      <table>
     {% for field in form %}
+
+        <tr>
+        <td>
         <div class="form-item">
             <div class="item-left">          
                   <p>{{ field.label_tag }}</p>
                   <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
             </div>
+        </td>
+        <td>
             <div class="item-right">
                 <p class="errorlist">{{ field.errors }} </p>
                  <p class="field">{{ field }} </p>          
             </div>
         </div>
-        <hr / >
+        </td>
+        </tr>
     {% endfor %}
     </table>
 <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />

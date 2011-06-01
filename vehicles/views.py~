@@ -93,6 +93,7 @@ def swap(request,offset):
   
   if request.method == 'POST':
     form = SwapForm(request.POST)
+    
     print "form:",form
     if form.is_valid():
   
@@ -104,10 +105,17 @@ def swap(request,offset):
             
         if v2 != None:
             e2 = Equipment.objects.get(vehicle=v)
+            print e2
+            print e
+            print v
+            print v2
             v.equipment = e
-            v2.equipment = e2
-            v.save()
+            v2.equipment = None
             v2.save()
+            v.save()
+            v2.equipment = e2
+            v2.save()
+            
             
         else:
             v.equipment = e

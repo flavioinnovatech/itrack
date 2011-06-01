@@ -56,7 +56,7 @@ def edit(request,offset):
         if form.is_valid():
             e = Equipment.objects.get(pk=int(offset))
             v = form.save(commit=False)
-            v.equipment = e
+            #v.equipment = e
             v.save()
             return HttpResponseRedirect("/vehicles/edit/finish")
         else:
@@ -105,10 +105,17 @@ def swap(request,offset):
             
         if v2 != None:
             e2 = Equipment.objects.get(vehicle=v)
+            print e2
+            print e
+            print v
+            print v2
             v.equipment = e
-            v2.equipment = e2
-            v.save()
+            v2.equipment = None
             v2.save()
+            v.save()
+            v2.equipment = e2
+            v2.save()
+            
             
         else:
             v.equipment = e

@@ -4,6 +4,6 @@
 {% block form_title %}
 <h1>Edição de veículo </h1>
 <h2>Dados de cadastro</h2>
-<em>Altere abaixo as informações do veículo.</em>
+<em>Altere abaixo as informações do sistema.</em>
 {% endblock %}
 

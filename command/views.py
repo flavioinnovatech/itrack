@@ -28,7 +28,7 @@ def create(request,offset):
     if request.method == 'POST':
         
         form = CommandForm(request.POST)
-        if form.is_valid:
+        if form.is_valid():
             s = System.objects.get(pk=int(offset))
             c = form.save(commit=False)
             c.system = s
@@ -56,6 +56,7 @@ def delete(request,offset):
     return HttpResponseRedirect("/commands/delete/finish")
     
   else:
+      print c.__dict__
       return render_to_response("command/templates/delete.html",locals(),context_instance=RequestContext(request))
       
 def delete_finish(request):
