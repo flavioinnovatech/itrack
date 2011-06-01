@@ -68,7 +68,7 @@ def index(request):
 def permissions(request,offset):
  #raise an Http 403 error in case the system is not parent of the 'offset' system
     childs = findChild(request.session['system'])
-    parent = request.session["system"]
+    parent = System.objects.get(pk=int(offset)).parent
     if (isChild(int(offset), childs)):
         system_name = System.objects.get(pk=int(offset))
         
@@ -130,7 +130,7 @@ def assoc_finish(request):
 def associations(request,offset):
  #raise an Http 403 error in case the system is not parent of the 'offset' system
     childs = findChild(request.session['system'])
-    parent = request.session["system"]
+    parent = System.objects.get(pk=int(offset)).parent
     if (isChild(int(offset),childs)):
         system_name = System.objects.get(pk=int(offset))
         
