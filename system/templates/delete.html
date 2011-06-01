@@ -11,11 +11,11 @@
 					
 					{% if childs  %}
 					    <p>
-					        
-					        Removendo este sistema, você também estará deletando os seus sistemas filhos listados abaixo:
-					        <ul>
+					        <em>
+					        Removendo este sistema, você também estará deletando os seus sistemas filhos listados abaixo:</em>
+					        <ul style="margin:10px;margin-left:50px;">
 					        {% for s in childs %}
-					            <li>{{s}}</li>
+					            <li style="list-style:circle;">{{s}}</li>
 					        {% endfor %}
 					        </ul>
 					    </p>

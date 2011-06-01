@@ -11,15 +11,15 @@
 					
 					{% if childs  %}
 					    <p>
-					        
-					        Removendo este sistema, você também estará deletando os seus sistemas filhos listados abaixo:
-					        <ul>
+					        <em>
+					        Removendo este sistema, você também estará deletando os seus sistemas filhos listados abaixo:</em>
+					        <ul style="margin:10px;">
 					        {% for s in childs %}
-					            <li>{{s}}</li>
+					            <li style="list-style:circle;">{{s}}</li>
 					        {% endfor %}
 					        </ul>
 					    </p>
-					    {% endif %}
+					{% endif %}
 					<div align="center" style="margin-top:10px;" id="actions">
             
             <form action='.' method='post'>{% csrf_token %}
@@ -29,32 +29,4 @@
             </div>
 
 {% endblock %}
-			<tr class="ui-widget-content jqgrow ui-row-ltr">
-				<td>
-					<h2>Confirmar remoção:</h2>
-					    <p> Tem certeza que deseja remover o sistema {{main_system}}? Todos os usuários de cada sistema removido também serão removidos no processo.</p>
-					    
-					    {% if childs  %}
-					    <p>
-					        
-					        Removendo este sistema, você também estará deletando os seus sistemas filhos listados abaixo:
-					        <ul>
-					        {% for s in childs %}
-					            <li>{{s}}</li>
-					        {% endfor %}
-					        </ul>
-					    </p>
-					    {% endif %}
-					    
-					    <form action='.' method='post'>{% csrf_token %}
-                            <input type="submit" value="Remover" /> <input type="button" value="Cancelar" onClick="history.back();"/>
-                        </form>
-					    
-					         
-				</td>
-			</tr>
-		</tbody>
-	</table>
-    
-</div>
-{% endblock %}
+
