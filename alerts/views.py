@@ -2,6 +2,7 @@
 from django.db.models import Q
 from django.contrib.auth.models import User
 from itrack.system.models import System
+from itrack.system.views import findChild,isChild
 from itrack.equipments.models import Equipment
 from itrack.alerts.models import Alert
 from itrack.alerts.forms import AlertForm
@@ -51,7 +52,9 @@ def create(request,offset):
         form = AlertForm()
         adm_id = System.objects.get(pk=int(system_id)).administrator.id
         form.fields['equipment'].queryset=Equipment.objects.filter(system=int(system_id))
+        
         form.fields['destinataries'].queryset=User.objects.filter(Q(system=int(system_id)) | Q(pk=adm_id) )
+        
         return render_to_response("alerts/templates/create.html",locals(),context_instance=RequestContext(request))
         
 def create_finish(request):
@@ -78,7 +81,19 @@ def edit(request,offset):
         form = AlertForm(instance=v)
         adm_id = System.objects.get(pk=system_id).administrator.id
         form.fields['equipment'].queryset=Equipment.objects.filter(system=system_id)
-        form.fields['destinataries'].queryset=User.objects.filter(Q(system=system_id) | Q(pk=adm_id) )
+        
+        systems = System.objects.all()
+        
+        sysids = []
+        queryset =""
+        for sys in systems:
+          if ( isChild(sys.id,[system_id,findChild(system_id)]) == True):
+            sysids.append(sys.id)
+
+        filter_dict = {'system__id__in': sysids}
+                
+        form.fields['destinataries'].queryset=User.objects.filter(**filter_dict)
+        
         return render_to_response("alerts/templates/edit.html",locals(),context_instance=RequestContext(request),)
         
 def edit_finish(request):
@@ -87,11 +102,10 @@ def edit_finish(request):
 
     
 def delete(request,offset):
-  v = Vehicle.objects.get(pk=int(offset))
+  a = Alert.objects.get(pk=int(offset))
   if request.method == 'POST':
     
-    
-    v.delete()
+    a.delete()
     
     return HttpResponseRedirect("/alerts/delete/finish")
     
