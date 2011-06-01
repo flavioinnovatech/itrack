@@ -228,7 +228,7 @@ def deletefinish(request):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def delete(request,offset):
 #raise an Http 403 error in case the system is not parent of the 'offset' system
-    childs = findChild(request.session['system'])
+    childs = findChild(request.session["system"])
     if isChild(int(offset),childs):
         if request.method == 'POST':
             ids = serializeChild(findChild(int(offset)),[])
@@ -251,7 +251,7 @@ def delete(request,offset):
             
             ids = serializeChild(findChild(int(offset)),[])
             childs = System.objects.filter(pk__in=ids)
-
+            main_system = System.objects.get(pk=int(offset)).name
             return render_to_response("system/templates/delete.html",locals(),context_instance=RequestContext(request))
     
             
