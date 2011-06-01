@@ -28,7 +28,7 @@ def create(request,offset):
     if request.method == 'POST':
         
         form = CommandForm(request.POST)
-        if form.is_valid:
+        if form.is_valid():
             s = System.objects.get(pk=int(offset))
             c = form.save(commit=False)
             c.system = s
