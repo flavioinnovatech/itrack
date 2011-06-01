@@ -179,6 +179,8 @@ def edit(request,offset):
                 message =  "Sistema editado com sucesso."    
                 return HttpResponseRedirect("/system/edit/finish/")
 
+            else:
+              return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
             
         else:
             #display the edit form
