@@ -1,10 +1,12 @@
 {% extends "templates/base.html" %}
-
+{% block title  %}
+Infotrack - Associações de Equipamentos
+{% endblock %}
 {% block content %}
 
 
 <div  class="main-form">
-<h1>Permissões de sistema</h1>
+<h1>Permissões de Sistema</h1>
 <hr />
 <h2> Permissões aplicadas com sucesso </h2>
 <em>As permissões foram aplicadas corretamente ao sistema selecionado. <a href="{% url equipments.views.index %}"> Clique aqui para voltar a tela de gerenciamento de permissões. </a></em>
