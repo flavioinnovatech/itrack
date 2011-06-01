@@ -22,7 +22,8 @@ a {
   font-size:12px;
 }
 
-#login input {
+#login input[type="text"],#login input[type="password"] {
+  width: 200px;
 	margin: 5px;
 	border: 1px solid #AAAAAA;
 }
