@@ -235,7 +235,7 @@ def edit(request,offset):
     if isChild(s.id,[system,findChild(system)]):
       form = UserCompleteForm(instance = user)
       form.initial = dict( form.initial.items() + profile.__dict__.items())
-      
+      form.initial["password"] = ""
       return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
       
     else:

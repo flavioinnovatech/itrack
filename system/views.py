@@ -174,7 +174,8 @@ def edit(request,offset):
                 new_setting  = change_css(new_setting)              
                 new_setting.save()
                 
-                request.session['css'] = new_setting.css
+                if request.session['system'] == System.objects.get(pk=int(offset)).id:
+                    request.session['css'] = new_setting.css
                 message =  "Sistema editado com sucesso."    
                 return HttpResponseRedirect("/system/edit/finish/")
 
