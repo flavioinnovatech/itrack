@@ -14,7 +14,7 @@
     {% for field in form %}
         <div class="form-item">
             <div class="item-left">          
-                  <p>{{ field.label_tag }}</p>
+                  <p>{{ field.label_tag }}{%if field.field.required%} *{%endif%}</p>
                   <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
             </div>
             <div class="item-right">

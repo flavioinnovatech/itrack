@@ -156,6 +156,8 @@ def login(request):
                 system_id = item.id
                 domain = item.domain
                 system_name = item.name
+        
+        print request.user
             
         user_settings = Settings.objects.filter(system__id=system_id)
       	for item in user_settings:
@@ -170,7 +172,8 @@ def login(request):
         request.session['username'] = username
         request.session['user_id'] = user_id
         request.session['system_name'] = system_name
-                
+        
+        print "aqui!"
         # Redirect to a success page.
         return HttpResponseRedirect("/rastreamento/veicular")#render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
     else:
