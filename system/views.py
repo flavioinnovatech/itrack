@@ -45,6 +45,7 @@ def isChild(system,childs):
     return is_child
 
 #renders the HTML to edit childs
+#Deprecated see v2 below
 def render_system_html(childs,rendered_list=""):
     if childs == []: 
         return ""
@@ -55,10 +56,32 @@ def render_system_html(childs,rendered_list=""):
             rendered_list+= render_system_html(x)
         else:
         #if its a number, mount the url for the system
-            rendered_list+="<li>"+System.objects.get(pk=x).name+": <a href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
+            rendered_list+="<li>"+System.objects.get(pk=x).name+": <a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
     
     rendered_list+="</ul>"
     return rendered_list
+    
+def render_system_html2(childs,father="",rendered_list=""):
+  if childs == []: 
+    return ""
+  
+  if father != "":
+    childof = " class='child-of-node-"+str(father)+"' "
+  else:
+    childof = ""
+  
+  for x in childs:
+      if  type(x).__name__ == "list":
+      #if its a list, execute recursively inside it
+          parentIndex = childs.index(x) - 1
+          father = System.objects.get(pk=childs[parentIndex]).id
+          rendered_list+= render_system_html2(x,father)
+      else:
+      #if its a number, mount the url for the system
+          # rendered_list+=System.objects.get(pk=x).name
+          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+System.objects.get(pk=x).name+": </td><td style='text-align:center;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
+
+  return rendered_list    
 
 #serializes the recursive list from findChild
 def serializeChild(childs,ser_list=[]):
@@ -86,7 +109,7 @@ def index(request):
         vector.append(parent)
         vector.append(childs)
         
-        vector_html = render_system_html(childs)
+        vector_html = render_system_html2(childs)
         
     return render_to_response("system/templates/home.html",locals())
 
@@ -95,9 +118,33 @@ def index(request):
 def create(request):
         system = request.session["system"]
     
-        sysadm = User.objects.get(pk=request.user.id)
+        class ModifiedSettingsForm(SettingsForm):
+            pass
         
-        wiz = SystemWizard([UserCompleteForm,SystemForm,SettingsForm])
+        print ModifiedSettingsForm.__dict__
+        
+        sysadm = User.objects.get(pk=request.user.id)
+        settings_parent = Settings.objects.get(system=system)
+        
+        print settings_parent
+        print settings_parent.map_google
+        print settings_parent.map_maplink
+        print settings_parent.map_multspectral
+        
+        if not settings_parent.map_google:
+            print "aqui!"
+            ModifiedSettingsForm.base_fields["map_google"].widget = HiddenInput()
+        if not settings_parent.map_multspectral:
+            ModifiedSettingsForm.base_fields["map_maplink"].widget = HiddenInput()
+            print "aqui!"
+        if not settings_parent.map_maplink:
+            ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
+        
+
+        
+        
+        wiz = SystemWizard([UserCompleteForm,SystemForm,ModifiedSettingsForm])
+        print wiz.__dict__
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 
     
@@ -115,7 +162,7 @@ def edit(request,offset):
     if isChild(int(offset),childs) or int(offset) == request.session['system']:
         if request.method == 'POST':
             #process the edit form
-            
+            print request.POST.__dict__
             system = System.objects.get(pk=int(offset))
             settings = Settings.objects.get(system__id=int(offset))
             
@@ -145,17 +192,31 @@ def edit(request,offset):
             form_sys = SystemForm(instance = system)
             form_sett = SettingsForm(instance = settings)
             
-            if request.session["system"] == int(offset) and system_parent != None:
+            
+            if request.session["system"] == int(offset)  and system_parent != None:
                 #if the system being edited is the admin own system, disable the equipment field, unless he is the root admin
                 #del form_sys.fields["equipments"]
-                pass
+                del form_sett.fields["map_google"]
+                del form_sett.fields["map_maplink"]
+                del form_sett.fields["map_multspectral"]
             else:
+                    
                 if system_parent == None:
                     system_parent = system.id
                     system_admin = system.administrator.id
+                else:
+                    settings_parent_obj = Settings.objects.get(system = system_parent)
+                    if not settings_parent_obj.map_google:
+                        del form_sett.fields["map_google"]
+                    if not settings_parent_obj.map_multspectral:
+                        del form_sett.fields["map_maplink"]
+                    if not settings_parent_obj.map_maplink:
+                        del form_sett.fields["map_multspectral"]
                 #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
-            
+                
             sysname = system.name
+            wiz = SystemWizard([UserCompleteForm,SystemForm(instance = system),SettingsForm(instance = settings)])
+            #return wiz(context=RequestContext(request), request=request, extra_context=locals())
             return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         
     else:

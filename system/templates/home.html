@@ -1,24 +1,58 @@
 {% extends "templates/base.html" %}
+{%block title%}Infotrack - Sistemas {% endblock %}
+{% block head %}
+	<script type="text/javascript" src="/media/js/jquery.treeTable.js"></script>
+	<link rel="stylesheet" href="/media/css/jquery.treeTable.css" type="text/css" media="screen" /> 
+  <script type="text/javascript">
+
+  $(document).ready(function()  {
+    $("#tree").treeTable();
+  });
+
+  </script>
+{% endblock %}
 
 {% block content %}
 <div class="main-form">
-            <h1>Gerenciamento de sistemas</h1>
-            <hr />
-	            
+  <h1>Gerenciamento de sistemas</h1>
+  <hr />
 					{% if vector_html != "" %}
 					<h2>Sistemas filhos:</h2>
-					<em> A identação indica a hierarquia dos sistemas. </em>
-					<div id="child-wrapper">
-					{{ vector_html|safe }}   
-					</div>
+					<em> Clique nas setas para mostrar os sistemas filhos. </em>
+					
+
+
+					
+					
+					<div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><span class="ui-jqgrid-title"></span></div><div class="ui-state-default ui-jqgrid-hdiv"><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
+					  
+					  <thead>
+					    
+					    <tr role="rowheader" class="ui-jqgrid-labels">
+					      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 50%;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Nome do sistema</div></th>
+					      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 453px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Ação</div></th></tr></thead></table></div></div><div class="ui-jqgrid-bdiv"><div style="margin-left:19px;"><div></div><table id="tree" cellspacing="0" cellpadding="0" border="0" id="list4" tabindex="1" role="grid" aria-multiselectable="true" aria-labelledby="gbox_list4" class="ui-jqgrid-btable" style="width:100%"><tbody>
+					      
+					      
+					  <tr style="height: auto; width:100%" role="row" class="jqgfirstrow">
+					  
+					  <td style="height: 0px; width: 20px;" role="gridcell"></td>
+					  
+					  <td style="height: 0px; width:20px" role="gridcell"></td>
+					  
+					  
+					  </tr>
+					  
+					  <tr class="ui-widget-content jqgrow ui-row-ltr" tabindex="-1" role="row" id="1">
+					    {% autoescape off %}  
+    					{{ vector_html }} 
+    					{% endautoescape %}
+
+					  </tr></tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div> 
+        	
 					{% else %}
 					<em> Este sistema não possui nenhum filho. </em>
-					{% endif %}         
-				</td>
-			</tr>
-		</tbody>
-	</table>
-    <hr/>
+					{% endif %}
+          
     <div align="center" style="margin-top:30px;" id="actions">
         <a href="{% url system.views.create %}">Criar um subsistema </a>
          <a href="{% url system.views.edit request.session.system %}">Editar o seu sistema </a>

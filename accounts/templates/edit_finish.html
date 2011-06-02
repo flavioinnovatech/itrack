@@ -1,0 +1,13 @@
+{% extends "templates/base.html" %}
+{%block title%}Infotrack - Edição de Usuário {% endblock %}
+{% block content %}
+
+
+<div  class="main-form">
+<h1>Edição de Usuário</h1>
+<hr />
+<h2> Edição finalizada com sucesso </h2>
+<em>O usuário foi editado com sucesso. <a href="{% url accounts.views.index %}"> Clique aqui para voltar a tela de administração de usuários. </a></em>
+
+</div>
+{% endblock %}

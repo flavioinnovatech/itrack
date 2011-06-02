@@ -1,0 +1,14 @@
+{% extends "templates/base.html" %}
+
+{%block title%}Infotrack - Criação de Veículo {% endblock %}
+{% block content %}
+
+
+<div  class="main-form">
+<h1>Criação de Veículo</h1>
+<hr />
+<h2> Criação finalizada com sucesso </h2>
+<em>O veículo foi criado com sucesso. <a href="{% url vehicles.views.index %}"> Clique aqui para voltar a tela de administração de veículos. </a></em>
+
+</div>
+{% endblock %}

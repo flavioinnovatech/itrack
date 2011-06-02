@@ -58,6 +58,10 @@ a {
 	min-width:100%;
 }
 
+#content table {
+  margin: 0 auto;
+}
+
 #content {
 	margin-top:5px;
 	position: absolute;
@@ -304,6 +308,10 @@ html[xmlns] #nav {
     padding: 20px;
     min-height:400px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    
+    background: -moz-linear-gradient(center top , #FFFFFF, #CFCFCF) repeat scroll 0 0 transparent;
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CFCFCF'); /* for IE */
+  	background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CFCFCF)); /* for webkit browsers */
 }
 .main-form h1{
     font-size: 28px;
@@ -362,6 +370,7 @@ html[xmlns] #nav {
 .field input{
     width:350px;
     border: 1px solid #aaa;
+    border-radius: 0.6em 0.6em 0.6em 0.6em;
 }
 hr{
     clear:both;
@@ -378,7 +387,7 @@ hr{
 }
 
 #pop{
-  z-index:99999999;
+  z-index:9999999999999999999999999;
   display:none;
   position:absolute;
   top:0;
@@ -386,4 +395,29 @@ hr{
   width:100%;
   height:100%;
   border:1px solid #d0d0d0
+}
+
+input[type="text"], input[type="password"] {
+  height:25px;
+  border: 1px solid #aaa;
+  border-radius: 0.6em 0.6em 0.6em 0.6em;
+}
+
+.table-button {
+  font-color:#555555;
+  background-color: #E2E2E2;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+  border: 1px solid #;
+  font-size: 11px;
+  padding: 3px;
+  text-decoration: none;
+  border-radius: 5px 5px 5px 5px;
+  background: -moz-linear-gradient(center top , #FFFFFF, #CFCFCF) repeat scroll 0 0 transparent;
+  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CFCFCF'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CFCFCF)); /* for webkit browsers */
+}
+
+#menuContainer{
+  position:relative;
+  z-index:1;
 }

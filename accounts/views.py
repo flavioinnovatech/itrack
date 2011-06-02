@@ -45,13 +45,13 @@ def create_user(request):
           
           system.users.add(new_user)
 
-          message = "Usuário criado com sucesso."
           
-          #TO-DO pegar usarios pelo ID do sistema
           users = User.objects.filter(system=system)
                 
-          return render_to_response('accounts/templates/home.html',locals(),context_instance=RequestContext(request),)
+          return HttpResponseRedirect("/accounts/create/finish")
+
         else:
+          form = UserCompleteForm(request.POST)
           return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
 
     else:
@@ -61,8 +61,12 @@ def create_user(request):
 
         return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
         
+def edit_finish(request):
+    return render_to_response("accounts/templates/edit_finish.html",locals())
 
-
+def create_finish(request):
+    return render_to_response("accounts/templates/create_finish.html",locals())
+    
 def login(request):
   
   if request.POST:
@@ -82,7 +86,7 @@ def login(request):
         except:
         #if the user is not an admin, search in the users     
             system = System.objects.filter(users__username__exact=request.user.username)            
-            print system
+
             #if the user doesn't have a system
             if (len(system) == 0):
               erro = u"Usuário não possui sistema associado."
@@ -111,7 +115,7 @@ def login(request):
         return HttpResponseRedirect("/rastreamento/veicular")#render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
     else:
         # Show an error page
-        erro = u"Usuário ou senha inexistentes."
+        erro = u"Usuário ou senha incorretos."
         return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))
   else:
     return render_to_response('accounts/templates/login.html',locals(),context_instance=RequestContext(request))
@@ -125,6 +129,11 @@ def index(request):
     
     #TO-DO pegar usarios pelo ID do sistema
     users = User.objects.filter(system=system)
+    rendered_list = ""
+    
+    for item in users:
+      print item.__dict__
+      rendered_list+=u"<tr style='width:5%;' ><td style='width:50%;'>"+item.username+": </td><td><a class='table-button' href=\"/accounts/edit/"+str(item.id)+"/\">Editar</a>  <a class='table-button' href=\"/accounts/delete/"+str(item.id)+"/\">Apagar</a></td></tr>"
     
     return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
     
@@ -132,29 +141,33 @@ def index(request):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def edit(request,offset):
   
+  user = User.objects.get(pk=int(offset))
+  profile = UserProfile.objects.get(profile=int(offset))
   if request.method == 'POST':
+    form = UserCompleteForm(request.POST,instance=user)
+    form_user = UserForm(request.POST, instance = user)
+    form_profile = UserProfileForm(request.POST, instance = profile)
     
-    message = u"Usuário editado com sucesso"
-    system = request.session['system']
     
-    #TO-DO pegar usarios pelo ID do sistema
-    users = User.objects.filter(system=system)
-    
-    return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
+    if form_user.is_valid() and form_profile.is_valid():
+        new_user = form_user.save(commit=False)
+        new_user.set_password(new_user.password)
+        new_user.save()
+        new_profile = form_profile.save()
+        return HttpResponseRedirect ("/accounts/edit/finish")
+
+
+    return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
     
   else:
-    #display the edit form
-    user = User.objects.get(pk=int(offset))
-    profile = UserProfile.objects.get(profile=int(offset))
     
     system = request.session['system']
-    
     users = User.objects.filter(system=system)
         
     if user in users or user.username == request.user.username:
-      form_user = UserForm(instance = user)
-      form_profile = UserProfileForm(instance = profile)
       form = UserCompleteForm(instance = user)
+      form.initial = dict( form.initial.items() + profile.__dict__.items())
+      
       return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
       
     else:
@@ -165,21 +178,24 @@ def edit(request,offset):
 def delete(request,offset):
   if request.method == 'POST':
     
-    message = u"Tem certeza que quer deletar?"
+    user = User.objects.get(pk=int(offset))
+    profile = UserProfile.objects.get(profile=int(offset))
+    
+    profile.delete()
+    user.delete()
+    
     system = request.session['system']
     
     #TO-DO pegar usarios pelo ID do sistema
     users = User.objects.filter(system=system)
     
-    return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
+    return render_to_response("accounts/templates/delete_finish.html",locals(),context_instance=RequestContext(request))
     
   else:
-    #display the edit form
     user = User.objects.get(pk=int(offset))
     profile = UserProfile.objects.get(profile=int(offset))
     
     system = request.session['system']
-    
     users = User.objects.filter(system=system)
     
     if user in users:

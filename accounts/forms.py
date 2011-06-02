@@ -14,14 +14,14 @@ class UserForm(ModelForm):
             model = User
 
             exclude = ('is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined','groups','user_permissions')
-            
+    email = forms.EmailField(required=True)
     password = forms.CharField(widget=forms.PasswordInput(render_value=True),max_length=100)
     
 class UserTailForm(forms.ModelForm):
-    telephone = forms.CharField(max_length=20, label = "Telefone")
+    telephone = forms.CharField(max_length=20, label = "Telefone",required=False)
     cellphone = forms.CharField(max_length=20, label = "Celular")
-    address = forms.CharField(max_length=200, label = "Endereço")
-    city = forms.CharField(max_length=50, label= "Cidade")
+    address = forms.CharField(max_length=200, label = "Endereço",required=False)
+    city = forms.CharField(max_length=50, label= "Cidade",required=False)
 
 class UserCompleteForm(UserForm,UserTailForm):
     pass
