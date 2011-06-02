@@ -108,11 +108,9 @@ jQuery(document).ready(function(){
     
     width = $('#tabs').css("width");
     height= $('#tabs').css("height");
-    height = $('#tabs').css("height");
     top =  parseInt($('#tabs').position().top);
     left =  $('#tabs').css("left");
     top = parseInt(top);
-    alert (top);
     }
     
     normal = 0;
@@ -125,13 +123,18 @@ jQuery(document).ready(function(){
   });
   
   $('.normal').click(function() {
-    normal = 1;
-    $('#menuContainer').css("z-index","2");
-    $('#tabs').css("width","960px");
-    $('#tabs').css("height",height);
-    $('#tabs').css("top","170px" );
-    $('#tabs').css("left",( left ) );
-    alert ($('#tabs').css("top"));
+    
+    if (normal != 1) {
+    
+      normal = 1;
+        
+      $('#menuContainer').css("z-index","2");
+      $('#tabs').css("width","960px");
+      $('#tabs').css("height",height);
+      $('#tabs').css("top","170px" );
+      $('#tabs').css("left",( left ) );
+    
+    }
   });
 
 });
