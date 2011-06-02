@@ -5,9 +5,9 @@ from itrack.equipments.models import Equipment
 # Create your models here.
 
 class Vehicle(models.Model):
-    equipment = models.ForeignKey(Equipment, verbose_name= "Equipamento")
+    equipment = models.ForeignKey(Equipment, verbose_name= "Equipamento",blank=True,null=True,unique=True)
     chassi = models.CharField(max_length=30)
-    license_plate = models.CharField(max_length=10, verbose_name="Placa")
+    license_plate = models.CharField(max_length=10, verbose_name="Placa",unique=True)
     color = models.CharField(max_length=20, verbose_name = "Cor")
     year = models.CharField(max_length=30,verbose_name= "Ano")
     model = models.CharField(max_length=30,verbose_name= "Modelo")

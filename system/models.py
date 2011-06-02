@@ -27,8 +27,8 @@ class Settings(models.Model):
     system.default = 1
     
     title = models.CharField(max_length=200)
-    logo = models.ImageField(upload_to='static/img/')
-    logo.default = '/media/static/img/logo.png'
+    logo = models.ImageField(upload_to='img/')
+    logo.default = 'img/logo.png'
     
     color_site_background = models.CharField(max_length=50, verbose_name='Cor de fundo do site')
     color_table_background = models.CharField(max_length=50, verbose_name='cor de fundo das tabelas')
@@ -85,3 +85,10 @@ class Settings(models.Model):
     
     def __unicode__(self):
         return self.title    
+        
+class SystemPermissions(models.Model):
+  
+  system = models.ForeignKey(System)
+  
+  
+  

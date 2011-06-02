@@ -41,7 +41,7 @@ url(r'^equipment/associations/finish/$','equipments.views.assoc_finish'),
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
 
-url(r'^accounts/create/$', 'accounts.views.create_user'),
+url(r'^accounts/create/(\d+)/$', 'accounts.views.create_user'),
 url(r'^accounts/create/finish/$', 'accounts.views.create_finish'),
 
 url(r'^accounts/delete/(\d+)/$','accounts.views.delete'),
@@ -56,13 +56,13 @@ url(r'^vehicles/edit/(\d+)/$','vehicles.views.edit'),
 url(r'^vehicles/edit/finish/$','vehicles.views.edit_finish'),
 url(r'^vehicles/delete/(\d+)/$','vehicles.views.delete'),
 url(r'^vehicles/delete/finish/$','vehicles.views.delete_finish'),
+url(r'^vehicles/swap/(\d+)/$','vehicles.views.swap'),
+url(r'^vehicles/swap/finish/$','vehicles.views.swap_finish'),
 
 
 url(r'^commands/$', 'command.views.index'),
 url(r'^commands/create/(\d+)/$','command.views.create'),
 url(r'^commands/create/finish/$','command.views.create_finish'),
-url(r'^commands/edit/(\d+)/$','command.views.edit'),
-url(r'^commands/edit/finish/$','command.views.edit_finish'),
 url(r'^commands/delete/(\d+)/$','command.views.delete'),
 url(r'^commands/delete/finish/$','command.views.delete_finish'),
 

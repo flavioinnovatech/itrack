@@ -1,5 +1,8 @@
 {% extends "templates/base.html" %}
 
+{% block title  %}
+Infotrack - Associações de Equipamentos
+{% endblock %}
 {% block content %}
 
 
@@ -8,6 +11,5 @@
 <hr />
 <h2> Associações de equipamentos </h2>
 <em>Os equipamentos foram associados com sucesso ao sistema filho.  <a href="{% url equipments.views.index %}"> Clique aqui para voltar a tela de gerenciamento de permissões. </a></em>
-
 </div>
 {% endblock %}

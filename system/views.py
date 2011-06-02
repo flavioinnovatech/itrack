@@ -56,7 +56,7 @@ def render_system_html(childs,rendered_list=""):
             rendered_list+= render_system_html(x)
         else:
         #if its a number, mount the url for the system
-            rendered_list+="<li>"+System.objects.get(pk=x).name+": <a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
+            rendered_list+="<li>"+System.objects.get(pk=x).name+" <a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></li>\n"
     
     rendered_list+="</ul>"
     return rendered_list
@@ -79,7 +79,7 @@ def render_system_html2(childs,father="",rendered_list=""):
       else:
       #if its a number, mount the url for the system
           # rendered_list+=System.objects.get(pk=x).name
-          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+System.objects.get(pk=x).name+": </td><td style='text-align:center;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
+          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+System.objects.get(pk=x).name+" </td><td style='text-align:center;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
 
   return rendered_list    
 
@@ -132,11 +132,9 @@ def create(request):
         print settings_parent.map_multspectral
         
         if not settings_parent.map_google:
-            print "aqui!"
             ModifiedSettingsForm.base_fields["map_google"].widget = HiddenInput()
         if not settings_parent.map_multspectral:
             ModifiedSettingsForm.base_fields["map_maplink"].widget = HiddenInput()
-            print "aqui!"
         if not settings_parent.map_maplink:
             ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
         
@@ -176,10 +174,13 @@ def edit(request,offset):
                 new_setting  = change_css(new_setting)              
                 new_setting.save()
                 
-                request.session['css'] = new_setting.css
+                if request.session['system'] == System.objects.get(pk=int(offset)).id:
+                    request.session['css'] = new_setting.css
                 message =  "Sistema editado com sucesso."    
                 return HttpResponseRedirect("/system/edit/finish/")
 
+            else:
+              return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
             
         else:
             #display the edit form
@@ -229,7 +230,7 @@ def deletefinish(request):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def delete(request,offset):
 #raise an Http 403 error in case the system is not parent of the 'offset' system
-    childs = findChild(request.session['system'])
+    childs = findChild(request.session["system"])
     if isChild(int(offset),childs):
         if request.method == 'POST':
             ids = serializeChild(findChild(int(offset)),[])
@@ -242,7 +243,7 @@ def delete(request,offset):
                     UserProfile.objects.get(profile=usr).delete()
                     usr.delete()
                 sys.administrator.delete()
-                print "deletou"
+
             sys = System.objects.get(pk=int(offset))
             sys.administrator.delete()
             #sys.delete()
@@ -252,7 +253,7 @@ def delete(request,offset):
             
             ids = serializeChild(findChild(int(offset)),[])
             childs = System.objects.filter(pk__in=ids)
-
+            main_system = System.objects.get(pk=int(offset)).name
             return render_to_response("system/templates/delete.html",locals(),context_instance=RequestContext(request))
     
             

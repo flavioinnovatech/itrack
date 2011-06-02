@@ -59,13 +59,6 @@
 							<li><a href="/rastreamento/portatil/">Portátil</a>
 						</ul>
 					</li>
-					<li><a href="#">Telemetria</a>
-
-						<ul>
-							<li><a href="#">Analógica</a></li>
-							<li><a href="#">Digital</a></li>
-						</ul>
-					</li>
 					<li><a href="#">Relatórios</a>
 						<ul>
 							<li><a href="#">Paradas</a></li>
@@ -78,7 +71,8 @@
 						<ul>
 							{% for grp in request.user.groups.all %}
 							    {% if grp.name  == "administradores" %}
-							        <li><a href="{% url command.views.index %}">Administração</a></li>
+							        <li><a href="{% url command.views.index %}">Ver histórico</a></li>
+							        <li><a href="{% url command.views.create request.session.system %}">Enviar um novo comando </a></li>
 							    {% endif %}
 							 {%endfor%}
 						</ul>
@@ -87,7 +81,8 @@
 						<ul>
 							{% for grp in request.user.groups.all %}
 							    {% if grp.name  == "administradores" %}
-							        <li><a href="{% url alerts.views.index %}">Administração</a></li>
+							        <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
+							        <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
 							    {% endif %}
 							 {%endfor%}
 						</ul>

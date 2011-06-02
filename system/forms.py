@@ -36,6 +36,8 @@ class SettingsForm(ModelForm):
                 'color_site_font': TextInput(attrs={'class':'color'}),
                 'color_link': TextInput(attrs={'class':'color'}),
             }
+            
+
         
         
 class SystemWizard(FormWizard):
@@ -50,7 +52,7 @@ class SystemWizard(FormWizard):
                 form_data[field] = value
                 print field,":",value
         
-        print request.FILES
+
         
         form_usr = UserForm(form_data)
         form_profile = UserProfileForm(form_data)

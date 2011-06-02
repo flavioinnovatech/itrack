@@ -15,6 +15,7 @@
     width: 270px;
     text-align: center;
     margin-bottom: 5px;
+    background: white;
 }
 
 .selector-available h2, .selector-chosen h2 {

@@ -1,0 +1,9 @@
+{% extends "accounts/templates/form.html" %}
+
+{%block title%}Infotrack -Edição de Veículo {% endblock %}
+{% block form_title %}
+<h1>Remanejamento de veículo </h1>
+<h2>Troca de Equipamento</h2>
+<em>Informe a qual equipamento o veículo irá pertencer a partir de agora.</em>
+{% endblock %}
+
