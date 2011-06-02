@@ -20,7 +20,7 @@
       <td>
         <div class="form-item">
             <div class="item-left">          
-                  <p>{{ field.label_tag }}</p>
+                  <p>{{ field.label_tag }}{%if field.field.required%} *{%endif%}</p>
                   <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
             </div>
             </td>
@@ -33,7 +33,9 @@
           </tr>
         </div>
     {% endfor %}
+    
     </table>
+    <p style='font-weight:normal;'>*: Campos obrigatórios</p>
 <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
 {{ previous_fields|safe }}
 <div align="center" style="margin-top:10px;" id="actions">

@@ -3,7 +3,6 @@ from itrack.system.models import System,Settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 @login_required
-@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def index(request):
   settings = Settings.objects.get(system=request.session["system"])
   if settings.map_google:

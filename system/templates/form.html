@@ -38,7 +38,7 @@
 
 	    <tr class="ui-widget-content jqgrow ui-row-ltr">  
         <td>          
-          <h2>{{ field.label_tag }}</h2>
+          <h2>{{ field.label_tag }} {%if field.field.required%} *{%endif%}</h2>
           <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
         </td>
         
