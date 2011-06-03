@@ -4,8 +4,6 @@ from django.contrib.auth.views import login,logout,logout_then_login,password_re
 from django.conf import settings
 from itrack.system.forms import UserCompleteForm, SettingsForm, SystemForm, SystemWizard
 
-
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
@@ -23,7 +21,7 @@ url(r'^media/(.*)$', 'django.views.static.serve', {'document_root' : settings.ME
 url(r'^accounts/profile/$', 'main.views.index'),
 url(r'^themes/$', 'themes.views.index'),
 
-#url(r'^grid/$', 'grid.views.index'),
+url(r'^images/(.*)$', 'django.views.static.serve', {'document_root' : settings.MEDIA_ROOT}),
 
 url(r'^system/$','system.views.index'),
 url(r'^system/create/$','system.views.create'),
@@ -73,8 +71,6 @@ url(r'^alerts/edit/(\d+)/$','alerts.views.edit'),
 url(r'^alerts/edit/finish/$','alerts.views.edit_finish'),
 url(r'^alerts/delete/(\d+)/$','alerts.views.delete'),
 url(r'^alerts/delete/finish/$','alerts.views.delete_finish'),
-
-
 
 url(r'^accounts/password_reset/$', 'django.contrib.auth.views.password_reset', {'template_name':'accounts/templates/password_reset_form.html', 'email_template_name':'accounts/templates/password_reset_email.html'}),
 url(r'^password_reset/done/$', 'django.contrib.auth.views.password_reset_done', {'template_name':'userpanel/password_reset_done.html'}),

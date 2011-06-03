@@ -3,7 +3,7 @@
 from django.forms import *
 from django.http import HttpResponseRedirect
 from django.contrib.admin.widgets import *
-from itrack.system.models import System,Settings
+from itrack.system.models import System,Settings,SystemPerms
 from django.contrib.formtools.wizard import FormWizard
 from itrack.accounts.forms import UserCompleteForm, UserForm, UserProfileForm
 
@@ -37,7 +37,9 @@ class SettingsForm(ModelForm):
                 'color_link': TextInput(attrs={'class':'color'}),
             }
             
-
+class PermsForm(ModelForm):
+  class Meta:
+    model = SystemPerms
         
         
 class SystemWizard(FormWizard):
@@ -52,48 +54,53 @@ class SystemWizard(FormWizard):
                 form_data[field] = value
                 print field,":",value
         
-
-        
         form_usr = UserForm(form_data)
         form_profile = UserProfileForm(form_data)
         form_sys = SystemForm(form_data)
         form_sett = SettingsForm(form_data,request.FILES)
+        form_perms = PermsForm(form_data)
         
-        if form_usr.is_valid():
-            new_user = form_usr.save(commit=False)
-            new_user.set_password(form_data["password"])
-            new_user.save()
+        if form_usr.is_valid() and form_profile.is_valid() and form_sys.is_valid() and form_sett.is_valid():
+        
+          if form_usr.is_valid():
+              new_user = form_usr.save(commit=False)
+              new_user.set_password(form_data["password"])
+              new_user.save()
             
             
-        if form_profile.is_valid():
-            new_profile = form_profile.save(commit=False)
-            new_profile.profile_id = new_user.id
-            new_profile.save()
+          if form_profile.is_valid():
+              new_profile = form_profile.save(commit=False)
+              new_profile.profile_id = new_user.id
+              new_profile.save()
 
-        sys_id = request.session["system"] 
-        system = System.objects.get(pk=sys_id) 
+          sys_id = request.session["system"] 
+          system = System.objects.get(pk=sys_id) 
         
 
-        new_user.groups.add(1)
+          new_user.groups.add(1)
         
-        if form_sys.is_valid():
-            new_sys = form_sys.save(commit=False)
-            new_sys.parent_id = system.id
-            new_sys.administrator_id = new_user.id
+          if form_sys.is_valid():
+              new_sys = form_sys.save(commit=False)
+              new_sys.parent_id = system.id
+              new_sys.administrator_id = new_user.id
 
-            new_sys.save()
-            form_sys.save_m2m()
+              new_sys.save()
+              form_sys.save_m2m()
 
-        if form_sett.is_valid():
-            new_setting = form_sett.save(commit=False)
-            new_setting.system_id = new_sys.id
-            new_setting.title = new_sys.name
-            new_setting.save()
-            new_setting  = change_css(new_setting)              
-            new_setting.save()
+          if form_sett.is_valid():
+              new_setting = form_sett.save(commit=False)
+              new_setting.system_id = new_sys.id
+              new_setting.title = new_sys.name
+              new_setting.save()
+              new_setting  = change_css(new_setting)              
+              new_setting.save()
 
 
-        return HttpResponseRedirect('/system/finish/')
+              return HttpResponseRedirect('/system/finish/')
+              
+          else:
+            return render_to_response("system/templates/create_wizard.html",locals(),context_instance=RequestContext(request))
+            
 
 
 

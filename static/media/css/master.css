@@ -342,7 +342,8 @@ html[xmlns] #nav {
 .main-form form{
     margin-top:20px;
     width: 600px;
-    margin-left:100px;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 .item-left{
@@ -365,6 +366,7 @@ html[xmlns] #nav {
     float:left;
     text-align:left
     margin:40px;
+    min-width:200px;
 }
 .item-right .errorlist{
     color:red;

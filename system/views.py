@@ -11,7 +11,7 @@ from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
-from itrack.system.forms import SystemForm, SettingsForm, UserCompleteForm, SystemWizard, change_css
+from itrack.system.forms import SystemForm, SettingsForm, UserCompleteForm, SystemWizard, change_css, PermsForm
 from http403project.http import Http403
 from django.db.models import Q
 
@@ -120,9 +120,7 @@ def create(request):
     
         class ModifiedSettingsForm(SettingsForm):
             pass
-        
-        print ModifiedSettingsForm.__dict__
-        
+                
         sysadm = User.objects.get(pk=request.user.id)
         settings_parent = Settings.objects.get(system=system)
         
@@ -138,10 +136,8 @@ def create(request):
         if not settings_parent.map_maplink:
             ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
         
-
         
-        
-        wiz = SystemWizard([UserCompleteForm,SystemForm,ModifiedSettingsForm])
+        wiz = SystemWizard([UserCompleteForm,SystemForm,PermsForm,ModifiedSettingsForm])
         print wiz.__dict__
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 
