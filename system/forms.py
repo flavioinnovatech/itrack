@@ -105,7 +105,7 @@ class SystemWizard(FormWizard):
 
 
 def change_css(new_setting):
-          new_setting.css = ' #topContainer .centerContainer{ background: url(/media/'+new_setting.logo.name+') no-repeat;}'
+          new_setting.css = ' #topContainer .centerContainer{ background-image: url(/media/'+new_setting.logo.name+');}'
           new_setting.css = new_setting.css + ' body {background-color:#'+new_setting.color_site_background+';}'
 
           #Menu

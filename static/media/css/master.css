@@ -1,5 +1,9 @@
 #topContainer .centerContainer {
   height:100px;
+  background-position: left top;
+  background-image: url("/media/static/img/logo.png");
+  background-repeat:no-repeat;
+  background-size:auto 65px;
 }
 
 body {
@@ -351,7 +355,7 @@ html[xmlns] #nav {
 	-moz-border-radius: 9px;
 	-webkit-border-radius: 9px;
 	-moz-border-radius: 9px;
-    width:850px;
+/*    width:850px;*/
     margin: 0 auto;
     background:#fff;
     padding: 20px;
