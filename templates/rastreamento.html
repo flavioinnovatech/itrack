@@ -33,13 +33,13 @@ function montartabela(h,w) {
   
   if (h == null && w == null) {
 
-  w = screen.availWidth;
-  h = screen.availHeight;
+  w = $(window).width();
+  h = $(window).height();
   
   jQuery("#list4").jqGrid({ 
 
   	datatype: "local",
-  	height:h-500,
+  	height:h-250,
   	width: 930,
   	colNames:[
   	'Veículo',
@@ -59,7 +59,7 @@ function montartabela(h,w) {
   }
   
   else {
-
+    //tela cheia
     
     w = screen.availWidth;
     h = screen.availHeight;

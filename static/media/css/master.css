@@ -46,7 +46,6 @@ a {
 }
 
 .login-button {
-  background: -moz-linear-gradient(center top , #EBEBEB, #A1A1A1) repeat scroll 0 0 transparent;
   border-radius: 1em 1em 1em 1em;
   margin-left: 5px;
   padding: 6px 9px;
@@ -194,6 +193,7 @@ a {
 }
 
 #actions a,input[type="submit"]{
+  cursor: pointer;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
   padding:  6px 13px;
   margin-left:5px;
@@ -204,10 +204,12 @@ a {
 	text-decoration:none;
 	font-size:10px;
 	border: 1px solid #999;
+/*  background-color: a1a1a1;*/
 	
 	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebebeb', endColorstr='#a1a1a1'); /* for IE */
 	background: -webkit-gradient(linear, left top, left bottom, from(#ebebeb), to(#a1a1a1)); /* for webkit browsers */
 	background: -moz-linear-gradient(top,  #ebebeb,  #a1a1a1); /* for firefox 3.6+ */
+	
 }
 
 #actions a:hover,input[type="submit"]:hover{
@@ -238,6 +240,7 @@ a {
 /* main level link hover */
 #nav .current a, #nav li:hover > a {
 /*  border-top: solid 1px #f8f8f8;*/
+  color:#444;
 	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
 	-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
 	box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
