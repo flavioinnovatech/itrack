@@ -40,17 +40,12 @@ $(function() {
 <h2>Segundo passo: informações principais do sistema</h2>
 <em>Cadastre aqui as informações necessárias para identificação do sistema.</em>
 {% endif %}
-{% if step == 3 %}
-<h2>Terceiro passo: ferramentas de mapa</h2>
-<em>Configure as permissões de visualização das ferramentas de mapa.</em>
-{% endif %}
 
-{% if step == 4 %}
-<h2>Quarto passo: display do sistema</h2>
+{% if step == 3 %}
+<h2>Terceiro passo: display do sistema</h2>
 <em>Configure o esquema de cores e o logo do sistema.</em>
 {% endif %}
 
-{% if step != 3 %}
 
 <table>
 <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
@@ -74,30 +69,8 @@ $(function() {
         </td >
     {% endfor %}
 </table>
-{% endif %}
-
-{% if step == 3 %}
-<form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
-  <div id ="accordion">
-    {% for field in form.visible_fields %}
-
-    <h3><a href="#section1">Section 1</a></h3>
-    	<div class="form-item">
-          <div class="item-left">          
-                <p>{{ field.label_tag }}{%if field.field.required%} *{%endif%}</p>
-                <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
-          </div>
-          <div class="item-right">
-              <p class="errorlist">{{ field.errors }} </p>
-               <p class="field">{{ field }} </p>          
-          </div>
-      </div>
 
 
-        
-   {% endfor %}
-   </div>
-{% endif %}    
     
 <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
 {{ previous_fields|safe }}

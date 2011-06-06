@@ -17,7 +17,7 @@
 
 <script type="text/javascript">
 
-$('#tabs-1"').ready(function(){  
+$('#tabs-1').ready(function(){  
   montartabela();
 });
 
@@ -92,8 +92,8 @@ function montartabela(h,w) {
 
 
 jQuery(document).ready(function(){  
-  w = screen.availWidth;
-  h = screen.availHeight;  
+  w = $(window).width();
+  h = $(window).height(); 
 
   //$( "#tabs" ).css("height",h - (0.36 * h));
   $( "#tabs" ).css("top","130px");
@@ -104,6 +104,42 @@ jQuery(document).ready(function(){
   $('.fullscreen').click(function() {
     
     if (normal == 1) {
+      
+      width = $('#tabs').css("width");
+      height= $('#tabs').css("height");
+      top =  parseInt($('#tabs').position().top);
+      left =  $('#tabs').css("left");
+      top = parseInt(top);
+      }
+      
+      normal = 0;
+      
+      $('#menuContainer').css("z-index","0");
+      $('#tabs').css("width","100%");
+      $('#tabs').css("height","100%");
+      $('#tabs').css("top","0");
+      $('#tabs').css("left","0");
+  });
+    
+    $('.normal').click(function() {
+      
+      if (normal != 1) {
+      
+        normal = 1;
+          
+        $('#menuContainer').css("z-index","2");
+        $('#tabs').css("width","960px");
+        $('#tabs').css("height",height);
+        $('#tabs').css("top","130px" );
+        $('#tabs').css("left",( left ) );
+      
+      }
+  });
+
+});
+/* --------- GOOGLE MAPS--------- */
+function codeLatLng() {
+  if (normal == 1) {
     
     width = $('#tabs').css("width");
     height= $('#tabs').css("height");
@@ -116,36 +152,9 @@ jQuery(document).ready(function(){
     
     $('#menuContainer').css("z-index","0");
     $('#tabs').css("width","100%");
-    $('#tabs').css("height","100%");
+    $('#tabs-3').css("height","100%");
     $('#tabs').css("top","0");
     $('#tabs').css("left","0");
-  });
-  
-  $('.normal').click(function() {
-    
-    if (normal != 1) {
-    
-      normal = 1;
-        
-      $('#menuContainer').css("z-index","2");
-      $('#tabs').css("width","960px");
-      $('#tabs').css("height",height);
-      $('#tabs').css("top","130px" );
-      $('#tabs').css("left",( left ) );
-    
-    }
-  });
-
-});
-/* --------- GOOGLE MAPS--------- */
-
-var geocoder;
-var map;
-var infowindow = new google.maps.InfoWindow();
-var marker;
-geocoder = new google.maps.Geocoder();
-
-function codeLatLng() {
   
 	var geocoder;
 	var map;
@@ -158,6 +167,7 @@ function codeLatLng() {
 		center: latlng,
 		mapTypeId: 'roadmap'
 	}
+	
 	map = new google.maps.Map(document.getElementById("tabs-3"), myOptions);
   
 	var input = "-22.896359,-47.060092";
@@ -183,11 +193,6 @@ function codeLatLng() {
 		}
 	});
   
-  //document.getElementById('pop').style.display='block';
-
-	//$("#dialog").dialog({height: $(window).height()},{ width : ($(window).width() - 25)},{ closeText: 'X' }); 
-	$(".ui-icon").css("background-image", "none");
-	$(".ui-icon").css("text-indent", "0");
 }
 
 function mapa_multi() {
@@ -203,28 +208,19 @@ function mapa_multi() {
 <script>
 	$(function() {
 		$( "#tabs" ).tabs();
-		$( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
-			.removeClass( "ui-corner-all ui-corner-top" )
-			.addClass( "ui-corner-bottom" );
+
 	});
-	
-	w = screen.availWidth;
-  h = screen.availHeight;
   
   
 	
-	</script>
+</script>
 	
 	
 	
 	
 	<style>
 	#tabs { bottom:0;position: fixed; width:960px;z-index:0;} 
-	.tabs-bottom { position: relative; } 
-	.tabs-bottom .ui-tabs-panel { height: 100%; overflow: hidden; left:0;} 
-	.tabs-bottom .ui-tabs-nav { position: absolute !important; left: 0; bottom: 0; right:0; padding: 0 0.2em 0.2em 0; } 
-	.tabs-bottom .ui-tabs-nav li { margin-top: -2px !important; margin-bottom: 1px !important; border-top: none; border-bottom-width: 1px; }
-	.ui-tabs-selected { margin-top: -3px !important; }
+
 	</style>
 
 {% endblock %}
