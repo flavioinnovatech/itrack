@@ -481,6 +481,12 @@ input[type="text"], input[type="password"] {
 	background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CFCFCF)); /* for webkit browsers */
 }
 
+.table-button:hover{
+  background: -moz-linear-gradient(center top , #CFCFCF, #FFFFFF) repeat scroll 0 0 transparent;
+  filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#CFCFCF', endColorstr='#FFFFFF'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#CFCFCF), to(#FFFFFF)); /* for webkit browsers */
+}
+
 #menuContainer{
   position:relative;
   z-index:1;
@@ -491,4 +497,9 @@ input[type="text"], input[type="password"] {
 .ui-timepicker-div dl dt{ height: 25px; }
 .ui-timepicker-div dl dd{ margin: -25px 0 10px 65px; }
 .ui-timepicker-div td { font-size: 90%; }
+
+#gbox_list4 {
+  width:92%;
+  margin:0 auto;
+}
 
