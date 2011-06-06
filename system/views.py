@@ -137,7 +137,7 @@ def create(request):
             ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
         
         
-        wiz = SystemWizard([UserCompleteForm,SystemForm,PermsForm,ModifiedSettingsForm])
+        wiz = SystemWizard([UserCompleteForm,SystemForm,ModifiedSettingsForm])
         print wiz.__dict__
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 
