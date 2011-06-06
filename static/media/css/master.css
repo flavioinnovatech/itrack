@@ -291,7 +291,7 @@ a {
 }
 /* dropdown */
 #nav li:hover > ul {
-	display: block;
+/*  display: block;*/
 }
 #nav ul li {
 	float: left;
