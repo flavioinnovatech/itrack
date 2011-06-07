@@ -38,6 +38,8 @@ url(r'^equipment/associations/finish/$','equipments.views.assoc_finish'),
 
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
+url(r'^rastreamento/loadCustomFields/$', 'rastreamento.views.loadCustomFields'),
+url(r'^rastreamento/loadData/$', 'rastreamento.views.loadData'),
 
 url(r'^accounts/create/(\d+)/$', 'accounts.views.create_user'),
 url(r'^accounts/create/finish/$', 'accounts.views.create_finish'),
