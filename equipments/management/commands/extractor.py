@@ -153,5 +153,5 @@ while 1:
 		s.send(ack_msg)
 		xml =  ElementTree.fromstring(outbox.strip(""))
 		xmldict = XmlDictConfig(xml)
-
+		print xmldict
 
