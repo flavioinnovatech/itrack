@@ -37,7 +37,10 @@ class Equipment(models.Model):
    name = models.CharField(max_length=200)
    system = models.ManyToManyField(System, verbose_name="Sistema")
    serial = models.CharField(max_length=50, unique= True)
-   serial.default='000017E8'
+   serial.default = '000017E8'
+   serial.null = True
+
+
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):
@@ -55,5 +58,5 @@ class TrackingData(models.Model):
     type = models.ForeignKey(CustomField)
     value = models.CharField(max_length=100)    
     def __unicode__(self):
-        return self.type.type +'|' + self.type.tag
+        return str(self.tracking.eventdate)+" : "+self.type.type +' | ' + self.type.tag
 

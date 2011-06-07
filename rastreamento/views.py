@@ -13,3 +13,7 @@ def index(request):
     map_multispectral = 1
     
   return render_to_response("rastreamento/templates/rastreamento.html",locals())
+  
+# geofence test
+def geofence(request):
+  return render_to_response("templates/geofence.html",locals())

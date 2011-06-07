@@ -182,7 +182,7 @@ class Command(BaseCommand):
                                             tdata.save()
                                         except:
                                             pass
-                                self.stdout.write('>> Wrote one tracking table successfully.\n')
+                            self.stdout.write('>> Wrote one tracking table successfully.\n')
                     
                     except KeyError:
                         pass

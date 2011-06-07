@@ -104,7 +104,7 @@ jQuery(document).ready(function(){
 // }); //end document.ready
 
 /* --------------------------------------------- GOOGLE MAPS ------------------------------------------------------ */
-// function codeLatLng() {  
+$("#googlemap").click(function() {  
 	var geocoder;
 	var map;
 	var infowindow = new google.maps.InfoWindow();
@@ -144,8 +144,7 @@ jQuery(document).ready(function(){
   
   $("#tabs-3").css("height","100%");
   
-// }
-
+});
 });
 
 function mapa_multi() {

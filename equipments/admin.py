@@ -12,9 +12,12 @@ class CustomFieldAdmin(admin.ModelAdmin):
     list_display=['name','pk','tag','type']
     list_editable=['tag','type']
     
+class TrackingAdmin(admin.ModelAdmin):
+    list_display=['eventdate','msgtype']
+    
     
 admin.site.register(CustomField,CustomFieldAdmin)
-admin.site.register(Tracking)
+admin.site.register(Tracking,TrackingAdmin)
 admin.site.register(TrackingData)
 admin.site.register(Equipment)
 admin.site.register(EquipmentType, EquipTypeAdmin)
