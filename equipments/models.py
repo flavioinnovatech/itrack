@@ -7,16 +7,15 @@ class CustomField(models.Model):
    name = models.CharField(max_length=200)
    type = models.CharField(max_length=50)
    table = models.IntegerField()
+   tag = models.CharField(max_length=50)
+   tag.default='tag'
    def __unicode__(self):
       return self.name
-
-class CustomFieldData(models.Model):
-   customfield = models.ForeignKey(CustomField)
-   name = models.CharField(max_length=200)
-   value = models.BigIntegerField()
-   type = models.CharField(max_length=50)
-   def __unicode__(self):
-      return self.name
+      
+class CustomFieldName(models.Model):
+    system = models.ForeignKey(System, verbose_name="Sistema")
+    custom_field = models.ForeignKey(CustomField, verbose_name = "Campo")
+    name = models.CharField(max_length=50, verbose_name = "Nome")
 
 class EquipmentType(models.Model):
     custom_field = models.ManyToManyField(CustomField)
@@ -37,11 +36,23 @@ class AvailableFields(models.Model):
 class Equipment(models.Model):
    name = models.CharField(max_length=200)
    system = models.ManyToManyField(System, verbose_name="Sistema")
+   serial = models.CharField(max_length=50, unique= True)
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):
       return self.name
 
-
+class Tracking(models.Model):
+    msgtype = models.CharField(max_length=20)
+    equipment = models.ForeignKey(Equipment)
+    eventdate = models.DateTimeField()
+    def __unicode__(self):
+        return str(self.eventdate)
     
+class TrackingData(models.Model):
+    tracking = models.ForeignKey(Tracking)
+    type = models.ForeignKey(CustomField)
+    value = models.CharField(max_length=100)    
+    def __unicode__(self):
+        return self.type.type +'|' + self.type.tag
 

@@ -1,4 +1,4 @@
-from itrack.equipments.models import CustomField, Equipment, CustomFieldData, AvailableFields, EquipmentType
+from itrack.equipments.models import CustomField, Equipment, Tracking,TrackingData, AvailableFields, EquipmentType
 from django.contrib import admin
 
 
@@ -8,9 +8,14 @@ class AvailableAdmin(admin.ModelAdmin):
 class EquipTypeAdmin(admin.ModelAdmin):
     filter_horizontal = ["custom_field"]
     
+class CustomFieldAdmin(admin.ModelAdmin):
+    list_display=['name','pk','tag','type']
+    list_editable=['tag','type']
     
-admin.site.register(CustomField)
-admin.site.register(CustomFieldData)
+    
+admin.site.register(CustomField,CustomFieldAdmin)
+admin.site.register(Tracking)
+admin.site.register(TrackingData)
 admin.site.register(Equipment)
 admin.site.register(EquipmentType, EquipTypeAdmin)
 admin.site.register(AvailableFields,AvailableAdmin)

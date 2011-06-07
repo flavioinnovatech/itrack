@@ -1,0 +1,67 @@
+{% extends "templates/base.html" %}
+
+{%block title%}Infotrack - Criação de Sistema {% endblock %}
+
+{% block head %}
+
+<link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
+<script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+<script type="text/javascript" src="/media/js/jsi18n.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+
+<div  class="main-form">
+
+<h1>Criação de sistema </h1>
+<hr />
+{% if step == 1 %}
+<h2>Primeiro passo:  conta de administrador do sistema</h2>
+<em>Cadastre aqui o usuário que terá privilégios administrativos sobre o sistema a ser criado. </em>
+{% endif %}
+{% if step == 2 %}
+<h2>Segundo passo: informações principais do sistema</h2>
+<em>Cadastre aqui as informações necessárias para identificação do sistema.</em>
+{% endif %}
+{% if step == 3 %}
+<h2>Terceiro passo: display do sistema</h2>
+<em>Configure o esquema de cores e o logo do sistema.</em>
+{% endif %}
+
+<table>
+<form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
+    {% for field in form.visible_fields %}
+        <tr>
+          <td>
+        <div class="form-item">
+            <div class="item-left">          
+                  <p>{{ field.label_tag }} {%if field.field.required%} *{%endif%}</p>
+                  <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
+            </div>
+          </td>
+          <td>
+            <div class="item-right">
+                <p class="errorlist">{{ field.errors }} </p>
+                 <p class="field">{{ field }} </p>          
+            </div>
+          </td>
+        </tr>
+        </div>
+        </td >
+    {% endfor %}
+    </table>
+<input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
+{{ previous_fields|safe }}
+<input type="submit" value="Prosseguir" class="submit">
+<p class="clear">
+</form>
+
+</div>
+{% endblock %}
