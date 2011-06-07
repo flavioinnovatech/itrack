@@ -503,3 +503,16 @@ input[type="text"], input[type="password"] {
   margin:0 auto;
 }
 
+img.icon {
+  margin-right:10px;
+  height:20px;
+}
+
+img.fullscreen{
+  height:20px;
+  margin-top:4px;
+  cursor: pointer;
+}
+img.fullscreen:hover{
+  border:1px outset;
+}
