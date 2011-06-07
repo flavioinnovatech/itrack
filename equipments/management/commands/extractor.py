@@ -5,6 +5,11 @@ import os
 import sys 
 import select 
 from xml.etree import cElementTree as ElementTree
+from equipments.models import Equipment, Tracking, TrackingData,CustomField
+from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
+import time
+from datetime import datetime
 
 class XmlListConfig(list):
     def __init__(self, aList):
@@ -125,33 +130,60 @@ def authentication(s):
     except:
         exit(1)
 
-# ====> TESTING SEQUENCE FOR AUTHENTICATION UNDER CPR: 
-#creating and connecting trough the TCP socket
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((TCP_IP, TCP_PORT))
 
-#s.connect((TCP_IP, TCP_PORT))
-#sending the auth message, receiving the response and sending an ack message
-key = authentication(s)
-#mounting the XML response to server
-seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+key+"\" /></Package>"
-close_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"99\" />\n  <Data SessionId=\""+key+"\" />\n</Package>"
 
-#sending the response to the server, and awaiting the outbox message
-s.send(ack_msg)
-s.send(seckey_msg)
-data = s.recv(BUFFER_SIZE)
-s.send(ack_msg)
+class Command(BaseCommand):
+    args = 'no args'
+    help = 'Extract info from CPR'
+    
+    def handle(self, *args, **options):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((TCP_IP, TCP_PORT))
 
-#listening all information given by CPR. If timeout, exit the test sequence.
+        #s.connect((TCP_IP, TCP_PORT))
+        #sending the auth message, receiving the response and sending an ack message
+        key = authentication(s)
+        #mounting the XML response to server
+        seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+key+"\" /></Package>"
+        close_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"99\" />\n  <Data SessionId=\""+key+"\" />\n</Package>"
 
-while 1:
+        #sending the response to the server, and awaiting the outbox message
+        s.send(ack_msg)
+        s.send(seckey_msg)
+        data = s.recv(BUFFER_SIZE)
+        s.send(ack_msg)
+
+        #listening all information given by CPR. If timeout, exit the test sequence.
+
+        while 1:
 	
-	if ([s],[],[]) == select.select([s],[],[],0):
-		outbox = s.recv(BUFFER_SIZE)
-		s.send(ack_msg)
-		xml =  ElementTree.fromstring(outbox.strip(""))
-		xmldict = XmlDictConfig(xml)
-
-
+	        if ([s],[],[]) == select.select([s],[],[],0):
+		        outbox = s.recv(BUFFER_SIZE)
+		        s.send(ack_msg)
+		        xml =  ElementTree.fromstring(outbox.strip(""))
+		        xmldict = XmlDictConfig(xml)
+    
+                try:
+                    e = Equipment.objects.get(serial=self.xmldict['TCA']['SerialNumber'])
+                    searchdate = datetime.strptime(self.xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
+                    try:
+                        t = Tracking.objects.get(Q(equipment=e) & Q(eventdate=searchdate))
+                        
+                    except:
+                        t = Tracking(equipment=e, eventdate= searchdate, msgtype=self.table['Datagram']['MsgType'])
+                        t.save()
+                        for k_type,d_type in self.table.items():
+                            if type(d_type).__name__ == 'dict':
+                                for k_tag,d_tag in d_type.items():
+                                    try:
+                                        c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
+                                        tdata = TrackingData(tracking=t,type=c,value=d_tag)
+                                        tdata.save()
+                                    except:
+                                        pass
+                            self.stdout.write('>> Wrote one tracking table successfully.\n')
+                    
+            
+                except KeyError:
+                    pass
