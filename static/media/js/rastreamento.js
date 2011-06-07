@@ -87,38 +87,44 @@ $("#googlemap").click(function() {
 	var infowindow = new google.maps.InfoWindow();
 	var marker;
 	geocoder = new google.maps.Geocoder();
-	var latlng = new google.maps.LatLng(-14.239424,-53.186502);
+	
+	var input = "-22.896359,-47.060092";
+	var latlngStr = input.split(",",2); 
+	var lat = parseFloat(latlngStr[0]);
+	var lng = parseFloat(latlngStr[1]);
+	var latlng = new google.maps.LatLng(lat, lng);
 	var myOptions = {
 		zoom: 4,
 		center: latlng,
 		mapTypeId: 'roadmap'
 	}
 	
-	map = new google.maps.Map(document.getElementById("tabs-3"), myOptions);
   
-  // var input = "-22.896359,-47.060092";
-  // var latlngStr = input.split(",",2); 
-  // var lat = parseFloat(latlngStr[0]);
-  // var lng = parseFloat(latlngStr[1]);
-  // var latlng = new google.maps.LatLng(lat, lng);
-  // geocoder.geocode({'latLng': latlng}, function(results, status) {
-  //  if (status == google.maps.GeocoderStatus.OK) {
-  //    if (results[1]) {
-  //      map.setZoom(16);
-  //         marker = new google.maps.Marker({
-  //          position: latlng, 
-  //          map: map
-  //         });
-  //         infowindow.setContent(results[1].formatted_address);
-  //      infowindow.open(map);
-  //    } else {
-  //      alert("No results found");
-  //    }
-  //  } else {
-  //    alert("Geocoder failed due to: " + status);
-  //  }
-  // });
-  
+  if ($("#jqg_list4_1").is(':checked')) {
+    
+  var lat = $("td[aria-describedby=list4_Latitude]").text();
+  var lng = $("td[aria-describedby=list4_Longitude]").text();
+  var latlng = new google.maps.LatLng(lat, lng);
+	geocoder.geocode({'latLng': latlng}, function(results, status) {
+		if (status == google.maps.GeocoderStatus.OK) {
+			if (results[1]) {
+				map.setZoom(16);
+        marker = new google.maps.Marker({
+         position: latlng, 
+         map: map
+        });
+        infowindow.setContent(results[1].formatted_address);
+				infowindow.open(map);
+			} else {
+				alert("No results found");
+			}
+		} else {
+			alert("Geocoder failed due to: " + status);
+		}
+	});
+  }
+  map = new google.maps.Map(document.getElementById("tabs-3"), myOptions);
+	
   $("#tabs-3").css("height","100%");
   
 });
@@ -164,7 +170,7 @@ $("#googlemap").click(function() {
               jQuery("#list4").jqGrid('addRowData',1,myData[0]);
               
               //HACK
-              $("table#list4").css("width","930px");
+              $("table#list4").css("width","930px")
               
     });
   });
