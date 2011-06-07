@@ -37,6 +37,7 @@ class Equipment(models.Model):
    name = models.CharField(max_length=200)
    system = models.ManyToManyField(System, verbose_name="Sistema")
    serial = models.CharField(max_length=50, unique= True)
+   serial.default='000017E8'
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):
