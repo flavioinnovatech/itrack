@@ -12,4 +12,4 @@ def index(request):
   if settings.map_multspectral:
     map_multispectral = 1
     
-  return render_to_response("templates/rastreamento.html",locals())
+  return render_to_response("rastreamento/templates/rastreamento.html",locals())
