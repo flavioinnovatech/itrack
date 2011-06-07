@@ -1,15 +1,15 @@
-# -*- coding:utf8 -*-
 #!/usr/bin/env python
 import sys 
 import socket
 import os
 import sys 
 import select 
-import tty 
-import termios
 from xml.etree import cElementTree as ElementTree
-import pprint
-
+from equipments.models import Equipment, Tracking, TrackingData,CustomField
+from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
+import time
+from datetime import datetime
 
 class XmlListConfig(list):
     def __init__(self, aList):
@@ -118,7 +118,6 @@ def authentication(s):
     s.send(authentication_msg)
     try:
         data = s.recv(BUFFER_SIZE)
-        #
         
         xml = ElementTree.fromstring(data[:len(data)-1])
         msg_reason = xml.find("Header").get("Reason")
@@ -129,90 +128,62 @@ def authentication(s):
             exit(int(msg_reason))
         return sec_key
     except:
-	print ">> The connection has timed out."
         exit(1)
 
 
-def isData():
-        return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
 
 
+class Command(BaseCommand):
+    args = 'no args'
+    help = 'Insert one tracking to the database tables'
+    
+    def handle(self, *args, **options):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((TCP_IP, TCP_PORT))
 
-# ====> TESTING SEQUENCE FOR AUTHENTICATION UNDER CPR: 
+        #s.connect((TCP_IP, TCP_PORT))
+        #sending the auth message, receiving the response and sending an ack message
+        key = authentication(s)
+        #mounting the XML response to server
+        seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+key+"\" /></Package>"
+        close_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"99\" />\n  <Data SessionId=\""+key+"\" />\n</Package>"
 
-os.system("clear")
-print " \n\n\t\tWelcome to Infotrack CPR extractor script .\n\n"
-print ">> Trying to connect to the server",TCP_IP + ":" + str(TCP_PORT)+"."
+        #sending the response to the server, and awaiting the outbox message
+        s.send(ack_msg)
+        s.send(seckey_msg)
+        data = s.recv(BUFFER_SIZE)
+        s.send(ack_msg)
 
-#creating and connecting trough the TCP socket
+        #listening all information given by CPR. If timeout, exit the test sequence.
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((TCP_IP, TCP_PORT))
-
-#s.connect((TCP_IP, TCP_PORT))
-#sending the auth message, receiving the response and sending an ack message
-print ">> Connection established. Sending authentication protocol."
-key = authentication(s)
-print "\n>> Authentication successful. Security key:",key
-
-#mounting the XML response to server
-seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\" ?>\n<Package>\n  <Header Version=\"1.0\" Id=\"2\" />\n  <Data SessionId=\""+key+"\" />\n</Package>"
-close_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"99\" />\n  <Data SessionId=\""+key+"\" />\n</Package> "
-
-blocker_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"6\" />\n  <Data Account=\"2\" ProductId=\"41\" Serial=\"000017E8\" Priority=\"2\" />\n  <Command Blocker=\"ON\" Signal=\"ON\" Buzzer=\"ON\" Blocker=\"ON\"/>\n</Package>"
-
-print ">> Sending session start message."
-
-#sending the response to the server, and awaiting the outbox message
-#print seckey_msg
-#print len(seckey_msg)
-#s.send(ack_msg)
-#s.send(seckey_msg)
-#s.send(blocker_msg)
-#print blocker_msg
-
-#data = s.recv(BUFFER_SIZE)
-#print data
-
-#a = sys.stdin.readline()
-
-
-
-s.send(ack_msg)
-
-
-#listening all information given by CPR. If timeout, exit the test sequence.
-equipments = {}
-
-old_settings = termios.tcgetattr(sys.stdin)
-tty.setcbreak(sys.stdin.fileno())
-
-while 1:
+        while 1:
 	
-	if ([s],[],[]) == select.select([s],[],[],0):
-		outbox = s.recv(BUFFER_SIZE)
-		s.send(ack_msg)
-		xml =  ElementTree.fromstring(outbox.strip(""))
-		xmldict = XmlDictConfig(xml)
-		pp = pprint.PrettyPrinter(indent=4)
-		pp.pprint(xmldict)
-
-	else:
-		if isData():
-			c = sys.stdin.read(1)
-			if c == '\x1b':
-				print '>> Exiting the extraction script.'
-				termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
-				exit(0)
-			elif c == '1':
-				print ">> Sending Blocker signal to equipment with id 000017E8."
-				blocker_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"6\" />\n  <Data Account=\"2\" ProductId=\"41\" Serial=\"000017E8\" Priority=\"2\" />\n  <Command Blocker=\"ON\" Signal=\"ON\" Buzzer=\"ON\" Blocker=\"ON\"/>\n</Package>"
-				s.send(blocker_msg)
-			elif c == '2':
-				pass
-			elif c == '3':
-				pass
-			elif c == '4':
-				pass
-
-
+	        if ([s],[],[]) == select.select([s],[],[],0):
+		        outbox = s.recv(BUFFER_SIZE)
+		        s.send(ack_msg)
+		        xml =  ElementTree.fromstring(outbox.strip(""))
+		        xmldict = XmlDictConfig(xml)
+    
+                try:
+                    e = Equipment.objects.get(serial=self.xmldict['TCA']['SerialNumber'])
+                    searchdate = datetime.strptime(self.xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
+                    try:
+                        t = Tracking.objects.get(Q(equipment=e) & Q(eventdate=searchdate))
+                        
+                    except:
+                        t = Tracking(equipment=e, eventdate= searchdate, msgtype=self.table['Datagram']['MsgType'])
+                        t.save()
+                        for k_type,d_type in self.table.items():
+                            if type(d_type).__name__ == 'dict':
+                                for k_tag,d_tag in d_type.items():
+                                    try:
+                                        c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
+                                        tdata = TrackingData(tracking=t,type=c,value=d_tag)
+                                        tdata.save()
+                                    except:
+                                        pass
+                            self.stdout.write('>> Wrote one tracking table successfully.\n')
+                    
+            
+                except KeyError:
+                    pass

@@ -1,0 +1,115 @@
+{% extends "templates/base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
+<script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+<script type="text/javascript" src="/media/js/jsi18n.js"></script>
+<script type="text/javascript" src="/media/js/jquery-ui-timepicker-addon.js"></script>
+
+<script type="text/javascript">
+
+jQuery(document).ready(function(){  
+
+	$('.datepicker').datetimepicker({showSecond: true,timeFormat: 'hh:mm:ss'});
+	$('#menuContainer').css("z-index","0");
+	
+	$.datepicker.regional['br'] = {
+
+  	dateFormat: 'dd/mm/yy'
+
+  };
+  $.datepicker.setDefaults($.datepicker.regional['br']);
+  
+  $('#id_trigger').change(function(){
+    $("#id_trigger option:selected").each(function () {
+      if ($(this).val() != 2) {
+        $('#id_velocity_limit').attr('disabled','disabled');
+      }
+      else{
+        $('#id_velocity_limit').removeAttr('disabled');
+      }
+    });
+    
+  });
+  
+  $('#id_trigger').ready(function(){
+    $("#id_trigger option:selected").each(function () {
+      if ($(this).val() != 2) {
+        $('#id_velocity_limit').attr('disabled','disabled');
+      }
+      else{
+        $('#id_velocity_limit').removeAttr('disabled');
+      }
+    });
+    
+  });
+  
+		
+});
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div  class="main-form">
+{% block form_title %}
+<h1>Criação de usuário </h1>
+<hr />
+<h2>Dados de cadastro</h2>
+<em>Informe os dados necessários para o cadastro do usuário no sistema.</em>
+{% endblock %}
+<form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
+<table>
+
+    {% for field in form %}
+    <tr>
+      {% if field.label_tag != '<label for="id_destinataries">Destinataries</label>' %}
+      
+      <td>
+        <div class="form-item">
+            <div class="item-left">          
+                  <p>{{ field.label_tag }}</p>
+                  <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
+            </div>
+      </td>
+      {% endif %}
+      {% if field.label_tag == '<label for="id_destinataries">Destinataries</label>' %}
+      <td colspan="2">
+        <div class="item-right">
+            <p class="errorlist">{{ field.errors }} </p>
+             <p class="field">{{ field }} </p>          
+        </div>
+        </td>
+      </tr>
+       </div>
+      {% else %}
+            <td>
+            <div class="item-right">
+                <p class="errorlist">{{ field.errors }} </p>
+                 <p class="field">{{ field }} </p>          
+            </div>
+            </td>
+          </tr>
+        </div>
+      {% endif %}
+    {% endfor %}
+    </table>
+<input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
+{{ previous_fields|safe }}
+<div align="center" style="margin-top:10px;" id="actions">
+  
+  
+      <input type="Submit" value="Confirmar">
+      <a onClick="history.back();">Cancelar</a>
+      </form>
+      
+  </div>
+<p class="clear">
+
+</div>
+{% endblock %}
