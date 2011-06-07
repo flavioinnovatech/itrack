@@ -40,7 +40,6 @@ class Equipment(models.Model):
    serial.default = '000017E8'
    serial.null = True
 
-
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):
