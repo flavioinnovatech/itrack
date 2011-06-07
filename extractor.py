@@ -164,22 +164,21 @@ blocker_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header
 print ">> Sending session start message."
 
 #sending the response to the server, and awaiting the outbox message
-print seckey_msg
-print len(seckey_msg)
+#print seckey_msg
+#print len(seckey_msg)
 #s.send(ack_msg)
-s.send(seckey_msg)
+#s.send(seckey_msg)
 #s.send(blocker_msg)
 #print blocker_msg
 
-data = s.recv(BUFFER_SIZE)
-print data
+#data = s.recv(BUFFER_SIZE)
+#print data
 
-a = sys.stdin.readline()
+#a = sys.stdin.readline()
 
 
-'''
+
 s.send(ack_msg)
-print data
 
 
 #listening all information given by CPR. If timeout, exit the test sequence.
@@ -215,5 +214,5 @@ while 1:
 				pass
 			elif c == '4':
 				pass
-'''
+
 
