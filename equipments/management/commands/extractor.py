@@ -5,7 +5,7 @@ import os
 import sys 
 import select 
 from xml.etree import cElementTree as ElementTree
-from equipments.models import Equipment, Tracking, TrackingData,CustomField
+from itrack.equipments.models import Equipment, Tracking, TrackingData,CustomField
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 import time
@@ -159,31 +159,30 @@ class Command(BaseCommand):
         while 1:
 	
 	        if ([s],[],[]) == select.select([s],[],[],0):
-		        outbox = s.recv(BUFFER_SIZE)
-		        s.send(ack_msg)
-		        xml =  ElementTree.fromstring(outbox.strip(""))
-		        xmldict = XmlDictConfig(xml)
+		    outbox = s.recv(BUFFER_SIZE)
+		    s.send(ack_msg)
+                    xml =  ElementTree.fromstring(outbox.strip(""))
+		    xmldict = XmlDictConfig(xml)
     
-                try:
-                    e = Equipment.objects.get(serial=self.xmldict['TCA']['SerialNumber'])
-                    searchdate = datetime.strptime(self.xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
                     try:
-                        t = Tracking.objects.get(Q(equipment=e) & Q(eventdate=searchdate))
+                        e = Equipment.objects.get(serial=xmldict['TCA']['SerialNumber'])
+                        searchdate = datetime.strptime(xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
+                        try:
+                            t = Tracking.objects.get(Q(equipment=e) & Q(eventdate=searchdate))
                         
-                    except:
-                        t = Tracking(equipment=e, eventdate= searchdate, msgtype=self.table['Datagram']['MsgType'])
-                        t.save()
-                        for k_type,d_type in self.table.items():
-                            if type(d_type).__name__ == 'dict':
-                                for k_tag,d_tag in d_type.items():
-                                    try:
-                                        c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
-                                        tdata = TrackingData(tracking=t,type=c,value=d_tag)
-                                        tdata.save()
-                                    except:
-                                        pass
-                            self.stdout.write('>> Wrote one tracking table successfully.\n')
+                        except:
+                            t = Tracking(equipment=e, eventdate= searchdate, msgtype=xmldict['Datagram']['MsgType'])
+                            t.save()
+                            for k_type,d_type in xmldict.items():
+                                if type(d_type).__name__ == 'dict':
+                                    for k_tag,d_tag in d_type.items():
+                                        try:
+                                            c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
+                                            tdata = TrackingData(tracking=t,type=c,value=d_tag)
+                                            tdata.save()
+                                        except:
+                                            pass
+                                self.stdout.write('>> Wrote one tracking table successfully.\n')
                     
-            
-                except KeyError:
-                    pass
+                    except KeyError:
+                        pass

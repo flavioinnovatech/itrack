@@ -39,6 +39,8 @@ class Equipment(models.Model):
    serial = models.CharField(max_length=50, unique= True)
    serial.default = '000017E8'
    serial.null = True
+
+
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):
