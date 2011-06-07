@@ -1,3 +1,4 @@
+# -*- coding:utf8 -*-
 #!/usr/bin/env python
 import sys 
 import socket
@@ -155,17 +156,29 @@ key = authentication(s)
 print "\n>> Authentication successful. Security key:",key
 
 #mounting the XML response to server
-seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+key+"\" /></Package>"
-close_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"99\" />\n  <Data SessionId=\""+key+"\" />\n</Package>"
+seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\" ?>\n<Package>\n  <Header Version=\"1.0\" Id=\"2\" />\n  <Data SessionId=\""+key+"\" />\n</Package>"
+close_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"99\" />\n  <Data SessionId=\""+key+"\" />\n</Package> "
+
+blocker_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"6\" />\n  <Data Account=\"2\" ProductId=\"41\" Serial=\"000017E8\" Priority=\"2\" />\n  <Command Blocker=\"ON\" Signal=\"ON\" Buzzer=\"ON\" Blocker=\"ON\"/>\n</Package>"
+
 print ">> Sending session start message."
 
 #sending the response to the server, and awaiting the outbox message
-print seckey_msg
+#print seckey_msg
+#print len(seckey_msg)
+#s.send(ack_msg)
+#s.send(seckey_msg)
+#s.send(blocker_msg)
+#print blocker_msg
+
+#data = s.recv(BUFFER_SIZE)
+#print data
+
+#a = sys.stdin.readline()
+
+
+
 s.send(ack_msg)
-s.send(seckey_msg)
-data = s.recv(BUFFER_SIZE)
-s.send(ack_msg)
-print data
 
 
 #listening all information given by CPR. If timeout, exit the test sequence.

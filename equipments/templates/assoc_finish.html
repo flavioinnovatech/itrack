@@ -1,4 +1,5 @@
 {% extends "templates/base.html" %}
+
 {% block title  %}
 Infotrack - Associações de Equipamentos
 {% endblock %}
@@ -8,8 +9,7 @@ Infotrack - Associações de Equipamentos
 <div  class="main-form">
 <h1><img class="icon" src="/media/img/equip.png">Permissões de Sistema</h1>
 <hr />
-<h2> Permissões aplicadas com sucesso </h2>
-<em>Os equipamentos foram passados ao sistema filho corretamente. <a href="{% url equipments.views.index %}"> Clique aqui para voltar a tela de gerenciamento de permissões. </a></em>
-
+<h2> Associações de equipamentos </h2>
+<em>Os equipamentos foram associados com sucesso ao sistema filho.  <a href="{% url equipments.views.index %}"> Clique aqui para voltar a tela de gerenciamento de permissões. </a></em>
 </div>
 {% endblock %}
