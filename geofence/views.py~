@@ -1,8 +1,6 @@
 # Create your views here.
-from django.shortcuts import render_to_response
-from itrack.system.models import System,Settings
-from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType
-from django.contrib.auth.decorators import login_required, user_passes_test
+
+
 
 def index(request):
     parent = []

@@ -139,7 +139,6 @@ INSTALLED_APPS = (
 	'vehicles',
 	 'command',
 	 'alerts',
-	 'geofence',
 
 )
 
