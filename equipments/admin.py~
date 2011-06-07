@@ -10,7 +10,10 @@ class EquipTypeAdmin(admin.ModelAdmin):
     
 class CustomFieldAdmin(admin.ModelAdmin):
     list_display=['name','pk','tag','type']
-    list_editable=['tag']
+    list_editable=['tag','type']
+    
+class TrackingAdmin(admin.ModelAdmin):
+    list_display=['eventdate','type']
     
     
 admin.site.register(CustomField,CustomFieldAdmin)
