@@ -88,7 +88,7 @@ class Settings(models.Model):
         
 class SystemPerms(models.Model):
   
-  system = ForeignKey(System)
+  system = models.ForeignKey(System)
   
   google_map = models.BooleanField(verbose_name = 'Google - Mapa')
   
