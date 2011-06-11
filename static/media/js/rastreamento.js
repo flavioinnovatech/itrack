@@ -140,19 +140,45 @@ $("#googlemap").click(function() {
           var colModel = [];
           var colNames = [];
           myData = data;
+          address="";
+          
+          colNames.push("Endereço");
+          colModel.push({name:"Endereço"});
           
           $.each(data, function(key1, val1) {
             
                 colNames.push(val1.type);
                 
-                if (val1.type == "Latitude" || val1.type == "Longitude") {
+                if (val1.type == "Latitude") {
                   colModel.push({name:val1.type,hidden: true});
+                  lat = val1.value
+                }
+                
+                else if (val1.type == "Longitude"){
+                  colModel.push({name:val1.type,hidden: true});
+                  lng = val1.value
                 }
                 else {
                   colModel.push({name:val1.type});
                 }
+                
           });
-                      
+
+          var latlng = new google.maps.LatLng(lat,lng);
+          geocoder = new google.maps.Geocoder();
+          
+          if (geocoder) {
+                geocoder.geocode({'latLng': latlng}, function(results, status) {
+                  if (status == google.maps.GeocoderStatus.OK) {
+                   address = results[0].formatted_address;
+                  
+                  }
+                  else {
+                    alert("Geocoder failed due to: " + status);
+                  }
+                });
+            }
+
             jQuery("#list4").jqGrid({   
              	datatype: "local",
              	height:h-250,
@@ -171,10 +197,11 @@ $("#googlemap").click(function() {
                 arrayvalue.push(val1.value);
               });
               
-              myData = [ { "eventdate":arrayvalue[0],"Entrada Negativa 2":arrayvalue[1],"Botão de Pânico":arrayvalue[2],"Ignição (PPC)":arrayvalue[3],"Velocidade Tacógrafo":arrayvalue[4],"RPM":arrayvalue[5],"Longitude":arrayvalue[6],"Latitude":arrayvalue[7],"Velocidade GPS":arrayvalue[8] } ];
+              
+              myData = [ {"Endereço":address, "eventdate":arrayvalue[0],"Entrada Negativa 2":arrayvalue[1],"Botão de Pânico":arrayvalue[2],"Ignição (PPC)":arrayvalue[3],"Velocidade Tacógrafo":arrayvalue[4],"RPM":arrayvalue[5],"Longitude":arrayvalue[6],"Latitude":arrayvalue[7],"Velocidade GPS":arrayvalue[8] } ];
 
               jQuery("#list4").jqGrid('addRowData',1,myData[0]);
-              
+                            
               //HACK
               $("table#list4").css("width","931px");
               $("table.ui-jqgrid-htable").css("width","931px");
@@ -182,7 +209,6 @@ $("#googlemap").click(function() {
     });
   });
 
-  
 
 });
 
