@@ -16,11 +16,10 @@ def index(request):
     rendered_list = ""
     
     for item in equipments:
-        print item.id
-        print Vehicle.objects.filter(equipment=1)
+        
         try:
             v = Vehicle.objects.get(equipment__id=item.id)
-            rendered_list+=u"<tr style='width:5%;'><td>"+item.name+" </td><td>"+str(v.license_plate)+"</td><td><a class='table-button' href=\"/vehicles/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/vehicles/delete/"+str(v.id)+"/\">Apagar</a>  <a class='table-button'  href=\"/vehicles/swap/"+str(v.id)+"/\">Remanejar</a></td></tr>"
+            rendered_list+=u"<tr style='width:5%;'><td style='width:340px'>"+item.name+" </td><td style='width:338px'>"+str(v.license_plate)+"</td><td><a class='table-button' href=\"/vehicles/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/vehicles/delete/"+str(v.id)+"/\">Apagar</a>  <a class='table-button'  href=\"/vehicles/swap/"+str(v.id)+"/\">Remanejar</a></td></tr>"
         except:
             v_str = "<a class='table-button' href=\"/vehicles/create/"+str(item.id)+"/\">Criar veiculo</a>"
             rendered_list+=u"<tr style='width:5%;'><td style='width:40%;'>"+item.name+" </td><td style='width:40%;'></td><td>"+v_str+"</td><td></td></tr>"
@@ -54,7 +53,6 @@ def edit(request,offset):
     if request.method == 'POST':    
         form = VehicleForm(request.POST,instance=v)
         if form.is_valid():
-            e = Equipment.objects.get(pk=int(offset))
             v = form.save(commit=False)
             #v.equipment = e
             v.save()

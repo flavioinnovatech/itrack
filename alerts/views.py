@@ -7,6 +7,7 @@ from itrack.equipments.models import Equipment
 from itrack.alerts.models import Alert
 from itrack.alerts.forms import AlertForm
 from itrack.equipments.models import Equipment
+from itrack.vehicles.models import Vehicle
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
@@ -48,10 +49,28 @@ def create(request,offset):
             return render_to_response("alerts/templates/create.html",locals(),context_instance=RequestContext(request),)
         
     else:
-        system_id = request.session['system']
+        system_id = int(offset)
+
         form = AlertForm()
         adm_id = System.objects.get(pk=int(system_id)).administrator.id
-        form.fields['equipment'].queryset=Equipment.objects.filter(system=int(system_id))
+        
+        e_set = Equipment.objects.filter(system = system_id)
+        v_set = []
+        for e in e_set:
+            try:
+                v_set.append(Vehicle.objects.get(equipment=e.id).id)
+            except:
+                print "Veículo não encontrado."
+                
+        form.fields["equipment"].queryset = Vehicle.objects.filter(id__in=v_set)
+        form.fields["equipment"].label = "Veículo"
+        form.fields["equipment"].empty_label = "(Selecione a placa)"
+
+        if form.fields["equipment"].queryset:
+            vehicles_exist = True
+        else:
+            vehicles_exist = False
+        
         
         form.fields['destinataries'].queryset=User.objects.filter(Q(system=int(system_id)) | Q(pk=adm_id) )
         
