@@ -60,6 +60,5 @@ def loadData(request):
 # geofence test
 def geofence(request):
   return render_to_response("templates/geofence.html",locals())
-  
-#def systems(request,offset):
+
 

@@ -43,7 +43,7 @@ class Equipment(models.Model):
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):
-      return self.name
+      return self.serial
 
 class Tracking(models.Model):
     msgtype = models.CharField(max_length=20)
