@@ -100,7 +100,7 @@ $("#googlemap").click(function() {
 	}
 	
   
-  if ($("#jqg_list4_1").is(':checked')) {
+  if ($("input[id^=jqg_list4_1]").is(':checked')) {
     
   var lat = $("td[aria-describedby=list4_Latitude]").text();
   var lng = $("td[aria-describedby=list4_Longitude]").text();
@@ -128,7 +128,9 @@ $("#googlemap").click(function() {
   $("#tabs-3").css("height","100%");
   
 });
+/* --------------------------------------------- END GOOGLE MAPS ------------------------------------------------------ */
 
+/* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
   $.getJSON("/rastreamento/loadCustomFields",
     function(customFields){
       
@@ -140,13 +142,17 @@ $("#googlemap").click(function() {
           myData = data;
           
           $.each(data, function(key1, val1) {
-              
+            
                 colNames.push(val1.type);
                 
-                colModel.push({name:val1.type});
-               
+                if (val1.type == "Latitude" || val1.type == "Longitude") {
+                  colModel.push({name:val1.type,hidden: true});
+                }
+                else {
+                  colModel.push({name:val1.type});
+                }
           });
-            
+                      
             jQuery("#list4").jqGrid({   
              	datatype: "local",
              	height:h-250,
@@ -165,12 +171,13 @@ $("#googlemap").click(function() {
                 arrayvalue.push(val1.value);
               });
               
-              myData = [ { "Entrada Negativa 2":arrayvalue[0],"Botão de Pânico":arrayvalue[1],"Ignição (PPC)":arrayvalue[2],"Velocidade Tacógrafo":arrayvalue[3],"RPM":arrayvalue[4],"Longitude":arrayvalue[5],"Latitude":arrayvalue[6],"Velocidade GPS":arrayvalue[7] } ];
+              myData = [ { "eventdate":arrayvalue[0],"Entrada Negativa 2":arrayvalue[1],"Botão de Pânico":arrayvalue[2],"Ignição (PPC)":arrayvalue[3],"Velocidade Tacógrafo":arrayvalue[4],"RPM":arrayvalue[5],"Longitude":arrayvalue[6],"Latitude":arrayvalue[7],"Velocidade GPS":arrayvalue[8] } ];
 
               jQuery("#list4").jqGrid('addRowData',1,myData[0]);
               
               //HACK
-              $("table#list4").css("width","930px")
+              $("table#list4").css("width","931px");
+              $("table.ui-jqgrid-htable").css("width","931px");
               
     });
   });

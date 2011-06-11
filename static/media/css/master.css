@@ -510,7 +510,7 @@ img.icon {
 
 img.fullscreen{
   height:20px;
-  margin-top:4px;
+  margin-top:1px;
   cursor: pointer;
 }
 img.fullscreen:hover{
