@@ -30,11 +30,13 @@ url(r'^system/delete/(\d+)/$','system.views.delete'),
 url(r'^system/finish/$','system.views.finish'),
 url(r'^system/edit/finish/$','system.views.editfinish'),
 url(r'^system/delete/finish/$','system.views.deletefinish'),
+
 url(r'^equipment/$','equipments.views.index'),
 url(r'^equipment/permissions/(\d+)/$','equipments.views.permissions'),
 url(r'^equipment/associations/(\d+)/$','equipments.views.associations'),
 url(r'^equipment/finish/$','equipments.views.finish'),
 url(r'^equipment/associations/finish/$','equipments.views.assoc_finish'),
+url(r'^equipment/fieldnames/(\d+)/$','equipments.views.set_names'),
 
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),

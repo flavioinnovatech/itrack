@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.forms import *
 from django.contrib.admin.widgets import *
-from itrack.equipments.models import Equipment,AvailableFields,CustomField,EquipmentType
+from itrack.equipments.models import Equipment,AvailableFields,CustomField,EquipmentType, CustomFieldName
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.formsets import formset_factory
 from django.shortcuts import render_to_response
@@ -13,7 +13,7 @@ from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
-from itrack.equipments.forms import AvailableFieldsForm,EquipmentsForm
+from itrack.equipments.forms import AvailableFieldsForm,EquipmentsForm,CustomNameForm
 from http403project.http import Http403
 from django.db.models import Q,Count
 
@@ -112,7 +112,6 @@ def permissions(request,offset):
                 form.fields["custom_fields"].label = ""
                 form.fields["equip_type"].initial = EquipmentType.objects.get(pk=equip.id).name
                 if not form.fields["custom_fields"].queryset:
-                    print "aqui!"
                     form.fields["custom_fields"].widget = HiddenInput()
                     form.fields["equip_type"].widget = HiddenInput()
                     
@@ -156,6 +155,42 @@ def associations(request,offset):
     else:
         raise Http403(u'Você não tem permissão para editar este sistema.')
     
-#def set_names(request,offset):
+def set_names(request,offset):
+    system = int(offset)
+    cfn_set = CustomFieldName.objects.filter(system__id=system).filter(custom_field__availablefields__system = system).distinct()
+    parent = System.objects.get(pk=system).parent
+    
+    print cfn_set
+    
+    if parent == None:
+        parent = system
+    
+    print len(cfn_set)
+    cfn_parent_set = CustomFieldName.objects.filter(system = parent).filter(custom_field__availablefields__system = system).distinct()
+    NameFieldsFormset = formset_factory(CustomNameForm, extra=len(cfn_set))     
+    
+    if request.method == 'POST':
+        formset = NameFieldsFormset(request.POST)
+        if formset.is_valid():
+            for form in formset.cleaned_data:
+                cfn = CustomFieldName.objects.get(pk=int(form["id"]))
+                cfn.name = form["name"]
+                cfn.save()
+            return render_to_response('equipments/templates/assoc_finish.html',locals())
+
+        
+        
+    else:
+        formset = NameFieldsFormset()   
+    for form,cfn,pcfn in zip(formset,cfn_set,cfn_parent_set):
+        if parent == system:
+            form.fields["name"].label = cfn.custom_field.name
+        else:
+            form.fields["name"].label = pcfn.name
+            
+        form.fields["name"].initial = cfn.name
+        form.fields["id"].initial = cfn.id
+    return render_to_response("equipments/templates/fieldnames.html",locals(),context_instance=RequestContext(request))
+        
     
     

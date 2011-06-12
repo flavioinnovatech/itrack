@@ -16,6 +16,8 @@ class CustomFieldName(models.Model):
     system = models.ForeignKey(System, verbose_name="Sistema")
     custom_field = models.ForeignKey(CustomField, verbose_name = "Campo")
     name = models.CharField(max_length=50, verbose_name = "Nome")
+    def __unicode__(self):
+      return self.name
 
 class EquipmentType(models.Model):
     custom_field = models.ManyToManyField(CustomField)
