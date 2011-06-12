@@ -1,24 +1,24 @@
 function montartabela(h,w) {
   
-  /* -------------------------------------------- JQGRID READY -------------------------------------------- */ 
-
-  
-  
+  /* -------------------------------------------- Funções que controlam as tabs/fullscreen -------------------------------------------- */ 
   if (h == null && w == null) {
-
-  w = $(window).width();
-  h = $(window).height();
-  
-  	
+    w = $(window).width();
+    h = $(window).height();
   }  
   
 }
 
+//monta tabela no tamanho normal no primeiro carregamento da pagina
 $('#tabs-1').ready(function(){  
   montartabela();
 });
 
 jQuery(document).ready(function(){ 
+  
+  //desabilita vehicles toolbar quando gmaps nao é selecionado
+  $('a[href=#tabs-1]').click(function(){ 
+    $("img[class=vehicle]").hide();
+  });
 
   w = $(window).width();
   h = $(window).height();
@@ -81,7 +81,11 @@ jQuery(document).ready(function(){
 // }); //end document.ready
 
 /* --------------------------------------------- GOOGLE MAPS ------------------------------------------------------ */
-$("#googlemap").click(function() {  
+$("#googlemap").click(function() {
+  //habilita botao vehicle
+  $("img[class=vehicle]").show();
+  
+  
 	var geocoder;
 	var map;
 	var infowindow = new google.maps.InfoWindow();
@@ -99,7 +103,6 @@ $("#googlemap").click(function() {
 		mapTypeId: 'roadmap'
 	}
 	
-  
   if ($("input[id^=jqg_list4_1]").is(':checked')) {
     
   var lat = $("td[aria-describedby=list4_Latitude]").text();
