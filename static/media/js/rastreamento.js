@@ -23,7 +23,7 @@ jQuery(document).ready(function(){
   w = $(window).width();
   h = $(window).height();
   $( "#tabs" ).tabs();
-  $( "#tabs" ).css("top","130px");
+  // $( "#tabs" ).css("top","130px");
   
   tabw = ($("#tabs-1").width());
   tabh = ($("#tabs-1").height());
@@ -61,7 +61,7 @@ jQuery(document).ready(function(){
       $('#menuContainer').css("z-index","2");
       $('#tabs').css("width","960px");
       $('#tabs').css("height",height);
-      $('#tabs').css("top","130px" );
+      // $('#tabs').css("top","130px" );
       $('#tabs').css("left",( left ) );
 
       $("#tabs-3").css("width", "924px");
