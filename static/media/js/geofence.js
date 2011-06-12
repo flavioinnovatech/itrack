@@ -1,5 +1,4 @@
-$("#map").ready(function(){
-  
+$(document).ready(function(){
 /*======================================================  MAP LOAD ======================================================*/
   var geocoder;
   var map;
@@ -16,7 +15,7 @@ $("#map").ready(function(){
   	mapTypeId: 'roadmap'
   }
   
-  directionsDisplay = new google.maps.DirectionsRenderer();
+  // directionsDisplay = new google.maps.DirectionsRenderer();
   
   map = new google.maps.Map(document.getElementById("map"), myOptions);
 
@@ -42,15 +41,15 @@ $("#map").ready(function(){
   		alert("Geocoder failed due to: " + status);
   	}
 
-    directionsDisplay.setMap(map);
+    // directionsDisplay.setMap(map);
     
 });
   
 /*======================================================  END MAP LOAD ======================================================*/
-google.maps.event.addListener(map,"mousemove",function(point){
-   $("#lat").val( point.latLng.lat() );
-   $("#lng").val( point.latLng.lng() );
-});
+// google.maps.event.addListener(map,"mousemove",function(point){
+   // $("#lat").val( point.latLng.lat() );
+   // $("#lng").val( point.latLng.lng() );
+// });
 
 /*======================================================  CIRCLE ======================================================*/
 

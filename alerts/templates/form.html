@@ -10,10 +10,15 @@
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
 <script type="text/javascript" src="/media/js/jquery-ui-timepicker-addon.js"></script>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+<script type="text/javascript" src="/media/js/geofence.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
 <script type="text/javascript">
 
 jQuery(document).ready(function(){  
+
 
 	$('.datepicker').datetimepicker({showSecond: true,timeFormat: 'hh:mm:ss'});
 	$('#menuContainer').css("z-index","0");
@@ -49,7 +54,25 @@ jQuery(document).ready(function(){
     
   });
   
-		
+	$("#id_trigger").change(function(){
+	  $("#id_trigger option:selected").each(function () {
+      if( $(this).text() == "Cerca eletrônica") {
+        w = $(window).width();
+        h = $(window).height();
+        
+        $("#dialog").attr("title","Selecionar cerca eletrônica");
+                
+        $( "#dialog" ).dialog({
+          show: "fade",
+          modal: true,
+          height: h - 30,
+          width: w-30
+        });
+        
+        $("#dialog").html('<div style="float:left;height:100%;width:20%;"></div><div id="map" style="float:right;height:100%;width:80%"></div>');
+      }
+    });
+	});
 });
 
 </script>
@@ -69,7 +92,6 @@ jQuery(document).ready(function(){
     {% for field in form %}
     <tr>
       {% if field.label_tag != '<label for="id_destinataries">Destinataries</label>' and  field.label_tag != '<label for="id_vehicle">Veículo</label>' %}
-      
       <td>
         <div class="form-item">
             <div class="item-left"> 
@@ -94,7 +116,11 @@ jQuery(document).ready(function(){
                  <p class="field">{{ field }} </p>          
             </div>
             </td>
+            
           </tr>
+          {% if field.label_tag == '<label for="id_trigger">Trigger</label>' %}
+          
+          {% endif %}
         </div>
       {% endif %}
     {% endfor %}
