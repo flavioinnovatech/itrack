@@ -3,12 +3,15 @@
 from django.shortcuts import render_to_response
 from itrack.system.models import System,Settings
 from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType
+from itrack.rastreamento.forms import ConfigForm
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.template.context import RequestContext
 from django.utils import simplejson
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from itrack.vehicles.models import Vehicle
 import pprint
+
 
 @login_required
 def index(request):
@@ -19,8 +22,10 @@ def index(request):
     map_maplink = 1
   if settings.map_multspectral:
     map_multispectral = 1
-      
-  return render_to_response("rastreamento/templates/rastreamento.html",locals())
+  
+  form = ConfigForm()
+  
+  return render_to_response("rastreamento/templates/rastreamento.html",locals(),context_instance=RequestContext(request),)
 
 #TO-DO: needs permission here
 def loadCustomFields(request):
@@ -86,4 +91,14 @@ def loadData(request):
 def geofence(request):
   return render_to_response("templates/geofence.html",locals())
 
+def xhr_test(request):
+    
+    if request.method == "POST":
+        pass
+    else:
+        form = ConfigForm()
+        return render_to_response("rastreamento/templates/form.html",locals(),context_instance=RequestContext(request),) 
+    print form.__dict__
+    return render_to_response("rastreamento/templates/form.html",locals(),context_instance=RequestContext(request),)    
+    
 
