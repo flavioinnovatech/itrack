@@ -30,12 +30,14 @@
 	</head>
 	<body>
 		{% block fullscreen %}
-		  <div id="pop">
-      <a href="#" onclick="document.getElementById('pop').style.display='none';">[Fechar]</a>
-      <br />
-      	Agora coloque o estilo dessa div.
+		  <div id="boxes">
 
-        </div>
+      <div id="dialog" class="window" style="display:none;">
+      <b>Teste de Janela Modal</b>
+
+
+      <div id="mask"></div>
+      </div>
 		{% endblock %}
 		
 		<!-- Header/Logo -->

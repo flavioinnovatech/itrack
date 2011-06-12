@@ -28,7 +28,7 @@ jQuery(document).ready(function(){
   tabw = ($("#tabs-1").width());
   tabh = ($("#tabs-1").height());
   
-  document.body.style.overflow = "hidden";
+  // document.body.style.overflow-x = "hidden";
   
   normal = 1;
   $('img.fullscreen').click(function() {
