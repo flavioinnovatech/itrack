@@ -57,18 +57,21 @@ def loadData(request):
   data = {}
   for i in vehicles:
     info = {}
+    info["hora"] = {}
+    info["veiculo"] = {}
+    info["info"] = {}
     tracking = Tracking.objects.filter(equipment=i.equipment.id).order_by('eventdate').reverse()[0]
     trackingData = TrackingData.objects.filter(tracking=tracking.id)
-    info["eventdate"] = smart_str(tracking.eventdate, encoding='utf-8', strings_only=False, errors='strict')
-    info["chassi"] = i.chassi
-    info["license plate"] = i.license_plate
-    info["color"] = i.color
-    info["year"] = i.year
-    info["model"] = i.model
-    info["manufacturer"] = i.manufacturer
-    info["type"] = i.type
+    info["hora"]["eventdate"] = smart_str(tracking.eventdate, encoding='utf-8', strings_only=False, errors='strict')
+    info["veiculo"]["chassi"] = i.chassi
+    info["veiculo"]["license plate"] = i.license_plate
+    info["veiculo"]["color"] = i.color
+    info["veiculo"]["year"] = i.year
+    info["veiculo"]["model"] = i.model
+    info["veiculo"]["manufacturer"] = i.manufacturer
+    info["veiculo"]["type"] = i.type
     for j in trackingData:
-      info[smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
+      info["info"][smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
     data[tracking.equipment.serial] =  info
 
   pp = pprint.PrettyPrinter(indent=4)
