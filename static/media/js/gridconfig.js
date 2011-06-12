@@ -9,4 +9,16 @@ $(document).ready( function() {
     */
 });
 
+function saveConfigs(){
+    
+    $("#id_custom_fields option:selected").each(function(){
+        alert($(this).text());
+        });
+        
+    $("#id_vehicles option:selected").each(function(){
+        alert($(this).text());
+        });
+    
+}
+
 

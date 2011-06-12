@@ -94,7 +94,10 @@ def geofence(request):
 def xhr_test(request):
     
     if request.method == "POST":
-        pass
+        form = ConfigForm(request.POST)
+        if form.is_valid():
+            for field in form.cleaned_data:
+                print field
     else:
         form = ConfigForm()
         return render_to_response("rastreamento/templates/form.html",locals(),context_instance=RequestContext(request),) 

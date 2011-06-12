@@ -67,7 +67,7 @@
 
 	</div>
 	<div id="tabs-6">
-
+<div  class="main-form">
 
 <h1><img class="icon" src="/media/img/equip.png">Configurações do Grid </h1>
 <hr />
@@ -89,11 +89,12 @@
         {% endfor %}
     </table>
 
-<input type="submit" value="Salvar" class="submit">
+<a href="#" onClick="saveConfigs();"> Salvar </a>
+
 <p class="clear">
 </form>
 
-
+</div>
 	</div>
 </div>
 
