@@ -509,10 +509,25 @@ img.icon {
 }
 
 img.fullscreen{
-  height:20px;
+  height:19px;
   margin-top:1px;
   cursor: pointer;
 }
 img.fullscreen:hover{
   border:1px outset;
+}
+
+img#maptools{
+  cursor: pointer;
+  height: 19px;
+  margin-top: 1px;
+  margin-right:5px;
+}
+
+img#maptools:hover{
+  border:1px outset;
+}
+
+img#maptools.vehicle{
+  display:none;
 }
