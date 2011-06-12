@@ -156,5 +156,6 @@ def associations(request,offset):
     else:
         raise Http403(u'Você não tem permissão para editar este sistema.')
     
+#def set_names(request,offset):
     
     
