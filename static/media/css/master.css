@@ -531,3 +531,25 @@ img#maptools:hover{
 img#maptools.vehicle{
   display:none;
 }
+
+#tabs-3left{
+  float:left;
+  width:0;
+  height:100%;
+}
+
+#tabs-3right{
+  float:right;
+  width:100%;
+  height:100%;
+}
+
+#easyTooltip{
+	padding:5px;
+	border:1px solid #ccc;
+	background:#FFF;
+}
+
+#tabs{
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}

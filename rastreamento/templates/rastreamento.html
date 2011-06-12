@@ -13,7 +13,9 @@
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <!-- <script type="text/javascript" src="http://www.geoportal.com.br/Api_Js_v3/v3.js"></script> -->
 <!-- <script type="text/javascript" src="http://187.115.25.240:8088/media/js/multispetral.js"></script> -->
-<script type="text/javascript" src="/media/js/rastreamento.js"></script>	
+<script type="text/javascript" src="/media/js/rastreamento.js"></script>
+<script type="text/javascript" src="/media/js/easyTooltip.js"></script>	
+
 	
 	
 	<style>
@@ -32,8 +34,9 @@
 		{%if map_google %}<li><a id="googlemap" href="#tabs-3">Google</a></li>{% endif %}
 		{%if map_multispectral %}<li><a class="fullscreen" href="#" onClick="">Multispectral</a></li>{% endif %}
 		{%if map_maplink %}<li><a class="fullscreen" href="#" onClick="">Maplink</a></li>{% endif %}
-		<li class="fullscreen" style="float:right;"><img class="fullscreen" src="/media/img/fullscreen.png"></li>
-		<li style="float:right;"><img id="maptools" class="vehicle" src="/media/img/vehicle.png"></li>
+		<li class="fullscreen" style="float:right;"><img title="Modo tela cheia" class="fullscreen" src="/media/img/fullscreen.png"></li>
+		<li style="float:right;"><img title="Listar veículos" id="maptools" class="vehicle" src="/media/img/vehicle.png"></li>
+		<li style="float:right;"><img title="Listar geofences" id="maptools" class="vehicle" src="/media/img/geofence.png"></li>
 		
 		
 	</ul>
@@ -44,6 +47,8 @@
   <table id="list5"></table> 
 	</div>
 	<div id="tabs-3" style="z-index:-1">
+	<div id="tabs-3left"></div>
+	<div id="tabs-3right"></div>
 
 	</div>
 	<div id="tabs-4">
