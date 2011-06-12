@@ -68,17 +68,17 @@ jQuery(document).ready(function(){
 
     {% for field in form %}
     <tr>
-      {% if field.label_tag != '<label for="id_destinataries">Destinataries</label>' %}
+      {% if field.label_tag != '<label for="id_destinataries">Destinataries</label>' and  field.label_tag != '<label for="id_vehicle">Veículo</label>' %}
       
       <td>
         <div class="form-item">
-            <div class="item-left">          
+            <div class="item-left"> 
                   <p>{{ field.label_tag }} {%if field.field.required%} *{%endif%}</p>
                   <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
             </div>
       </td>
       {% endif %}
-      {% if field.label_tag == '<label for="id_destinataries">Destinataries</label>' %}
+      {% if field.label_tag == '<label for="id_destinataries">Destinataries</label>' or  field.label_tag == '<label for="id_vehicle">Veículo</label>' %}
       <td colspan="2">
         <div class="item-right">
             <p class="errorlist">{{ field.errors }} </p>

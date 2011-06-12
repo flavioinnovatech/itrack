@@ -80,6 +80,26 @@ jQuery(document).ready(function(){
   
 // }); //end document.ready
 
+/* --------------------------------------------- toolbar ------------------------------------------------------ */
+
+$(document).ready(function(){
+  $("img[id=maptools]").easyTooltip();
+  $("img[class=fullscreen]").easyTooltip();
+});
+
+$("img[id=maptools]").click(function() {
+  if($("#tabs-3left").css("width") == "0px") {
+    $("#tabs-3right").css("width","80%");
+    $("#tabs-3left").css("width","20%");
+  }
+  else {
+    $("#tabs-3right").css("width","100%");
+    $("#tabs-3left").css("width","0");
+  }
+});
+
+/* --------------------------------------------- toolbar end  ------------------------------------------------------ */
+
 /* --------------------------------------------- GOOGLE MAPS ------------------------------------------------------ */
 $("#googlemap").click(function() {
   //habilita botao vehicle
@@ -126,7 +146,7 @@ $("#googlemap").click(function() {
 		}
 	});
   }
-  map = new google.maps.Map(document.getElementById("tabs-3"), myOptions);
+  map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
 	
   $("#tabs-3").css("height","100%");
   
@@ -145,31 +165,23 @@ $("#googlemap").click(function() {
           myData = data;
           address="";
           
+          colNames.push("Placa");
+          colModel.push({name:"Placa"});
           colNames.push("Endereço");
           colModel.push({name:"Endereço"});
           
+          //loop para cada equip
           $.each(data, function(key1, val1) {
             
-                colNames.push(val1.type);
-                
-                if (val1.type == "Latitude") {
-                  colModel.push({name:val1.type,hidden: true});
-                  lat = val1.value
-                }
-                
-                else if (val1.type == "Longitude"){
-                  colModel.push({name:val1.type,hidden: true});
-                  lng = val1.value
-                }
-                else {
-                  colModel.push({name:val1.type});
-                }
-                
+            $.each(data, function(key1, val1) {
+              
+            });
+          
           });
 
-          var latlng = new google.maps.LatLng(lat,lng);
-          geocoder = new google.maps.Geocoder();
-          
+          // var latlng = new google.maps.LatLng(lat,lng);
+          // geocoder = new google.maps.Geocoder();
+          geocoder=0;
           if (geocoder) {
                 geocoder.geocode({'latLng': latlng}, function(results, status) {
                   if (status == google.maps.GeocoderStatus.OK) {
