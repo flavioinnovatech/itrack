@@ -9,7 +9,6 @@ class Geofence(models.Model):
     system = models.ForeignKey(System, verbose_name = "Sistema")
     equipments = models.ManyToManyField(Equipment, verbose_name = "Equipamentos")
     
-
 class GeoEntity(models.Model):
     geofence = models.ForeignKey(Geofence, verbose_name = "Cerca Eletrônica")
     lat = models.FloatField()
