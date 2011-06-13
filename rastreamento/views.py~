@@ -26,7 +26,8 @@ def index(request):
   form = ConfigForm()
   form.fields["custom_names"].queryset = CustomFieldName.objects.filter(system = request.session["system"])
   form.fields["vehicles"].queryset = Vehicle.objects.filter(equipment__system = request.session["system"])
-  
+  form.fields["custom_names"].initial = CustomFieldName.objects.filter(custom_field__system = request.session["system"])
+  form.fields["vehicles"].initial = Vehicle.objects.filter(system = request.session["system"])
   return render_to_response("rastreamento/templates/rastreamento.html",locals(),context_instance=RequestContext(request),)
 
 #TO-DO: needs permission here
@@ -57,7 +58,7 @@ def loadData(request):
     except:
         print "Veículo não encontrado."
         
-  vehicles = Vehicle.objects.filter(id__in=v_set)
+  vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
 
 
   #data needs vehicle identification here
@@ -82,8 +83,8 @@ def loadData(request):
         cfn = CustomFieldName.objects.filter(system=system).get(custom_field=j.type)
         print CustomField.objects.filter(system=system)
         print cfn.custom_field
-        if cfn.custom_field in CustomField.objects.filter(system=system)
-        info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
+        if cfn.custom_field in CustomField.objects.filter(system=system):
+            info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
       except:
         pass
             
@@ -107,6 +108,15 @@ def xhr_test(request):
         #if form.is_valid():
         #    for field in form.cleaned_data:
         #        print field
+        
+        v_set = Vehicle.objects.filter(system = request.session["system"])
+        for v in v_set:
+            v.system.remove(request.session["system"])
+        
+        cf_set = CustomField.objects.filter(system = request.session["system"])
+        for cf in cf_set:
+            cf.system.remove(request.session["system"])
+        
         try:
             vehicles = request.POST.getlist(u"vehicles[]")
             for vehicle in vehicles:
