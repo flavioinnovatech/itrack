@@ -145,7 +145,18 @@ $(document).ready(function(){
   });
 
    $("#savecircle").click(function(){
-     alert('ae');
+    
+     coords = {lat: circle.center.lat(), lng: circle.center.lng(), radius: circle.radius};
+     //alert(coords.toSource());
+     $('#id_geoentities').remove();
+     $.post(
+        "/geofence/save/",
+        {type:'circle', coords: coords, system : window.location.pathname.split("/")[3]},
+        function(data){
+            $('form').append("<input type='hidden' name='geoentities' id='id_geoentities' value='"+data+"' />");
+            $("#dialog").dialog("close");
+        }
+     );
    });
   
 

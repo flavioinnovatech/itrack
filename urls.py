@@ -79,6 +79,7 @@ url(r'^alerts/delete/(\d+)/$','alerts.views.delete'),
 url(r'^alerts/delete/finish/$','alerts.views.delete_finish'),
 
 url(r'^geofence/$','rastreamento.views.geofence'),
+url(r'^geofence/save/$','geofence.views.saveGeofence'),
 
 
 url(r'^accounts/password_reset/$', 'django.contrib.auth.views.password_reset', {'template_name':'accounts/templates/password_reset_form.html', 'email_template_name':'accounts/templates/password_reset_email.html'}),
