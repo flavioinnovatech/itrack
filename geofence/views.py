@@ -29,9 +29,28 @@ def saveGeofence(request):
         p1 = GeoEntity(geofence=None,lat = float(parsed_dict['coords']['lat']), lng = float(parsed_dict['coords']['lng']), radius = float(parsed_dict['coords']['radius']))
         p1.save()
         return HttpResponse(p1.id)
-        pass
     elif parsed_dict['type'] == 'polygon':
-        pass
+        str_coords =  parsed_dict['coords']['points'].replace("(","").split(")")
+        coords = []
+        for coord in str_coords:
+            if not coord == "":
+                coords.append(coord.split(","))
+        
+        list_ids = []
+        sequence = 0
+        for ent in coords:
+            p = GeoEntity(geofence=None,lat=float(ent[0]),lng=float(ent[1]),radius=0,seq=sequence)
+            sequence += 1
+            p.save()
+            list_ids.append(p.id)
+
+        str_ids = ""
+        for id in list_ids:
+            str_ids+=str(id)+","
+        
+        print str_ids
+        
+        return HttpResponse(str_ids)
     elif parsed_dict['type'] == 'route':
         pass
     else:

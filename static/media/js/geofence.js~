@@ -38,9 +38,10 @@ $(document).ajaxSend(function(event, xhr, settings) {
 
 $(document).ready(function(){
   
+  
   $("#savecircle").attr('disabled','disabled');
-  
-  
+  $("#saveroute").attr('disabled','disabled');
+  // $("#savepolygon").attr('disabled','disabled');
 /*======================================================  MAP LOAD ======================================================*/
   var geocoder;
   var map;
@@ -57,9 +58,11 @@ $(document).ready(function(){
   	mapTypeId: 'roadmap'
   }
   
-  // directionsDisplay = new google.maps.DirectionsRenderer();
-  
+  directionsDisplay = new google.maps.DirectionsRenderer();
   map = new google.maps.Map(document.getElementById("map"), myOptions);
+  directionsDisplay.setMap(map);
+  creator = new PolygonCreator(map);
+  creator.destroy();
   
   google.maps.event.trigger(map, 'resize');
   map.setZoom( map.getZoom() );
@@ -109,6 +112,7 @@ $(document).ready(function(){
 // $(document).ready(function(){
 
   $("#circletool").click(function() {
+    creator.destroy();
       
     if (isNaN(parseInt($("#radius").val()))) {
       alert('Digite um número válido para o raio');
@@ -116,7 +120,7 @@ $(document).ready(function(){
 
     else {
   
-      alert('Clique para escolher centro do círculo');
+      // alert('Clique para escolher centro do círculo');
 
       google.maps.event.addDomListenerOnce(map,"click",function(point){
       
@@ -148,7 +152,7 @@ $(document).ready(function(){
     
      coords = {lat: circle.center.lat(), lng: circle.center.lng(), radius: circle.radius};
      //alert(coords.toSource());
-     $('form').remove('#id_geoentities');
+     $('#id_geoentities').remove();
      $.post(
         "/geofence/save/",
         {type:'circle', coords: coords, system : window.location.pathname.split("/")[3]},
@@ -160,46 +164,75 @@ $(document).ready(function(){
    });
   
 
-});
+
 /*====================================================== END CIRCLE ======================================================*/
-
 /*======================================================  ROUTE ======================================================*/
-$("#routetool").click(function(){
+  $("#routetool").click(function(){
+    creator.destroy();
 
-    alert('Selecione uma rua para origem e outra para destino');
+      // alert('Selecione uma rua para origem e outra para destino');
 
-    google.maps.event.addListener(map,"click",function(point){
+      google.maps.event.addListenerOnce(map,"click",function(point){
       
-      var start = point.latLng
+        var start = point.latLng
 
-      google.maps.event.addListener(map,"click",function(point){
+        google.maps.event.addListenerOnce(map,"click",function(point){ 
 
-      // var start = "São Paulo";
-      //       var end = "Campinas";
-      var request = {
-        origin:start, 
-        destination:point.latLng,
-        travelMode: google.maps.DirectionsTravelMode.DRIVING
-      };
-      directionsService.route(request, function(result, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
-          directionsDisplay.setDirections(result);
-        }
+        var request = {
+          origin:start, 
+          destination:point.latLng,
+          travelMode: google.maps.DirectionsTravelMode.DRIVING
+        };
+        directionsService.route(request, function(result, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(result);
+          
+            $("#saveroute").removeAttr('disabled');
+          }
       
-        else {
-          alert('Rua inválida');
-        }
+          else {
+            alert('Rota inválida');
+          }
+        });
+      
       });
-      google.maps.event.clearListeners(map, 'click');
-      
     });
-    });
-    
-    
-
-});
+  });
+  
+  $("#saveroute").click(function(){
+    alert('ae');
+  });
 
 /*====================================================== END ROUTE ======================================================*/
+
+/*====================================================== POLYGON START ======================================================*/
+
+  $("#polygontool").click(function(){
+    
+    creator = new PolygonCreator(map);
+        
+  });
+  
+  $("#savepolygon").click(function(){
+    creator.destroy();
+    $('#id_geoentities').remove();
+    
+    /*coords = {lat: circle.center.lat(), lng: circle.center.lng(), radius: circle.radius};
+    
+     $.post(
+        "/geofence/save/",
+        {type:'circle', coords: coords, system : window.location.pathname.split("/")[3]},
+        function(data){
+            $('form').append("<input type='hidden' name='geoentities' id='id_geoentities' value='"+data+"' />");
+            $("#dialog").dialog("close");
+        }
+     );*/
+    alert(creator.showData());
+  });
+
+/*====================================================== POLYGON END ======================================================*/
+
+});
 
 
 
