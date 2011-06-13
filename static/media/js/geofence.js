@@ -1,4 +1,46 @@
-$("#map").ready(function(){
+////////////////// Função para habiliar o POST
+$(document).ajaxSend(function(event, xhr, settings) {
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function safeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+});
+
+$(document).ready(function(){
+  
+  $("#savecircle").attr('disabled','disabled');
+  
+  
 /*======================================================  MAP LOAD ======================================================*/
   var geocoder;
   var map;
@@ -23,18 +65,12 @@ $("#map").ready(function(){
   map.setZoom( map.getZoom() );
   
   google.maps.event.addListener(map, "mousemove", function(){
-  	google.maps.event.trigger(map, 'resize'); 
-  	map.setZoom( map.getZoom() - 1);
-    map.setZoom( map.getZoom() + 1);
-  });	
+     google.maps.event.trigger(map, 'resize'); 
+   }); 
 
   map.setZoom( map.getZoom() - 1);
   map.setZoom( map.getZoom() + 1);
-  // google.maps.event.addListener(map, 'resize', function() {
-    // alert('ae');
-      // google.maps.event.trigger(map, 'resize');
-  // });
-  
+
   
 
   var input = "-22.896359,-47.060092";
@@ -61,7 +97,7 @@ $("#map").ready(function(){
 
     // directionsDisplay.setMap(map);
     
-});
+// });
   
 /*======================================================  END MAP LOAD ======================================================*/
 // google.maps.event.addListener(map,"mousemove",function(point){
@@ -70,52 +106,48 @@ $("#map").ready(function(){
 // });
 
 /*======================================================  CIRCLE ======================================================*/
-$("#circletool").ready(function(){
-var markersArray = [];
+// $(document).ready(function(){
 
-  
-  if (isNaN(parseInt($("#radius").val()))) {
-    alert('Digite um número válido');
-  }
-
-  else {
-  
-  alert('Clique para escolher origem do círculo');
-
-  google.maps.event.addListener(map,"click",function(point){
-    
-      if (markersArray) {
-          for (i in markersArray) {
-            markersArray[i].setMap(null);
-          }
-        }
+  $("#circletool").click(function() {
       
+    if (isNaN(parseInt($("#radius").val()))) {
+      alert('Digite um número válido para o raio');
+    }
+
+    else {
+  
+      alert('Clique para escolher centro do círculo');
+
+      google.maps.event.addDomListenerOnce(map,"click",function(point){
+      
+          radius = parseInt($("#radius").val());
     
-      radius = parseInt($("#radius").val());
-    
-      circle = new google.maps.Circle({
-        center : point.latLng,
-        map : map,
-        strokeColor : "#FFAA00",
-        radius : radius
+          circle = new google.maps.Circle({
+            center : point.latLng,
+            map : map,
+            strokeColor : "#FFAA00",
+            radius : radius
+          });
+          
+           $("#savecircle").removeAttr('disabled');
+           
+          /*$.post({
+               url: "/geofence/",
+               data: {geo1 = {lat = point.latLng.lat(),lng = point.latLng.lng(), r = radius}}
+               success: function(msg){
+                 alert( "Data Saved: " + msg );
+               }
+          });*/
+      
       });
-      
-      markersArray.push(circle);
-      google.maps.event.clearListeners(map, 'click');
-
-      /*$.post({
-           url: "/geofence/",
-           data: {geo1 = {lat = point.latLng.lat(),lng = point.latLng.lng(), r = radius}}
-           success: function(msg){
-             alert( "Data Saved: " + msg );
-           }
-      });*/
-      
+    }
   
-    
   });
+
+   $("#savecircle").click(function(){
+     alert('ae');
+   });
   
-  }
 
 });
 /*====================================================== END CIRCLE ======================================================*/

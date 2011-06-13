@@ -18,3 +18,7 @@ def index(request):
         vector_html = render_system_html2(childs)
         
     return render_to_response("system/templates/home.html",locals())
+    
+def saveGeofence(request):
+  
+  return render_to_response("alerts/templates/create.html",locals())
