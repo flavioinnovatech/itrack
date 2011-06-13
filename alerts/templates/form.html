@@ -1,5 +1,30 @@
 {% extends "templates/base.html" %}
 
+{% block fullscreen %}
+  <div id="dialog" class="window" style="display:none;">
+    
+  <div id="accordion" style="float:left;height:100%;width:20%;">
+    <h3><a href="#">Círculo</a></h3>
+      <div>
+        <p>Digite um raio e em seguida clique no botão abaixo para traçar o centro no mapa:</p><br/>
+        <input type="text" id="#radius"></input> metros <br/><br/>
+        <input type="submit" value="Traçar centro" id="#circletool"></input>
+      </div>
+    <h3><a href="#">Polígono</a></h3>
+      <div>
+        <p>pol</p>
+      </div>
+    <h3><a href="#">Rota</a></h3>
+      <div>
+        <p>rota</p>
+      </div>
+  </div>
+  
+  <div id="map" style="float:right;height:100%;width:79%"></div>
+  </div>
+
+{% endblock %}
+
 {% block head %}
 <link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
 <script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
@@ -66,10 +91,23 @@ jQuery(document).ready(function(){
           show: "fade",
           modal: true,
           height: h - 30,
-          width: w-30
+          width: w-30,
+          open: function(){
+            $("#accordion").accordion({ 
+                autoHeight: true,
+                create: function() {
+                  
+                  $("#circletool").click(function(){
+                    alert('ae');
+                  });
+                }
+              
+            });  
+          }
+          
         });
         
-        $("#dialog").html('<div style="float:left;height:100%;width:20%;"></div><div id="map" style="float:right;height:100%;width:80%"></div>');
+        // $("#dialog").html('');
       }
     });
 	});
