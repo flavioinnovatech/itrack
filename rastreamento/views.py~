@@ -2,7 +2,7 @@
 
 from django.shortcuts import render_to_response
 from itrack.system.models import System,Settings
-from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType
+from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType,CustomFieldName
 from itrack.rastreamento.forms import ConfigForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template.context import RequestContext
@@ -22,8 +22,12 @@ def index(request):
     map_maplink = 1
   if settings.map_multspectral:
     map_multispectral = 1
-      
-  return render_to_response("rastreamento/templates/rastreamento.html",locals())
+  
+  form = ConfigForm()
+  form.fields["custom_names"].queryset = CustomFieldName.objects.filter(system = request.session["system"])
+  form.fields["vehicles"].queryset = Vehicle.objects.filter(equipment__system = request.session["system"])
+  
+  return render_to_response("rastreamento/templates/rastreamento.html",locals(),context_instance=RequestContext(request),)
 
 #TO-DO: needs permission here
 def loadCustomFields(request):
@@ -74,11 +78,18 @@ def loadData(request):
     info["veiculo"]["manufacturer"] = i.manufacturer
     info["veiculo"]["type"] = i.type
     for j in trackingData:
-      info["info"][smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
+      try:
+        cfn = CustomFieldName.objects.filter(system=system).get(custom_field=j.type)
+        print CustomField.objects.filter(system=system)
+        print cfn.custom_field
+        if cfn.custom_field in CustomField.objects.filter(system=system)
+        info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
+      except:
+        pass
+            
     data[tracking.equipment.serial] =  info
-
-  pp = pprint.PrettyPrinter(indent=4)
-  pp.pprint(data)
+       
+    print data 
 
   json = simplejson.dumps(data)
 
@@ -92,11 +103,31 @@ def geofence(request):
 def xhr_test(request):
     
     if request.method == "POST":
-        pass
+        #form = ConfigForm(request.POST)
+        #if form.is_valid():
+        #    for field in form.cleaned_data:
+        #        print field
+        try:
+            vehicles = request.POST.getlist(u"vehicles[]")
+            for vehicle in vehicles:
+                v = Vehicle.objects.get(pk=int(vehicle))
+                v.system.add(request.session["system"])
+        except:
+            pass
+        try:
+            custom_names = request.POST.getlist(u"custom_names[]")
+            for name in custom_names:
+                cf = CustomFieldName.objects.get(pk=int(name)).custom_field
+                cf.system.add(int(request.session["system"]))
+        except:
+            pass
+            
+
+        
     else:
         form = ConfigForm()
         return render_to_response("rastreamento/templates/form.html",locals(),context_instance=RequestContext(request),) 
-    print form.__dict__
+
     return render_to_response("rastreamento/templates/form.html",locals(),context_instance=RequestContext(request),)    
     
 
