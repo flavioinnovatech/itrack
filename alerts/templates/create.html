@@ -6,3 +6,17 @@
 <h2>Dados de cadastro</h2>
 <em>Informe os dados necessários para o cadastro do veículo no sistema.</em>
 {% endblock %}
+
+{% block content %}
+{% if not vehicles_exist %}
+<div  class="main-form">
+<h1><img class="icon" src="/media/img/equipment.png">Criação de alerta </h1><hr/>
+<h2>Dados do comando</h2>
+<em>O sistema não possui nenhum veículo associado aos equipamentos. É necessário associar os veículos aos equipamentos antes de criar alertas. <a href = "{% url vehicles.views.index %}"> Clique aqui para ir a tela de administração de veículos. </a></em>
+
+
+</div>
+{% else %}
+   {{ block.super }}
+{% endif %}
+{% endblock %}

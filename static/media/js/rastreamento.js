@@ -1,34 +1,35 @@
 function montartabela(h,w) {
   
-  /* -------------------------------------------- JQGRID READY -------------------------------------------- */ 
-
-  
-  
+  /* -------------------------------------------- Funções que controlam as tabs/fullscreen -------------------------------------------- */ 
   if (h == null && w == null) {
-
-  w = $(window).width();
-  h = $(window).height();
-  
-  	
+    w = $(window).width();
+    h = $(window).height();
   }  
   
 }
 
+//monta tabela no tamanho normal no primeiro carregamento da pagina
 $('#tabs-1').ready(function(){  
   montartabela();
 });
 
 jQuery(document).ready(function(){ 
+  
+  //desabilita vehicles toolbar quando gmaps nao é selecionado
+  $('a[href=#tabs-1]').click(function(){
+    window.location.reload();
+    $("img[class=vehicle]").hide();
+  });
 
   w = $(window).width();
   h = $(window).height();
   $( "#tabs" ).tabs();
-  $( "#tabs" ).css("top","130px");
+  // $( "#tabs" ).css("top","130px");
   
   tabw = ($("#tabs-1").width());
   tabh = ($("#tabs-1").height());
   
-  document.body.style.overflow = "hidden";
+  // document.body.style.overflow-x = "hidden";
   
   normal = 1;
   $('img.fullscreen').click(function() {
@@ -43,11 +44,12 @@ jQuery(document).ready(function(){
         top = parseInt(top);
       
         $('#menuContainer').css("z-index","0");
-        $('#tabs').css("width","100%");
-        $('#tabs').css("height","100%");
+        $('#tabs').css("width",w);
+        $('#tabs').css("height",h);
+        $('#tabs').css("position","absolute");
         $('#tabs').css("top","0");
         $('#tabs').css("left","0");
-        $("#tabs-3").css("height","100%");
+        $("#tabs-3").css("height","97%");
         $("#tabs-3").css("width","97%");
         normal = 0;
         
@@ -58,10 +60,11 @@ jQuery(document).ready(function(){
         break;
         
      case 0:
+     $('#tabs').css("position","inherit");
       $('#menuContainer').css("z-index","2");
       $('#tabs').css("width","960px");
       $('#tabs').css("height",height);
-      $('#tabs').css("top","130px" );
+      // $('#tabs').css("top","130px" );
       $('#tabs').css("left",( left ) );
 
       $("#tabs-3").css("width", "924px");
@@ -80,8 +83,35 @@ jQuery(document).ready(function(){
   
 // }); //end document.ready
 
+/* --------------------------------------------- toolbar ------------------------------------------------------ */
+$(document).ready(function(){
+  $("img[id=maptools]").easyTooltip();
+  $("img[class=fullscreen]").easyTooltip();
+});
+
+$("img[id=maptools]").click(function() {
+  if($("#tabs-3left").css("width") == "0px") {
+    $("#tabs-3right").css("width","79%");
+    $("#tabs-3left").css("width","20%");
+  }
+  else {
+    $("#tabs-3right").css("width","100%");
+    $("#tabs-3left").css("width","0");
+  }
+});
+
+/* --------------------------------------------- toolbar end  ------------------------------------------------------ */
+
 /* --------------------------------------------- GOOGLE MAPS ------------------------------------------------------ */
-$("#googlemap").click(function() {  
+
+
+$("#googlemap").click(function() {
+  w = $(window).width();
+  h = $(window).height();
+  //habilita botao vehicle
+  $("img[class=vehicle]").show();
+  
+  
 	var geocoder;
 	var map;
 	var infowindow = new google.maps.InfoWindow();
@@ -99,8 +129,7 @@ $("#googlemap").click(function() {
 		mapTypeId: 'roadmap'
 	}
 	
-  
-  if ($("#jqg_list4_1").is(':checked')) {
+  if ($("input[id^=jqg_list4_1]").is(':checked')) {
     
   var lat = $("td[aria-describedby=list4_Latitude]").text();
   var lng = $("td[aria-describedby=list4_Longitude]").text();
@@ -123,30 +152,130 @@ $("#googlemap").click(function() {
 		}
 	});
   }
-  map = new google.maps.Map(document.getElementById("tabs-3"), myOptions);
+  map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
 	
-  $("#tabs-3").css("height","100%");
+  $("#tabs-3").css("height",h-200);
   
 });
+/* --------------------------------------------- END GOOGLE MAPS ------------------------------------------------------ */
 
-  $.getJSON("/rastreamento/loadCustomFields",
-    function(customFields){
-      
+/* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
       $.getJSON("/rastreamento/loadData",
         function(data){
-           // $.each(data, function(key1, val1) {alert(val1.type);    });
+          
+          //montar cabeçalhos
           var colModel = [];
           var colNames = [];
-          myData = data;
           
-          $.each(data, function(key1, val1) {
-              
-                colNames.push(val1.type);
-                
-                colModel.push({name:val1.type});
-               
-          });
+          //Campos fixos
+          colNames.push("Latitude");
+          colModel.push({name:"Latitude",hidden:true});
+          colNames.push("Longitude");
+          colModel.push({name:"Longitude",hidden:true});
+          colNames.push("Placa");
+          colModel.push({name:"Placa",align:"center"});
+          colNames.push("Tipo veículo");
+          colModel.push({name:"Tipo veículo",align:"center"});
+          colNames.push("Hora");
+          colModel.push({name:"Hora",align:"center"});
+          colNames.push("Endereço");
+          colModel.push({name:"Endereço",align:"center"});
+          
+          //para cada veículo
+          $.each(data, function(key, equip) {
             
+            //para cada info
+            $.each(equip.info, function(key2,info){
+              
+              if (key2 == "Latitude" || key2 == "Longitude") {
+
+              }
+              
+              
+              else {
+                colNames.push(key2);
+                colModel.push({name:key2,align:"center"});
+              }
+            });
+             
+          });
+          
+          //inserir dados
+          
+          //cria o objeto para cada linha
+          myData = [];
+          object = new Object;
+          $.each(colNames, function(key, name) {
+              object[name] = "";
+          });
+          
+          $.each(data, function(key, equip) {              
+            
+              $.each(colNames, function(key, name) {
+            
+                //Campos fixos
+                if (name == "Hora") {
+                  object[name] = equip.hora.eventdate;
+                }
+                
+                else if (name == "Tipo veículo") {
+                  object[name] = equip.veiculo.type;
+                }
+                
+                else if (name == "Placa") {
+                  object[name] = equip.veiculo.license_plate;
+                }
+                
+                //Geocode reverse RULES
+                else if (name == "Endereço") {
+                  var lat = object["Latitude"];
+                  var lng = object["Longitude"];
+                  var latlng = new google.maps.LatLng(lat,lng);
+                  geocoder = new google.maps.Geocoder();
+                  geocoder.geocode({'latLng': latlng}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                    
+                        $("#end").attr("value",results[0].formatted_address);
+                    }
+                    else {
+                      $("#end").attr("value","");
+                    }
+                    
+                  });
+                  
+                  object[name] = $("#end").val();
+                  
+                }
+                
+                //Custom fields
+                else {
+                  
+                  object[name] = equip.info[name];
+                  
+                }
+                
+            });
+            
+            myData.push(object);
+          });
+          
+          
+
+          // var latlng = new google.maps.LatLng(lat,lng);
+          // geocoder = new google.maps.Geocoder();
+          geocoder=0;
+          if (geocoder) {
+                geocoder.geocode({'latLng': latlng}, function(results, status) {
+                  if (status == google.maps.GeocoderStatus.OK) {
+                   address = results[0].formatted_address;
+                  
+                  }
+                  else {
+                    alert("Geocoder failed due to: " + status);
+                  }
+                });
+            }
+
             jQuery("#list4").jqGrid({   
              	datatype: "local",
              	height:h-250,
@@ -156,26 +285,17 @@ $("#googlemap").click(function() {
              	multiselect: true, 
              	caption: "Rastreamento veicular" }); 
 
-              var i = 0
-              var myData = [];
-              var arraytype = [];
-              var arrayvalue = [];
-              $.each(data, function(key1, val1) {
-                arraytype.push(val1.type);
-                arrayvalue.push(val1.value);
+              var i = 0;
+              $.each(myData, function(key, item) { 
+                jQuery("#list4").jqGrid('addRowData',i+1,item);
+                i = i+1;
               });
-              
-              myData = [ { "Entrada Negativa 2":arrayvalue[0],"Botão de Pânico":arrayvalue[1],"Ignição (PPC)":arrayvalue[2],"Velocidade Tacógrafo":arrayvalue[3],"RPM":arrayvalue[4],"Longitude":arrayvalue[5],"Latitude":arrayvalue[6],"Velocidade GPS":arrayvalue[7] } ];
-
-              jQuery("#list4").jqGrid('addRowData',1,myData[0]);
-              
               //HACK
-              $("table#list4").css("width","930px")
+              $("table#list4").css("width","931px");
+              $("table.ui-jqgrid-htable").css("width","931px");
               
     });
-  });
 
-  
 
 });
 

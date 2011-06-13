@@ -6,6 +6,7 @@ from django.contrib.admin.widgets import *
 from itrack.system.models import System,Settings,SystemPerms
 from django.contrib.formtools.wizard import FormWizard
 from itrack.accounts.forms import UserCompleteForm, UserForm, UserProfileForm
+from itrack.equipments.models import CustomFieldName
 
 class SystemForm(ModelForm):
     class Meta:
@@ -95,7 +96,12 @@ class SystemWizard(FormWizard):
               new_setting  = change_css(new_setting)              
               new_setting.save()
 
-
+              cfn_set = CustomFieldName.objects.filter(system = system)
+              for cfn in cfn_set:
+                cfn2 = CustomFieldName(system = new_sys, custom_field=cfn.custom_field, name = cfn.name)
+                cfn2.save()
+              
+              
               return HttpResponseRedirect('/system/finish/')
               
           else:

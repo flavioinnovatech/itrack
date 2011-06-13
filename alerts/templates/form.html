@@ -1,5 +1,34 @@
 {% extends "templates/base.html" %}
 
+{% block fullscreen %}
+  <div id="dialog" class="window" style="display:none;">
+    
+  <div id="accordion" style="float:left;height:100%;width:20%;">
+    <h3><a href="#">Círculo</a></h3>
+      <div>
+        <p>Digite um raio e em seguida clique no botão abaixo para traçar o centro no mapa:</p><br/>
+        <input type="text" id="radius"></input> metros <br/><br/>
+        <p align="center"><span class="table-button" id="circletool" style="cursor:pointer;padding:5px;">Traçar centro</span></p><br><br/>
+        <input id="savecircle" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>
+      </div>
+    <h3><a href="#">Polígono</a></h3>
+      <div>
+        <p>Clique no botão abaixo para selecionar os vértices do polígono no mapa:</p><br/>
+        <p align="center"><span class="table-button"  id="polygontool" style="cursor:pointer;padding:5px;">Traçar polígono</span></p><br><br/>
+        <input id="savepolygon" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>      </div>
+    <h3><a href="#">Rota</a></h3>
+      <div>
+        <p>Clique no botão abaixo e em seguida selecione uma rua para origem e uma rua para destino</p><br/>
+        <p align="center"><span class="table-button"  id="routetool"  style="cursor:pointer;padding:5px;">Selecionar rota</span></p><br/><br/>
+        <input id="saveroute" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>
+      </div>
+  </div>
+  
+  <div id="map" style="float:right;height:100%;width:79%"></div>
+  </div>
+
+{% endblock %}
+
 {% block head %}
 <link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
 <script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
@@ -10,10 +39,16 @@
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
 <script type="text/javascript" src="/media/js/jquery-ui-timepicker-addon.js"></script>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+<script type="text/javascript" src="/media/js/geofence.js"></script>
+<script type="text/javascript" src="/media/js/polygon(1.0).js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
 <script type="text/javascript">
 
 jQuery(document).ready(function(){  
+
 
 	$('.datepicker').datetimepicker({showSecond: true,timeFormat: 'hh:mm:ss'});
 	$('#menuContainer').css("z-index","0");
@@ -49,7 +84,32 @@ jQuery(document).ready(function(){
     
   });
   
-		
+	$("#id_trigger").change(function(){
+	  $("#id_trigger option:selected").each(function () {
+      if( $(this).text() == "Cerca eletrônica") {
+        w = $(window).width();
+        h = $(window).height();
+        
+        $("#dialog").attr("title","Selecionar cerca eletrônica");
+                
+        $( "#dialog" ).dialog({
+          show: "fade",
+          modal: true,
+          height: h - 30,
+          width: w-30,
+          open: function(){
+            $("#accordion").accordion({ 
+                autoHeight: true
+              
+            });  
+          }
+          
+        });
+        
+        // $("#dialog").html('');
+      }
+    });
+	});
 });
 
 </script>
@@ -68,17 +128,16 @@ jQuery(document).ready(function(){
 
     {% for field in form %}
     <tr>
-      {% if field.label_tag != '<label for="id_destinataries">Destinataries</label>' %}
-      
+      {% if field.label_tag != '<label for="id_destinataries">Destinataries</label>' and  field.label_tag != '<label for="id_vehicle">Veículo</label>' %}
       <td>
         <div class="form-item">
-            <div class="item-left">          
+            <div class="item-left"> 
                   <p>{{ field.label_tag }} {%if field.field.required%} *{%endif%}</p>
                   <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
             </div>
       </td>
       {% endif %}
-      {% if field.label_tag == '<label for="id_destinataries">Destinataries</label>' %}
+      {% if field.label_tag == '<label for="id_destinataries">Destinataries</label>' or  field.label_tag == '<label for="id_vehicle">Veículo</label>' %}
       <td colspan="2">
         <div class="item-right">
             <p class="errorlist">{{ field.errors }} </p>
@@ -94,7 +153,11 @@ jQuery(document).ready(function(){
                  <p class="field">{{ field }} </p>          
             </div>
             </td>
+            
           </tr>
+          {% if field.label_tag == '<label for="id_trigger">Trigger</label>' %}
+          
+          {% endif %}
         </div>
       {% endif %}
     {% endfor %}

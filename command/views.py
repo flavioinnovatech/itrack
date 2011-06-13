@@ -1,5 +1,6 @@
 # -*- coding:utf8 -*-
 from itrack.command.models import Command
+from itrack.vehicles.models import Vehicle
 from itrack.command.forms import CommandForm
 from itrack.equipments.models import Equipment
 from itrack.system.models import System
@@ -36,12 +37,41 @@ def create(request,offset):
             c.save()
             return HttpResponseRedirect("/commands/create/finish")
         else:
-            return render_to_response("command/templates/create.html",locals(),context_instance=RequestContext(request),)
         
+            e_set = Equipment.objects.filter(system = int(offset))
+            v_set = []
+            
+            for e in e_set:
+                try:
+                    v_set.append(Vehicle.objects.get(equipment=e.id).id)
+                except:
+                    print "Veículo não encontrado."
+            form.fields["equipment"].queryset = Vehicle.objects.filter(id__in=v_set)
+            form.fields["equipment"].label = "Veículo"
+            form.fields["equipment"].empty_label = "(Selecione a placa)"
+            vehicles_exist = True
+            return render_to_response("command/templates/create.html",locals(),context_instance=RequestContext(request),)
     else:
         
         form = CommandForm()
-        form.fields["equipment"].queryset = Equipment.objects.filter(system = int(offset))
+        e_set = Equipment.objects.filter(system = int(offset))
+        v_set = []
+        
+        for e in e_set:
+            try:
+                v_set.append(Vehicle.objects.get(equipment=e.id).id)
+            except:
+                print "Veículo não encontrado."
+             
+        form.fields["equipment"].queryset = Vehicle.objects.filter(id__in=v_set)
+        form.fields["equipment"].label = "Veículo"
+        form.fields["equipment"].empty_label = "(Selecione a placa)"
+        
+        if form.fields["equipment"].queryset:
+            vehicles_exist = True
+        else:
+            vehicles_exist = False
+            
         return render_to_response("command/templates/create.html",locals(),context_instance=RequestContext(request),)
         
 def create_finish(request):

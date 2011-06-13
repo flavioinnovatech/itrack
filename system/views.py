@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response
 from itrack.system.models import System, Settings
 from django.contrib.auth.models import User
 from itrack.accounts.models import UserProfile
-from itrack.equipments.models import Equipment
+from itrack.equipments.models import Equipment,CustomFieldName
 from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect

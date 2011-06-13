@@ -8,4 +8,4 @@ class VehicleForm(ModelForm):
         exclude=['equipment']
         
 class SwapForm(Form):
-    equipment = ModelChoiceField(Equipment.objects.all)
+    equipment = ModelChoiceField(Equipment.objects.all())

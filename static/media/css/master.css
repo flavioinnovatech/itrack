@@ -3,7 +3,7 @@
   background-position: left top;
   background-image: url("/media/static/img/logo.png");
   background-repeat:no-repeat;
-  background-size:auto 65px;
+  background-size:auto 60px;
 }
 
 body {
@@ -474,6 +474,7 @@ input[type="text"], input[type="password"] {
   border: 1px solid #;
   font-size: 11px;
   padding: 3px;
+  margin-left:5px;
   text-decoration: none;
   border-radius: 5px 5px 5px 5px;
   background: -moz-linear-gradient(center top , #FFFFFF, #CFCFCF) repeat scroll 0 0 transparent;
@@ -509,10 +510,48 @@ img.icon {
 }
 
 img.fullscreen{
-  height:20px;
-  margin-top:4px;
+  height:19px;
+  margin-top:1px;
   cursor: pointer;
 }
 img.fullscreen:hover{
   border:1px outset;
 }
+
+img#maptools{
+  cursor: pointer;
+  height: 19px;
+  margin-top: 1px;
+  margin-right:5px;
+}
+
+img#maptools:hover{
+  border:1px outset;
+}
+
+img#maptools.vehicle{
+  display:none;
+}
+
+#tabs-3left{
+  float:left;
+  width:0;
+  height:100%;
+}
+
+#tabs-3right{
+  float:right;
+  width:100%;
+  height:100%;
+}
+
+#easyTooltip{
+	padding:5px;
+	border:1px solid #ccc;
+	background:#FFF;
+}
+
+#tabs{
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+

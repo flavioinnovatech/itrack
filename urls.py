@@ -30,16 +30,18 @@ url(r'^system/delete/(\d+)/$','system.views.delete'),
 url(r'^system/finish/$','system.views.finish'),
 url(r'^system/edit/finish/$','system.views.editfinish'),
 url(r'^system/delete/finish/$','system.views.deletefinish'),
+
 url(r'^equipment/$','equipments.views.index'),
 url(r'^equipment/permissions/(\d+)/$','equipments.views.permissions'),
 url(r'^equipment/associations/(\d+)/$','equipments.views.associations'),
 url(r'^equipment/finish/$','equipments.views.finish'),
 url(r'^equipment/associations/finish/$','equipments.views.assoc_finish'),
+url(r'^equipment/fieldnames/(\d+)/$','equipments.views.set_names'),
 
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
-url(r'^rastreamento/loadCustomFields/$', 'rastreamento.views.loadCustomFields'),
 url(r'^rastreamento/loadData/$', 'rastreamento.views.loadData'),
+url(r'^rastreamento/xhrtest/$', 'rastreamento.views.xhr_test'),
 
 url(r'^accounts/create/(\d+)/$', 'accounts.views.create_user'),
 url(r'^accounts/create/finish/$', 'accounts.views.create_finish'),
@@ -48,6 +50,7 @@ url(r'^accounts/delete/(\d+)/$','accounts.views.delete'),
 url(r'^accounts/ajax/delete/$','accounts.ajax.delete'),
 url(r'^accounts/edit/(\d+)/$','accounts.views.edit'),
 url(r'^accounts/edit/finish/$','accounts.views.edit_finish'),
+
 
 url(r'^vehicles/$', 'vehicles.views.index'),
 url(r'^vehicles/create/(\d+)/$','vehicles.views.create'),
@@ -75,6 +78,7 @@ url(r'^alerts/delete/(\d+)/$','alerts.views.delete'),
 url(r'^alerts/delete/finish/$','alerts.views.delete_finish'),
 
 url(r'^geofence/$','rastreamento.views.geofence'),
+url(r'^geofence/save/$','geofence.views.saveGeofence'),
 
 
 url(r'^accounts/password_reset/$', 'django.contrib.auth.views.password_reset', {'template_name':'accounts/templates/password_reset_form.html', 'email_template_name':'accounts/templates/password_reset_email.html'}),

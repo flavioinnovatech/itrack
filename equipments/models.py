@@ -4,6 +4,7 @@ from django.db import models
 from itrack.system.models import System
 
 class CustomField(models.Model):
+   system = models.ManyToManyField(System)
    name = models.CharField(max_length=200)
    type = models.CharField(max_length=50)
    table = models.IntegerField()
@@ -16,6 +17,8 @@ class CustomFieldName(models.Model):
     system = models.ForeignKey(System, verbose_name="Sistema")
     custom_field = models.ForeignKey(CustomField, verbose_name = "Campo")
     name = models.CharField(max_length=50, verbose_name = "Nome")
+    def __unicode__(self):
+      return self.name
 
 class EquipmentType(models.Model):
     custom_field = models.ManyToManyField(CustomField)
@@ -43,7 +46,7 @@ class Equipment(models.Model):
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):
-      return self.name
+      return self.serial
 
 class Tracking(models.Model):
     msgtype = models.CharField(max_length=20)
