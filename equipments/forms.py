@@ -10,7 +10,7 @@ from django.http import HttpResponseRedirect
 
 class AvailableFieldsForm(Form):
     equip_type  = CharField(max_length=40,widget = TextInput(attrs={'readonly':True}), label="Modelo")
-    custom_fields = ModelMultipleChoiceField(CustomField.objects.all(),widget= FilteredSelectMultiple("Campos",False,attrs={'rows':'30'}))
+    custom_fields = ModelMultipleChoiceField(CustomFieldName.objects.all(),widget= FilteredSelectMultiple("Campos",False,attrs={'rows':'30'}))
     custom_fields.required = False
     
 class EquipmentsForm(Form):

@@ -19,4 +19,4 @@ class EquipmentsForm(Form):
         
 class CustomNameForm(Form):
     name = CharField(max_length=40,widget = TextInput())
-    id = CharField(max_length=40,widget = HiddenInput(),required=False)
+    id = CharField(max_length=40,widget = HiddenInput(),required=True)

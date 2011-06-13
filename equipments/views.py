@@ -91,23 +91,20 @@ def permissions(request,offset):
                             av.save()
                             
                             for cf in form["custom_fields"]:
-                                av.custom_fields.add(cf)
+                                av.custom_fields.add(cf.custom_field)
                             av.save()
                         except KeyError:
                             pass
-                        
-                        
                         
                 return HttpResponseRedirect("/equipment/finish/")
         else:
             
             formset = AvailableFieldsFormset()
             for form,equip in zip(formset,equip_types):
-                form.fields["custom_fields"].queryset = CustomField.objects.filter(Q(availablefields__system = parent) & Q(availablefields__equip_type = equip)).order_by('type')
-            
                 
-                form.fields["custom_fields"].initial = CustomField.objects.filter(Q(availablefields__system = int(offset)) & Q(availablefields__equip_type = equip))
-       
+                form.fields["custom_fields"].queryset = CustomFieldName.objects.filter(Q(custom_field__availablefields__system = parent) & Q(custom_field__availablefields__equip_type = equip)& Q(system=int(offset)))
+                
+                form.fields["custom_fields"].initial = CustomFieldName.objects.filter(Q(custom_field__availablefields__system = int(offset)) & Q(custom_field__availablefields__equip_type = equip)&Q(system=int(offset)))
                 
                 form.fields["custom_fields"].label = ""
                 form.fields["equip_type"].initial = EquipmentType.objects.get(pk=equip.id).name
