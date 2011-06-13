@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$("#map").ready(function(){
 /*======================================================  MAP LOAD ======================================================*/
   var geocoder;
   var map;
@@ -18,28 +18,46 @@ $(document).ready(function(){
   // directionsDisplay = new google.maps.DirectionsRenderer();
   
   map = new google.maps.Map(document.getElementById("map"), myOptions);
+  
+  google.maps.event.trigger(map, 'resize');
+  map.setZoom( map.getZoom() );
+  
+  google.maps.event.addListener(map, "mousemove", function(){
+  	google.maps.event.trigger(map, 'resize'); 
+  	map.setZoom( map.getZoom() - 1);
+    map.setZoom( map.getZoom() + 1);
+  });	
+
+  map.setZoom( map.getZoom() - 1);
+  map.setZoom( map.getZoom() + 1);
+  // google.maps.event.addListener(map, 'resize', function() {
+    // alert('ae');
+      // google.maps.event.trigger(map, 'resize');
+  // });
+  
+  
 
   var input = "-22.896359,-47.060092";
   var latlngStr = input.split(",",2); 
   var lat = parseFloat(latlngStr[0]);
   var lng = parseFloat(latlngStr[1]);
   var latlng = new google.maps.LatLng(lat, lng);
-  geocoder.geocode({'latLng': latlng}, function(results, status) {
-  	if (status == google.maps.GeocoderStatus.OK) {
-  		if (results[1]) {
-  			map.setZoom(16);
-  			marker = new google.maps.Marker({
-  				position: latlng, 
-  				map: map
-  			});
-  			infowindow.setContent(results[1].formatted_address);
-  			infowindow.open(map, marker);
-  		} else {
-  			alert("No results found");
-  		}
-  	} else {
-  		alert("Geocoder failed due to: " + status);
-  	}
+  // geocoder.geocode({'latLng': latlng}, function(results, status) {
+    // if (status == google.maps.GeocoderStatus.OK) {
+      // if (results[1]) {
+        // map.setZoom(16);
+        // marker = new google.maps.Marker({
+          // position: latlng, 
+          // map: map
+        // });
+        // infowindow.setContent(results[1].formatted_address);
+        // infowindow.open(map, marker);
+      // } else {
+        // alert("No results found");
+      // }
+    // } else {
+      // alert("Geocoder failed due to: " + status);
+    // }
 
     // directionsDisplay.setMap(map);
     
@@ -52,11 +70,16 @@ $(document).ready(function(){
 // });
 
 /*======================================================  CIRCLE ======================================================*/
-
+$("#circletool").ready(function(){
 var markersArray = [];
 
-$("#circletool").click(function(){
+  
+  if (isNaN(parseInt($("#radius").val()))) {
+    alert('Digite um número válido');
+  }
 
+  else {
+  
   alert('Clique para escolher origem do círculo');
 
   google.maps.event.addListener(map,"click",function(point){
@@ -87,10 +110,12 @@ $("#circletool").click(function(){
              alert( "Data Saved: " + msg );
            }
       });*/
+      
+  
     
   });
   
-  
+  }
 
 });
 /*====================================================== END CIRCLE ======================================================*/
@@ -133,7 +158,6 @@ $("#routetool").click(function(){
 
 /*====================================================== END ROUTE ======================================================*/
 
-});
 
 
 
