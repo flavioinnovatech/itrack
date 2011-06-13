@@ -11,6 +11,7 @@ from itrack.vehicles.models import Vehicle
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
+from itrack.geofence.models import Geofence,GeoEntity
 from django.contrib.auth.decorators import login_required, user_passes_test
 import pprint
 
@@ -39,7 +40,7 @@ def create(request,offset):
     if request.method == 'POST':
         form = AlertForm(request.POST)
         
-        if form.is_valid():
+        if form.is_valid():           
             
             system_id = request.session['system']
             v = form.save(commit=False)
@@ -53,6 +54,19 @@ def create(request,offset):
               v.vehicle.add(vehi)
             
             v.save()
+            
+            if request.POST.has_key("geoentities"):
+                g = Geofence(system = System.objects.get(pk=system_id),alert = v)
+                g.save()
+                geo_ids = map(lambda x : (int(x) if (x != '') else None),request.POST["geoentities"].split(","))
+                print geo_ids
+                for ent in GeoEntity.objects.filter(id__in=geo_ids):
+                    ent.geofence = g
+                    ent.save()
+                
+                GeoEntity.objects.filter(geofence = None).delete()
+              
+            
             return HttpResponseRedirect("/alerts/create/finish")
         else:
             system_id = int(offset)
