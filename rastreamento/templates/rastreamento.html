@@ -2,6 +2,7 @@
 {% extends "templates/base.html" %}
 
 
+
 {%block title%}Infotrack - Rastreamento Veicular {% endblock %}
 
 {% block head %}
@@ -105,5 +106,11 @@
 {% block dialogMap %}
 <div id="dialog" title="Rastreamento Veicular">
 
+</div>
+{% endblock %}
+
+{% block fullscreen %}
+<div id="sucessdialog" style="display:none;" title="Configurações do Grid">
+Configurações do grid salvas com sucesso.
 </div>
 {% endblock %}

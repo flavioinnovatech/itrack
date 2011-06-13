@@ -474,6 +474,7 @@ input[type="text"], input[type="password"] {
   border: 1px solid #;
   font-size: 11px;
   padding: 3px;
+  margin-left:5px;
   text-decoration: none;
   border-radius: 5px 5px 5px 5px;
   background: -moz-linear-gradient(center top , #FFFFFF, #CFCFCF) repeat scroll 0 0 transparent;

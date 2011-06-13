@@ -46,7 +46,7 @@ def render_equipment_html(childs,father="",rendered_list=""):
           rendered_list+= render_equipment_html(x,father)
       else:
       #if its a number, mount the entry for the system
-          rendered_list+=u"<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +u"><td style='width:50%;'>"+System.objects.get(pk=x).name+u" </td><td style='text-align:center;'><a class='table-button' href=\"/equipment/permissions/"+str(x)+u"/\">Permissões</a>  <a class='table-button' href=\"/equipment/associations/"+str(x)+u"/\">Equipamentos</a></td></tr>\n"
+          rendered_list+=u"<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +u"><td style='width:50%;'>"+System.objects.get(pk=x).name+u" </td><td style='text-align:center;'><a class='table-button' href=\"/equipment/permissions/"+str(x)+u"/\">Permissões</a>  <a class='table-button' href=\"/equipment/associations/"+str(x)+u"/\">Equipamentos</a><a class='table-button' href=\"/equipment/fieldnames/"+str(x)+u"/\">Campos</a></td></tr>\n"
 
   return rendered_list    
 

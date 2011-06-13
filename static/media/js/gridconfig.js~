@@ -49,7 +49,17 @@ function saveConfigs(){
         vehicles.push($(Elem).attr("value"));
         });
     
-    $.post("/rastreamento/xhrtest/",{v: vehicles, custom_names: custom_names});
+    $.post("/rastreamento/xhrtest/",{vehicles: vehicles, custom_names: custom_names}, function(){
+        
+        $('#sucessdialog').dialog({
+            modal: true,
+            buttons: {
+			    Ok: function() {
+				    $( this ).dialog( "close" );
+		    }
+        });
+        }
+    );
     
 }
 

@@ -24,7 +24,7 @@ def index(request):
     map_multispectral = 1
   
   form = ConfigForm()
-  form.fields["custom_names"].queryset = CustomFieldName.objects.filter(system = request.session["system"])
+  form.fields["custom_names"].queryset = CustomFieldName.objects.filter(system = request.session["system"]).filter(custom_field__availablefields__system = system).distinct()
   form.fields["vehicles"].queryset = Vehicle.objects.filter(equipment__system = request.session["system"])
   form.fields["custom_names"].initial = CustomFieldName.objects.filter(custom_field__system = request.session["system"])
   form.fields["vehicles"].initial = Vehicle.objects.filter(system = request.session["system"])
@@ -81,8 +81,6 @@ def loadData(request):
     for j in trackingData:
       try:
         cfn = CustomFieldName.objects.filter(system=system).get(custom_field=j.type)
-        print CustomField.objects.filter(system=system)
-        print cfn.custom_field
         if cfn.custom_field in CustomField.objects.filter(system=system):
             info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
       except:

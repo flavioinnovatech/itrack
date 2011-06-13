@@ -24,7 +24,7 @@ def index(request):
     map_multispectral = 1
   
   form = ConfigForm()
-  form.fields["custom_names"].queryset = CustomFieldName.objects.filter(system = request.session["system"])
+  form.fields["custom_names"].queryset = CustomFieldName.objects.filter(system = request.session["system"]).filter(custom_field__availablefields__system = request.session["system"]).distinct()
   form.fields["vehicles"].queryset = Vehicle.objects.filter(equipment__system = request.session["system"])
   form.fields["custom_names"].initial = CustomFieldName.objects.filter(custom_field__system = request.session["system"])
   form.fields["vehicles"].initial = Vehicle.objects.filter(system = request.session["system"])

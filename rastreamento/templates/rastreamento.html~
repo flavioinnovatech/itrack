@@ -2,6 +2,7 @@
 {% extends "templates/base.html" %}
 
 
+
 {%block title%}Infotrack - Rastreamento Veicular {% endblock %}
 
 {% block head %}
@@ -89,7 +90,7 @@
         {% endfor %}
     </table>
 
-<a href="#" onClick="saveConfigs()"> Salvar </a>
+<a href="#" id="saveconf"> Salvar </a>
 
 <p class="clear">
 </form>
@@ -105,5 +106,11 @@
 {% block dialogMap %}
 <div id="dialog" title="Rastreamento Veicular">
 
+</div>
+{% endblock %}
+
+{% block fullscreen %}
+<div id="sucessdialog" style="display:none;">
+Configurações salvas com sucesso.
 </div>
 {% endblock %}
