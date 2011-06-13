@@ -154,21 +154,26 @@ $("#googlemap").click(function() {
 /* --------------------------------------------- END GOOGLE MAPS ------------------------------------------------------ */
 
 /* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
-  $.getJSON("/rastreamento/loadCustomFields",
-    function(customFields){
-      
       $.getJSON("/rastreamento/loadData",
         function(data){
-           // $.each(data, function(key1, val1) {alert(val1.type);    });
+          alert(data.toSource());
+          //montar cabeçalhos
           var colModel = [];
           var colNames = [];
+          $.each(data, function(key, equip) {
+             
+             $.each(data, function(key, equip) {
+
+             });
+          });
+          
           myData = data;
           address="";
           
-          colNames.push("Placa");
-          colModel.push({name:"Placa"});
-          colNames.push("Endereço");
-          colModel.push({name:"Endereço"});
+          // colNames.push("Placa");
+          //           colModel.push({name:"Placa"});
+          //           colNames.push("Endereço");
+          //           colModel.push({name:"Endereço"});
           
           //loop para cada equip
           $.each(data, function(key1, val1) {
@@ -222,7 +227,6 @@ $("#googlemap").click(function() {
               $("table.ui-jqgrid-htable").css("width","931px");
               
     });
-  });
 
 
 });

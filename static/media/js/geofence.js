@@ -120,7 +120,7 @@ $(document).ready(function(){
 
     else {
   
-      alert('Clique para escolher centro do círculo');
+      // alert('Clique para escolher centro do círculo');
 
       google.maps.event.addDomListenerOnce(map,"click",function(point){
       
@@ -159,7 +159,7 @@ $(document).ready(function(){
   $("#routetool").click(function(){
     creator.destroy();
 
-      alert('Selecione uma rua para origem e outra para destino');
+      // alert('Selecione uma rua para origem e outra para destino');
 
       google.maps.event.addListenerOnce(map,"click",function(point){
       

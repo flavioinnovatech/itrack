@@ -40,7 +40,6 @@ url(r'^equipment/fieldnames/(\d+)/$','equipments.views.set_names'),
 
 url(r'^rastreamento/veicular/$', 'rastreamento.views.index'),
 url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
-url(r'^rastreamento/loadCustomFields/$', 'rastreamento.views.loadCustomFields'),
 url(r'^rastreamento/loadData/$', 'rastreamento.views.loadData'),
 url(r'^rastreamento/xhrtest/$', 'rastreamento.views.xhr_test'),
 
