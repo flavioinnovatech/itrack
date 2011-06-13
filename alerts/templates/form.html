@@ -7,8 +7,9 @@
     <h3><a href="#">Círculo</a></h3>
       <div>
         <p>Digite um raio e em seguida clique no botão abaixo para traçar o centro no mapa:</p><br/>
-        <input type="text" id="#radius"></input> metros <br/><br/>
-        <input type="submit" value="Traçar centro" id="#circletool"></input>
+        <input type="text" id="radius"></input> metros <br/><br/>
+        <p align="center"><span id="circletool" style="cursor:pointer;">Traçar centro</span></p><br><br/>
+        <input id="savecircle" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>
       </div>
     <h3><a href="#">Polígono</a></h3>
       <div>
@@ -94,13 +95,7 @@ jQuery(document).ready(function(){
           width: w-30,
           open: function(){
             $("#accordion").accordion({ 
-                autoHeight: true,
-                create: function() {
-                  
-                  $("#circletool").click(function(){
-                    alert('ae');
-                  });
-                }
+                autoHeight: true
               
             });  
           }
