@@ -36,7 +36,7 @@
 {% endblock %}
 
 {% block content %}
-
+<input type="hidden" id="end"></input>
 
 <div id="tabs" class="tabs-bottom">
 	<ul>
@@ -90,7 +90,7 @@
         {% endfor %}
     </table>
 
-<a href="#" id="saveconf"> Salvar </a>
+<a href="#" id="saveconf" class="table-button"> Salvar </a>
 
 <p class="clear">
 </form>
@@ -110,7 +110,7 @@
 {% endblock %}
 
 {% block fullscreen %}
-<div id="sucessdialog" style="display:none;">
-Configurações salvas com sucesso.
+<div id="sucessdialog" style="display:none;" title="Configurações do Grid">
+Configurações do grid salvas com sucesso.
 </div>
 {% endblock %}
