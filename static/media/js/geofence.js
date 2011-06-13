@@ -168,6 +168,7 @@ $(document).ready(function(){
 /*====================================================== END CIRCLE ======================================================*/
 /*======================================================  ROUTE ======================================================*/
   $("#routetool").click(function(){
+
     creator.destroy();
 
       // alert('Selecione uma rua para origem e outra para destino');

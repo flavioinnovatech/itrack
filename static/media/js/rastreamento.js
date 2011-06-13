@@ -16,7 +16,8 @@ $('#tabs-1').ready(function(){
 jQuery(document).ready(function(){ 
   
   //desabilita vehicles toolbar quando gmaps nao é selecionado
-  $('a[href=#tabs-1]').click(function(){ 
+  $('a[href=#tabs-1]').click(function(){
+    window.location.reload();
     $("img[class=vehicle]").hide();
   });
 
@@ -90,7 +91,7 @@ $(document).ready(function(){
 
 $("img[id=maptools]").click(function() {
   if($("#tabs-3left").css("width") == "0px") {
-    $("#tabs-3right").css("width","80%");
+    $("#tabs-3right").css("width","79%");
     $("#tabs-3left").css("width","20%");
   }
   else {
@@ -128,7 +129,7 @@ $("#googlemap").click(function() {
 		mapTypeId: 'roadmap'
 	}
 	
-  if ($("input[id^=jqg_list4_1]").is(':checked')) { alert('ae');
+  if ($("input[id^=jqg_list4_1]").is(':checked')) {
     
   var lat = $("td[aria-describedby=list4_Latitude]").text();
   var lng = $("td[aria-describedby=list4_Longitude]").text();
