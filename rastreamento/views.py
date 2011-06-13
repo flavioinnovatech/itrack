@@ -29,23 +29,6 @@ def index(request):
   form.fields["custom_names"].initial = CustomFieldName.objects.filter(custom_field__system = request.session["system"])
   form.fields["vehicles"].initial = Vehicle.objects.filter(system = request.session["system"])
   return render_to_response("rastreamento/templates/rastreamento.html",locals(),context_instance=RequestContext(request),)
-
-#TO-DO: needs permission here
-def loadCustomFields(request):
-  system = request.session["system"]
-  equips = Equipment.objects.filter(system=system)
-
-  customFields = []
-  
-  for i in equips:
-    equiptype = EquipmentType.objects.filter(name=i.type)
-    for k in equiptype:
-      customfields = CustomField.objects.filter(equipmenttype=k)
-      for j in customfields:
-          customFields.append(j.name)
-  
-  json = simplejson.dumps(customFields)
-  return HttpResponse(json, mimetype='application/json')
   
 def loadData(request):
   system = request.session["system"]
