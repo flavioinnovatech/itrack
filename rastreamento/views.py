@@ -55,7 +55,7 @@ def loadData(request):
     trackingData = TrackingData.objects.filter(tracking=tracking.id)
     info["hora"]["eventdate"] = smart_str(tracking.eventdate, encoding='utf-8', strings_only=False, errors='strict')
     info["veiculo"]["chassi"] = i.chassi
-    info["veiculo"]["license plate"] = i.license_plate
+    info["veiculo"]["license_plate"] = i.license_plate
     info["veiculo"]["color"] = i.color
     info["veiculo"]["year"] = i.year
     info["veiculo"]["model"] = i.model
@@ -64,9 +64,11 @@ def loadData(request):
     for j in trackingData:
       try:
         cfn = CustomFieldName.objects.filter(system=system).get(custom_field=j.type)
-        if cfn.custom_field in CustomField.objects.filter(system=system):
-            info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
+        if cfn.custom_field in CustomField.objects.filter(system=system) or j.type.type == "GPS":
+            info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value          
       except:
+        if j.type.type == "GPS":
+          info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
         pass
             
     data[tracking.equipment.serial] =  info
