@@ -84,6 +84,7 @@ def loadData(request):
 def geofence(request):
   return render_to_response("templates/geofence.html",locals())
 
+
 def xhr_test(request):
     
     if request.method == "POST":
@@ -123,4 +124,5 @@ def xhr_test(request):
 
     return render_to_response("rastreamento/templates/form.html",locals(),context_instance=RequestContext(request),)    
     
+
 
