@@ -86,19 +86,7 @@ class Settings(models.Model):
     def __unicode__(self):
         return self.title    
         
-class SystemPerms(models.Model):
-  
-  system = models.ForeignKey(System)
-  system.null = True
-  
-  google_map = models.BooleanField(verbose_name = 'Google - Mapa')
-  
-  maplink_map = models.BooleanField(verbose_name = 'Maplink - Mapa')
-  maplink_geocode = models.BooleanField(verbose_name = 'Maplink - Geocode reverso')
-  
-  multspectral_map = models.BooleanField(verbose_name = 'Multispectral - Mapa')
-  multspectral_geocode = models.BooleanField(verbose_name = 'Multispectral - Geocode reverso')
-  multspectral_geofence = models.BooleanField(verbose_name = 'Multispectral - Geofence')
+
   
   
   

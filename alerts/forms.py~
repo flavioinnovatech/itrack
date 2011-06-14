@@ -19,5 +19,5 @@ class AlertForm(ModelForm):
         }
     
     vehicle = ModelMultipleChoiceField(Vehicle.objects.all(),widget= FilteredSelectMultiple(u"Veículos",False,attrs={'rows':'30'}))
-    
+  
     destinataries = ModelMultipleChoiceField(User.objects.all(),widget= FilteredSelectMultiple(u"Notificados",False,attrs={'rows':'30'}))

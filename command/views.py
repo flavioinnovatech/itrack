@@ -2,11 +2,12 @@
 from itrack.command.models import Command
 from itrack.vehicles.models import Vehicle
 from itrack.command.forms import CommandForm
-from itrack.equipments.models import Equipment
+from itrack.equipments.models import Equipment,CustomFieldName,CustomField
 from itrack.system.models import System
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
+from django.db.models import Q
 
 def index(request):
     system = request.session['system']
@@ -49,6 +50,9 @@ def create(request,offset):
             form.fields["equipment"].queryset = Vehicle.objects.filter(id__in=v_set)
             form.fields["equipment"].label = "Veículo"
             form.fields["equipment"].empty_label = "(Selecione a placa)"
+            
+            form.fields["type"].queryset = CustomFieldName.objects.filter(Q(custom_field__type = 'Output') & Q(system = int(offset)) & Q(custom_field__availablefields__system = int(offset))).distinct()
+            form.fields["type"].empty_label = "(selecione o Comando)"
             vehicles_exist = True
             return render_to_response("command/templates/create.html",locals(),context_instance=RequestContext(request),)
     else:
@@ -66,6 +70,8 @@ def create(request,offset):
         form.fields["equipment"].queryset = Vehicle.objects.filter(id__in=v_set)
         form.fields["equipment"].label = "Veículo"
         form.fields["equipment"].empty_label = "(Selecione a placa)"
+        form.fields["type"].queryset = CustomFieldName.objects.filter(Q(custom_field__type = 'Output') & Q(system = int(offset)) & Q(custom_field__availablefields__system = int(offset))).distinct()
+        form.fields["type"].empty_label = "(selecione o Comando)"
         
         if form.fields["equipment"].queryset:
             vehicles_exist = True

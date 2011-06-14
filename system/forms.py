@@ -3,10 +3,10 @@
 from django.forms import *
 from django.http import HttpResponseRedirect
 from django.contrib.admin.widgets import *
-from itrack.system.models import System,Settings,SystemPerms
+from itrack.system.models import System,Settings
 from django.contrib.formtools.wizard import FormWizard
 from itrack.accounts.forms import UserCompleteForm, UserForm, UserProfileForm
-from itrack.equipments.models import CustomFieldName
+from itrack.equipments.models import CustomFieldName,SystemPerms
 
 class SystemForm(ModelForm):
     class Meta:

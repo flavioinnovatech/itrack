@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from itrack.system.models import System
 from itrack.system.views import findChild,isChild
-from itrack.equipments.models import Equipment
+from itrack.equipments.models import Equipment,CustomFieldName
 from itrack.alerts.models import Alert
 from itrack.alerts.forms import AlertForm
 from itrack.equipments.models import Equipment
@@ -80,7 +80,8 @@ def create(request,offset):
             
             form.fields["vehicle"].queryset = Vehicle.objects.filter(id__in=v_set)
             form.fields["vehicle"].label = "Veículo"
-            
+            form.fields["trigger"].queryset = CustomFieldName.objects.filter(Q(custom_field__type = 'Input') & Q(system = int(offset)) & Q(custom_field__availablefields__system = int(offset))).distinct()
+            form.fields["trigger"].empty_label = "(selecione o trigger)"
             if form.fields["vehicle"].queryset:
                 vehicles_exist = True
             else:
@@ -105,7 +106,9 @@ def create(request,offset):
         
         form.fields["vehicle"].queryset = Vehicle.objects.filter(id__in=v_set)
         form.fields["vehicle"].label = "Veículo"
-          
+        form.fields["trigger"].queryset = CustomFieldName.objects.filter(Q(custom_field__type = 'Input') & Q(system = int(offset)) & Q(custom_field__availablefields__system = int(offset))).distinct()
+        #form.fields["trigger"].queryset.append(("Geofence","Geofence"))
+        form.fields["trigger"].empty_label = "(selecione o trigger)"
         if form.fields["vehicle"].queryset:
             vehicles_exist = True
         else:

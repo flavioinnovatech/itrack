@@ -7,4 +7,5 @@ class CommandForm(ModelForm):
         model = Command
         exclude = ['time_sent','time_executed','time_received','system','state']
     activate = ChoiceField(choices = (("ON","Ativar"),("OFF","Desativar"),),widget=RadioSelect(),label=u"Ação")
+    activate.empty_label="(selecione o Comando)"
         

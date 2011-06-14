@@ -4,6 +4,7 @@ from django.db import models
 from itrack.system.models import System
 
 class CustomField(models.Model):
+   system = models.ManyToManyField(System)
    name = models.CharField(max_length=200)
    type = models.CharField(max_length=50)
    table = models.IntegerField()
@@ -60,4 +61,19 @@ class TrackingData(models.Model):
     value = models.CharField(max_length=100)    
     def __unicode__(self):
         return str(self.tracking.eventdate)+" : "+self.type.type +' | ' + self.type.tag
+        
+class SystemPerms(models.Model):
+  
+  system = models.ForeignKey(System)
+  system.null = True
+  
+  google_map = models.BooleanField(verbose_name = 'Google - Mapa')
+  
+  maplink_map = models.BooleanField(verbose_name = 'Maplink - Mapa')
+  maplink_geofence = models.BooleanField(verbose_name = 'Maplink - Geofence')
+  multspectral_map = models.BooleanField(verbose_name = 'Multispectral - Mapa')
+  multspectral_geofence = models.BooleanField(verbose_name = 'Multispectral - Geofence')
+  can_sms =models.BooleanField(verbose_name = 'Pode enviar SMS')
+  can_geofence = models.BooleanField(verbose_name = "Pode criar geofences")
+  
 

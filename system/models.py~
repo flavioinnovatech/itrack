@@ -3,8 +3,7 @@
 from django.db import models
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
-from vehicles.models import Vehicle
-from equipments.models import CustomField
+from itrack.equipments.models import CustomField
 
 class System(Site):
     class Meta:
@@ -103,10 +102,7 @@ class SystemPerms(models.Model):
   
   
   
-class GridOptions(models.Model):
-    system = models.ForeignKey(System)
-    vehicles = models.ForeignKey(Vehicle)
-    custom_fields = modelsForeignKey(CustomField)
+
   
   
   

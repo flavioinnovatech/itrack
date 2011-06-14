@@ -98,7 +98,7 @@ class SystemWizard(FormWizard):
 
               cfn_set = CustomFieldName.objects.filter(system = system)
               for cfn in cfn_set:
-                cfn2 = CustomFieldName(system = cfn.system, custom_field=cfn.custom_field, name = cfn.name)
+                cfn2 = CustomFieldName(system = new_sys, custom_field=cfn.custom_field, name = cfn.name)
                 cfn2.save()
               
               
