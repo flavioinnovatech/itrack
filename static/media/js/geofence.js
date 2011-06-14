@@ -38,6 +38,67 @@ $(document).ajaxSend(function(event, xhr, settings) {
 
 $(document).ready(function(){
   
+
+	$('.datepicker').datetimepicker({showSecond: true,timeFormat: 'hh:mm:ss'});
+	$('#menuContainer').css("z-index","0");
+	
+	$.datepicker.regional['br'] = {
+
+  	dateFormat: 'dd/mm/yy'
+
+  };
+  $.datepicker.setDefaults($.datepicker.regional['br']);
+  
+  $('#id_trigger').change(function(){
+    $("#id_trigger option:selected").each(function () {
+      if ($(this).val() != 2) {
+        $('#id_velocity_limit').attr('disabled','disabled');
+      }
+      else{
+        $('#id_velocity_limit').removeAttr('disabled');
+      }
+    });
+    
+  });
+  
+  $('#id_trigger').ready(function(){
+    $("#id_trigger option:selected").each(function () {
+      if ($(this).val() != 2) {
+        $('#id_velocity_limit').attr('disabled','disabled');
+      }
+      else{
+        $('#id_velocity_limit').removeAttr('disabled');
+      }
+    });
+    
+  });
+  
+	$("#id_trigger").change(function(){
+	  $("#id_trigger option:selected").each(function () {
+      if( $(this).text() == "Cerca eletrônica") {
+        w = $(window).width();
+        h = $(window).height();
+        alert('ae');
+        
+        $("#dialog").attr("title","Selecionar cerca eletrônica");
+                
+        $( "#dialog" ).dialog({
+          show: "fade",
+          modal: true,
+          height: h - 30,
+          width: w-30,
+          open: function(){
+            $("#accordion").accordion({ 
+                autoHeight: true
+              
+            });  
+          }
+          
+        });
+        
+      }
+    });
+	});
   
   $("#savecircle").attr('disabled','disabled');
   $("#saveroute").attr('disabled','disabled');

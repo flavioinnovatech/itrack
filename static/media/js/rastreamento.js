@@ -17,7 +17,7 @@ jQuery(document).ready(function(){
   
   //desabilita vehicles toolbar quando gmaps nao é selecionado
   $('a[href=#tabs-1]').click(function(){
-    window.location.reload();
+   
     $("img[class=vehicle]").hide();
   });
 
@@ -85,6 +85,7 @@ jQuery(document).ready(function(){
 
 /* --------------------------------------------- toolbar ------------------------------------------------------ */
 $(document).ready(function(){
+  loadGrid();
   $("img[id=maptools]").easyTooltip();
   $("img[class=fullscreen]").easyTooltip();
 });
@@ -129,6 +130,7 @@ $("#googlemap").click(function() {
 		mapTypeId: 'roadmap'
 	}
 	
+	//Works only for the first vehicle
   if ($("input[id^=jqg_list4_1]").is(':checked')) {
     
   var lat = $("td[aria-describedby=list4_Latitude]").text();
@@ -160,6 +162,17 @@ $("#googlemap").click(function() {
 /* --------------------------------------------- END GOOGLE MAPS ------------------------------------------------------ */
 
 /* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
+$('a[href=#tabs-1]').click(function(){
+  loadGrid();
+});
+
+});
+  
+  
+function loadGrid() {
+  
+      $('#list4').jqGrid('GridUnload');
+  
       $.getJSON("/rastreamento/loadData",
         function(data){
           
@@ -190,7 +203,6 @@ $("#googlemap").click(function() {
               if (key2 == "Latitude" || key2 == "Longitude") {
 
               }
-              
               
               else {
                 colNames.push(key2);
@@ -295,9 +307,11 @@ $("#googlemap").click(function() {
               $("table.ui-jqgrid-htable").css("width","931px");
               
     });
+  
+
+}
 
 
-});
 
 
 
