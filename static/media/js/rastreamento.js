@@ -90,14 +90,25 @@ $(document).ready(function(){
   $("img[class=fullscreen]").easyTooltip();
 });
 
+var toolnow = null;
 $("img[id=maptools]").click(function() {
+  
+  if (!toolnow) {
+    toolnow = $(this).attr('class');
+  }
+  
   if($("#tabs-3left").css("width") == "0px") {
     $("#tabs-3right").css("width","79%");
     $("#tabs-3left").css("width","20%");
   }
   else {
-    $("#tabs-3right").css("width","100%");
-    $("#tabs-3left").css("width","0");
+    
+    if ($(this).attr('class') == toolnow) {
+      $("#tabs-3right").css("width","100%");
+      $("#tabs-3left").css("width","0px");
+    }
+    toolnow = $(this).attr('class');
+    
   }
 });
 
@@ -111,7 +122,7 @@ $("#googlemap").click(function() {
   h = $(window).height();
   //habilita botao vehicle
   $("img[class=vehicle]").show();
-  
+  $("img[class=geofence]").show();
   
 	var geocoder;
 	var map;
@@ -170,7 +181,6 @@ $('a[href=#tabs-1]').click(function(){
   
   
 function loadGrid() {
-  
       $('#list4').jqGrid('GridUnload');
   
       $.getJSON("/rastreamento/loadData",

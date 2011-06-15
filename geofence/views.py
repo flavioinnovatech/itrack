@@ -2,10 +2,12 @@
 from django.shortcuts import render_to_response
 from itrack.system.models import System,Settings
 from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType
+from itrack.geofence.models import GeoEntity,Geofence
+from itrack.alerts.models import Alert
 from django.contrib.auth.decorators import login_required, user_passes_test
 from querystring_parser import parser
-from itrack.geofence.models import GeoEntity,Geofence
 from django.http import HttpResponse
+from django.utils import simplejson
 
 def index(request):
     parent = []
@@ -57,3 +59,15 @@ def saveGeofence(request):
         pass
    
   #return render_to_response("alerts/templates/create.html",locals())
+def loadGeofences(request):
+  system = request.session["system"]
+  geofence = Alert.objects.filter(system=system)
+  
+  data = []
+  for g in geofence:
+    data.append({ "name" : g.name })
+
+  json = simplejson.dumps(data)
+  
+  return HttpResponse(json, mimetype='application/json')
+  

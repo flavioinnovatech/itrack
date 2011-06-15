@@ -75,10 +75,9 @@ $(document).ready(function(){
   
 	$("#id_trigger").change(function(){
 	  $("#id_trigger option:selected").each(function () {
-      if( $(this).text() == "Cerca eletrônica") {
+      if( $(this).text() == "Cerca Eletrônica") {
         w = $(window).width();
         h = $(window).height();
-        alert('ae');
         
         $("#dialog").attr("title","Selecionar cerca eletrônica");
                 

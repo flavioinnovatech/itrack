@@ -529,7 +529,7 @@ img#maptools:hover{
   border:1px outset;
 }
 
-img#maptools.vehicle{
+img#maptools{
   display:none;
 }
 
