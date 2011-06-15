@@ -54,7 +54,7 @@
 					{% endif %}
           
     <div align="center" style="margin-top:30px;" id="actions">
-        <a href="{% url system.views.create %}">Criar um subsistema </a>
+        {% if can_create %}<a href="{% url system.views.create %}">Criar um subsistema </a> {% endif %}
          <a href="{% url system.views.edit request.session.system %}">Editar o seu sistema </a>
 
     </div>

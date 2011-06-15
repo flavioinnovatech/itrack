@@ -102,7 +102,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'http403project.http.Http403Middleware',
+    'django403.middleware.Django403Middleware',
 
 )
 
@@ -140,6 +140,7 @@ INSTALLED_APPS = (
 	 'command',
 	 'alerts',
 	 'geofence',
+	 'drivers',
 
 )
 

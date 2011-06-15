@@ -1,0 +1,23 @@
+{% extends "command/templates/form.html" %}
+
+{%block title%}Infotrack - Criação de motorista {% endblock %}
+{% block form_title %}
+<h1><img class="icon" src="/media/img/users.png">Criação de motorista </h1><hr/>
+<h2>Dados do motorista</h2>
+<em></em>
+{% endblock %}
+
+
+{% block content %}
+{% if not rendered_list %}
+<div  class="main-form">
+<h1><img class="icon" src="/media/img/users.png">Envio de comando </h1><hr/>
+<h2>Dados do comando</h2>
+<em>O sistema não possui nenhum veículo associado aos equipamentos. É necessário associar os veículos aos equipamentos antes de enviar comandos. <a href = "{% url vehicles.views.index %}"> Clique aqui para ir a tela de administração de veículos. </a></em>
+
+
+</div>
+{% else %}
+   {{ block.super }}
+{% endif %}
+{% endblock %}

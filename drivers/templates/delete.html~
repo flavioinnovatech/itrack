@@ -1,0 +1,19 @@
+{% extends "templates/base.html" %}
+
+{% block content  %}
+
+<div class="main-form">
+  <h1><img class="icon" src="/media/img/vehicle.png">Gerenciamento de Veículos</h1>
+  <hr />
+					<h2>Remoção de Veículo</h2>
+					<em> Tem certeza que deseja remover o veículo "{{ v.license_plate }}"? </em>
+					
+					<div align="center" style="margin-top:10px;" id="actions">
+            
+            <form action='.' method='post'>{% csrf_token %}
+                <a href="#" onClick="parentNode.submit();">Confirmar</a>
+                <a onClick="history.back();">Cancelar</a>
+            </form>
+            </div>
+
+{% endblock %}
