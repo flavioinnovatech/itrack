@@ -6,12 +6,12 @@
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 		
 		<style type="text/css">
-		     #topContainer .centerContainer{ background: url(/media/static/img/logo.png) no-repeat;} body {background-color:#E0E0E0;} #nav {background: 7A7A7A; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#A9A9A9, endColorstr=#7A7A7A);} #nav {background: -moz-linear-gradient(top,  #A9A9A9,  #7A7A7A);}#nav {background: -webkit-gradient(linear, left top, left bottom, from(#A9A9A9), to(#7A7A7A));}#nav .current a, #nav li:hover > a {background-color: #A1A1A1;}#nav .current a, #nav li:hover > a {filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr=#EBEBEB, endColorstr=#A1A1A1);}#nav .current a, #nav li:hover > a {background: -moz-linear-gradient(top,  #EBEBEB,  #A1A1A1);}#nav .current a, #nav li:hover > a {background: -webkit-gradient(linear, left top, left bottom, from(#EBEBEB), to(#A1A1A1));}#nav a {color: #E7E5E5;}#nav a:hover {color: #444444;}#nav ul{background-color:#CFCFCF;} #nav ul{filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFFFFF, endColorstr=#CFCFCF);} #nav ul {background: -moz-linear-gradient(top,  #FFFFFF,  #CFCFCF);}#nav ul{background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CFCFCF));}#nav ul a:hover {background-color: #A0A0A0 !important; color:#E7E5E5 !important;}
+		    body {background-color:#E0E0E0;} #nav {background: 7A7A7A; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#A9A9A9, endColorstr=#7A7A7A);} #nav {background: -moz-linear-gradient(top,  #A9A9A9,  #7A7A7A);}#nav {background: -webkit-gradient(linear, left top, left bottom, from(#A9A9A9), to(#7A7A7A));}#nav .current a, #nav li:hover > a {background-color: #A1A1A1;}#nav .current a, #nav li:hover > a {filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr=#EBEBEB, endColorstr=#A1A1A1);}#nav .current a, #nav li:hover > a {background: -moz-linear-gradient(top,  #EBEBEB,  #A1A1A1);}#nav .current a, #nav li:hover > a {background: -webkit-gradient(linear, left top, left bottom, from(#EBEBEB), to(#A1A1A1));}#nav a {color: #E7E5E5;}#nav a:hover {color: #444444;}#nav ul{background-color:#CFCFCF;} #nav ul{filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFFFFF, endColorstr=#CFCFCF);} #nav ul {background: -moz-linear-gradient(top,  #FFFFFF,  #CFCFCF);}#nav ul{background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CFCFCF));}#nav ul a:hover {background-color: #A0A0A0 !important; color:#E7E5E5 !important;}
 		</style>
 		
 		<link rel="stylesheet" href="/media/css/reset.css" type="text/css" media="screen" />
 		<link rel="stylesheet" href="/media/css/master.css" type="text/css" media="screen" /> 
-		<link rel="stylesheet" type="text/css" media="screen" href="/media/css/jquery-ui-1.8.12.custom.css" />
+		<link rel="stylesheet" type="text/css" media="screen" href="/media/css/jquery-ui-1.8.13.custom.css" />
 		
 		<style type="text/css">
   	{% autoescape off %}
@@ -21,19 +21,16 @@
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript">jQuery.noConflict();</script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"></script> 
-	  <script src="/media/js/jquery.scrollfollow.js" type="text/javascript"></script> 
+	  <script src="/media/js/jquery.scrollfollow.js" type="text/javascript"></script>
+	  
+	  <script type="text/javascript" src="/media/js/master.js"></script>
 		
 		{% block head %} {% endblock %}
 		
 	</head>
 	<body>
 		{% block fullscreen %}
-		  <div id="pop">
-      <a href="#" onclick="document.getElementById('pop').style.display='none';">[Fechar]</a>
-      <br />
-      	Agora coloque o estilo dessa div.
-
-        </div>
+		 
 		{% endblock %}
 		
 		<!-- Header/Logo -->
@@ -59,13 +56,6 @@
 							<li><a href="/rastreamento/portatil/">Portátil</a>
 						</ul>
 					</li>
-					<li><a href="#">Telemetria</a>
-
-						<ul>
-							<li><a href="#">Analógica</a></li>
-							<li><a href="#">Digital</a></li>
-						</ul>
-					</li>
 					<li><a href="#">Relatórios</a>
 						<ul>
 							<li><a href="#">Paradas</a></li>
@@ -74,26 +64,30 @@
 							<li><a href="#">Telemetria</a></li>
 						</ul>
 					</li>
-					<li><a href="#">Comandos</a>
-						<ul>
+					
 							{% for grp in request.user.groups.all %}
 							    {% if grp.name  == "administradores" %}
-							        <li><a href="{% url command.views.index %}">Ver histórico</a></li>
-							        <li><a href="{% url command.views.create request.session.system %}">Enviar um novo comando </a></li>
+							    <li><a href="#">Comandos</a>
+						            <ul>
+							            <li><a href="{% url command.views.index %}">Ver histórico</a></li>
+							            <li><a href="{% url command.views.create request.session.system %}">Enviar um novo comando </a></li>
+							        </ul>
+            					</li>
 							    {% endif %}
 							 {%endfor%}
-						</ul>
-					</li>
-					<li><a href="#">Alertas</a>
-						<ul>
+
+					
 							{% for grp in request.user.groups.all %}
 							    {% if grp.name  == "administradores" %}
-							        <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
-							        <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
+							    <li><a href="#">Alertas</a>
+						            <ul>
+							            <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
+							            <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
+									</ul>
+					            </li>
 							    {% endif %}
 							 {%endfor%}
-						</ul>
-					</li>
+
 					<li><a href="#">Configurações</a>
 						<ul>
 							<!--<li><a href="#">Grid</a></li>

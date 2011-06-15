@@ -64,44 +64,46 @@
 							<li><a href="#">Telemetria</a></li>
 						</ul>
 					</li>
-					<li><a href="#">Comandos</a>
-						<ul>
+					
 							{% for grp in request.user.groups.all %}
 							    {% if grp.name  == "administradores" %}
-							        <li><a href="{% url command.views.index %}">Ver histórico</a></li>
-							        <li><a href="{% url command.views.create request.session.system %}">Enviar um novo comando </a></li>
+							    <li><a href="#">Comandos</a>
+						            <ul>
+							            <li><a href="{% url command.views.index %}">Ver histórico</a></li>
+							            <li><a href="{% url command.views.create request.session.system %}">Enviar um novo comando </a></li>
+							        </ul>
+            					</li>
 							    {% endif %}
 							 {%endfor%}
-						</ul>
-					</li>
-					<li><a href="#">Alertas</a>
-						<ul>
+
+					
 							{% for grp in request.user.groups.all %}
 							    {% if grp.name  == "administradores" %}
-							        <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
-							        <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
+							    <li><a href="#">Alertas</a>
+						            <ul>
+							            <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
+							            <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
+									</ul>
+					            </li>
 							    {% endif %}
 							 {%endfor%}
-						</ul>
-					</li>
-					<li><a href="#">Configurações</a>
-						<ul>
-							<!--<li><a href="#">Grid</a></li>
-							<li><a href="#">Recursos</a></li>-->
 							
 							{% for grp in request.user.groups.all %}
 							    {% if grp.name  == "administradores" %}
-							        <li><a href="{% url equipments.views.index %}">Equipamentos</a></li>
-							        <li><a href="{% url vehicles.views.index %}">Veículos</a></li>
-							        <li><a href="{% url accounts.views.index %}">Usuários</a></li>
-							        <li><a href="{% url system.views.index %}"> Sistemas </a></li>
+							    <li><a href="#">Configurações</a>
+						            <ul>
+							            <li><a href="{% url equipments.views.index %}">Equipamentos</a></li>
+							            <li><a href="{% url vehicles.views.index %}">Veículos</a></li>
+							            <li><a href="{% url accounts.views.index %}">Usuários</a></li>
+							            <li><a href="{% url system.views.index %}"> Sistemas </a></li>
+							    	</ul>
+					            </li>
 							    {% endif %}
                              
 							    
 					        {% endfor %}
 							
-						</ul>
-					</li>
+
 					<li><a href="#">Ajuda</a></li>
 					<li><a href="{% url django.contrib.auth.views.logout_then_login %}">Sair</a></li>
 				</ul>

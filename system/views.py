@@ -9,11 +9,11 @@ from itrack.accounts.models import UserProfile
 from itrack.equipments.models import Equipment,CustomFieldName
 from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template.context import RequestContext
 from itrack.system.forms import SystemForm, SettingsForm, UserCompleteForm, SystemWizard, change_css, PermsForm
-from http403project.http import Http403
 from django.db.models import Q
+from itrack.system.tools import systemDepth
 
 #creates the list of childs for the system with id = 'parent'
 def findChild(parent):
@@ -100,9 +100,9 @@ def serializeChild(childs,ser_list=[]):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def index(request):
     parent = []
-    system = System.objects.filter(administrator__username=request.user.username)
-    for item in system:
-        parent = item.id
+    system = System.objects.get(administrator__username=request.user.username)
+    
+    parent = system.id
     vector = []
     if parent != []:
         childs = findChild(parent)
@@ -110,24 +110,27 @@ def index(request):
         vector.append(childs)
         
         vector_html = render_system_html2(childs)
-        
+    
+    #controls the depth: systems that are deeper than 4 levels cannot create more subsystems
+    if systemDepth(system) >= 4:
+        can_create = 0
+    else:
+        can_create = 1
+    
     return render_to_response("system/templates/home.html",locals())
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def create(request):
         system = request.session["system"]
-    
+
+        if systemDepth(System.objects.get(administrator__username=request.user.username)) >= 4:
+            return HttpResponseForbidden(u"Você não tem permissão para criar um subsistema.")
         class ModifiedSettingsForm(SettingsForm):
             pass
                 
         sysadm = User.objects.get(pk=request.user.id)
         settings_parent = Settings.objects.get(system=system)
-        
-        print settings_parent
-        print settings_parent.map_google
-        print settings_parent.map_maplink
-        print settings_parent.map_multspectral
         
         if not settings_parent.map_google:
             ModifiedSettingsForm.base_fields["map_google"].widget = HiddenInput()
@@ -138,7 +141,6 @@ def create(request):
         
         
         wiz = SystemWizard([UserCompleteForm,SystemForm,ModifiedSettingsForm])
-        print wiz.__dict__
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 
     
@@ -217,7 +219,7 @@ def edit(request,offset):
             return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         
     else:
-        raise Http403(u'Você não tem permissão para editar este sistema.')
+        return HttpResponseForbidden(u"Você não tem permissão para alterar este sistema.")
 
 def deletefinish(request):
     return render_to_response("system/templates/delete_finish.html",locals())
@@ -254,7 +256,7 @@ def delete(request,offset):
     
             
     else:
-        raise Http403(u'Você não tem permissão para apagar este sistema.')
+        return HttpResponseForbidden(u'Você não tem permissão para apagar este sistema.')
 
 
   

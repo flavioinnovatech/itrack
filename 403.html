@@ -1,0 +1,12 @@
+{% extends 'templates/base.html' %}
+
+{% block content %}
+<div  class="main-form" style="text-align:center;">
+<h1><!--<img class="icon" src="/media/img/command.png">-->Acesso negado </h1><hr/>
+<h2 style="margin-top:15px;text-align:center;">{{message}}</h2>
+<em style="text-align:center;"><a href="{% url main.views.index %}"> Clique aqui para voltar à pagina inicial </a> </em>
+
+
+</div>
+
+{% endblock %}

@@ -16,7 +16,7 @@ def system_has_access():
             system = args[0]
             childs = findChild(request.session["system"])
             print childs
-            if isChild(int(system),childs):
+            if isChild(system,childs):
                 return func(request, *args, **kwargs)
             else:
                 return HttpResponseForbidden(u"Você não tem permissão para alterar esse sistema.")        
