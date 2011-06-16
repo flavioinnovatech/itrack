@@ -256,8 +256,7 @@ function loadGrid() {
                   geocoder = new google.maps.Geocoder();
                   geocoder.geocode({'latLng': latlng}, function(results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
-                    
-                        $("#end").attr("value",results[0].formatted_address);
+                      $("#end").attr("value",results[0].formatted_address);
                     }
                     else {
                       $("#end").attr("value","");
