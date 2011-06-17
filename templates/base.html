@@ -80,7 +80,7 @@
 						            <ul>
 							            <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
 							            <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
-							            <li><a href="#">Cercas eletrõnicas</a></li>
+							            <li><a href="{% url geofence.views.index %}">Cercas eletrõnicas</a></li>
 									</ul>
 					            </li>
 							    {% endif %}
