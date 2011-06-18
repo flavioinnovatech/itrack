@@ -23,7 +23,7 @@ class CustomFieldName(models.Model):
 class EquipmentType(models.Model):
     custom_field = models.ManyToManyField(CustomField)
     name = models.CharField(max_length=200)
-    
+    manufacturer = models.CharField(max_length=40, verbose_name = "Fabricante", default="Quanta")
     def __unicode__(self):
         return self.name
 
@@ -42,7 +42,6 @@ class Equipment(models.Model):
    serial = models.CharField(max_length=50, unique= True)
    serial.default = '000017E8'
    serial.null = True
-
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):
