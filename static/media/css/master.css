@@ -80,7 +80,7 @@ a {
 
 #content p{
 	//font-size: 15px;
-	font-weight: bold;	
+/*  font-weight: bold;  */
 	//margin-bottom:5px;
 	//margin: 5px 5px 5px 5px;
 }
@@ -458,7 +458,7 @@ hr{
 input[type="text"], input[type="password"] {
   height:25px;
   border: 1px solid #aaa;
-  border-radius: 0.6em 0.6em 0.6em 0.6em;
+  border-radius: 5px;
 }
 
 .item-right select {

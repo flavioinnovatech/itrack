@@ -86,7 +86,7 @@ url(r'^alerts/edit/finish/$','alerts.views.edit_finish'),
 url(r'^alerts/delete/(\d+)/$','alerts.views.delete'),
 url(r'^alerts/delete/finish/$','alerts.views.delete_finish'),
 
-url(r'^geofence/$','rastreamento.views.geofence'),
+url(r'^geofence/$','geofence.views.index'),
 url(r'^geofence/save/$','geofence.views.saveGeofence'),
 url(r'^geofence/load/$','geofence.views.loadGeofences'),
 

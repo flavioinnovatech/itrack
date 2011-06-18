@@ -49,12 +49,9 @@
 		<div id="menuContainer">
 			<div class="centerContainer" align="center">
 				<ul id="nav">
-					<li><a href="#">Rastreamentos</a>
+					<li><a href="{% url rastreamento.views.index %}">Rastreamentos</a>
 						
-						<ul>
-							<li><a href="/rastreamento/veicular/">Veicular</a>
-							<li><a href="/rastreamento/portatil/">Portátil</a>
-						</ul>
+						
 					</li>
 					<li><a href="#">Relatórios</a>
 						<ul>
@@ -83,6 +80,7 @@
 						            <ul>
 							            <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
 							            <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
+							            <li><a href="{% url geofence.views.index %}">Cercas eletrõnicas</a></li>
 									</ul>
 					            </li>
 							    {% endif %}

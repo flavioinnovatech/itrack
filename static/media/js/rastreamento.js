@@ -147,23 +147,23 @@ $("#googlemap").click(function() {
   var lat = $("td[aria-describedby=list4_Latitude]").text();
   var lng = $("td[aria-describedby=list4_Longitude]").text();
   var latlng = new google.maps.LatLng(lat, lng);
-	geocoder.geocode({'latLng': latlng}, function(results, status) {
-		if (status == google.maps.GeocoderStatus.OK) {
-			if (results[1]) {
-				map.setZoom(16);
+  geocoder.geocode({'latLng': latlng}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      if (results[1]) {
+        map.setZoom(16);
         marker = new google.maps.Marker({
-         position: latlng, 
-         map: map
+          position: latlng, 
+          map: map
         });
         infowindow.setContent(results[1].formatted_address);
-				infowindow.open(map);
-			} else {
-				alert("No results found");
-			}
-		} else {
-			alert("Geocoder failed due to: " + status);
-		}
-	});
+        infowindow.open(map);
+      } else {
+        alert("No results found");
+      }
+    } else {
+      alert("Geocoder failed due to: " + status);
+    }
+  });
   }
   map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
 	
@@ -256,8 +256,7 @@ function loadGrid() {
                   geocoder = new google.maps.Geocoder();
                   geocoder.geocode({'latLng': latlng}, function(results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
-                    
-                        $("#end").attr("value",results[0].formatted_address);
+                      $("#end").attr("value",results[0].formatted_address);
                     }
                     else {
                       $("#end").attr("value","");

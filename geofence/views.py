@@ -10,19 +10,10 @@ from django.http import HttpResponse
 from django.utils import simplejson
 
 def index(request):
-    parent = []
     system = System.objects.filter(administrator__username=request.user.username)
-    for item in system:
-        parent = item.id
-    vector = []
-    if parent != []:
-        childs = findChild(parent)
-        vector.append(parent)
-        vector.append(childs)
+
         
-        vector_html = render_system_html2(childs)
-        
-    return render_to_response("system/templates/home.html",locals())
+    return render_to_response("geofence/templates/home.html",locals())
     
 def saveGeofence(request):
   if request.method == "POST":
