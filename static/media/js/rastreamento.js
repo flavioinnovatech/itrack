@@ -1,19 +1,11 @@
-function montartabela(h,w) {
-  
-  /* -------------------------------------------- Funções que controlam as tabs/fullscreen -------------------------------------------- */ 
-  if (h == null && w == null) {
-    w = $(window).width();
-    h = $(window).height();
-  }  
-  
-}
-
-//monta tabela no tamanho normal no primeiro carregamento da pagina
-$('#tabs-1').ready(function(){  
-  montartabela();
-});
-
 jQuery(document).ready(function(){ 
+  loadGrid();
+  $("img[id=maptools]").easyTooltip();
+  $("img[class=fullscreen]").easyTooltip();
+  
+  setTimeout(function(){
+    doTimer();
+  },1000); 
   
   //desabilita vehicles toolbar quando gmaps nao é selecionado
   $('a[href=#tabs-1]').click(function(){
@@ -83,12 +75,7 @@ jQuery(document).ready(function(){
   
 // }); //end document.ready
 
-/* --------------------------------------------- toolbar ------------------------------------------------------ */
-$(document).ready(function(){
-  loadGrid();
-  $("img[id=maptools]").easyTooltip();
-  $("img[class=fullscreen]").easyTooltip();
-});
+/* --------------------------------------------- toolbar starts  ------------------------------------------------------ */
 
 var toolnow = null;
 $("img[id=maptools]").click(function() {
@@ -179,13 +166,13 @@ $('a[href=#tabs-1]').click(function(){
 
 });
   
-  
+var globaldata;
 function loadGrid() {
-      $('#list4').jqGrid('GridUnload');      
+  $('#list4').jqGrid('GridUnload');     
   
       $.getJSON("/rastreamento/loadData",
         function(data){
-          
+          globaldata = data;
           //montar cabeçalhos
           var colModel = [];
           var colNames = [];
@@ -196,7 +183,7 @@ function loadGrid() {
           colNames.push("Longitude");
           colModel.push({name:"Longitude",hidden:true});
           colNames.push("Placa");
-          colModel.push({name:"Placa",align:"center"});
+          colModel.push({name:"Placa",align:"center",formatter:currencyFmatter});
           colNames.push("Tipo veículo");
           colModel.push({name:"Tipo veículo",align:"center"});
           colNames.push("Hora");
@@ -235,8 +222,8 @@ function loadGrid() {
             caption: "Rastreamento veicular" 
           });
           
-          $("#load_list4").show();
-          $("#lui_list4").show();
+          // $("#load_list4").show();
+          // $("#lui_list4").show();
           
           //inserir dados
           
@@ -299,7 +286,6 @@ function loadGrid() {
 
           var time = nequips*400 + 500;
           
-          
           setTimeout(function(){
               var i = 0;
               $.each(myData, function(key, item) { 
@@ -307,8 +293,8 @@ function loadGrid() {
                 i = i+1;
               });
               
-              $("#load_list4").hide();
-              $("#lui_list4").hide();
+              // $("#load_list4").hide();
+              // $("#lui_list4").hide();
               
               //HACK
               $("table#list4").css("width","931px");
@@ -323,7 +309,22 @@ function loadGrid() {
 
 }
 
+function doTimer() {
+  setTimeout(function(){
+    loadGrid();
+    doTimer();
+  },30000);
+}
 
+function currencyFmatter (cellvalue, options, rowObject)
+{
+   link = "<a href='javascript:showVehicle(\""+cellvalue+"\")'>"+cellvalue+"</a> ";
+   return link;
+}
+
+function showVehicle(vehicle) {
+  alert(globaldata.toSource());
+}
 
 
 
