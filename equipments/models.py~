@@ -42,7 +42,6 @@ class Equipment(models.Model):
    serial = models.CharField(max_length=50, unique= True)
    serial.default = '000017E8'
    serial.null = True
-
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
    def __unicode__(self):
@@ -68,12 +67,11 @@ class SystemPerms(models.Model):
   system.null = True
   
   google_map = models.BooleanField(verbose_name = 'Google - Mapa')
-  
+  google_geofence = models.BooleanField(verbose_name = "Google - Geofence")
   maplink_map = models.BooleanField(verbose_name = 'Maplink - Mapa')
-  maplink_geofence = models.BooleanField(verbose_name = 'Maplink - Geofence')
   multspectral_map = models.BooleanField(verbose_name = 'Multispectral - Mapa')
   multspectral_geofence = models.BooleanField(verbose_name = 'Multispectral - Geofence')
   can_sms =models.BooleanField(verbose_name = 'Pode enviar SMS')
-  can_geofence = models.BooleanField(verbose_name = "Pode criar geofences")
+  
   
 

@@ -24,3 +24,6 @@ class Alert(models.Model):
     velocity_limit.blank = True
     def __unicode__(self):
         return self.name
+        
+class Popup(models.Model):
+    pass
