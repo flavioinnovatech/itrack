@@ -170,7 +170,7 @@ $(document).ready(function(){
   
   });
 
-  $("#savecircle").click(function(){
+   $("#savecircle").click(function(){
     
      coords = {lat: circle.center.lat(), lng: circle.center.lng(), radius: circle.radius};
      //alert(coords.toSource());
