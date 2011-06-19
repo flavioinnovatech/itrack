@@ -24,7 +24,7 @@
 	  <script src="/media/js/jquery.scrollfollow.js" type="text/javascript"></script>
 	  
 	  <script type="text/javascript" src="/media/js/master.js"></script>
-		
+      <script type="text/javascript" src="/media/js/alertcheck.js"></script>
 		{% block head %} {% endblock %}
 		
 	</head>
@@ -113,6 +113,8 @@
 				{% block content %}{% endblock %}
 			</div> <!-- end centerConteiner -->
 		</div> <!-- end content -->
+		<div id="systemid" style="display:none;">{{request.session.system}}</div>
+		<div id="userid" style="display:none;">{{request.user.id}}</div>
 	</body>
 	
 	<!-- Toolbar -->

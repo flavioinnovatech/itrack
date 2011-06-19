@@ -555,3 +555,11 @@ img#maptools{
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
+.popup-content p{}
+.alert-wrapper h2{ clear:both; margin-top:10px;}
+.alert-wrapper ul{padding:3px 3px 3px 10px; margin-bottom:35px;}
+.alert-wrapper ul li span { font-weight: bold; float:left;}
+.alert-wrapper ul li p { float:right; margin-bottom:0px;}
+.alert-wrapper ul li {clear:both;}
+
+

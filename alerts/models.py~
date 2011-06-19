@@ -17,10 +17,18 @@ class Alert(models.Model):
     receive_email = models.BooleanField(verbose_name = 'Receber alerta por email')
     receive_sms = models.BooleanField(verbose_name = 'Receber alerta por SMS')
     trigger = models.ForeignKey(CustomFieldName,verbose_name="Trigger",null=True)
-    velocity_limit = models.DecimalField(max_digits=4, decimal_places=0,verbose_name = 'Limite de Velocidade (km/h)')
-    velocity_limit.null = True
-    velocity_limit.blank = True
-    velocity_limit.null = True
-    velocity_limit.blank = True
+    linear_limit = models.DecimalField(max_digits=8, decimal_places=0,verbose_name = 'Limite')
+    linear_limit.null = True
+    linear_limit.blank = True
+    state = models.BooleanField(verbose_name = 'Alertar quando', choices=(("ON","Ligado/Acima do limite"),("OFF","Desligado/Abaixo do limite"),))
+
     def __unicode__(self):
         return self.name
+        
+class Popup(models.Model):
+    alert = models.ForeignKey(Alert)
+    system = models.ForeignKey(System)
+    vehicle = models.ForeignKey(Vehicle)
+    date = models.DateTimeField(null = True)
+    def __unicode__(self):
+        return str(self.alert)+" : "+str(self.vehicle)

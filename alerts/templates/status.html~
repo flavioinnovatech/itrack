@@ -1,0 +1,27 @@
+{% if data %}
+<div class="popup-content" title="Notificação de alerta{{numalerts|pluralize}} ocorrido{{numalerts|pluralize}}">
+    <img class="ui-icon-alert ui-icon" style="float:left;margin-right:3px;" /><p>Você recebeu {{numalerts}} novo{{numalerts|pluralize}} alerta{{numalerts|pluralize}}:</p>
+    {% for id,alert in data.items %}
+        <div class="alert-wrapper">
+            <h2 style="font-size:18px;">{{alert.name}}</h2>
+            <hr />
+            <ul>
+                <li><span>Veículo:</span> <p>{{alert.plate}}</p></li>
+                <li><span>Data:</span> <p>{{alert.date}}</p></li>
+                <li><span>Trigger:</span> <p>{{alert.trigger}}</p></li>
+               <li><span>Limite:</span> <p>{{alert.limit}}</p></li>
+                <li><span>Alertar quando:</span> 
+                    <p>{% if alert.limit %}
+                            {% if alert.state %}Acima do limite
+                            {% else %}Abaixo do limite
+                            {% endif %}
+                       {%else%}
+                            {% if alert.state %}Ligado
+                            {% else %}Desligado
+                            {% endif %}
+                      {% endif%}</p></li>
+            </ul>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}

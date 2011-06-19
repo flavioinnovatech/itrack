@@ -44,7 +44,26 @@
 <script type="text/javascript" src="/media/js/geofence.js"></script>
 <script type="text/javascript" src="/media/js/polygon(1.0).js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
 
+$(document).ready(function(){
+    if ($('#id_trigger option:selected').attr('class') == 'linearinput'){
+        $('.limitclass').show();
+    }
+    
+    $('#id_trigger').change(function(){
+        if ($('#id_trigger option:selected').attr('class') == 'linearinput'){
+            $('.limitclass').show();
+        }else{
+            $('.limitclass').hide();
+            $('#id_linear_limit').attr("value","")
+        }
+    });
+
+});
+
+
+</script> 
 
 {% endblock %}
 
@@ -60,7 +79,7 @@
 <table>
 
     {% for field in form %}
-    <tr>
+    <tr {% if  field.label = 'Limite' %} class='limitclass' style='display:none;' {% endif %}>
       {% if field.label_tag != '<label for="id_destinataries">Destinataries</label>' and  field.label_tag != '<label for="id_vehicle">Veículo</label>' %}
       <td>
         <div class="form-item">
