@@ -8,7 +8,7 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
-  $(".main-form").css("height","450px");
+  $(".main-form").css("height","500px");
   
   $("#accordion").accordion({ 
       autoHeight: true
@@ -40,8 +40,9 @@ $(document).ready(function(){
   creator = new PolygonCreator(map);
   
   var geofences = [];
+
   
-  ///////////// Cirlce tools
+  ///////////// Circle tools
   $("#circletool").click(function() {
     creator.destroy();
           
@@ -84,6 +85,7 @@ $(document).ready(function(){
   
   });
   
+  //Circle is marked with address input
   $("#circlesubmit").submit(function(){
     creator.destroy();
       
@@ -136,7 +138,152 @@ $(document).ready(function(){
         
   });
   
+  // Add inputs when desirable
+  $("#addpoint").click(function(){
+    var i = $("input[id^=polygoninput]").size() + 1;
+     $('<input type="text" id="polygoninput'+i+'" />').appendTo('#polygoninputs');
+     i++;
+  });
+  
+  $("#polygonsubmit").submit(function(){
+
+    creator.destroy();
+    var directionDisplay;
+    var directionsService = new google.maps.DirectionsService();
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
+
+    if (geofences.length > 0) {
+      geofences[0].setMap(null);
+      geofences.pop();
+    }
+    
+    var points = [];
+    waypoints = [];
+    var distance;
+
+    var i = 0;
+    $("input[id^=polygoninput]").each(function(){
+      
+      if ($(this).attr("value") == "")
+        return false;
+      
+      i++;
+      var address =  $(this).attr("value");
+
+      geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          // map.setCenter(results[0].geometry.location);
+          position = results[0].geometry.location;
+          points.push(position);
+          var waypoint = {location:position};
+          waypoints.push(waypoint);
+
+        } else {
+          alert("Geocode was not successful for the following reason: " + status);
+        }
+      });
+    });
+    
+    var time = $("input[id^=polygoninput]").size();
+    time = time*40;
+    setTimeout(function(){
+     
+      bermudaTriangle = new google.maps.Polygon({
+          paths: points,
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#FF0000",
+          fillOpacity: 0.35
+        });
+        
+        map.setCenter(points[0]);
+        
+        geofences.push(bermudaTriangle);
+
+        bermudaTriangle.setMap(map);
+      
+    },time); 
+    
+  });
+  
   ///////////// Route
+  // Add inputs when desirable
+  $("#adddestiny").click(function(){
+    var i = $("input[id^=routeinput]").size() + 1;
+     $('<input type="text" id="routeinput'+i+'" />').appendTo('#routeinputs');
+     i++;
+  });
+  
+  //Route is marked with address input
+  $("#routesubmit").submit(function(){
+
+    creator.destroy();
+    var directionDisplay;
+    var directionsService = new google.maps.DirectionsService();
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
+
+    if (geofences.length > 0) {
+      geofences[0].setMap(null);
+      geofences.pop();
+    }
+    
+    var points = [];
+    waypoints = [];
+    var distance;
+
+    var i = 0;
+    $("input[id^=routeinput]").each(function(){
+      
+      if ($(this).attr("value") == "")
+        return false;
+      
+      i++;
+      var address =  $(this).attr("value");
+      points.push(address);
+      var waypoint = {location:address};
+      waypoints.push(waypoint);
+
+         
+    });
+
+    var request = {
+      origin:points[0], 
+      destination:points[(points.length)-1],
+      optimizeWaypoints:true,
+      waypoints:waypoints,
+      travelMode: google.maps.DirectionsTravelMode.DRIVING
+    };
+    directionsService.route(request, function(result, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        directionsDisplay.setDirections(result);
+        
+        distance = 0;
+        for (i=0;i<result.routes.length;i++){
+          for (j=0;j<result.routes[i].legs.length;j++){ 
+            distance += result.routes[i].legs[j].distance["value"];
+          }
+        }
+        
+        $("#routedistance").attr("value",distance);
+        geofences.push(directionsDisplay);
+        $("#saveroute").removeAttr('disabled');
+      }
+
+      else {
+        alert('Rota inválida');
+      }
+    });
+
+
+
+
+
+  });
+  
+  //Route tool
   $("#routetool").click(function(){
 
      creator.destroy();
@@ -150,32 +297,48 @@ $(document).ready(function(){
        geofences.pop();
      }
 
-       google.maps.event.addListenerOnce(map,"click",function(point){
+     var points = [];
+     waypoints = [];
+     
+     google.maps.event.clearInstanceListeners(map);
+     google.maps.event.addListener(map,"click",function(point){
 
-         var start = point.latLng
-
-         google.maps.event.addListenerOnce(map,"click",function(point){ 
-
+       points.push(point);
+              
+       if (points.length >= 2) {
+         
+         var waypoint = {location:point.latLng};
+         waypoints.push(waypoint);
+          
          var request = {
-           origin:start, 
-           destination:point.latLng,
+           origin:points[0].latLng, 
+           destination:points[(points.length)-1].latLng,
+           optimizeWaypoints:true,
+           waypoints:waypoints,
            travelMode: google.maps.DirectionsTravelMode.DRIVING
          };
          directionsService.route(request, function(result, status) {
            if (status == google.maps.DirectionsStatus.OK) {
              directionsDisplay.setDirections(result);
 
-             $("#saveroute").removeAttr('disabled');
-             
+             var distance = 0;
+             for (i=0;i<result.routes.length;i++){
+               for (j=0;j<result.routes[i].legs.length;j++){ 
+                 distance += result.routes[i].legs[j].distance["value"];
+               }
+             }
+
+             $("#routedistance").attr("value",distance);
              geofences.push(directionsDisplay);
+             $("#saveroute").removeAttr('disabled');
            }
 
            else {
              alert('Rota inválida');
            }
          });
-
-       });
+       }
+       
      });
   });
   
@@ -208,17 +371,46 @@ $(document).ready(function(){
        <div>
          <p>Clique no botão abaixo para selecionar os vértices do polígono no mapa:</p><br/>
          <p align="center"><span class="table-button"  id="polygontool" style="cursor:pointer;padding:5px;">Traçar polígono</span></p><br><br/>
+          <hr/><br/>
+          <p>Ou digite os endereços para os pontos:</p><br/>
+           <form id="polygonsubmit"  style="margin-top:5px;width:auto;" action="#map">
+             <div id="polygoninputs">
+               <input id="polygoninput1" type="text"></input>
+               <input id="polygoninput2" type="text"></input>
+               <input id="polygoninput3" type="text"></input>
+             </div>
+           <p><span id="addpoint">Adicionar ponto</span></p>
+           <input type="submit">
+           </form>
+           <hr/><br/>
          <input id="savepolygon" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>      </div>
      <h3><a href="#">Rota</a></h3>
        <div>
-         <p>Clique no botão abaixo e em seguida selecione uma rua para origem e uma rua para destino</p><br/>
+         <p>Para selecionar a rota clique no botão abaixo e selecione os pontos desejados no mapa.</p><br/>
          <p align="center"><span class="table-button"  id="routetool"  style="cursor:pointer;padding:5px;">Selecionar rota</span></p><br/><br/>
+         <p align="center"><span class="table-button"  id="routetool"  style="cursor:pointer;padding:5px;">Finalizar rota</span></p><br/><br/>
+         <hr/><br/>
+         <p>Ou digite os endereços para os pontos:</p><br/>
+         <form id="routesubmit"  style="margin-top:5px;width:auto;" action="#map">
+           <div id="routeinputs">
+             <input id="routeinput1" type="text"></input>
+             <input id="routeinput2" type="text"></input>
+           </div>
+         <p><span id="adddestiny">Adicionar destino</span></p>
+         <input type="submit">
+         </form>
+        
+         <br/><br/><hr/><br/>
+         
+         <p>Distância da rota:</p><br/>
+         <input id="routedistance" type="text" style="width:84px;"></input>metros
          <input id="saveroute" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>
+         
        </div>
     </div>
   </div>
 
-   <div id="map" style="float:right;height:450px;width:79%;background-color:white;"></div>
+   <div id="map" style="float:right;height:500px;width:79%;background-color:white;"></div>
    </div>
 </div>
 {% endblock %}

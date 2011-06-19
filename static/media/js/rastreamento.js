@@ -181,7 +181,7 @@ $('a[href=#tabs-1]').click(function(){
   
   
 function loadGrid() {
-      $('#list4').jqGrid('GridUnload');
+      $('#list4').jqGrid('GridUnload');      
   
       $.getJSON("/rastreamento/loadData",
         function(data){
@@ -205,10 +205,12 @@ function loadGrid() {
           colModel.push({name:"Endereço",align:"center"});
           
           //para cada veículo
+          var nequips = 0;
           $.each(data, function(key, equip) {
-            
+            nequips++;
             //para cada info
             $.each(equip.info, function(key2,info){
+
               
               if (key2 == "Latitude" || key2 == "Longitude") {
 
@@ -222,6 +224,20 @@ function loadGrid() {
              
           });
           
+          jQuery("#list4").jqGrid({   
+            datatype: "local",
+            height:h-250,
+            width: 930,
+            colNames: colNames, 
+            colModel:colModel,
+            multiselect: true, 
+            loadui:"block",
+            caption: "Rastreamento veicular" 
+          });
+          
+          $("#load_list4").show();
+          $("#lui_list4").show();
+          
           //inserir dados
           
           //cria o objeto para cada linha
@@ -230,6 +246,7 @@ function loadGrid() {
           $.each(colNames, function(key, name) {
               object[name] = "";
           });
+          
           
           $.each(data, function(key, equip) {              
             
@@ -256,15 +273,12 @@ function loadGrid() {
                   geocoder = new google.maps.Geocoder();
                   geocoder.geocode({'latLng': latlng}, function(results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
-                      $("#end").attr("value",results[0].formatted_address);
-                    }
-                    else {
-                      $("#end").attr("value","");
+                      object[name] = results[0].formatted_address;
                     }
                     
                   });
                   
-                  object[name] = $("#end").val();
+                  // object[name] = $("#end").val();
                   
                 }
                 
@@ -277,44 +291,33 @@ function loadGrid() {
                 
             });
             
-            myData.push(object);
+            setTimeout(function(){
+              myData.push(object);
+            },400);
+            
           });
+
+          var time = nequips*400 + 500;
           
           
-
-          // var latlng = new google.maps.LatLng(lat,lng);
-          // geocoder = new google.maps.Geocoder();
-          geocoder=0;
-          if (geocoder) {
-                geocoder.geocode({'latLng': latlng}, function(results, status) {
-                  if (status == google.maps.GeocoderStatus.OK) {
-                   address = results[0].formatted_address;
-                  
-                  }
-                  else {
-                    alert("Geocoder failed due to: " + status);
-                  }
-                });
-            }
-
-            jQuery("#list4").jqGrid({   
-             	datatype: "local",
-             	height:h-250,
-             	width: 930,
-             	colNames: colNames, 
-             	colModel:colModel,
-             	multiselect: true, 
-             	caption: "Rastreamento veicular" }); 
-
+          setTimeout(function(){
               var i = 0;
               $.each(myData, function(key, item) { 
                 jQuery("#list4").jqGrid('addRowData',i+1,item);
                 i = i+1;
               });
+              
+              $("#load_list4").hide();
+              $("#lui_list4").hide();
+              
               //HACK
               $("table#list4").css("width","931px");
               $("table.ui-jqgrid-htable").css("width","931px");
-              
+            
+          },time);
+          
+          
+
     });
   
 
