@@ -1,3 +1,5 @@
+var map;
+
 jQuery(document).ready(function(){ 
   loadGrid();
   $("img[id=maptools]").easyTooltip();
@@ -112,7 +114,6 @@ $("#googlemap").click(function() {
   $("img[class=geofence]").show();
   
 	var geocoder;
-	var map;
 	var infowindow = new google.maps.InfoWindow();
 	var marker;
 	geocoder = new google.maps.Geocoder();

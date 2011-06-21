@@ -71,7 +71,7 @@ def loadGeofences(request):
     if g.type == 'C':
       for ge in geoentities:
         coords = {"radius":ge.radius,"lat":ge.lat,"lng":ge.lng}
-        data.append({"name":g.name,"type":g.type,"coords":coords})
+        data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
         
         
   # data.append({ "name" : g.name, "type": g.type })
