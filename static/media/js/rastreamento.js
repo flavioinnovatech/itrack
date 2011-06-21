@@ -323,7 +323,23 @@ function currencyFmatter (cellvalue, options, rowObject)
 }
 
 function showVehicle(vehicle) {
-  alert(globaldata.toSource());
+  
+  $("#vehicledialog").html("");
+  $("#vehicledialog").attr("title","Dados do veículo "+vehicle);
+  
+  $.each(globaldata, function(key, equip) {
+    $.each(equip, function(key1, equipdata) {
+      
+      if (key1 == "veiculo" && equipdata.license_plate == vehicle) {
+                
+        $.each(equipdata,function(key2,vehicledata) {
+          $("#vehicledialog").append("<p>"+key2+":  "+vehicledata+"</p>");
+          $("#vehicledialog").dialog({show: "blind",modal:true});
+        });  
+      }     
+    });
+  });
+  
 }
 
 
