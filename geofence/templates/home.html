@@ -194,6 +194,51 @@ $(document).ready(function(){
         
   });
   
+  // The save POST
+  $("#savepolygon").click(function(){
+    
+    coords = {points: creator.showData()};
+    
+    $('#id_geoentities').remove();
+      
+    $("#generaldialog").html("");
+    $("#generaldialog").attr("title","Salvar cerca eletrônica");
+    $("#generaldialog").append("<p><b>Digite um nome para a cerca:</b></p>")
+    $("#generaldialog").append("<p><input id='geofencename' type='text'></input></p>");
+    
+    $("#generaldialog").dialog({
+      modal:true,
+      show:'clip',
+      buttons: {
+        "Salvar": function() {
+          geofencename = $("#geofencename").val();
+          
+          if(geofencename){ 
+            $.post(
+                "/geofence/save/",
+                {name:geofencename,type:'polygon', coords: coords, system : window.location.pathname.split("/")[3]},
+                function(data){
+                    $('form').append("<input type='hidden' name='geoentities' id='id_geoentities' value='"+data+"' />");
+                    $("#dialog").dialog("close");
+                }
+             );
+            
+            $( this ).dialog( "close" );
+          }
+          
+          else {
+            alert('Digite um nome para a cerca eletrônica.')
+          }
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+    
+     
+  })
+  
   // Add inputs when desirable
   $("#addpoint").click(function(){
     var i = $("input[id^=polygoninput]").size() + 1;

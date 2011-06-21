@@ -32,6 +32,11 @@ def saveGeofence(request):
         p1.save()
         return HttpResponse(p1.id)
     elif parsed_dict['type'] == 'polygon':
+      
+        system = System.objects.get(pk=request.session['system'])
+        g = Geofence(name=parsed_dict['name'],system=system,type='P')
+        g.save()
+        
         str_coords =  parsed_dict['coords']['points'].replace("(","").split(")")
         coords = []
         for coord in str_coords:
@@ -41,7 +46,7 @@ def saveGeofence(request):
         list_ids = []
         sequence = 0
         for ent in coords:
-            p = GeoEntity(geofence=None,lat=float(ent[0]),lng=float(ent[1]),radius=0,seq=sequence)
+            p = GeoEntity(geofence=g,lat=float(ent[0]),lng=float(ent[1]),radius=0,seq=sequence)
             sequence += 1
             p.save()
             list_ids.append(p.id)
@@ -66,13 +71,21 @@ def loadGeofences(request):
   data = []
   
   for g in geofence:
-    geoentities = GeoEntity.objects.filter(geofence=g)
     
     if g.type == 'C':
+      geoentities = GeoEntity.objects.filter(geofence=g)
       for ge in geoentities:
         coords = {"radius":ge.radius,"lat":ge.lat,"lng":ge.lng}
         data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
         
+    if g.type == 'P':
+      geoentities = GeoEntity.objects.filter(geofence=g).order_by('seq')
+      coords = []
+      for ge in geoentities:
+        coord = {"lat":ge.lat,"lng":ge.lng}
+        coords.append(coord)
+        
+      data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
         
   # data.append({ "name" : g.name, "type": g.type })
   # data.append({ "name" : "g.name", "type": "g.type" })
