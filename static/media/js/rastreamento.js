@@ -333,7 +333,7 @@ function showVehicle(vehicle) {
       if (key1 == "veiculo" && equipdata.license_plate == vehicle) {
                 
         $.each(equipdata,function(key2,vehicledata) {
-          $("#vehicledialog").append("<p>"+key2+":  "+vehicledata+"</p>");
+          $("#vehicledialog").append("<p><b>"+key2+":</b>  "+vehicledata+"</p>");
           $("#vehicledialog").dialog({show: "blind",modal:true});
         });  
       }     
