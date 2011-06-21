@@ -52,11 +52,13 @@ def saveGeofence(request):
   #return render_to_response("alerts/templates/create.html",locals())
 def loadGeofences(request):
   system = request.session["system"]
-  geofence = Alert.objects.filter(system=system)
+  geofence = Geofence.objects.filter(system=system)
   
   data = []
   for g in geofence:
-    data.append({ "name" : g.name })
+    alert = Alert.objects.get(geofence=g)
+    data.append({ "name" : alert.name })
+      
 
   json = simplejson.dumps(data)
   

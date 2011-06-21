@@ -78,11 +78,6 @@ def loadData(request):
   json = simplejson.dumps(data)
 
   return HttpResponse(json, mimetype='application/json')
-  
-  
-# geofence test
-def geofence(request):
-  return render_to_response("templates/geofence.html",locals())
 
 
 def xhr_test(request):

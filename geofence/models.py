@@ -8,6 +8,13 @@ from itrack.alerts.models import Alert
 class Geofence(models.Model):
     system = models.ForeignKey(System, verbose_name = "Sistema")
     alert = models.ForeignKey(Alert, verbose_name = "Alerta",null = True)
+    types = (
+            ('C', 'Círculo'),
+            ('P', 'Polígono'),
+            ('R', 'Rota')
+        )
+    type = models.CharField(max_length=1, choices=types)
+    type.default = 'C'
     def __unicode__(self):
         return str(self.alert.name)
     

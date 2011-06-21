@@ -10,7 +10,7 @@ jQuery(document).ready(function(){
   //desabilita vehicles toolbar quando gmaps nao é selecionado
   $('a[href=#tabs-1]').click(function(){
    
-    $("img[class=vehicle]").hide();
+    $("img[id=maptools]").hide();
   });
 
   w = $(window).width();
