@@ -19,7 +19,16 @@ def saveGeofence(request):
   if request.method == "POST":
     parsed_dict = parser.parse(request.POST.urlencode())
     if parsed_dict['type'] == 'circle':
-        p1 = GeoEntity(geofence=None,lat = float(parsed_dict['coords']['lat']), lng = float(parsed_dict['coords']['lng']), radius = float(parsed_dict['coords']['radius']))
+
+        system = System.objects.get(pk=request.session['system'])
+        
+        # Save geofence first
+        g = Geofence(name=parsed_dict['name'],system=system,type='C')
+        g.save()
+
+        # Links GeoEntity with the previous created Geofence
+        p1 = GeoEntity(geofence=g,lat = float(parsed_dict['coords']['lat']), lng = float(parsed_dict['coords']['lng']), radius = float(parsed_dict['coords']['radius']))
+            
         p1.save()
         return HttpResponse(p1.id)
     elif parsed_dict['type'] == 'polygon':
@@ -55,11 +64,19 @@ def loadGeofences(request):
   geofence = Geofence.objects.filter(system=system)
   
   data = []
+  
   for g in geofence:
-    alert = Alert.objects.get(geofence=g)
-    data.append({ "name" : alert.name })
-      
-
+    geoentities = GeoEntity.objects.filter(geofence=g)
+    
+    if g.type == 'C':
+      for ge in geoentities:
+        coords = {"radius":ge.radius,"lat":ge.lat,"lng":ge.lng}
+        data.append({"name":g.name,"type":g.type,"coords":coords})
+        
+        
+  # data.append({ "name" : g.name, "type": g.type })
+  # data.append({ "name" : "g.name", "type": "g.type" })
+  print data
   json = simplejson.dumps(data)
   
   return HttpResponse(json, mimetype='application/json')

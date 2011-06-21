@@ -40,6 +40,8 @@ $(document).ready(function(){
   creator = new PolygonCreator(map);
   
   var geofences = [];
+  var circle = null;
+  var geofencename = null;
 
   
   ///////////// Circle tools
@@ -125,6 +127,60 @@ $(document).ready(function(){
     }
     
   });
+  
+  //The save POST
+  $("#savecircle").click(function(){
+    
+    if (circle) {
+      coords = {lat: circle.center.lat(), lng: circle.center.lng(), radius: circle.radius};
+      // alert(coords.toSource());
+      $('#id_geoentities').remove();
+      
+      $("#generaldialog").html("");
+      $("#generaldialog").attr("title","Salvar cerca eletrônica");
+      $("#generaldialog").append("<p><b>Digite um nome para a cerca:</b></p>")
+      $("#generaldialog").append("<p><input id='geofencename' type='text'></input></p>");
+      
+      
+      $("#generaldialog").dialog({
+        modal:true,
+        show:'clip',
+        buttons: {
+          "Salvar": function() {
+            geofencename = $("#geofencename").val();
+            
+            if(geofencename){ 
+              $.post(
+                "/geofence/save/",
+                {name:geofencename,type:'circle', coords: coords, system : window.location.pathname.split("/")[3]},
+                function(data){
+                  $('form').append("<input type='hidden' name='geoentities' id='id_geoentities' value='"+data+"' />");
+                  $("#dialog").dialog("close");
+                }
+              );
+              
+              $( this ).dialog( "close" );
+            }
+            
+            else {
+              alert('Digite um nome para a cerca eletrônica.')
+            }
+          },
+          Cancel: function() {
+            $( this ).dialog( "close" );
+          }
+        }
+      });
+      
+             
+    }
+    
+    else {
+      alert("Selecione um círculo primeiro.");
+    }
+    
+  });
+  
   
   ///////////// Polygon tool
   $("#polygontool").click(function(){
