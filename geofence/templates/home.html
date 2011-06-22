@@ -8,7 +8,7 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
-  $(".main-form").css("height","500px");
+  $(".main-form").css("height","600px");
   
   $("#accordion").accordion({ 
       autoHeight: true
@@ -71,6 +71,8 @@ $(document).ready(function(){
           radius : radius
         });
 
+        circlearea = Math.PI * radius * radius / 1000;
+        circlearea = circlearea.toFixed(2);
         geofences.push(circle);
 
         $("#savecircle").removeAttr('disabled');
@@ -118,6 +120,9 @@ $(document).ready(function(){
             radius : radius
           });
           
+          circlearea = Math.PI * radius * radius / 1000;
+          circlearea = circlearea.toFixed(2);
+          $("#circlearea").attr("value",circlearea)
           geofences.push(circle);
           
         } else {
@@ -466,6 +471,10 @@ $(document).ready(function(){
          <form id="circlesubmit" style="margin-top:5px;width:auto;" action="#map">
            <p><input id="circlecenter" type="text"></input></p></br/>
          </form>
+         <hr/><br/>
+         <p>Área da círculo selecionado:</p>
+         <input type="text" id="circlearea" style="width:93px;"></input> km<sup>2</sup>
+         <br/><br/><hr/><br/>
          <input id="savecircle" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>
        </div>
      <h3><a href="#">Polígono</a></h3>
