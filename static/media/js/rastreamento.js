@@ -198,37 +198,40 @@ function loadGrid() {
           
           var markers = new Array;
           
-          jQuery("#list4").jqGrid({   
-            datatype: "local",
-            height:h-250,
-            width: 930,
-            colNames: colNames, 
-            colModel:colModel,
-            multiselect: true, 
-            loadui:"block",
-            caption: "Rastreamento veicular",
-            onSelectRow: function(rowid,status){ 
-              if (status == true) {
-                lat = $('#list4').jqGrid('getCell',rowid,'Latitude');
-                lng = $('#list4').jqGrid('getCell',rowid,'Longitude');
-                var latlng = new google.maps.LatLng(lat, lng);
+          if (olddata != null) {
+            jQuery("#list4").jqGrid({   
+              datatype: "local",
+              height:h-250,
+              width: 930,
+              colNames: colNames, 
+              colModel:colModel,
+              multiselect: true, 
+              loadui:"block",
+              caption: "Rastreamento veicular",
+              onSelectRow: function(rowid,status){ 
+                if (status == true) {
+                  lat = $('#list4').jqGrid('getCell',rowid,'Latitude');
+                  lng = $('#list4').jqGrid('getCell',rowid,'Longitude');
+                  var latlng = new google.maps.LatLng(lat, lng);
                 
-                marker = new google.maps.Marker({
-                  position: latlng, 
-                  map: map
-                });
+                  marker = new google.maps.Marker({
+                    position: latlng, 
+                    map: map
+                  });
                 
-                map.setCenter(latlng);
+                  map.setCenter(latlng);
                 
-                markers[rowid] = marker;
+                  markers[rowid] = marker;
               
-              }
+                }
               
-              else {
-                markers[rowid].setMap(null);
+                else {
+                  markers[rowid].setMap(null);
+                }
               }
-            }
-          });
+            });
+          
+          }
           
           // $("#load_list4").show();
           // $("#lui_list4").show();
