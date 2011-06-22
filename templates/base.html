@@ -63,7 +63,7 @@
 					</li>
 					
 							{% for grp in request.user.groups.all %}
-							    {% if grp.name  == "administradores" %}
+							    {% if grp.name  == "administradores" or grp.name == "comando" %}
 							    <li><a href="#">Comandos</a>
 						            <ul>
 							            <li><a href="{% url command.views.index %}">Ver histórico</a></li>
@@ -75,7 +75,7 @@
 
 					
 							{% for grp in request.user.groups.all %}
-							    {% if grp.name  == "administradores" %}
+							    {% if grp.name  == "administradores" or grp.name == "alerta"  %}
 							    <li><a href="#">Alertas</a>
 						            <ul>
 							            <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>

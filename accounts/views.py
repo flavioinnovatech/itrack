@@ -94,18 +94,29 @@ def create_user(request,offset):
 
           user.set_password(password)
           user.save()
+          
+          alert = request.POST["alert"]
+          command = request.POST["command"]
+          
           if adm is not None:
-            print "aqui"
             user.groups.add(1)
-
-                    
+            
+          elif alert is not None and command is not None:
+            user.groups.add(2)
+            user.groups.add(3)
+            
+          elif command is not None:
+            user.groups.add(3)
+            
+          elif alert is not None:
+            user.groups.add(2)
+          
           new_profile = form_profile.save(commit=False)
           new_profile.profile_id = new_user.id
           new_profile.save()
           
           system.users.add(new_user)
 
-          
           users = User.objects.filter(system=system)
                 
           return HttpResponseRedirect("/accounts/create/finish")
@@ -219,6 +230,36 @@ def edit(request,offset):
         new_user = form_user.save(commit=False)
         new_user.set_password(new_user.password)
         new_user.save()
+        
+        try:
+            alert = request.POST["alert"]
+        except:
+            alert = None
+            
+        try:
+          command = request.POST["command"]
+        except:
+          command = None
+
+        try:
+          adm = request.POST['Administrador']
+        except:
+          adm = None
+
+        
+        if adm is not None:
+          user.groups.add(1)
+          
+        elif alert is not None and command is not None:
+          user.groups.add(2)
+          user.groups.add(3)
+          
+        elif command is not None:
+          user.groups.add(3)
+          
+        elif alert is not None:
+          user.groups.add(2)
+        
         new_profile = form_profile.save()
         return HttpResponseRedirect ("/accounts/edit/finish")
 
@@ -229,13 +270,16 @@ def edit(request,offset):
     
     system = request.session['system']
     users = User.objects.filter(system=system)
-    
+
     try:
         s = System.objects.get(users__id=user.id)
     except:
         s = System.objects.get(administrator__id = user.id)
     if isChild(s.id,[system,findChild(system)]):
       form = UserCompleteForm(instance = user)
+      
+      # ROOOTS BLOODY ROOTS
+      form.fields["Administrador"] = forms.CharField(widget=forms.CheckboxInput(),help_text="Marque a caixa para atribuir privilégios administrativos ao usuário")
       form.initial = dict( form.initial.items() + profile.__dict__.items())
       form.initial["password"] = ""
       return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))

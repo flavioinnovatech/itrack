@@ -22,6 +22,8 @@ class UserTailForm(forms.ModelForm):
     cellphone = forms.CharField(max_length=20, label = "Celular")
     address = forms.CharField(max_length=200, label = "Endereço",required=False)
     city = forms.CharField(max_length=50, label= "Cidade",required=False)
+    alert = forms.BooleanField(label = 'Visualizar alertas',required=False)
+    command = forms.BooleanField(label = 'Visualizar comandos',required=False)
 
 class UserCompleteForm(UserForm,UserTailForm):
     pass
