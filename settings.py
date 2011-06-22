@@ -169,8 +169,9 @@ LOGGING = {
 
 DAJAXICE_MEDIA_PREFIX="dajaxice" 
 
-EMAIL_HOST=""
-EMAIL_PORT= ""
-EMAIL_HOST_USER=''
-EMAIL_HOST_PASSWORD=''
-EMAIL_USER_TLS=True
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT= 587
+EMAIL_HOST_USER='aaacec@gmail.com '
+EMAIL_HOST_PASSWORD='senha1'
+EMAIL_USE_TLS=True
