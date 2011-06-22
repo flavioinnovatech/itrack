@@ -7,7 +7,7 @@
 <script type="text/javascript" src="/static/admin/js/core.js"></script>
 <script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
 <script type="text/javascript" src="/static/admin/js/actions.js"></script>
-<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+<script type="text/javascript" src="/media/js/SelectBox.js"></script>
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
 
@@ -50,8 +50,12 @@
 <hr />
 <h2>Campos disponíveis para o sistema {{system_name}}</h2>
 <em>Para cada tipo de equipamento disponível, defina quais campos são visíveis para este sistema. </em>
-
-
+<div id="legenda" style="margin:15px 0 0 30px;"> Legenda:
+    <ul>
+        <li><p class="optiongreen" style="display:block; margin:0 0 0px 30px; padding: 3px; width:100px; text-align:center;"> Entradas </p></li>
+        <li><p class="optionred" style="display:block; margin:0 0 0px 30px; padding: 3px; width:100px; text-align:center;"> Saídas </p></li>
+    </ul>
+</div>
 
 <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
 
@@ -69,9 +73,6 @@
             </div>
         </div>
         <hr / >
-        {% endfor %}
-        {% for field in form.hidden_fields %}
-            {{ field }}      
         {% endfor %}
     {% endfor %}
 

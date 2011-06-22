@@ -12,6 +12,7 @@ from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template.context import RequestContext
 from itrack.system.forms import SystemForm, SettingsForm, UserCompleteForm, SystemWizard, change_css, PermsForm
+from itrack.equipments.forms import AvailableFieldsForm,EquipmentsForm,CustomNameForm
 from django.db.models import Q
 from itrack.system.tools import systemDepth
 
@@ -219,7 +220,7 @@ def edit(request,offset):
             return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         
     else:
-        return HttpResponseForbidden(u"Você não tem permissão para alterar este sistema")
+        return HttpResponseForbidden(u"Você não tem permissão para alterar este sistema.")
 
 def deletefinish(request):
     return render_to_response("system/templates/delete_finish.html",locals())
@@ -258,5 +259,8 @@ def delete(request,offset):
     else:
         return HttpResponseForbidden(u'Você não tem permissão para apagar este sistema.')
 
-
-  
+@login_required
+def sys_not_created(request):
+    if request.method == 'POST':
+        request.session["system_being_created"] = False
+    return HttpResponse(u'False')

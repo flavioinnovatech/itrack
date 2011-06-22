@@ -56,7 +56,7 @@ var SelectBox = {
         SelectBox.cache[id].length--;
     },
     add_to_cache: function(id, option) {
-        SelectBox.cache[id].push({value: option.value, text: option.text, displayed: 1,type : option.type});
+        SelectBox.cache[id].push({value: option.value, text: option.text, displayed: 1,type : option.className});
     },
     cache_contains: function(id, value) {
         // Check if an item is contained in the cache

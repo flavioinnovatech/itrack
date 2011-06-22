@@ -91,8 +91,11 @@ def permissions(request,offset):
                             av.save()
                         except KeyError:
                             pass
-                        
-                return HttpResponseRedirect("/equipment/finish/")
+                    
+                    if request.session["system_being_created"]:
+                        return HttpResponseRedirect("/equipment/fieldnames/"+offset)
+                    else:        
+                        return HttpResponseRedirect("/equipment/finish/")
         else:
             
             formset = AvailableFieldsFormset()
@@ -138,7 +141,10 @@ def associations(request,offset):
                     eq.system.add(system_name)
                     eq.save()
                 
-                return HttpResponseRedirect("/equipment/associations/finish/")
+                if request.session["system_being_created"]:
+                    return HttpResponseRedirect("/equipment/permissions/"+offset)
+                else:  
+                    return HttpResponseRedirect("/equipment/associations/finish/")
         else:
             form = EquipmentsForm()
             form.fields["equipments"].label = ""
@@ -178,7 +184,12 @@ def set_names(request,offset):
                 cfn = CustomFieldName.objects.get(pk=int(form["id"]))
                 cfn.name = form["name"]
                 cfn.save()
-            return render_to_response('equipments/templates/assoc_finish.html',locals())
+            
+            if request.session["system_being_created"]:
+                request.session["system_being_created"] = False
+                return HttpResponseRedirect("/system/finish/")
+            else:
+                return render_to_response('equipments/templates/assoc_finish.html',locals())
 
         
         
@@ -192,6 +203,7 @@ def set_names(request,offset):
             
         form.fields["name"].initial = cfn.name
         form.fields["id"].initial = cfn.id
+
     return render_to_response("equipments/templates/fieldnames.html",locals(),context_instance=RequestContext(request))
         
     

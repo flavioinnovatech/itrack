@@ -13,6 +13,21 @@
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
 
+<script type="text/javascript">
+  var confirm_to_exit = true;
+  window.onbeforeunload = confirmExit;
+  function confirmExit()
+  {
+    if(need_to_confirm) return "A criação do sistema ainda não foi terminada, e ele não será salvo se você sair do assistente agora. Tem certeza que deseja sair?";
+  }
+  
+    $(document).ready(function(){
+        $('.submit').click(function(){
+            need_to_confirm = false;
+          });
+  });
+</script>
+
 {% endblock %}
 
 {% block content %}
@@ -20,7 +35,7 @@
 
 <div  class="main-form">
 
-<h1>Criação de sistema </h1>
+<h1><img src="/media/img/configuration.png" class="icon">Criação de sistema </h1>
 <hr />
 {% if step == 1 %}
 <h2>Primeiro passo:  conta de administrador do sistema</h2>
@@ -30,10 +45,12 @@
 <h2>Segundo passo: informações principais do sistema</h2>
 <em>Cadastre aqui as informações necessárias para identificação do sistema.</em>
 {% endif %}
+
 {% if step == 3 %}
 <h2>Terceiro passo: display do sistema</h2>
 <em>Configure o esquema de cores e o logo do sistema.</em>
 {% endif %}
+
 
 <table>
 <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
@@ -42,7 +59,7 @@
           <td>
         <div class="form-item">
             <div class="item-left">          
-                  <p>{{ field.label_tag }} {%if field.field.required%} *{%endif%}</p>
+                  <p>{{ field.label_tag }}{%if field.field.required%} *{%endif%}</p>
                   <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
             </div>
           </td>
@@ -56,10 +73,13 @@
         </div>
         </td >
     {% endfor %}
-    </table>
+</table>
+
+
+    
 <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
 {{ previous_fields|safe }}
-<input type="submit" value="Prosseguir" class="submit">
+<input type="submit" value="Prosseguir" class="submit" onclick="confirm_to_exit = false;">
 <p class="clear">
 </form>
 

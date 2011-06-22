@@ -114,7 +114,7 @@
 			</div> <!-- end centerConteiner -->
 		</div> <!-- end content -->
 		<div id="systemid" style="display:none;">{{request.session.system}}</div>
-		<div id="userid" style="display:none;">{{request.session.user.id}}</div>
+		<div id="userid" style="display:none;">{{request.user.id}}</div>
 	</body>
 	
 	<!-- Toolbar -->

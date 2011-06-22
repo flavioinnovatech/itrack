@@ -3,10 +3,11 @@
 from django.forms import *
 from django.http import HttpResponseRedirect
 from django.contrib.admin.widgets import *
-from itrack.system.models import System,Settings,SystemPerms
+from itrack.system.models import System,Settings
 from django.contrib.formtools.wizard import FormWizard
 from itrack.accounts.forms import UserCompleteForm, UserForm, UserProfileForm
-from itrack.equipments.models import CustomFieldName
+from itrack.equipments.models import CustomFieldName,SystemPerms
+from itrack.equipments.views import associations, permissions,set_names
 
 class SystemForm(ModelForm):
     class Meta:
@@ -46,6 +47,7 @@ class PermsForm(ModelForm):
 class SystemWizard(FormWizard):
     def get_template(self,step):
         return 'system/templates/create_wizard.html'
+
 
     def done(self,request,form_list):
         
@@ -101,8 +103,8 @@ class SystemWizard(FormWizard):
                 cfn2 = CustomFieldName(system = new_sys, custom_field=cfn.custom_field, name = cfn.name)
                 cfn2.save()
               
-              
-              return HttpResponseRedirect('/system/finish/')
+         
+              return HttpResponseRedirect('/equipments/associations/'+str(new_sys.id))
               
           else:
             return render_to_response("system/templates/create_wizard.html",locals(),context_instance=RequestContext(request))

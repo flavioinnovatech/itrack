@@ -129,10 +129,10 @@ margin-bottom:0; /*override dojo style*/
 
 .optiongreen{
     color: #007700;
-    background: #ccffcc;
+    background: #aaffaa;
 }
 
 .optionred{
     color: #770000;
-    background: #ffcccc;
+    background: #ffaaaa;
 }

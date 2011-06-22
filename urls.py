@@ -30,6 +30,8 @@ url(r'^system/delete/(\d+)/$','system.views.delete'),
 url(r'^system/finish/$','system.views.finish'),
 url(r'^system/edit/finish/$','system.views.editfinish'),
 url(r'^system/delete/finish/$','system.views.deletefinish'),
+url(r'^sys_not_created/$','system.views.sys_not_created'),
+
 
 url(r'^equipment/$','equipments.views.index'),
 url(r'^equipment/permissions/(\d+)/$','equipments.views.permissions'),

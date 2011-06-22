@@ -103,6 +103,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django403.middleware.Django403Middleware',
+    'system.middleware.CreateSystemMiddleware',
 
 )
 
@@ -140,6 +141,7 @@ INSTALLED_APPS = (
 	 'command',
 	 'alerts',
 	 'geofence',
+	 'drivers',
 
 )
 

@@ -11,6 +11,34 @@
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
 
+{% if request.session.system_being_created %}
+<script type="text/javascript">
+  
+  var need_to_confirm = true;
+  window.onbeforeunload = confirmExit;
+  function confirmExit()
+  {
+    if(need_to_confirm){
+        return "O seu sistema foi criado com as configurações básicas, mas o assistente ainda não foi concluído. Você pode executar as etapas restantes de configuração do sistema depois, acessando o menu de Equipamentos na aba Configurações. Tem certeza que deseja sair?";
+    }
+  }
+  window.onunload = postleave;
+  function postleave()
+  {
+    if(need_to_confirm){
+        alert("Página descarregando");
+        $.post('/sys_not_created/',{});
+    }
+  }
+  $(document).ready(function(){
+    $('.submit').click(function(){
+        need_to_confirm = false;
+      });
+  });
+</script>
+
+{% endif %}
+
 {% endblock %}
 
 {%block title%}Infotrack - Associações de Equipamentos {% endblock %}

@@ -7,8 +7,8 @@
 <script type="text/javascript" src="/static/admin/js/core.js"></script>
 <script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
 <script type="text/javascript" src="/static/admin/js/actions.js"></script>
-<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
-<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+
+
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
 
 {% endblock %}
@@ -18,7 +18,7 @@
 
 <div  class="main-form">
 
-<h1>Permissões de Equipamentos </h1>
+<h1><img class="icon" src="/media/img/equip.png">Permissões de Equipamentos </h1>
 <hr />
 <h2>Campos disponíveis para o sistema {{system_name}}</h2>
 <em>Para cada tipo de equipamento existente no sistema, defina quais campos são visíveis para este sistema. </em>
@@ -30,7 +30,7 @@
         {% for field in form.visible_fields %}
         <div class="form-item">
             <div class="item-left">          
-                  <p>{{ field.label_tag }}</p>
+                  <p>{{ field.label_tag }} {%if field.field.required%} *{%endif%}</p>
                   <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
             </div>
             <div class="item-right">

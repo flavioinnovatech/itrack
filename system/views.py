@@ -9,9 +9,10 @@ from itrack.accounts.models import UserProfile
 from itrack.equipments.models import Equipment,CustomFieldName
 from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.template.context import RequestContext
 from itrack.system.forms import SystemForm, SettingsForm, UserCompleteForm, SystemWizard, change_css, PermsForm
+from itrack.equipments.forms import AvailableFieldsForm,EquipmentsForm,CustomNameForm
 from django.db.models import Q
 from itrack.system.tools import systemDepth
 
@@ -258,5 +259,8 @@ def delete(request,offset):
     else:
         return HttpResponseForbidden(u'Você não tem permissão para apagar este sistema.')
 
-
-  
+@login_required
+def sys_not_created(request):
+    if request.method == 'POST':
+        request.session["system_being_created"] = False
+    return HttpResponse(u'False')

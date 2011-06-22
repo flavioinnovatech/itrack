@@ -1,7 +1,5 @@
 {% extends "templates/base.html" %}
 
-{%block title%}Infotrack - Criação de Sistema {% endblock %}
-
 {% block head %}
 
 <link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
@@ -13,74 +11,70 @@
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
 
+
+{% if request.session.system_being_created %}
 <script type="text/javascript">
+  
   var need_to_confirm = true;
   window.onbeforeunload = confirmExit;
   function confirmExit()
   {
-    if(need_to_confirm) return "A criação do sistema ainda não foi terminada, e ele não será salvo se você sair do assistente agora. Tem certeza que deseja sair?";
+    if(need_to_confirm){
+        return "O seu sistema foi criado com as configurações básicas, mas o assistente ainda não foi concluído. Você pode executar as etapas restantes de configuração do sistema depois, acessando o menu de Equipamentos na aba Configurações. Tem certeza que deseja sair?";
+    }
+  }
+  window.onunload = postleave;
+  function postleave()
+  {
+    if(need_to_confirm){
+        $.post('/sys_not_created/',{});
+    }
   }
   
-    $(document).ready(function(){
-        $('.submit').click(function(){
-            need_to_confirm = false;
-          });
+  $(document).ready(function(){
+    $('.submit').click(function(){
+        need_to_confirm = false;
+      });
   });
+
 </script>
 
+{% endif %}
+
+
 {% endblock %}
+
+{%block title%}Infotrack - Associações de Equipamentos {% endblock %}
 
 {% block content %}
 
 
 <div  class="main-form">
 
-<h1><img src="/media/img/configuration.png" class="icon">Criação de sistema </h1>
+<h1>Permissões de Sistema </h1>
 <hr />
-{% if step == 1 %}
-<h2>Primeiro passo:  conta de administrador do sistema</h2>
-<em>Cadastre aqui o usuário que terá privilégios administrativos sobre o sistema a ser criado. </em>
-{% endif %}
-{% if step == 2 %}
-<h2>Segundo passo: informações principais do sistema</h2>
-<em>Cadastre aqui as informações necessárias para identificação do sistema.</em>
-{% endif %}
+<h2>Equipamentos disponíveis para o sistema {{system_name}}</h2>
+<em>Selecione abaixo quais equipamentos do seu sistema terão visibilidade no subsistema {{system_name}} </em>
 
-{% if step == 3 %}
-<h2>Terceiro passo: display do sistema</h2>
-<em>Configure o esquema de cores e o logo do sistema.</em>
-{% endif %}
-
-
-<table>
 <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
-    {% for field in form.visible_fields %}
-        <tr>
-          <td>
+   {% for field in form.visible_fields %}
         <div class="form-item">
             <div class="item-left">          
-                  <p>{{ field.label_tag }}{%if field.field.required%} *{%endif%}</p>
+                  <p>{{ field.label_tag }}</p>
                   <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
             </div>
-          </td>
-          <td>
             <div class="item-right">
                 <p class="errorlist">{{ field.errors }} </p>
                  <p class="field">{{ field }} </p>          
             </div>
-          </td>
-        </tr>
         </div>
-        </td >
-    {% endfor %}
-</table>
-
-
-    
+        <hr / >
+        {% endfor %}
+    </table>
 <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
 {{ previous_fields|safe }}
-<input type="submit" value="Prosseguir" class="submit" onclick="confirm_to_exit = false;">
-<p class="clear">
+<input type="submit" value="Salvar" class="submit">
+<p class="clear"></p>
 </form>
 
 </div>
