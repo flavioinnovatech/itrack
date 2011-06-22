@@ -64,7 +64,7 @@
 					</li>
 					
 							{% for grp in request.user.groups.all %}
-							    {% if grp.name  == "administradores" %}
+							    {% if grp.name  == "administradores" or grp.name == "comando" %}
 							    <li><a href="#">Comandos</a>
 						            <ul>
 							            <li><a href="{% url command.views.index %}">Ver histórico</a></li>
@@ -76,12 +76,12 @@
 
 					
 							{% for grp in request.user.groups.all %}
-							    {% if grp.name  == "administradores" %}
+							    {% if grp.name  == "administradores" or grp.name == "alerta"  %}
 							    <li><a href="#">Alertas</a>
 						            <ul>
 							            <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
 							            <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
-							            <li><a href="{% url geofence.views.index %}">Cercas eletrõnicas</a></li>
+							            <li><a href="{% url geofence.views.index %}">Cercas eletrônicas</a></li>
 									</ul>
 					            </li>
 							    {% endif %}
@@ -116,11 +116,8 @@
 		</div> <!-- end content -->
 		<div id="systemid" style="display:none;">{{request.session.system}}</div>
 		<div id="userid" style="display:none;">{{request.user.id}}</div>
+		<div id="vehicledialog" style="display:none;"></div>
+		<div id="generaldialog" style="display:none;"></div>
 	</body>
-	
-	<!-- Toolbar -->
-	
-	{% block toolbar %}{% endblock %}
-
 	
 </html>

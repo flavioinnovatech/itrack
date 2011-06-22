@@ -2,6 +2,7 @@
 
 from django.db import models
 from itrack.equipments.models import  Equipment, CustomFieldName
+from itrack.geofence.models import Geofence
 from django.contrib.auth.models import User
 from itrack.system.models import System
 from itrack.vehicles.models import Vehicle
@@ -20,7 +21,8 @@ class Alert(models.Model):
     linear_limit = models.DecimalField(max_digits=8, decimal_places=0,verbose_name = 'Limite')
     linear_limit.null = True
     linear_limit.blank = True
-    state = models.BooleanField(verbose_name = 'Alertar quando', choices=((True,"Ligado/Acima do limite"),(False,"Desligado/Abaixo do limite"),))
+    state = models.BooleanField(verbose_name = 'Alertar quando', choices=((True,"Ligado/Acima do limite/Veículo sair da cerca eletrônica"),(False,"Desligado/Abaixo do limite/Veículo entrar na cerca eletrônica"),))
+    geofence = models.ForeignKey(Geofence, verbose_name = "Cerca Eletrônica",null = True,blank = True)
 
     def __unicode__(self):
         return self.name

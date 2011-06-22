@@ -8,33 +8,36 @@ from itrack.alerts.models import Alert
 from itrack.alerts.forms import AlertForm
 from itrack.equipments.models import Equipment
 from itrack.vehicles.models import Vehicle
+from django.contrib.auth.models import Group, Permission
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponseForbidden
 from itrack.geofence.models import Geofence,GeoEntity
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test,permission_required
 import pprint
 
 @login_required
-@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='alerta').count() != 0)
 def index(request):
-    system_id = request.session['system']
-   
-    equipments = Equipment.objects.filter(system = system_id)
-    
-    rendered_list = ""
-    for item in equipments:
-      vehicles = Vehicle.objects.filter(equipment=item.id)
-      
-      for v in vehicles:
-        alerts = Alert.objects.filter(vehicle=v.id)
-        for v in alerts:
-          rendered_list+=u"<tr style='width:5%;'><td style='width:25%;'>"+v.name+" </td><td style='width:18%'>"+item.name+"</td><td style='width:25%'>"+str(v.time_start)+"</td><td style='width:20%'>"+str(v.time_end)+"</td><td style='width:120px; padding-left:5px;'><a class='table-button' href=\"/alerts/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/alerts/delete/"+str(v.id)+"/\">Apagar</a></td></tr>"
+
+  system_id = request.session['system']
+
+  equipments = Equipment.objects.filter(system = system_id)
+
+  rendered_list = ""
+  for item in equipments:
+    vehicles = Vehicle.objects.filter(equipment=item.id)
+
+    for v in vehicles:
+      alerts = Alert.objects.filter(vehicle=v.id)
+      for v in alerts:
+        rendered_list+=u"<tr style='width:5%;'><td style='width:25%;'>"+v.name+" </td><td style='width:18%'>"+item.name+"</td><td style='width:25%'>"+str(v.time_start)+"</td><td style='width:20%'>"+str(v.time_end)+"</td><td style='width:120px; padding-left:5px;'><a class='table-button' href=\"/alerts/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/alerts/delete/"+str(v.id)+"/\">Apagar</a></td></tr>"
 
 
-    return render_to_response("alerts/templates/index.html",locals(),context_instance=RequestContext(request))
+  return render_to_response("alerts/templates/index.html",locals(),context_instance=RequestContext(request))
 
-
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='alerta').count() != 0)    
 def create(request,offset):
     
     if request.method == 'POST':
@@ -122,10 +125,15 @@ def create(request,offset):
         form.fields['destinataries'].queryset=User.objects.filter(Q(system=int(system_id)) | Q(pk=adm_id) )
         
         return render_to_response("alerts/templates/create.html",locals(),context_instance=RequestContext(request))
-        
+
+ 
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='alerta').count() != 0) 
 def create_finish(request):
     return render_to_response("alerts/templates/create_finish.html",locals())
-        
+    
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='alerta').count() != 0)        
 def edit(request,offset):
     #get the alert object
     v = Alert.objects.get(pk=int(offset))
@@ -177,12 +185,14 @@ def edit(request,offset):
     form.fields['destinataries'].queryset=User.objects.filter(Q(system=system_id) | Q(pk=adm_id) )
     
     return render_to_response("alerts/templates/edit.html",locals(),context_instance=RequestContext(request),)
-    
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='alerta').count() != 0)    
 def edit_finish(request):
     return render_to_response("alerts/templates/edit_finish.html",locals())
 
-
-    
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='alerta').count() != 0)  
 def delete(request,offset):
   a = Alert.objects.get(pk=int(offset))
   if request.method == 'POST':
@@ -193,7 +203,9 @@ def delete(request,offset):
     
   else:
       return render_to_response("alerts/templates/delete.html",locals(),context_instance=RequestContext(request))
-      
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='alerta').count() != 0)    
 def delete_finish(request):
     return render_to_response("alerts/templates/delete_finish.html",locals())
 

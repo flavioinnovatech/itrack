@@ -41,24 +41,47 @@
 <script type="text/javascript" src="/media/js/jquery-ui-timepicker-addon.js"></script>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
-<script type="text/javascript" src="/media/js/geofence.js"></script>
-<script type="text/javascript" src="/media/js/polygon(1.0).js"></script>
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
 <script type="text/javascript">
 
+state0 = null;
+state1 = null;
 $(document).ready(function(){
+  
     if ($('#id_trigger option:selected').attr('class') == 'linearinput'){
+        $('tr.geofence').hide();
         $('.limitclass').show();
+    }
+    
+    if ($('#id_trigger option:selected').attr('class') == 'geofence'){
+        $('.limitclass').hide();
+        $('tr.geofence').show();
     }
     
     $('#id_trigger').change(function(){
         if ($('#id_trigger option:selected').attr('class') == 'linearinput'){
-            $('.limitclass').show();
-        }else{
+           $('tr.geofence').hide();
+           $('.limitclass').show();
+           
+           alert ($("#id_state_0").html());
+           $("#id_state_0").text(state0);
+        }
+        
+        else if ($('#id_trigger option:selected').attr('class') == 'geofence'){
+          $('.limitclass').hide();
+          $('tr.geofence').show();
+          
+          state0 = $("#id_state_0").text();
+          $("#id_state_0").text("Veículo sair da cerca");
+        }
+        else{
+            $('tr.geofence').hide();
             $('.limitclass').hide();
             $('#id_linear_limit').attr("value","")
         }
     });
+    
+    
 
 });
 
@@ -79,7 +102,16 @@ $(document).ready(function(){
 <table>
 
     {% for field in form %}
-    <tr {% if  field.label = 'Limite' %} class='limitclass' style='display:none;' {% endif %}>
+      {% if  field.label == 'Limite' %}
+        <tr class="limitclass" style="display:none;">
+      {% else %}
+      {% if field.label == 'Cerca Eletrônica' %}
+        <tr class="geofence" style="display:none;">
+      {% else  %}
+        <tr>
+      {% endif %}
+      {% endif %}
+
       {% if field.label_tag != '<label for="id_destinataries">Destinataries</label>' and  field.label_tag != '<label for="id_vehicle">Veículo</label>' %}
       <td>
         <div class="form-item">

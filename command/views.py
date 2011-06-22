@@ -8,7 +8,10 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required,user_passes_test
 
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def index(request):
     system = request.session['system']
     
@@ -24,7 +27,8 @@ def index(request):
     
     return render_to_response("command/templates/index.html",locals(),context_instance=RequestContext(request))
 
-
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def create(request,offset):
     
     if request.method == 'POST':
@@ -80,9 +84,13 @@ def create(request,offset):
             
         return render_to_response("command/templates/create.html",locals(),context_instance=RequestContext(request),)
         
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def create_finish(request):
     return render_to_response("command/templates/create_finish.html",locals())
 
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def delete(request,offset):
   c = Command.objects.get(pk=int(offset))
   if request.method == 'POST':
@@ -95,6 +103,8 @@ def delete(request,offset):
       print c.__dict__
       return render_to_response("command/templates/delete.html",locals(),context_instance=RequestContext(request))
       
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def delete_finish(request):
     return render_to_response("command/templates/delete_finish.html",locals())
 

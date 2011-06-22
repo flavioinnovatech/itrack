@@ -1,3 +1,5 @@
+var map;
+
 jQuery(document).ready(function(){ 
   loadGrid();
   $("img[id=maptools]").easyTooltip();
@@ -10,7 +12,7 @@ jQuery(document).ready(function(){
   //desabilita vehicles toolbar quando gmaps nao é selecionado
   $('a[href=#tabs-1]').click(function(){
    
-    $("img[class=vehicle]").hide();
+    $("img[id=maptools]").hide();
   });
 
   w = $(window).width();
@@ -75,31 +77,7 @@ jQuery(document).ready(function(){
   
 // }); //end document.ready
 
-/* --------------------------------------------- toolbar starts  ------------------------------------------------------ */
 
-var toolnow = null;
-$("img[id=maptools]").click(function() {
-  
-  if (!toolnow) {
-    toolnow = $(this).attr('class');
-  }
-  
-  if($("#tabs-3left").css("width") == "0px") {
-    $("#tabs-3right").css("width","79%");
-    $("#tabs-3left").css("width","20%");
-  }
-  else {
-    
-    if ($(this).attr('class') == toolnow) {
-      $("#tabs-3right").css("width","100%");
-      $("#tabs-3left").css("width","0px");
-    }
-    toolnow = $(this).attr('class');
-    
-  }
-});
-
-/* --------------------------------------------- toolbar end  ------------------------------------------------------ */
 
 /* --------------------------------------------- GOOGLE MAPS ------------------------------------------------------ */
 
@@ -111,8 +89,11 @@ $("#googlemap").click(function() {
   $("img[class=vehicle]").show();
   $("img[class=geofence]").show();
   
+  $("#tabs-3").css("height",h-200);
+  
+  
+});
 	var geocoder;
-	var map;
 	var infowindow = new google.maps.InfoWindow();
 	var marker;
 	geocoder = new google.maps.Geocoder();
@@ -129,40 +110,42 @@ $("#googlemap").click(function() {
 	}
 	
 	//Works only for the first vehicle
-  if ($("input[id^=jqg_list4_1]").is(':checked')) {
-    
-  var lat = $("td[aria-describedby=list4_Latitude]").text();
-  var lng = $("td[aria-describedby=list4_Longitude]").text();
-  var latlng = new google.maps.LatLng(lat, lng);
-  geocoder.geocode({'latLng': latlng}, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      if (results[1]) {
-        map.setZoom(16);
-        marker = new google.maps.Marker({
-          position: latlng, 
-          map: map
-        });
-        infowindow.setContent(results[1].formatted_address);
-        infowindow.open(map);
-      } else {
-        alert("No results found");
-      }
-    } else {
-      alert("Geocoder failed due to: " + status);
-    }
-  });
-  }
+  // if ($("input[id^=jqg_list4_1]").is(':checked')) {
+  //   
+  // var lat = $("td[aria-describedby=list4_Latitude]").text();
+  // var lng = $("td[aria-describedby=list4_Longitude]").text();
+  // var latlng = new google.maps.LatLng(lat, lng);
+  // geocoder.geocode({'latLng': latlng}, function(results, status) {
+  //   if (status == google.maps.GeocoderStatus.OK) {
+  //     if (results[1]) {
+  //       map.setZoom(16);
+  //       marker = new google.maps.Marker({
+  //         position: latlng, 
+  //         map: map
+  //       });
+  //       infowindow.setContent(results[1].formatted_address);
+  //       infowindow.open(map);
+  //     } else {
+  //       alert("No results found");
+  //     }
+  //   } else {
+  //     alert("Geocoder failed due to: " + status);
+  //   }
+  // });
+  // }
   map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
+  google.maps.event.trigger(map, 'resize');
+  map.setZoom( map.getZoom() );
+   
+  google.maps.event.addListener(map, "mousemove", function(){
+    google.maps.event.trigger(map, 'resize'); 
+  });
 	
-  $("#tabs-3").css("height",h-200);
   
-});
+// });
 /* --------------------------------------------- END GOOGLE MAPS ------------------------------------------------------ */
 
 /* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
-$('a[href=#tabs-1]').click(function(){
-  loadGrid();
-});
 
 });
   
@@ -172,6 +155,9 @@ function loadGrid() {
   
       $.getJSON("/rastreamento/loadData",
         function(data){
+          
+          loadlateralgrid(data);
+          
           globaldata = data;
           //montar cabeçalhos
           var colModel = [];
@@ -198,7 +184,6 @@ function loadGrid() {
             //para cada info
             $.each(equip.info, function(key2,info){
 
-              
               if (key2 == "Latitude" || key2 == "Longitude") {
 
               }
@@ -211,6 +196,8 @@ function loadGrid() {
              
           });
           
+          var markers = new Array;
+          
           jQuery("#list4").jqGrid({   
             datatype: "local",
             height:h-250,
@@ -219,7 +206,28 @@ function loadGrid() {
             colModel:colModel,
             multiselect: true, 
             loadui:"block",
-            caption: "Rastreamento veicular" 
+            caption: "Rastreamento veicular",
+            onSelectRow: function(rowid,status){ 
+              if (status == true) {
+                lat = $('#list4').jqGrid('getCell',rowid,'Latitude');
+                lng = $('#list4').jqGrid('getCell',rowid,'Longitude');
+                var latlng = new google.maps.LatLng(lat, lng);
+                
+                marker = new google.maps.Marker({
+                  position: latlng, 
+                  map: map
+                });
+                
+                map.setCenter(latlng);
+                
+                markers[rowid] = marker;
+              
+              }
+              
+              else {
+                markers[rowid].setMap(null);
+              }
+            }
           });
           
           // $("#load_list4").show();
@@ -323,7 +331,23 @@ function currencyFmatter (cellvalue, options, rowObject)
 }
 
 function showVehicle(vehicle) {
-  alert(globaldata.toSource());
+  
+  $("#vehicledialog").html("");
+  $("#vehicledialog").attr("title","Dados do veículo "+vehicle);
+  
+  $.each(globaldata, function(key, equip) {
+    $.each(equip, function(key1, equipdata) {
+      
+      if (key1 == "veiculo" && equipdata.license_plate == vehicle) {
+                
+        $.each(equipdata,function(key2,vehicledata) {
+          $("#vehicledialog").append("<p><b>"+key2+":</b>  "+vehicledata+"</p>");
+          $("#vehicledialog").dialog({show: "blind",modal:true});
+        });  
+      }     
+    });
+  });
+  
 }
 
 

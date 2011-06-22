@@ -1,10 +1,37 @@
 {% extends "templates/base.html" %}
 
+{%block head%}
 
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    
+    if ($("#id_Administrador").attr("checked")) {
+      $(".notadmin input").attr("checked",true);
+      $(".notadmin input").attr("disabled",true);
+    }
+    
+    
+    $('#id_Administrador').click(function(){
+      // hide the other permission
+      if ($("#id_Administrador").attr("checked")) {
+        $(".notadmin input").attr("checked",true);
+        $(".notadmin input").attr("disabled",true);
+      }
+      
+      else {
+        $(".notadmin input").attr("checked",false);
+        $(".notadmin input").attr("disabled",false);
+      }
+    });
+    
+  });
+
+</script>
+
+{%endblock%}
 
 {% block content %}
-
-
 <div  class="main-form">
 {% block form_title %}
 <h1><img src="/media/img/users.png" class="icon">Criação de usuário </h1>
@@ -16,7 +43,12 @@
 <table>
 
     {% for field in form %}
-    <tr>
+    
+    {% if field.label == 'Visualizar alertas' or field.label == 'Visualizar comandos' %}
+      <tr class='notadmin'>
+    {% else %}
+      <tr>
+    {% endif %}
       <td>
         <div class="form-item">
             <div class="item-left">          

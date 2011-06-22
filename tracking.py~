@@ -1,8 +1,0 @@
-from equipments.models import Equipment, Tracking, TrackingData
-import sys
-import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'itrack.settings'
-
-a = sys.stdin.readline()
-
-print a
