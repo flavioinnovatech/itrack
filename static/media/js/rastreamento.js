@@ -77,31 +77,7 @@ jQuery(document).ready(function(){
   
 // }); //end document.ready
 
-/* --------------------------------------------- toolbar starts  ------------------------------------------------------ */
 
-var toolnow = null;
-$("img[id=maptools]").click(function() {
-  
-  if (!toolnow) {
-    toolnow = $(this).attr('class');
-  }
-  
-  if($("#tabs-3left").css("width") == "0px") {
-    $("#tabs-3right").css("width","79%");
-    $("#tabs-3left").css("width","20%");
-  }
-  else {
-    
-    if ($(this).attr('class') == toolnow) {
-      $("#tabs-3right").css("width","100%");
-      $("#tabs-3left").css("width","0px");
-    }
-    toolnow = $(this).attr('class');
-    
-  }
-});
-
-/* --------------------------------------------- toolbar end  ------------------------------------------------------ */
 
 /* --------------------------------------------- GOOGLE MAPS ------------------------------------------------------ */
 
@@ -179,6 +155,9 @@ function loadGrid() {
   
       $.getJSON("/rastreamento/loadData",
         function(data){
+          
+          loadlateralgrid(data);
+          
           globaldata = data;
           //montar cabeçalhos
           var colModel = [];
