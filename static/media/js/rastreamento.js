@@ -113,6 +113,10 @@ $("#googlemap").click(function() {
   $("img[class=vehicle]").show();
   $("img[class=geofence]").show();
   
+  $("#tabs-3").css("height",h-200);
+  
+  
+});
 	var geocoder;
 	var infowindow = new google.maps.InfoWindow();
 	var marker;
@@ -130,40 +134,42 @@ $("#googlemap").click(function() {
 	}
 	
 	//Works only for the first vehicle
-  if ($("input[id^=jqg_list4_1]").is(':checked')) {
-    
-  var lat = $("td[aria-describedby=list4_Latitude]").text();
-  var lng = $("td[aria-describedby=list4_Longitude]").text();
-  var latlng = new google.maps.LatLng(lat, lng);
-  geocoder.geocode({'latLng': latlng}, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      if (results[1]) {
-        map.setZoom(16);
-        marker = new google.maps.Marker({
-          position: latlng, 
-          map: map
-        });
-        infowindow.setContent(results[1].formatted_address);
-        infowindow.open(map);
-      } else {
-        alert("No results found");
-      }
-    } else {
-      alert("Geocoder failed due to: " + status);
-    }
-  });
-  }
+  // if ($("input[id^=jqg_list4_1]").is(':checked')) {
+  //   
+  // var lat = $("td[aria-describedby=list4_Latitude]").text();
+  // var lng = $("td[aria-describedby=list4_Longitude]").text();
+  // var latlng = new google.maps.LatLng(lat, lng);
+  // geocoder.geocode({'latLng': latlng}, function(results, status) {
+  //   if (status == google.maps.GeocoderStatus.OK) {
+  //     if (results[1]) {
+  //       map.setZoom(16);
+  //       marker = new google.maps.Marker({
+  //         position: latlng, 
+  //         map: map
+  //       });
+  //       infowindow.setContent(results[1].formatted_address);
+  //       infowindow.open(map);
+  //     } else {
+  //       alert("No results found");
+  //     }
+  //   } else {
+  //     alert("Geocoder failed due to: " + status);
+  //   }
+  // });
+  // }
   map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
+  google.maps.event.trigger(map, 'resize');
+  map.setZoom( map.getZoom() );
+   
+  google.maps.event.addListener(map, "mousemove", function(){
+    google.maps.event.trigger(map, 'resize'); 
+  });
 	
-  $("#tabs-3").css("height",h-200);
   
-});
+// });
 /* --------------------------------------------- END GOOGLE MAPS ------------------------------------------------------ */
 
 /* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
-$('a[href=#tabs-1]').click(function(){
-  loadGrid();
-});
 
 });
   
@@ -199,7 +205,6 @@ function loadGrid() {
             //para cada info
             $.each(equip.info, function(key2,info){
 
-              
               if (key2 == "Latitude" || key2 == "Longitude") {
 
               }
@@ -212,6 +217,8 @@ function loadGrid() {
              
           });
           
+          var markers = new Array;
+          
           jQuery("#list4").jqGrid({   
             datatype: "local",
             height:h-250,
@@ -220,7 +227,28 @@ function loadGrid() {
             colModel:colModel,
             multiselect: true, 
             loadui:"block",
-            caption: "Rastreamento veicular" 
+            caption: "Rastreamento veicular",
+            onSelectRow: function(rowid,status){ 
+              if (status == true) {
+                lat = $('#list4').jqGrid('getCell',rowid,'Latitude');
+                lng = $('#list4').jqGrid('getCell',rowid,'Longitude');
+                var latlng = new google.maps.LatLng(lat, lng);
+                
+                marker = new google.maps.Marker({
+                  position: latlng, 
+                  map: map
+                });
+                
+                map.setCenter(latlng);
+                
+                markers[rowid] = marker;
+              
+              }
+              
+              else {
+                markers[rowid].setMap(null);
+              }
+            }
           });
           
           // $("#load_list4").show();

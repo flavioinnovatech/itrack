@@ -16,7 +16,14 @@ class SpecialSelect(Select):
         option_value = force_unicode(option_value)
         selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
         if option_value != '':
-            linear_class = (CustomFieldName.objects.get(pk=int(option_value)).custom_field.type == 'LinearInput') and u' class="linearinput"' or ''
+            cft = CustomFieldName.objects.get(pk=int(option_value)).custom_field.type
+            cf = CustomFieldName.objects.get(pk=int(option_value)).custom_field.tag
+            linear_class = ""
+            if cf == 'GeoFence':
+              linear_class = u'class = geofence'
+            elif cft == 'LinearInput':
+              linear_class = u' class="linearinput"'
+# linear_class = (CustomFieldName.objects.get(pk=int(option_value)).custom_field.type == 'LinearInput') and u' class="linearinput"' or ''
         else:
             linear_class = ''
         return u'<option value="%s"%s%s>%s</option>' % (

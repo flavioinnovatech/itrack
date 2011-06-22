@@ -4,6 +4,8 @@
 	  * www.the-di-lab.com
 	  * 22.06.2010
 	  */
+
+	
 	 function PolygonCreator(map){
 	 	 //create pen to draw on map
 		 this.map = map;
@@ -217,6 +219,12 @@
 				    fillOpacity: 0.35,
 					map:this.map
 	  	});
+		
+		area = google.maps.geometry.spherical.computeArea(this.polygonObj.getPath());
+    area = area/1000;
+    area = area.toFixed(2);
+		
+		$("#polygonarea").attr("value",area);
 		
 		this.remove = function(){
 			this.info.remove();
