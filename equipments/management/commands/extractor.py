@@ -10,6 +10,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 import time
 from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 class XmlListConfig(list):
     def __init__(self, aList):
@@ -161,7 +162,7 @@ class Command(BaseCommand):
 	        if ([s],[],[]) == select.select([s],[],[],0):
 		    outbox = s.recv(BUFFER_SIZE)
 		    s.send(ack_msg)
-                    xml =  ElementTree.fromstring(outbox.strip(""))
+            xml =  ElementTree.fromstring(outbox.strip(""))
 		    xmldict = XmlDictConfig(xml)
     
                     try:
@@ -170,7 +171,7 @@ class Command(BaseCommand):
                         try:
                             t = Tracking.objects.get(Q(equipment=e) & Q(eventdate=searchdate))
                         
-                        except:
+                        except ObjectDoesNotExist:
                             t = Tracking(equipment=e, eventdate= searchdate, msgtype=xmldict['Datagram']['MsgType'])
                             t.save()
                             for k_type,d_type in xmldict.items():
@@ -180,9 +181,9 @@ class Command(BaseCommand):
                                             c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
                                             tdata = TrackingData(tracking=t,type=c,value=d_tag)
                                             tdata.save()
-                                        except:
+                                        except ObjectDoesNotExist:
                                             pass
-                            self.stdout.write('>> Wrote one tracking table successfully.\n')
+                            self.stdout.write('>> The tracking table sent on '+searchdate+' for the equipment '+ xmldict['TCA']['SerialNumber'] +'has been saved successfully.\n')
                     
-                    except KeyError:
+                    except ObjectDoesNotExist:
                         pass
