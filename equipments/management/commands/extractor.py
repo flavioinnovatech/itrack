@@ -158,13 +158,11 @@ class Command(BaseCommand):
         #listening all information given by CPR. If timeout, exit the test sequence.
 
         while 1:
-	
-	        if ([s],[],[]) == select.select([s],[],[],0):
-		    outbox = s.recv(BUFFER_SIZE)
-		    s.send(ack_msg)
+            if ([s],[],[]) == select.select([s],[],[],0):
+            outbox = s.recv(BUFFER_SIZE)
+            s.send(ack_msg)
             xml =  ElementTree.fromstring(outbox.strip(""))
-		    xmldict = XmlDictConfig(xml)
-    
+            xmldict = XmlDictConfig(xml)
                     try:
                         e = Equipment.objects.get(serial=xmldict['TCA']['SerialNumber'])
                         searchdate = datetime.strptime(xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
