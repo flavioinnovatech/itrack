@@ -1,16 +1,70 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys 
 import socket
 import os
 import sys 
 import select 
-from xml.etree import cElementTree as ElementTree
-from itrack.equipments.models import Equipment, Tracking, TrackingData,CustomField
-from django.core.management.base import BaseCommand, CommandError
-from django.db.models import Q
+import string
+from urllib import urlencode
+import urllib
 import time
 from datetime import datetime
+from xml.etree import cElementTree as ElementTree
+
+from django.db.models import Q
+from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
+
+from itrack.equipments.models import Equipment, Tracking, TrackingData,CustomField
+from itrack.alerts.models import Alert,Popup
+from itrack.vehicles.models import Vehicle
+from itrack.accounts.models import UserProfile
+
+def SendSMS(to,msg):
+
+    respostas = { "000" : "000 - Mensagem enviada com sucesso!", 
+	    "010" : "010 - Mensagem sem conteudo.",
+	    "011" : "011 - Mensagem invalida.",
+	    "012" : "012 - Destinatario vazio.",
+	    "013" : "013 - Destinatario invalido.", 
+	    "014" : "014 - Destinatario vazio",
+	    "080" : "080 - ID ja usado.",
+	    "900" : "900 - Erro de autenticacao na conta.",
+	    "990" : "990 - Creditos insuficientes.",
+	    "999" : "999 - Erro desconhecido."
+    }
+
+    # Aqui voce deve preencher os dados de autenticacao de sua conta
+    account = 'infotrack'
+    code = '8OcDN8nVzx'
+
+    # Aqui voce deve preencher os dados da mensagem
+    # Lembre que o celular deve estar internacionalizado (ex: 555184220483)
+    #msg = 'Teste'
+    to = '55'+ str(to)
+    #to = '551481189826'
+
+    # Prepara a mensagem com URL Encode
+    msgUrl = urlencode({'msg':msg})
+
+    # Tenta abrir a URL indicada
+    url  = "http://system.human.com.br/GatewayIntegration/msgSms.do?dispatch=send&account=" + account + "&code=" + code + "&to=" + to + "&" + msgUrl
+    conexao = urllib.urlopen(url)
+    conteudo = conexao.read()
+    conexao.close()
+
+    # Retira o trecho que sera verificado
+    codigo = conteudo[0:3]
+
+    # Retorna resposta para o usuario
+    try:
+	    return respostas[codigo]
+    except:
+	    return conteudo
+
+
 
 class XmlListConfig(list):
     def __init__(self, aList):
@@ -87,7 +141,7 @@ authentication_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header
 
 ack_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"98\" Reason=\"0\" Save=\"FALSE\"/><Data /></Package>"
 
-#Checks if the packet sent was successful. If not,prints on screen the meaning of the reason specified.
+#Checks if the packet sent was successful. If not,print on screen the meaning of the reason specified.
 def reasonMsg(msg):
     if msg == "0":
         return 1
@@ -155,33 +209,90 @@ class Command(BaseCommand):
         data = s.recv(BUFFER_SIZE)
         s.send(ack_msg)
 
-        #listening all information given by CPR. If timeout, exit the test sequence.
+        #listening all information given by CPR.
 
         while 1:
             if ([s],[],[]) == select.select([s],[],[],0):
-            outbox = s.recv(BUFFER_SIZE)
-            s.send(ack_msg)
-            xml =  ElementTree.fromstring(outbox.strip(""))
-            xmldict = XmlDictConfig(xml)
+                outbox = s.recv(BUFFER_SIZE)
+                s.send(ack_msg)
+                xml =  ElementTree.fromstring(outbox.strip(""))
+                xmldict = XmlDictConfig(xml)
+                try:
+                    e = Equipment.objects.get(serial=xmldict['TCA']['SerialNumber'])
+                    searchdate = datetime.strptime(xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
                     try:
-                        e = Equipment.objects.get(serial=xmldict['TCA']['SerialNumber'])
-                        searchdate = datetime.strptime(xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
-                        try:
-                            t = Tracking.objects.get(Q(equipment=e) & Q(eventdate=searchdate))
-                        
-                        except ObjectDoesNotExist:
-                            t = Tracking(equipment=e, eventdate= searchdate, msgtype=xmldict['Datagram']['MsgType'])
-                            t.save()
-                            for k_type,d_type in xmldict.items():
-                                if type(d_type).__name__ == 'dict':
-                                    for k_tag,d_tag in d_type.items():
-                                        try:
-                                            c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
-                                            tdata = TrackingData(tracking=t,type=c,value=d_tag)
-                                            tdata.save()
-                                        except ObjectDoesNotExist:
-                                            pass
-                            self.stdout.write('>> The tracking table sent on '+searchdate+' for the equipment '+ xmldict['TCA']['SerialNumber'] +'has been saved successfully.\n')
+                        t = Tracking.objects.get(Q(equipment=e) & Q(eventdate=searchdate))
                     
                     except ObjectDoesNotExist:
-                        pass
+                        t = Tracking(equipment=e, eventdate=searchdate, msgtype=xmldict['Datagram']['MsgType'])
+                        t.save()
+                        for k_type,d_type in xmldict.items():
+                            if type(d_type).__name__ == 'dict':
+                                for k_tag,d_tag in d_type.items():
+                                    try:
+                                        c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
+                                        tdata = TrackingData(tracking=t,type=c,value=d_tag)
+                                        tdata.save()
+                                    except ObjectDoesNotExist:
+                                        pass
+                        self.stdout.write('>> The tracking table sent on '+str(searchdate)+' for the equipment '+ xmldict['TCA']['SerialNumber'] +' has been saved successfully.\n')
+                        
+    #      Here is the main alert handler. First, queries the database looking if there's some alert that matches the 
+    # received tracking. After that, for each alert in the result of the query, alert in each way available.
+                        
+                        #get the vehicle object
+                        vehicle = Vehicle.objects.get(equipment = e)
+                        
+                        if vehicle.last_alert_date is not None:
+                            self.stdout.write(str((searchdate - vehicle.last_alert_date).total_seconds())+'\n')
+                            self.stdout.write(str(vehicle.threshold_time*60)+'\n')
+                            
+                            #checks if there's enough time between the last alert sent and a possibly new one
+                            if (searchdate - vehicle.last_alert_date).total_seconds() > vehicle.threshold_time*60:
+                                self.stdout.write('>> Alert threshold reached.\n')
+                                vehicle.last_alert_date = searchdate
+                                vehicle.save()
+                                
+                                
+                                alerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True))
+                                
+                                #iterates over the inputs and checks if it is needed to send the alert
+                                for k_type,d_type in dict(xmldict['Input'].items() + xmldict['LinearInput'].items()):
+                                    if type(d_type).__name__ == 'dict':
+                                        for k_tag,d_tag in d_type.items():
+                                            try:
+                                                c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
+                                                #function that returns true if the alert shall be sent, and false if not.
+                                                for alert in alerts:                                                
+                                                    if AlertComparison(alert,c,d_tag):
+                                                        if alert.receive_email:
+                                                            #TODO: function to send the email
+                                                            pass
+                                                        if alert.receive_sms:
+                                                            for destinatary in alert.destinataries.values():
+                                                                self.stdout.write(str(destinatary['username']) + '\n')
+                                                                cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone
+                                                                self.stdout.write(SendSMS(cellphone,'[INFOTRACK] O alerta: "'+str(alert)+u'" foi disparado pelo veiculo '+str(vehicle)+'.')+'\n')                                                
+
+                                                        if alert.receive_popup:
+                                                            #TODO: function to register the popup
+                                                            pass               
+                                            except:
+                                                pass
+                        else:
+                            vehicle.last_alert_date = searchdate
+                            vehicle.save()
+                            
+                               
+                        
+                        #self.stdout.write(str(searchdate)+'\n')
+                        #self.stdout.write(str(a_set[1]["time_start"])+' >> '+str(a_set[1]["time_start"] < searchdate) +'\n')
+                        #self.stdout.write(str(a_set[1]["time_end"])+' >> '+str(a_set[1]["time_end"] > searchdate) +'\n')
+                        
+                        
+                        
+                
+                except ObjectDoesNotExist:
+                    pass
+                except KeyError:
+                    pass
