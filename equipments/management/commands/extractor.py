@@ -23,6 +23,9 @@ from itrack.vehicles.models import Vehicle
 from itrack.accounts.models import UserProfile
 from comparison import AlertComparison
 
+
+
+
 def SendSMS(to,msg):
 
     respostas = { "000" : "000 - Mensagem enviada com sucesso!", 
@@ -264,7 +267,7 @@ class Command(BaseCommand):
                                                 c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
                                                 #function that returns true if the alert shall be sent, and false if not.
                                                 for alert in alerts:                                                
-                                                    if AlertComparison(alert,c,d_tag):
+                                                    if AlertComparison(self,alert,c,d_tag):
                                                         if alert.receive_email:
                                                             #TODO: function to send the email
                                                             pass
