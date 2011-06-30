@@ -22,14 +22,14 @@ DATABASES = {
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     },
-    'default-bkp': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'infotrack',                      # Or path to database file if using sqlite3.
-        'USER': 'postgres',                      # Not used with sqlite3.
-        'PASSWORD': 'infotrack',                  # Not used with sqlite3.
-        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-	}
+   # 'default-bkp': {
+   #     'ENGINE': 'django.contrib.gis.db.backends.postgis', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+   #     'NAME': 'infotrack',                      # Or path to database file if using sqlite3.
+   #     'USER': 'postgres',                      # Not used with sqlite3.
+   #     'PASSWORD': 'infotrack',                  # Not used with sqlite3.
+   #     'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
+   #     'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+   #},
 }
 
 # Local time zone for this installation. Choices can be found here:
