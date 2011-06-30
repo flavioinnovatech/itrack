@@ -48,7 +48,11 @@ state0 = null;
 state1 = null;
 $(document).ready(function(){
         
-    $('.datepicker').datetimepicker();
+    $('.datepicker').datetimepicker({
+        showSecond: true,
+        timeFormat: 'hh:mm:ss',
+        dateFormat: 'yy-mm-dd'
+    });
     if ($('#id_trigger option:selected').attr('class') == 'linearinput'){
         $('.geofenceinput').hide();
         $('.limitclass').show();

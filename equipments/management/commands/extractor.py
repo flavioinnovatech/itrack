@@ -273,15 +273,16 @@ class Command(BaseCommand):
                                                             pass
                                                         if alert.receive_sms:
                                                             for destinatary in alert.destinataries.values():
+                                                                
                                                                 self.stdout.write(str(destinatary['username']) + '-> ')
-                                                                cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone
-                                                                #self.stdout.write(SendSMS(cellphone,'[INFOTRACK] O alerta: "'+str(alert)+u'" foi disparado pelo veiculo '+str(vehicle)+'.')+'\n')                                                
+                                                                cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone                                               
+                                                                self.stdout.write(str(cellphone))
+                                                                self.stdout.write(SendSMS(cellphone,'[INFOTRACK] O alerta: "'+str(alert)+u'" foi disparado pelo veiculo '+str(vehicle)+'.')+'\n')                                                
 
                                                         if alert.receive_popup:
                                                             for destinatary in alert.destinataries.all():
                                                                 popup = Popup(alert=alert,user=destinatary,vehicle=vehicle,date=searchdate)
-                                                                popup.save()
-                                                            pass               
+                                                                popup.save()             
                                             except ObjectDoesNotExist:
                                                 pass
                         else:
