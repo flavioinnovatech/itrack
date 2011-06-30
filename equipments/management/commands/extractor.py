@@ -43,7 +43,7 @@ def SendSMS(to,msg):
     account = 'infotrack'
     code = '8OcDN8nVzx'
 
-    if len(str(to)) < 10:
+    if len(str(to)) <= 10:
         to = '55'+ str(to)
     else:
         to = str(to)
@@ -247,11 +247,12 @@ class Command(BaseCommand):
                         vehicle = Vehicle.objects.get(equipment = e)
                         
                         if vehicle.last_alert_date is not None:
-                            self.stdout.write(str((searchdate - vehicle.last_alert_date).total_seconds())+'\n')
+                            total_seconds = (searchdate - vehicle.last_alert_date).days * 24 * 60 * 60 + (searchdate - vehicle.last_alert_date).seconds
+                            self.stdout.write(str(total_seconds)+'\n')
                             self.stdout.write(str(vehicle.threshold_time*60)+'\n')
                             
                             #checks if there's enough time between the last alert sent and a possibly new one
-                            if (searchdate - vehicle.last_alert_date).total_seconds() > vehicle.threshold_time*60:
+                            if total_seconds > vehicle.threshold_time*60:
                                 self.stdout.write('>> Alert threshold reached.\n')
                                 vehicle.last_alert_date = searchdate
                                 vehicle.save()
@@ -260,27 +261,26 @@ class Command(BaseCommand):
                                 alerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True))
                                 
                                 #iterates over the inputs and checks if it is needed to send the alert
-                                for k_type,d_type in dict(xmldict['Input'].items() + xmldict['LinearInput'].items()):
-                                    if type(d_type).__name__ == 'dict':
-                                        for k_tag,d_tag in d_type.items():
+                                for k_type,d_type in dict(xmldict['Input'].items() + xmldict['LinearInput'].items()).items():
+                                            
                                             try:
-                                                c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
+                                                c = CustomField.objects.get(Q(tag=k_type)& ~Q(type='GPS'))
                                                 #function that returns true if the alert shall be sent, and false if not.
-                                                for alert in alerts:                                                
-                                                    if AlertComparison(self,alert,c,d_tag):
+                                                for alert in alerts:
+                                                    if AlertComparison(self,alert,c,d_type):
                                                         if alert.receive_email:
                                                             #TODO: function to send the email
                                                             pass
                                                         if alert.receive_sms:
                                                             for destinatary in alert.destinataries.values():
-                                                                self.stdout.write(str(destinatary['username']) + '\n')
+                                                                self.stdout.write(str(destinatary['username']) + '-> ')
                                                                 cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone
-                                                                self.stdout.write(SendSMS(cellphone,'[INFOTRACK] O alerta: "'+str(alert)+u'" foi disparado pelo veiculo '+str(vehicle)+'.')+'\n')                                                
+                                                                #self.stdout.write(SendSMS(cellphone,'[INFOTRACK] O alerta: "'+str(alert)+u'" foi disparado pelo veiculo '+str(vehicle)+'.')+'\n')                                                
 
                                                         if alert.receive_popup:
                                                             #TODO: function to register the popup
                                                             pass               
-                                            except:
+                                            except ObjectDoesNotExist:
                                                 pass
                         else:
                             vehicle.last_alert_date = searchdate
