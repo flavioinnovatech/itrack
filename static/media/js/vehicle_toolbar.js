@@ -160,8 +160,8 @@ $(document).ready(function(){
     
 });
 
-olddata = null;
-function loadlateralgrid (data) { 
+
+function loadlateralgrid () { 
     // if ( $("#tabs-3left").css("width") > "0px" ) {
       
       // $.getJSON("/rastreamento/loadData",function(data){
@@ -171,8 +171,9 @@ function loadlateralgrid (data) {
         // else{
         //   alert ('null');
         // }
-        
+        alert(globaldata);
         //montar cabeçalhos
+        data = globaldata;
         var colModel = [];
         var colNames = [];
         
@@ -270,7 +271,7 @@ function loadlateralgrid (data) {
           
       
       olddata = data;
-    // }
+  //}
   
 }
 
