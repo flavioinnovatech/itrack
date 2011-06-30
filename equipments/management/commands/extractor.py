@@ -21,6 +21,7 @@ from itrack.equipments.models import Equipment, Tracking, TrackingData,CustomFie
 from itrack.alerts.models import Alert,Popup
 from itrack.vehicles.models import Vehicle
 from itrack.accounts.models import UserProfile
+from comparison import AlertComparison
 
 def SendSMS(to,msg):
 
@@ -36,15 +37,15 @@ def SendSMS(to,msg):
 	    "999" : "999 - Erro desconhecido."
     }
 
-    # Aqui voce deve preencher os dados de autenticacao de sua conta
     account = 'infotrack'
     code = '8OcDN8nVzx'
 
-    # Aqui voce deve preencher os dados da mensagem
-    # Lembre que o celular deve estar internacionalizado (ex: 555184220483)
-    #msg = 'Teste'
-    to = '55'+ str(to)
+    if len(str(to)) < 10:
+        to = '55'+ str(to)
+    else:
+        to = str(to)
     #to = '551481189826'
+    #to = 'xx1234567890'
 
     # Prepara a mensagem com URL Encode
     msgUrl = urlencode({'msg':msg})
@@ -55,7 +56,6 @@ def SendSMS(to,msg):
     conteudo = conexao.read()
     conexao.close()
 
-    # Retira o trecho que sera verificado
     codigo = conteudo[0:3]
 
     # Retorna resposta para o usuario
