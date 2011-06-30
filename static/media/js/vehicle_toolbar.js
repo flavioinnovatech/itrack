@@ -171,9 +171,9 @@ function loadlateralgrid () {
         // else{
         //   alert ('null');
         // }
-        alert(globaldata);
+
         //montar cabeçalhos
-        data = globaldata;
+        var data = globaldata;
         var colModel = [];
         var colNames = [];
         
@@ -186,8 +186,8 @@ function loadlateralgrid () {
         colModel.push({name:"Placa",align:"center"});
         
         //cria o objeto para cada linha
-        myData = [];
-        object = new Object;
+        var myData = [];
+        var object = new Object;
         $.each(colNames, function(key, name) {
             object[name] = "";
         });
@@ -265,7 +265,7 @@ function loadlateralgrid () {
             i = i+1;
           });
           
-          
+          //$("#list_cb").css("width","180px");
           $("table#list").css("width","180px");
           $("table.ui-jqgrid-htable").css("width","180px");
           

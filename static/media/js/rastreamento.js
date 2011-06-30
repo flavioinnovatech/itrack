@@ -160,7 +160,7 @@ function loadData() {
             globaldata = data;
             
             loadGrid();
-            //loadlateralgrid();
+            loadlateralgrid();
         
     });
 }
