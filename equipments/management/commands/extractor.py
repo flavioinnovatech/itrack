@@ -278,7 +278,9 @@ class Command(BaseCommand):
                                                                 #self.stdout.write(SendSMS(cellphone,'[INFOTRACK] O alerta: "'+str(alert)+u'" foi disparado pelo veiculo '+str(vehicle)+'.')+'\n')                                                
 
                                                         if alert.receive_popup:
-                                                            #TODO: function to register the popup
+                                                            for destinatary in alert.destinataries.all():
+                                                                popup = Popup(alert=alert,user=destinatary,vehicle=vehicle,date=searchdate)
+                                                                popup.save()
                                                             pass               
                                             except ObjectDoesNotExist:
                                                 pass
