@@ -160,8 +160,8 @@ $(document).ready(function(){
     
 });
 
-olddata = null;
-function loadlateralgrid (data) { 
+
+function loadlateralgrid () { 
     // if ( $("#tabs-3left").css("width") > "0px" ) {
       
       // $.getJSON("/rastreamento/loadData",function(data){
@@ -171,8 +171,9 @@ function loadlateralgrid (data) {
         // else{
         //   alert ('null');
         // }
-        
+
         //montar cabeçalhos
+        var data = globaldata;
         var colModel = [];
         var colNames = [];
         
@@ -185,8 +186,8 @@ function loadlateralgrid (data) {
         colModel.push({name:"Placa",align:"center"});
         
         //cria o objeto para cada linha
-        myData = [];
-        object = new Object;
+        var myData = [];
+        var object = new Object;
         $.each(colNames, function(key, name) {
             object[name] = "";
         });
@@ -264,13 +265,13 @@ function loadlateralgrid (data) {
             i = i+1;
           });
           
-          
+          //$("#list_cb").css("width","180px");
           $("table#list").css("width","180px");
           $("table.ui-jqgrid-htable").css("width","180px");
           
       
       olddata = data;
-    // }
+  //}
   
 }
 

@@ -9,16 +9,16 @@ from django.template.context import RequestContext
 def status(request):
     if request.method == 'POST':
         # gets the system
-        system = parser.parse(request.POST.urlencode())['system']
+        user = parser.parse(request.POST.urlencode())['user']
         
         #checks if there's a popup for this system
-        popups_list = Popup.objects.filter(Q(system = system) & Q(alert__destinataries = request.user.id))
+        popups_list = Popup.objects.filter(Q(user = user))
         print popups_list
         data = {}
 
         for popup in popups_list:
            data[popup.id] = {'name': popup.alert.name, 'date': popup.date, 'trigger': popup.alert.trigger, 'plate': popup.vehicle.license_plate, 'limit':popup.alert.linear_limit, 'state':popup.alert.state }
-
+           popup.delete()
                    
         numalerts = len(data)
          

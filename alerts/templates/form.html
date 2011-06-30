@@ -47,37 +47,52 @@
 state0 = null;
 state1 = null;
 $(document).ready(function(){
-  
+        
+    $('.datepicker').datetimepicker({
+        showSecond: true,
+        timeFormat: 'hh:mm:ss',
+        dateFormat: 'yy-mm-dd'
+    });
     if ($('#id_trigger option:selected').attr('class') == 'linearinput'){
-        $('tr.geofence').hide();
+        $('.geofenceinput').hide();
         $('.limitclass').show();
+        $('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Sinal acima do limite");
+        $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Sinal abaixo do limite");
     }
     
     if ($('#id_trigger option:selected').attr('class') == 'geofence'){
         $('.limitclass').hide();
-        $('tr.geofence').show();
+        $('.geofenceinput').show();
+        $('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Veículo entrar na cerca");
+        $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Veículo sair da cerca");
+
     }
     
     $('#id_trigger').change(function(){
         if ($('#id_trigger option:selected').attr('class') == 'linearinput'){
-           $('tr.geofence').hide();
+           $('.geofenceinput').hide();
            $('.limitclass').show();
+           $('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Sinal acima do limite");
+           $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Sinal abaixo do limite");
            
-           alert ($("#id_state_0").html());
-           $("#id_state_0").text(state0);
+
         }
         
         else if ($('#id_trigger option:selected').attr('class') == 'geofence'){
           $('.limitclass').hide();
-          $('tr.geofence').show();
+          $('.geofenceinput').show();
+          $('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Veículo entrar na cerca");
+          $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Veículo sair da cerca");
           
-          state0 = $("#id_state_0").text();
-          $("#id_state_0").text("Veículo sair da cerca");
+
+          
         }
         else{
-            $('tr.geofence').hide();
+            $('.geofenceinput').hide();
             $('.limitclass').hide();
             $('#id_linear_limit').attr("value","")
+            $('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Ligado");
+            $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Desligado");
         }
     });
     
@@ -106,7 +121,7 @@ $(document).ready(function(){
         <tr class="limitclass" style="display:none;">
       {% else %}
       {% if field.label == 'Cerca Eletrônica' %}
-        <tr class="geofence" style="display:none;">
+        <tr class="geofenceinput" style="display:none;">
       {% else  %}
         <tr>
       {% endif %}
