@@ -1,7 +1,11 @@
 var map;
 
 jQuery(document).ready(function(){ 
-  loadGrid();
+  
+  loadData();
+
+  //loadGrid();
+  
   $("img[id=maptools]").easyTooltip();
   $("img[class=fullscreen]").easyTooltip();
   
@@ -148,17 +152,32 @@ $("#googlemap").click(function() {
 /* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
 
 });
-  
+
 var globaldata;
-function loadGrid() {
-  $('#list4').jqGrid('GridUnload');     
-  
-      $.getJSON("/rastreamento/loadData",
+function loadData() {
+    $.getJSON("/rastreamento/loadData",
         function(data){
+            globaldata = data;
+            
+            loadGrid();
+            loadlateralgrid();
+        
+    });
+}
+
+  
+//var globaldata;
+var olddata = null;
+function loadGrid() {
+  //$('#list4').jqGrid('GridUnload');     
+
+      //$.getJSON("/rastreamento/loadData",
+      //  function(data){
+          var data = globaldata;
+
+          //loadlateralgrid(data);
           
-          loadlateralgrid(data);
-          
-          globaldata = data;
+          //globaldata = data;
           //montar cabeçalhos
           var colModel = [];
           var colNames = [];
@@ -198,7 +217,7 @@ function loadGrid() {
           
           var markers = new Array;
           
-          if (olddata != null) {
+          if (olddata == null) {
             jQuery("#list4").jqGrid({   
               datatype: "local",
               height:h-250,
@@ -246,7 +265,16 @@ function loadGrid() {
           });
           
           
-          $.each(data, function(key, equip) {              
+          $.each(data, function(key, equip) {
+          
+            if (olddata != null) { 
+            
+                $.each(olddata, function(key2,olditem) {
+                    if (olditem.id == equip.id) {
+                        jQuery("#list4").jqGrid('delRowData', equip.id);
+                    }
+                });
+            }
             
               $.each(colNames, function(key, name) {
             
@@ -288,18 +316,24 @@ function loadGrid() {
                 }
                 
             });
+                
             
+
             setTimeout(function(){
               myData.push(object);
             },400);
             
+
+            
           });
 
-          var time = nequips*400 + 500;
+          
+          var time = nequips*400 + 500;  
           
           setTimeout(function(){
               var i = 0;
-              $.each(myData, function(key, item) { 
+              $.each(myData, function(key, item) {
+              
                 jQuery("#list4").jqGrid('addRowData',i+1,item);
                 i = i+1;
               });
@@ -313,16 +347,18 @@ function loadGrid() {
             
           },time);
           
-          
+          olddata = data;
 
-    });
+    //});
   
 
 }
 
 function doTimer() {
   setTimeout(function(){
-    loadGrid();
+    loadData();
+    //loadlateralgrid();
+    //loadGrid();
     doTimer();
   },30000);
 }
