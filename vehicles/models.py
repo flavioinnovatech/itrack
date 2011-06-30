@@ -15,5 +15,7 @@ class Vehicle(models.Model):
     model = models.CharField(max_length=30,verbose_name= "Modelo")
     manufacturer = models.CharField(max_length=30,verbose_name= "Marca")
     type = models.CharField(max_length=30, verbose_name = "Tipo de Veículo")
+    last_alert_date = models.DateTimeField(u'Último alerta enviado',null=True)
+    threshold_time = models.FloatField(u'Tempo mínimo entre o envio de alertas',default=5)
     def __unicode__(self):
         return self.license_plate
