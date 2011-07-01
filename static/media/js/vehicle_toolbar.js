@@ -162,6 +162,9 @@ $(document).ready(function(){
 
 
 function loadlateralgrid () { 
+
+	if (globaldata != null)
+		return;
     // if ( $("#tabs-3left").css("width") > "0px" ) {
       
       // $.getJSON("/rastreamento/loadData",function(data){

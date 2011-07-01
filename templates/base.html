@@ -81,6 +81,15 @@
 						            <ul>
 							            <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
 							            <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
+									</ul>
+					            </li>
+							    {% endif %}
+							 {%endfor%}
+							 
+							 {% for grp in request.user.groups.all %}
+							    {% if grp.name  == "administradores" or grp.name == "alerta"  %}
+							    <li><a href="#">Ferramentas</a>
+						            <ul>
 							            <li><a href="{% url geofence.views.index %}">Cercas eletrônicas</a></li>
 									</ul>
 					            </li>
