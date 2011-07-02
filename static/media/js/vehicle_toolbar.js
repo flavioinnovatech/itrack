@@ -28,7 +28,7 @@ $(document).ready(function(){
     $("#gbox_list1").hide();
   });
   
-  var globaldata = null;
+  var globalgeofences = null;
   $("img.geofence").click(function(){
     
     $("#gbox_list").hide();
@@ -57,9 +57,20 @@ $(document).ready(function(){
         });
         
         $.each(data, function(key, geofence) {
+        	
+          if (olddata != null) { 
+            
+            $.each(olddata, function(key2,olditem) {
+            	if (olditem.id == equip.id) {
+                	jQuery("#list4").jqGrid('delRowData', equip.id);
+                }
+          	});
+          }
           
           object = new Object;
           $.each(colNames, function(key, name) {
+          	
+          	
           
             if (name == "Nome") {
               object[name] = geofence.name;
@@ -145,14 +156,16 @@ $(document).ready(function(){
           } 
         }); 
 
-          var i = 0;
-          $.each(myData, function(key, item) { 
-            jQuery("#list1").jqGrid('addRowData',item.id,item);
-            i = i+1;
-          });
+		globalgeofences = myData;
+			
+        var i = 0;
+        $.each(myData, function(key, item) { 
+        	jQuery("#list1").jqGrid('addRowData',item.id,item);
+        	i = i+1;
+        });
           
-          $("table#list1").css("width","180px");
-          $("table.ui-jqgrid-htable").css("width","180px");
+        $("table#list1").css("width","180px");
+        $("table.ui-jqgrid-htable").css("width","180px");
 
       });
     }
@@ -162,6 +175,9 @@ $(document).ready(function(){
 
 
 function loadlateralgrid () { 
+
+	if (globaldata == null)
+		return;
     // if ( $("#tabs-3left").css("width") > "0px" ) {
       
       // $.getJSON("/rastreamento/loadData",function(data){

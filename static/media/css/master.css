@@ -181,7 +181,7 @@ a {
 	font-weight: bold;
 	text-decoration: none;
 	display: block;
-	padding:  8px 29px;
+	padding:  8px 23px;
 	margin: 0;
 	-webkit-border-radius: 1.6em;
 	-moz-border-radius: 1.6em;
@@ -191,6 +191,20 @@ a {
 #nav a:hover {
     background-color: none;
 }
+
+#geofencetool input[type="submit"]{
+	margin: 10px auto 5px auto;
+}
+
+#addpoint, #adddestiny {
+	float:right;
+}
+
+#addpoint:hover, #adddestiny:hover {
+	cursor:pointer;
+	text-decoration:underline;
+}
+
 
 #actions a,input[type="submit"]{
   cursor: pointer;
@@ -277,7 +291,7 @@ a {
 	display: none;
 	margin: 0;
 	padding: 0;
-	width: 185px;
+	width: 172px;
 	position: absolute;
 	top: 35px;
 	left: 0;
