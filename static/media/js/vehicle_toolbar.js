@@ -29,6 +29,7 @@ $(document).ready(function(){
   });
   
   var globalgeofences = null;
+  var oldgeofences = null;
   $("img.geofence").click(function(){
     
     $("#gbox_list").hide();
@@ -39,7 +40,7 @@ $(document).ready(function(){
     if ( $("#tabs-3left").css("width") > "0px" ) { 
 
       $.getJSON("/geofence/load/",function(data){
-        globaldata = data;
+        globalgeofences = data;
         //montar cabeçalhos
         var colModel = [];
         var colNames = [];
@@ -58,10 +59,10 @@ $(document).ready(function(){
         
         $.each(data, function(key, geofence) {
         	
-          if (olddata != null) { 
+          if (oldgeofences != null) { 
             
-            $.each(olddata, function(key2,olditem) {
-            	if (olditem.id == equip.id) {
+            $.each(oldgeofences, function(key2,olditem) {
+            	if (olditem.id == geofence.id) {
                 	jQuery("#list4").jqGrid('delRowData', equip.id);
                 }
           	});
@@ -100,7 +101,7 @@ $(document).ready(function(){
             
             if (status == true) {
 
-              $.each(globaldata, function(key,data) {
+              $.each(globalgeofences, function(key,data) {
 
                 if (data.id == id) {
 
@@ -156,7 +157,7 @@ $(document).ready(function(){
           } 
         }); 
 
-		globalgeofences = myData;
+		oldgeofences = myData;
 			
         var i = 0;
         $.each(myData, function(key, item) { 
