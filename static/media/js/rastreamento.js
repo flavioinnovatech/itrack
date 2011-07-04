@@ -1,10 +1,9 @@
 var map;
+var multimapa;
 
 jQuery(document).ready(function(){ 
   
   loadData();
-
-  //loadGrid();
   
   jQuery("img[id=maptools]").easyTooltip();
   jQuery("img[class=fullscreen]").easyTooltip();
@@ -49,6 +48,8 @@ jQuery(document).ready(function(){
         jQuery('#tabs').css("left","0");
         jQuery("#tabs-3").css("height","97%");
         jQuery("#tabs-3").css("width","97%");
+        jQuery("#tabs-4").css("height","97%");
+        jQuery("#tabs-4").css("width","97%");
         normal = 0;
         
         //resize do jqgrid
@@ -66,6 +67,7 @@ jQuery(document).ready(function(){
       jQuery('#tabs').css("left",( left ) );
 
       jQuery("#tabs-3").css("width", "924px");
+      jQuery("#tabs-4").css("width", "924px");
       normal = 1;
       
       //resize jqgrid
@@ -92,11 +94,19 @@ jQuery("#googlemap").click(function() {
   //habilita botao vehicle
   jQuery("img[class=vehicle]").show();
   jQuery("img[class=geofence]").show();
-  
   jQuery("#tabs-3").css("height",h-200);
-  
+});
+
+jQuery("#multispectralmap").click(function() {
+  w = jQuery(window).width();
+  h = jQuery(window).height();
+  //habilita botao vehicle
+  jQuery("img[class=vehicle]").show();
+  jQuery("img[class=geofence]").show();
   
 });
+
+  //Insert google permission here
 	var geocoder;
 	var infowindow = new google.maps.InfoWindow();
 	var marker;
@@ -113,30 +123,7 @@ jQuery("#googlemap").click(function() {
 		mapTypeId: 'roadmap'
 	}
 	
-	//Works only for the first vehicle
-  // if (jQuery("input[id^=jqg_list4_1]").is(':checked')) {
-  //   
-  // var lat = jQuery("td[aria-describedby=list4_Latitude]").text();
-  // var lng = jQuery("td[aria-describedby=list4_Longitude]").text();
-  // var latlng = new google.maps.LatLng(lat, lng);
-  // geocoder.geocode({'latLng': latlng}, function(results, status) {
-  //   if (status == google.maps.GeocoderStatus.OK) {
-  //     if (results[1]) {
-  //       map.setZoom(16);
-  //       marker = new google.maps.Marker({
-  //         position: latlng, 
-  //         map: map
-  //       });
-  //       infowindow.setContent(results[1].formatted_address);
-  //       infowindow.open(map);
-  //     } else {
-  //       alert("No results found");
-  //     }
-  //   } else {
-  //     alert("Geocoder failed due to: " + status);
-  //   }
-  // });
-  // }
+	jQuery("#tabs-4").css("height",h-200);
   map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
   google.maps.event.trigger(map, 'resize');
   map.setZoom( map.getZoom() );
@@ -144,7 +131,21 @@ jQuery("#googlemap").click(function() {
   google.maps.event.addListener(map, "mousemove", function(){
     google.maps.event.trigger(map, 'resize'); 
   });
-	
+  
+  //Insert Multispectral permission here
+  var Ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C";
+  multimapa = new multispectral(-52.9, -14.5, 0, "tabs-4", Ticket, false, "ErroCallback");
+  function ErroCallback(valid, args) { alert('ae');
+    if (valid == "false" || valid == false) {
+      if (typeof args == "string") {
+        alert(args);
+      }
+    }
+    else {
+      alert(args);
+    }
+  }
+
   
 // });
 /* --------------------------------------------- END GOOGLE MAPS ------------------------------------------------------ */
@@ -215,7 +216,8 @@ function loadGrid() {
              
           });
           
-          var markers = new Array;
+          var googlemarkers = new Array;
+          var multimarkers = new Array;
           
           if (olddata == null) {
             jQuery("#list4").jqGrid({   
@@ -231,21 +233,29 @@ function loadGrid() {
                 if (status == true) {
                   lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
                   lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
+
+                  //Insert google permission here
                   var latlng = new google.maps.LatLng(lat, lng);
-                
                   marker = new google.maps.Marker({
                     position: latlng, 
                     map: map
                   });
-                
                   map.setCenter(latlng);
-                
-                  markers[rowid] = marker;
+                  googlemarkers[rowid] = marker;
+                  
+                  //Insert multispectral permission here
+                  multimapa.Client.addPoint("rowid",-46.67,-23.62,"http://www.geoportal.com.br/applet/images/icone40.gif","PT01","Teste A","Teste B","Teste C","Grupo01",true,20,20,"ErroCallback");
+                  multimarkers[rowid] = rowid;
               
                 }
               
                 else {
-                  markers[rowid].setMap(null);
+                  
+                  //Insert google permission here
+                  googlemarkers[rowid].setMap(null);
+                  
+                  //Insert multispectral permission here
+                  multimapa.Client.removePoints("rowid","ErroCallback");
                 }
               }
             });
@@ -303,9 +313,7 @@ function loadGrid() {
                     }
                     
                   });
-                  
-                  // object[name] = jQuery("#end").val();
-                  
+                                    
                 }
                 
                 //Custom fields
@@ -327,7 +335,6 @@ function loadGrid() {
             
           });
 
-          
           var time = nequips*400 + 500;  
           
           setTimeout(function(){
@@ -389,12 +396,3 @@ function showVehicle(vehicle) {
   
 }
 
-
-
-function mapa_multi() {
-	callMultispectral(-22.896359,-47.060092);
-	//jQuery("#dialog").dialog({height: jQuery(window).height()},{ width : (jQuery(window).width() - 25)},{ closeText: 'X' }); 
-	//jQuery(".ui-icon").css("background-image", "none");
-	//jQuery(".ui-icon").css("text-indent", "0");
-	
-}
