@@ -1,5 +1,5 @@
     ////////////////// Função para habiliar o POST
-$(document).ajaxSend(function(event, xhr, settings) {
+jQuery(document).ajaxSend(function(event, xhr, settings) {
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {

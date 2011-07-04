@@ -1,4 +1,4 @@
-$(document).ajaxSend(function(event, xhr, settings) {
+jQuery(document).ajaxSend(function(event, xhr, settings) {
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -27,7 +27,7 @@ $(document).ajaxSend(function(event, xhr, settings) {
             !(/^(\/\/|http:|https:).*/.test(url));
     }
     function safeMethod(method) {
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        return (/^(GET|HEAD|OPTIONS|TRACE)jQuery/.test(method));
     }
 
     if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
@@ -41,21 +41,21 @@ function saveConfigs(){
     var custom_names = [];
     var vehicles = [];
 
-    $("#id_custom_names_to option").each(function(index,Elem){
-        custom_names.push($(Elem).attr("value"));
+    jQuery("#id_custom_names_to option").each(function(index,Elem){
+        custom_names.push(jQuery(Elem).attr("value"));
         });
         
-    $("#id_vehicles_to option").each(function(index,Elem){
-        vehicles.push($(Elem).attr("value"));
+    jQuery("#id_vehicles_to option").each(function(index,Elem){
+        vehicles.push(jQuery(Elem).attr("value"));
         });
     
-    $.post("/rastreamento/xhrtest/",{vehicles: vehicles, custom_names: custom_names}, function(){
+    jQuery.post("/rastreamento/xhrtest/",{vehicles: vehicles, custom_names: custom_names}, function(){
         
-        $('#sucessdialog').dialog({
+        jQuery('#sucessdialog').dialog({
             modal: true,
             buttons: {
 			    Ok: function() {
-				    $( this ).dialog( "close" );
+				    jQuery( this ).dialog( "close" );
 		    }}
         });
         }
@@ -63,13 +63,13 @@ function saveConfigs(){
     
 }
 
-$(document).ready( function() {
+jQuery(document).ready( function() {
 	
-	$('#saveconf').click(function() {
+	jQuery('#saveconf').click(function() {
         saveConfigs();
         /*
-        $.get("/rastreamento/xhrtest", function(data) {
-            $("#tabs-6").html(data);
+        jQuery.get("/rastreamento/xhrtest", function(data) {
+            jQuery("#tabs-6").html(data);
 
         });
         */
