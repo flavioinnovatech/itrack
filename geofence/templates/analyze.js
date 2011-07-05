@@ -28,3 +28,40 @@ function collectcirclepoints(){
         }
     }
 }
+
+
+dist = 50;
+                    m = (actual.Ja - previous.Ja)/(actual.Ia - previous.Ia);
+                    m = -1/m;
+                    n = previous.Ja - m*previous.Ia;
+                    // y = m*x + n
+                    C = - dist*dist + previous.Ja*previous.Ja + previous.Ia*previous.Ia -2*previous.Ja*n;
+                    A = 1 + m*m;
+                    B = 2*m*n - 2*previous.Ia - 2*m*previous.Ja;
+                    
+                    x1=-B/2/A+Math.pow(Math.pow(B,2)-4*A*C,0.5)/2/A;
+                    x2=-B/2/A-Math.pow(Math.pow(B,2)-4*A*C,0.5)/2/A;
+                    
+                    y1 = m*x1 + n;
+                    y2 = m*x2 + n;
+
+                    p1 = new google.maps.LatLng(x1,y1);
+                    p2 = new google.maps.LatLng(x2,y2);
+                    
+                    alert(p1);
+                    alert(p2);
+                    alert(actual);
+                    
+                    marker1 = new google.maps.Marker({position:p1, map: map});
+                    marker2 = new google.maps.Marker({position:p2, map: map});
+                    
+                    
+                    
+                    
+                     var linha = new google.maps.Polyline({
+                        path: [latlng_p,actual],
+                        strokeColor: "#FF0000",
+                        strokeOpacity: 0.5,
+                        strokeWeight: 1,
+                        map:map
+                      });
