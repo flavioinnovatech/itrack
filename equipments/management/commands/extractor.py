@@ -269,11 +269,9 @@ class Command(BaseCommand):
                                                 for alert in alerts:
                                                     if AlertComparison(self,alert,c,d_type):
                                                         if alert.receive_email:
-                                                            self.stdout.write('asidjaiosdjis')
-                                                            #TODO: function to send the email
-                                                            # for destinatary in alert.destinataries.values():
-                                                              
-                                                            # pass
+                                                          for destinatary in alert.destinataries.values():
+                                                            send_mail(str(alert), str(alert), "infotrack@infotrack.com.br", [destinatary['email']], fail_silently=False, auth_user=None, auth_password=None, connection=None)
+                                                            
                                                         if alert.receive_sms:
                                                             for destinatary in alert.destinataries.values():
                                                                 
