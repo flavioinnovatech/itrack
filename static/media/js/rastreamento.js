@@ -1,76 +1,78 @@
 var map;
+var multimapa;
 
 jQuery(document).ready(function(){ 
   
   loadData();
-
-  //loadGrid();
   
-  $("img[id=maptools]").easyTooltip();
-  $("img[class=fullscreen]").easyTooltip();
+  jQuery("img[id=maptools]").easyTooltip();
+  jQuery("img[class=fullscreen]").easyTooltip();
   
   setTimeout(function(){
     doTimer();
   },1000); 
   
   //desabilita vehicles toolbar quando gmaps nao é selecionado
-  $('a[href=#tabs-1]').click(function(){
+  jQuery('a[href=#tabs-1]').click(function(){
    
-    $("img[id=maptools]").hide();
+    jQuery("img[id=maptools]").hide();
   });
 
-  w = $(window).width();
-  h = $(window).height();
-  $( "#tabs" ).tabs();
-  // $( "#tabs" ).css("top","130px");
+  w = jQuery(window).width();
+  h = jQuery(window).height();
+  jQuery( "#tabs" ).tabs();
+  // jQuery( "#tabs" ).css("top","130px");
   
-  tabw = ($("#tabs-1").width());
-  tabh = ($("#tabs-1").height());
+  tabw = (jQuery("#tabs-1").width());
+  tabh = (jQuery("#tabs-1").height());
   
   // document.body.style.overflow-x = "hidden";
   
   normal = 1;
-  $('img.fullscreen').click(function() {
+  jQuery('img.fullscreen').click(function() {
     switch (normal) {
       
       case 1:
       //fullscren
-        width = $('#tabs').css("width");
-        height= $('#tabs').css("height");
-        top =  parseInt($('#tabs').position().top);
-        left =  $('#tabs').css("left");
+        width = jQuery('#tabs').css("width");
+        height= jQuery('#tabs').css("height");
+        top =  parseInt(jQuery('#tabs').position().top);
+        left =  jQuery('#tabs').css("left");
         top = parseInt(top);
       
-        $('#menuContainer').css("z-index","0");
-        $('#tabs').css("width",w);
-        $('#tabs').css("height",h);
-        $('#tabs').css("position","absolute");
-        $('#tabs').css("top","0");
-        $('#tabs').css("left","0");
-        $("#tabs-3").css("height","97%");
-        $("#tabs-3").css("width","97%");
+        jQuery('#menuContainer').css("z-index","0");
+        jQuery('#tabs').css("width",w);
+        jQuery('#tabs').css("height",h);
+        jQuery('#tabs').css("position","absolute");
+        jQuery('#tabs').css("top","0");
+        jQuery('#tabs').css("left","0");
+        jQuery("#tabs-3").css("height","97%");
+        jQuery("#tabs-3").css("width","97%");
+        jQuery("#tabs-4").css("height","97%");
+        jQuery("#tabs-4").css("width","97%");
         normal = 0;
         
         //resize do jqgrid
-        $("#list4").setGridWidth(w - 50);
-        $("#list4").setGridHeight(h - 150);
+        jQuery("#list4").setGridWidth(w - 50);
+        jQuery("#list4").setGridHeight(h - 150);
         
         break;
         
      case 0:
-     $('#tabs').css("position","inherit");
-      $('#menuContainer').css("z-index","2");
-      $('#tabs').css("width","960px");
-      $('#tabs').css("height",height);
-      // $('#tabs').css("top","130px" );
-      $('#tabs').css("left",( left ) );
+     jQuery('#tabs').css("position","inherit");
+      jQuery('#menuContainer').css("z-index","2");
+      jQuery('#tabs').css("width","960px");
+      jQuery('#tabs').css("height",height);
+      // jQuery('#tabs').css("top","130px" );
+      jQuery('#tabs').css("left",( left ) );
 
-      $("#tabs-3").css("width", "924px");
+      jQuery("#tabs-3").css("width", "924px");
+      jQuery("#tabs-4").css("width", "924px");
       normal = 1;
       
       //resize jqgrid
-      $("#list4").setGridWidth(tabw);
-      $("#list4").setGridHeight(tabh - 80);
+      jQuery("#list4").setGridWidth(tabw);
+      jQuery("#list4").setGridHeight(tabh - 80);
 
       break;
     }
@@ -86,17 +88,25 @@ jQuery(document).ready(function(){
 /* --------------------------------------------- GOOGLE MAPS ------------------------------------------------------ */
 
 
-$("#googlemap").click(function() {
-  w = $(window).width();
-  h = $(window).height();
+jQuery("#googlemap").click(function() {
+  w = jQuery(window).width();
+  h = jQuery(window).height();
   //habilita botao vehicle
-  $("img[class=vehicle]").show();
-  $("img[class=geofence]").show();
-  
-  $("#tabs-3").css("height",h-200);
-  
+  jQuery("img[class=vehicle]").show();
+  jQuery("img[class=geofence]").show();
+  jQuery("#tabs-3").css("height",h-200);
+});
+
+jQuery("#multispectralmap").click(function() {
+  w = jQuery(window).width();
+  h = jQuery(window).height();
+  //habilita botao vehicle
+  jQuery("img[class=vehicle]").show();
+  jQuery("img[class=geofence]").show();
   
 });
+
+  //Insert google permission here
 	var geocoder;
 	var infowindow = new google.maps.InfoWindow();
 	var marker;
@@ -113,30 +123,7 @@ $("#googlemap").click(function() {
 		mapTypeId: 'roadmap'
 	}
 	
-	//Works only for the first vehicle
-  // if ($("input[id^=jqg_list4_1]").is(':checked')) {
-  //   
-  // var lat = $("td[aria-describedby=list4_Latitude]").text();
-  // var lng = $("td[aria-describedby=list4_Longitude]").text();
-  // var latlng = new google.maps.LatLng(lat, lng);
-  // geocoder.geocode({'latLng': latlng}, function(results, status) {
-  //   if (status == google.maps.GeocoderStatus.OK) {
-  //     if (results[1]) {
-  //       map.setZoom(16);
-  //       marker = new google.maps.Marker({
-  //         position: latlng, 
-  //         map: map
-  //       });
-  //       infowindow.setContent(results[1].formatted_address);
-  //       infowindow.open(map);
-  //     } else {
-  //       alert("No results found");
-  //     }
-  //   } else {
-  //     alert("Geocoder failed due to: " + status);
-  //   }
-  // });
-  // }
+	jQuery("#tabs-4").css("height",h-200);
   map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
   google.maps.event.trigger(map, 'resize');
   map.setZoom( map.getZoom() );
@@ -144,7 +131,21 @@ $("#googlemap").click(function() {
   google.maps.event.addListener(map, "mousemove", function(){
     google.maps.event.trigger(map, 'resize'); 
   });
-	
+  
+  //Insert Multispectral permission here
+  var Ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C";
+  // multimapa = new multispectral(-52.9, -14.5, 0, "tabs-4", Ticket, false, "ErroCallback");
+  function ErroCallback(valid, args) { alert('ae');
+    if (valid == "false" || valid == false) {
+      if (typeof args == "string") {
+        alert(args);
+      }
+    }
+    else {
+      alert(args);
+    }
+  }
+
   
 // });
 /* --------------------------------------------- END GOOGLE MAPS ------------------------------------------------------ */
@@ -155,7 +156,7 @@ $("#googlemap").click(function() {
 
 var globaldata;
 function loadData() {
-    $.getJSON("/rastreamento/loadData",
+    jQuery.getJSON("/rastreamento/loadData",
         function(data){
             globaldata = data;
             
@@ -169,9 +170,9 @@ function loadData() {
 //var globaldata;
 var olddata = null;
 function loadGrid() {
-  //$('#list4').jqGrid('GridUnload');     
+  //jQuery('#list4').jqGrid('GridUnload');     
 
-      //$.getJSON("/rastreamento/loadData",
+      //jQuery.getJSON("/rastreamento/loadData",
       //  function(data){
           var data = globaldata;
 
@@ -198,10 +199,10 @@ function loadGrid() {
           
           //para cada veículo
           var nequips = 0;
-          $.each(data, function(key, equip) {
+          jQuery.each(data, function(key, equip) {
             nequips++;
             //para cada info
-            $.each(equip.info, function(key2,info){
+            jQuery.each(equip.info, function(key2,info){
 
               if (key2 == "Latitude" || key2 == "Longitude") {
 
@@ -215,7 +216,8 @@ function loadGrid() {
              
           });
           
-          var markers = new Array;
+          var googlemarkers = new Array;
+          var multimarkers = new Array;
           
           if (olddata == null) {
             jQuery("#list4").jqGrid({   
@@ -229,54 +231,62 @@ function loadGrid() {
               caption: "Rastreamento veicular",
               onSelectRow: function(rowid,status){ 
                 if (status == true) {
-                  lat = $('#list4').jqGrid('getCell',rowid,'Latitude');
-                  lng = $('#list4').jqGrid('getCell',rowid,'Longitude');
+                  lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
+                  lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
+
+                  //Insert google permission here
                   var latlng = new google.maps.LatLng(lat, lng);
-                
                   marker = new google.maps.Marker({
                     position: latlng, 
                     map: map
                   });
-                
                   map.setCenter(latlng);
-                
-                  markers[rowid] = marker;
+                  googlemarkers[rowid] = marker;
+                  
+                  //Insert multispectral permission here
+                  // multimapa.Client.addPoint("rowid",-46.67,-23.62,"http://www.geoportal.com.br/applet/images/icone40.gif","PT01","Teste A","Teste B","Teste C","Grupo01",true,20,20,"ErroCallback");
+                  multimarkers[rowid] = rowid;
               
                 }
               
                 else {
-                  markers[rowid].setMap(null);
+                  
+                  //Insert google permission here
+                  googlemarkers[rowid].setMap(null);
+                  
+                  //Insert multispectral permission here
+                  // multimapa.Client.removePoints("rowid","ErroCallback");
                 }
               }
             });
           
           }
           
-          // $("#load_list4").show();
-          // $("#lui_list4").show();
+          // jQuery("#load_list4").show();
+          // jQuery("#lui_list4").show();
           
           //inserir dados
           
           //cria o objeto para cada linha
           myData = [];
           object = new Object;
-          $.each(colNames, function(key, name) {
+          jQuery.each(colNames, function(key, name) {
               object[name] = "";
           });
           
           
-          $.each(data, function(key, equip) {
+          jQuery.each(data, function(key, equip) {
           
             if (olddata != null) { 
             
-                $.each(olddata, function(key2,olditem) {
+                jQuery.each(olddata, function(key2,olditem) {
                     if (olditem.id == equip.id) {
                         jQuery("#list4").jqGrid('delRowData', equip.id);
                     }
                 });
             }
             
-              $.each(colNames, function(key, name) {
+              jQuery.each(colNames, function(key, name) {
             
                 //Campos fixos
                 if (name == "Hora") {
@@ -303,9 +313,7 @@ function loadGrid() {
                     }
                     
                   });
-                  
-                  // object[name] = $("#end").val();
-                  
+                                    
                 }
                 
                 //Custom fields
@@ -327,23 +335,22 @@ function loadGrid() {
             
           });
 
-          
           var time = nequips*400 + 500;  
           
           setTimeout(function(){
               var i = 0;
-              $.each(myData, function(key, item) {
+              jQuery.each(myData, function(key, item) {
               
                 jQuery("#list4").jqGrid('addRowData',i+1,item);
                 i = i+1;
               });
               
-              // $("#load_list4").hide();
-              // $("#lui_list4").hide();
+              // jQuery("#load_list4").hide();
+              // jQuery("#lui_list4").hide();
               
               //HACK
-              $("table#list4").css("width","931px");
-              $("table.ui-jqgrid-htable").css("width","931px");
+              jQuery("table#list4").css("width","931px");
+              jQuery("table.ui-jqgrid-htable").css("width","931px");
             
           },time);
           
@@ -371,17 +378,17 @@ function currencyFmatter (cellvalue, options, rowObject)
 
 function showVehicle(vehicle) {
   
-  $("#vehicledialog").html("");
-  $("#vehicledialog").attr("title","Dados do veículo "+vehicle);
+  jQuery("#vehicledialog").html("");
+  jQuery("#vehicledialog").attr("title","Dados do veículo "+vehicle);
   
-  $.each(globaldata, function(key, equip) {
-    $.each(equip, function(key1, equipdata) {
+  jQuery.each(globaldata, function(key, equip) {
+    jQuery.each(equip, function(key1, equipdata) {
       
       if (key1 == "veiculo" && equipdata.license_plate == vehicle) {
                 
-        $.each(equipdata,function(key2,vehicledata) {
-          $("#vehicledialog").append("<p><b>"+key2+":</b>  "+vehicledata+"</p>");
-          $("#vehicledialog").dialog({show: "blind",modal:true});
+        jQuery.each(equipdata,function(key2,vehicledata) {
+          jQuery("#vehicledialog").append("<p><b>"+key2+":</b>  "+vehicledata+"</p>");
+          jQuery("#vehicledialog").dialog({show: "blind",modal:true});
         });  
       }     
     });
@@ -389,12 +396,3 @@ function showVehicle(vehicle) {
   
 }
 
-
-
-function mapa_multi() {
-	callMultispectral(-22.896359,-47.060092);
-	//jQuery("#dialog").dialog({height: $(window).height()},{ width : ($(window).width() - 25)},{ closeText: 'X' }); 
-	//jQuery(".ui-icon").css("background-image", "none");
-	//jQuery(".ui-icon").css("text-indent", "0");
-	
-}

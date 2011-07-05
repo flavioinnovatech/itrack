@@ -132,7 +132,7 @@ class XmlDictConfig(dict):
                 self.update({element.tag: element.text})
 
 
-TCP_IP = '192.168.1.119' 	# the server IP address
+TCP_IP = '187.115.25.240' 	# the server IP address
 TCP_PORT = 5000			# the server port
 BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
 USERNAME = "extractor"		# the user that will log on CPR
@@ -269,8 +269,9 @@ class Command(BaseCommand):
                                                 for alert in alerts:
                                                     if AlertComparison(self,alert,c,d_type):
                                                         if alert.receive_email:
-                                                            #TODO: function to send the email
-                                                            pass
+                                                          for destinatary in alert.destinataries.values():
+                                                            send_mail(str(alert), str(alert), "infotrack@infotrack.com.br", [destinatary['email']], fail_silently=False, auth_user=None, auth_password=None, connection=None)
+                                                            
                                                         if alert.receive_sms:
                                                             for destinatary in alert.destinataries.values():
                                                                 

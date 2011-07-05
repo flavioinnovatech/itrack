@@ -1,45 +1,46 @@
-$(document).ready(function(){
+jQuery(document).ready(function(){
   
   var toolnow = null;
-  $("img[id=maptools]").click(function() {
+  jQuery("img[id=maptools]").click(function() {
 
     if (!toolnow) {
-      toolnow = $(this).attr('class');
+      toolnow = jQuery(this).attr('class');
     }
 
-    if($("#tabs-3left").css("width") == "0px") {
-      $("#tabs-3right").css("width","79%");
-      $("#tabs-3left").css("width","20%");
+    if(jQuery("#tabs-3left").css("width") == "0px") {
+      jQuery("#tabs-3right").css("width","79%");
+      jQuery("#tabs-3left").css("width","20%");
       
     }
     else {
 
-      if ($(this).attr('class') == toolnow) {
-        $("#tabs-3right").css("width","100%");
-        $("#tabs-3left").css("width","0px");     
+      if (jQuery(this).attr('class') == toolnow) {
+        jQuery("#tabs-3right").css("width","100%");
+        jQuery("#tabs-3left").css("width","0px");     
       }
-      toolnow = $(this).attr('class');
+      toolnow = jQuery(this).attr('class');
 
     }
   });
 
-  $("img.vehicle").click(function(){
-    $("#gbox_list").show();
-    $("#gbox_list1").hide();
+  jQuery("img.vehicle").click(function(){
+    jQuery("#gbox_list").show();
+    jQuery("#gbox_list1").hide();
   });
   
-  var globaldata = null;
-  $("img.geofence").click(function(){
+  var globalgeofences = null;
+  var oldgeofences = null;
+  jQuery("img.geofence").click(function(){
     
-    $("#gbox_list").hide();
-    $("#gbox_list1").show();
+    jQuery("#gbox_list").hide();
+    jQuery("#gbox_list1").show();
     
-    // $('#list').jqGrid('GridUnload');
+    // jQuery('#list').jqGrid('GridUnload');
     
-    if ( $("#tabs-3left").css("width") > "0px" ) { 
+    if ( jQuery("#tabs-3left").css("width") > "0px" ) { 
 
-      $.getJSON("/geofence/load/",function(data){
-        globaldata = data;
+      jQuery.getJSON("/geofence/load/",function(data){
+        globalgeofences = data;
         //montar cabeçalhos
         var colModel = [];
         var colNames = [];
@@ -52,14 +53,25 @@ $(document).ready(function(){
         
         myData = [];
         object = new Object;
-        $.each(colNames, function(key, name) {
+        jQuery.each(colNames, function(key, name) {
             object[name] = "";
         });
         
-        $.each(data, function(key, geofence) {
+        jQuery.each(data, function(key, geofence) {
+        	
+          if (oldgeofences != null) { 
+            
+            jQuery.each(oldgeofences, function(key2,olditem) {
+            	if (olditem.id == geofence.id) {
+                	jQuery("#list4").jqGrid('delRowData', equip.id);
+                }
+          	});
+          }
           
           object = new Object;
-          $.each(colNames, function(key, name) {
+          jQuery.each(colNames, function(key, name) {
+          	
+          	
           
             if (name == "Nome") {
               object[name] = geofence.name;
@@ -89,7 +101,7 @@ $(document).ready(function(){
             
             if (status == true) {
 
-              $.each(globaldata, function(key,data) {
+              jQuery.each(globalgeofences, function(key,data) {
 
                 if (data.id == id) {
 
@@ -112,7 +124,7 @@ $(document).ready(function(){
                     
                     var polygon = [];
                     
-                    $.each (data.coords, function(key1,point) {
+                    jQuery.each (data.coords, function(key1,point) {
                       var latlng = new google.maps.LatLng(point.lat, point.lng);
                       polygon.push(latlng)
                     }); 
@@ -145,14 +157,16 @@ $(document).ready(function(){
           } 
         }); 
 
-          var i = 0;
-          $.each(myData, function(key, item) { 
-            jQuery("#list1").jqGrid('addRowData',item.id,item);
-            i = i+1;
-          });
+		oldgeofences = myData;
+			
+        var i = 0;
+        jQuery.each(myData, function(key, item) { 
+        	jQuery("#list1").jqGrid('addRowData',item.id,item);
+        	i = i+1;
+        });
           
-          $("table#list1").css("width","180px");
-          $("table.ui-jqgrid-htable").css("width","180px");
+        jQuery("table#list1").css("width","180px");
+        jQuery("table.ui-jqgrid-htable").css("width","180px");
 
       });
     }
@@ -162,9 +176,12 @@ $(document).ready(function(){
 
 
 function loadlateralgrid () { 
-    // if ( $("#tabs-3left").css("width") > "0px" ) {
+
+	if (globaldata == null)
+		return;
+    // if ( jQuery("#tabs-3left").css("width") > "0px" ) {
       
-      // $.getJSON("/rastreamento/loadData",function(data){
+      // jQuery.getJSON("/rastreamento/loadData",function(data){
         // if (olddata != null) {
         //   alert (olddata.toSource());
         // }
@@ -188,14 +205,14 @@ function loadlateralgrid () {
         //cria o objeto para cada linha
         var myData = [];
         var object = new Object;
-        $.each(colNames, function(key, name) {
+        jQuery.each(colNames, function(key, name) {
             object[name] = "";
         });
-        $.each(data, function(key, equip) {              
+        jQuery.each(data, function(key, equip) {              
           
           object["id"] = equip.id;
           
-            $.each(colNames, function(key, name) {
+            jQuery.each(colNames, function(key, name) {
           
               //Campos fixos
               if (name == "Placa") {
@@ -227,8 +244,8 @@ function loadlateralgrid () {
          	caption: "Rastreamento veicular",
          	onSelectRow: function(rowid,status){ 
             if (status == true) {
-              lat = $('#list4').jqGrid('getCell',rowid,'Latitude');
-              lng = $('#list4').jqGrid('getCell',rowid,'Longitude');
+              lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
+              lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
               var latlng = new google.maps.LatLng(lat, lng);
               
               marker = new google.maps.Marker({
@@ -250,11 +267,11 @@ function loadlateralgrid () {
         }); 
 
           var i = 0;
-          $.each(myData, function(key, item) { 
+          jQuery.each(myData, function(key, item) { 
             
             if (olddata != null) {
             
-              $.each(olddata, function(key2,olditem) {
+              jQuery.each(olddata, function(key2,olditem) {
                 if (olditem.id == item.id) {
                   jQuery("#list").jqGrid('delRowData', item.id);
                 }
@@ -265,9 +282,9 @@ function loadlateralgrid () {
             i = i+1;
           });
           
-          //$("#list_cb").css("width","180px");
-          $("table#list").css("width","180px");
-          $("table.ui-jqgrid-htable").css("width","180px");
+          //jQuery("#list_cb").css("width","180px");
+          jQuery("table#list").css("width","180px");
+          jQuery("table.ui-jqgrid-htable").css("width","180px");
           
       
       olddata = data;

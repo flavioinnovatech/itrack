@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect
 
 @login_required
 def index(request):
-    
     return HttpResponseRedirect("/rastreamento/veicular/");
+    
+def multispectral(request):
+  return render_to_response("templates/temp.html",locals())
 

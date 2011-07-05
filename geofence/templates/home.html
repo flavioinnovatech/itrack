@@ -11,7 +11,8 @@ $(document).ready(function(){
   $(".main-form").css("height","600px");
   
   $("#accordion").accordion({ 
-      autoHeight: true
+      autoHeight: true,
+      collapsible: true
   });
   
   var geocoder;
@@ -79,11 +80,7 @@ $(document).ready(function(){
          
       });
       
-      
-      
-      // $("#savecircle").click(function(){
-      //         alert('ae');
-      //       });
+
       
     }
   
@@ -564,7 +561,7 @@ $(document).ready(function(){
 {% endblock %}
 
 {% block content %}
-<div  class="main-form">
+<div  class="main-form" id="geofencetool">
 
   <div style="float:left;width:20%;height:100%;">
    <p>Posição do cursor:</p>
@@ -598,14 +595,14 @@ $(document).ready(function(){
                <input id="polygoninput2" type="text"></input>
                <input id="polygoninput3" type="text"></input>
              </div>
-           <p><span id="addpoint">Adicionar ponto</span></p>
-           <input type="submit">
+           <p><span id="addpoint"> + Adicionar ponto</span></p>
+           <p align="center"><input type="submit" value="Traçar polígono"/></p>
            </form>
            <hr/><br/>
             <p>Área do polígono selecionado:</p>
             <input type="text" id="polygonarea" style="width:93px;"></input> km<sup>2</sup>
             <br/><br/><hr/><br/>
-         <input id="savepolygon" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>      </div>
+         	<p align="center"><input id="savepolygon" type="submit" value="Salvar cerca eletrônica"></p></div>
      <h3><a href="#">Rota</a></h3>
        <div>
          <p>Para selecionar a rota clique no botão abaixo e selecione os pontos desejados no mapa.</p><br/>
@@ -615,27 +612,24 @@ $(document).ready(function(){
          <p>Ou digite os endereços para os pontos:</p><br/>
          <form id="routesubmit"  style="margin-top:5px;width:auto;" action="#map">
            <div id="routeinputs">
-             <input id="routeinput1" type="text"></input>
-             <input id="routeinput2" type="text"></input>
+             <input id="routeinput1" type="text" />
+             <input id="routeinput2" type="text" />
            </div>
-         <p><span id="adddestiny">Adicionar destino</span></p>
-         <input type="submit">
+         <p><span id="adddestiny"> + Adicionar destino</span></p>
+         <p align="center"><input type="submit" value="Traçar rota" /></p>
          </form>
         
          <br/><br/><hr/><br/>
          
          <p>Distância da rota:</p><br/>
-         <input id="routedistance" type="text" style="width:84px;"></input>metros
-         <input id="saveroute" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>
+         <input id="routedistance" type="text" style="width:103px;"> km
+         <p align="center"><input id="saveroute" type="submit" value="Salvar cerca eletrônica" /></p>
          
        </div>
     </div>
   </div>
-   <div id="appendpoints"></div>
-   <div id="map" style="float:right;height:500px;width:79%;background-color:white;"></div>
-   
-   </div>
-</div>
-{% endblock %}
 
+   <div id="map" style="float:right;height:555px;width:79%;background-color:white;"></div>
+   </div>
+{% endblock %}
 

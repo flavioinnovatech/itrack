@@ -19,13 +19,14 @@
   	{% endautoescape %}
   	</style>
 		
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript">jQuery.noConflict();</script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"></script>
+		<!-- <script type="text/javascript">jQuery.noConflict();</script> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"></script> 
 		<script src="/media/js/ajaxsend.js" type="text/javascript"></script> 
 	  <script src="/media/js/jquery.scrollfollow.js" type="text/javascript"></script>
 	  
 	  <script type="text/javascript" src="/media/js/master.js"></script>
-      <script type="text/javascript" src="/media/js/alertcheck.js"></script>
+    <script type="text/javascript" src="/media/js/alertcheck.js"></script>
 		{% block head %} {% endblock %}
 		
 	</head>
@@ -81,7 +82,17 @@
 						            <ul>
 							            <li><a href="{% url alerts.views.index %}">Ver histórico</a></li>
 							            <li><a href="{% url alerts.views.create request.session.system %}">Criar alerta</a></li>
+									</ul>
+					            </li>
+							    {% endif %}
+							 {%endfor%}
+							 
+							 {% for grp in request.user.groups.all %}
+							    {% if grp.name  == "administradores" or grp.name == "alerta"  %}
+							    <li><a href="#">Ferramentas</a>
+						            <ul>
 							            <li><a href="{% url geofence.views.index %}">Cercas eletrônicas</a></li>
+							             <li><a href="#">Trajetos</a>
 									</ul>
 					            </li>
 							    {% endif %}
