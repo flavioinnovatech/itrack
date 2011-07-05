@@ -134,7 +134,7 @@ jQuery("#multispectralmap").click(function() {
   
   //Insert Multispectral permission here
   var Ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C";
-  multimapa = new multispectral(-52.9, -14.5, 0, "tabs-4", Ticket, false, "ErroCallback");
+  // multimapa = new multispectral(-52.9, -14.5, 0, "tabs-4", Ticket, false, "ErroCallback");
   function ErroCallback(valid, args) { alert('ae');
     if (valid == "false" || valid == false) {
       if (typeof args == "string") {
@@ -244,7 +244,7 @@ function loadGrid() {
                   googlemarkers[rowid] = marker;
                   
                   //Insert multispectral permission here
-                  multimapa.Client.addPoint("rowid",-46.67,-23.62,"http://www.geoportal.com.br/applet/images/icone40.gif","PT01","Teste A","Teste B","Teste C","Grupo01",true,20,20,"ErroCallback");
+                  // multimapa.Client.addPoint("rowid",-46.67,-23.62,"http://www.geoportal.com.br/applet/images/icone40.gif","PT01","Teste A","Teste B","Teste C","Grupo01",true,20,20,"ErroCallback");
                   multimarkers[rowid] = rowid;
               
                 }
@@ -255,7 +255,7 @@ function loadGrid() {
                   googlemarkers[rowid].setMap(null);
                   
                   //Insert multispectral permission here
-                  multimapa.Client.removePoints("rowid","ErroCallback");
+                  // multimapa.Client.removePoints("rowid","ErroCallback");
                 }
               }
             });
