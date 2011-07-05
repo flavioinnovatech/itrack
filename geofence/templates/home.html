@@ -202,7 +202,10 @@ $(document).ready(function(){
   
   // The save POST
   $("#savepolygon").click(function(){
-    alert(creator.showData());
+    
+    // var match = /\\(.+?\\)/.exec(creator.showData());
+        
+    // (-12.746114226507563, -52.9927091875)(-15.981071606666031, -43.9399748125)(-22.36906704273474, -56.4204435625)
     
     coords = {points: creator.showData()};
     

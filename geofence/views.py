@@ -22,15 +22,17 @@ def saveGeofence(request):
 
         system = System.objects.get(pk=request.session['system'])
         
+        
+        
         # Save geofence first
-        g = Geofence(name=parsed_dict['name'],system=system,type='C')
-        g.save()
+        # g = Geofence(name=parsed_dict['name'],system=system,type='C')
+        # g.save()
 
         # Links GeoEntity with the previous created Geofence
-        p1 = GeoEntity(geofence=g,lat = float(parsed_dict['coords']['lat']), lng = float(parsed_dict['coords']['lng']), radius = float(parsed_dict['coords']['radius']))
+        # p1 = GeoEntity(geofence=g,lat = float(parsed_dict['coords']['lat']), lng = float(parsed_dict['coords']['lng']), radius = float(parsed_dict['coords']['radius']))
             
-        p1.save()
-        return HttpResponse(p1.id)
+        # p1.save()
+        return HttpResponse("p1.id")
     elif parsed_dict['type'] == 'polygon':
       
         system = System.objects.get(pk=request.session['system'])
@@ -39,23 +41,33 @@ def saveGeofence(request):
         
         str_coords =  parsed_dict['coords']['points'].replace("(","").split(")")
         coords = []
+
+        wkt = "POLYGON(("
+        i = 0
         for coord in str_coords:
             if not coord == "":
-                coords.append(coord.split(","))
+                i = i+1
+                wkt += coord.replace(","," ")
+                if i != len(str_coords) - 1:
+                  wkt += ","
+                
+        wkt += "))"
         
-        list_ids = []
-        sequence = 0
-        for ent in coords:
-            p = GeoEntity(geofence=g,lat=float(ent[0]),lng=float(ent[1]),radius=0,seq=sequence)
-            sequence += 1
-            p.save()
-            list_ids.append(p.id)
+        print wkt 
+        
+        # list_ids = []
+        #         sequence = 0
+        #         for ent in coords:
+            # p = GeoEntity(geofence=g,lat=float(ent[0]),lng=float(ent[1]),radius=0,seq=sequence)
+            # sequence += 1
+            # p.save()
+            # list_ids.append(p.id)
 
         str_ids = ""
-        for id in list_ids:
-            str_ids+=str(id)+","
+        # for id in list_ids:
+            # str_ids+=str(id)+","
         
-        print str_ids
+        # print str_ids
         
         return HttpResponse(str_ids)
     elif parsed_dict['type'] == 'route':
