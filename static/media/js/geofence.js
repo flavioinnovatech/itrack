@@ -11,6 +11,7 @@ $(document).ready(function(){
 	var map;
 	var infowindow = new google.maps.InfoWindow();
 	var marker;
+	var coords;
 	geocoder = new google.maps.Geocoder();
 	
 function drawPolyRoute(result){
@@ -18,27 +19,16 @@ function drawPolyRoute(result){
                 previous = result.routes[i].overview_path[0];
                 top_points = [];
                 bottom_points = [];
+                circle_points = [];
                 lastbrng = 0;
                 
-            /*
-                var p1 = new LatLon(result.routes[i].overview_path[1].lat(),result.routes[i].overview_path[1].lng());
-                var p2 = new LatLon(result.routes[i].overview_path[0].lat(),result.routes[i].overview_path[0].lng());
-                
-                brng = p1.bearingTo(p2);
-                p3 = p2.destinationPoint(brng-90,0.1);
-                p4 = p2.destinationPoint(brng+90,0.1);
-                
-                p3_google = new google.maps.LatLng(p3.lat(),p3.lon());
-                p4_google = new google.maps.LatLng(p4.lat(),p4.lon());
-                
-                top_points.push(p4_google);
-                bottom_points.push(p3_google);
-            */
 
                 for(j=0;j<result.routes[i].legs.length;j++){
                     for(k=0;k<result.routes[i].legs[j].steps.length;k++){
                         for(l=0; l<result.routes[i].legs[j].steps[k].path.length; l++){
+                            
                             actual = result.routes[i].legs[j].steps[k].path[l];
+                            circle_points.push(actual);
                             
                             var p1 = new LatLon(previous.lat(),previous.lng());
                             var p2 = new LatLon(actual.lat(),actual.lng());
@@ -111,6 +101,8 @@ function drawPolyRoute(result){
                   });
                                  
          }
+         
+         return {polygon:points_list, points: circle_points};
     }
                     
 	
@@ -480,7 +472,7 @@ function drawPolyRoute(result){
         }
         
         //poligono cercando a rota
-        drawPolyRoute(result);
+        coords = drawPolyRoute(result);
         
         
         $("#routedistance").attr("value",distance);
@@ -550,7 +542,7 @@ function drawPolyRoute(result){
              }
 
             //poligono cercando a rota
-             drawPolyRoute(result);
+             coords = drawPolyRoute(result);
 
                                       
              
@@ -566,6 +558,64 @@ function drawPolyRoute(result){
        }
        
        });
+       
+       
+    });
+
+    $('#saveroute').click(function(){
+          
+    // var match = /\\(.+?\\)/.exec(creator.showData());
+        
+    // (-12.746114226507563, -52.9927091875)(-15.981071606666031, -43.9399748125)(-22.36906704273474, -56.4204435625)
+
+    $('#id_geoentities').remove();
+      
+    $("#generaldialog").html("");
+    $("#generaldialog").attr("title","Salvar cerca eletrônica");
+    $("#generaldialog").append("<p><b>Digite um nome para a cerca:</b></p>")
+    $("#generaldialog").append("<p><input id='geofencename' type='text'></input></p>");
+    
+    $("#generaldialog").dialog({
+      modal:true,
+      show:'clip',
+      buttons: {
+        "Salvar": function() {
+          geofencename = $("#geofencename").val();
+          
+          if(geofencename){ 
+            dict_to_send = {};
+            dict_to_send['polygon'] = [];
+            dict_to_send['points'] = []; 
+            for(i=0; i < coords['polygon'].length; i++){
+                dict_to_send['polygon'].push({lat: coords['polygon'][i].lat(),lng: coords['polygon'][i].lng()});
+            }
+            for(i=0; i < coords['points'].length; i++){
+                dict_to_send['points'].push({lat: coords['points'][i].lat(), lng: coords['points'][i].lng()});
+            }
+            $.post(
+                "/geofence/save/",
+                {name:geofencename,type:'route', coords: dict_to_send, system : window.location.pathname.split("/")[3]},
+                function(data){
+                    $('form').append("<input type='hidden' name='geoentities' id='id_geoentities' value='"+data+"' />");
+                    $("#dialog").dialog("close");
+                }
+             );
+            
+            $( this ).dialog( "close" );
+          }
+          
+          else {
+            alert('Digite um nome para a cerca eletrônica.')
+          }
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+    
+    
+    
     });
 
 });

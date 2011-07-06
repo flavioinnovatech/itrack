@@ -260,12 +260,19 @@ class Command(BaseCommand):
                                   vehicle.save()
                
                                   # geofence check
-                                  # geoalerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True) & ~Q(geofence=None))
-                                  # point = Point(xmldict['GPS']['Lat'],xmldict['GPS']['Long'])
-                                  # self.stdout.write(str(point))
-                                  
-                                  
-                                  # for geoalert in geoalerts:
+                                  try:
+                                    geoalerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True) & ~Q(geofence=None))
+                                    self.stdout.write(xmldict['GPS']['Lat'])
+                                    point = Point(xmldict['GPS']['Lat'],xmldict['GPS']['Long'])
+                                    
+                                    
+                                    #TODO: fazer isso funcionar!
+                                    for geoalert in geoalerts:
+                                        Geofence.objects.filter(Q(polygon__contains=point) & Q(id=geoalert.geofence.id))
+                                    
+                                  except:
+                                    self.stdout.write('>> The tracking table is lacking Latitude and Longitude information.\n')
+
                                     
                
                

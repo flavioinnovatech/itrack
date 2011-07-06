@@ -71,7 +71,8 @@ def saveGeofence(request):
         
         return HttpResponse(g.id)
     elif parsed_dict['type'] == 'route':
-        pass
+         print parsed_dict['coords']['polygon']
+         print parsed_dict['coords']['points']
     else:
         pass
    
