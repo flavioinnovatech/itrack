@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from querystring_parser import parser
 from django.http import HttpResponse
 from django.utils import simplejson
+from django.contrib.gis import geos
 
 def index(request):
     system = System.objects.filter(administrator__username=request.user.username)
@@ -22,6 +23,13 @@ def saveGeofence(request):
 
         system = System.objects.get(pk=request.session['system'])
         
+        center = geos.Point(float(parsed_dict['coords']['lat']), float(parsed_dict['coords']['lng']))
+        
+        radius = float(parsed_dict['coords']['radius'])
+        
+        circle = center.buffer(radius)
+        
+        print circle
         
         
         # Save geofence first
@@ -63,7 +71,6 @@ def saveGeofence(request):
             # p.save()
             # list_ids.append(p.id)
 
-        str_ids = ""
         # for id in list_ids:
             # str_ids+=str(id)+","
         
