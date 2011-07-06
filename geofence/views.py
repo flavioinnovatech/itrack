@@ -27,7 +27,7 @@ def saveGeofence(request):
         
         radius = float(parsed_dict['coords']['radius'])
         
-        circle = center.buffer(radius/40000*360)
+        circle = center.buffer(radius/1000/40000*360)
 
         circle = str(circle)[8:len(str(circle))]
         

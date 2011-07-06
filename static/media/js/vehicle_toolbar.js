@@ -71,7 +71,6 @@ jQuery(document).ready(function(){
           object = new Object;
           jQuery.each(colNames, function(key, name) {
           	
-          	
           
             if (name == "Nome") {
               object[name] = geofence.name;
@@ -106,28 +105,14 @@ jQuery(document).ready(function(){
                 if (data.id == id) {
 
                   if(data.type == 'C') {
-                    var latlng = new google.maps.LatLng(data.coords.lat, data.coords.lng);
-
-                    circle = new google.maps.Circle({
-                      center : latlng,
-                      map : map,
-                      strokeColor : "#FFAA00",
-                      radius : data.coords.radius
-                    });
-                    
-                    map.setCenter(latlng);
-                    
-                    geofence[id] = circle;
-                  }
-                  
-                  if(data.type == "P") {
                     
                     var polygon = [];
                     
-                    jQuery.each (data.coords, function(key1,point) {
-                      var latlng = new google.maps.LatLng(point.lat, point.lng);
+                    jQuery.each (data.polygon[0][0], function(key1,point) {
+                      var latlng = new google.maps.LatLng(point[1], point[0]);
                       polygon.push(latlng)
-                    }); 
+                      
+                    });
                                         
                     bermudaTriangle = new google.maps.Polygon({
                       paths: polygon,
@@ -141,7 +126,61 @@ jQuery(document).ready(function(){
                     bermudaTriangle.setMap(map);
                     
                     geofence[id] = bermudaTriangle;
+                  }
                   
+                  if(data.type == "P") {
+                    
+                     var polygon = [];
+
+                      jQuery.each (data.polygon[0][0], function(key1,point) {
+                        var latlng = new google.maps.LatLng(point[1], point[0]);
+                        polygon.push(latlng)
+
+                      });
+
+                      bermudaTriangle = new google.maps.Polygon({
+                        paths: polygon,
+                        strokeColor: "#FF0000",
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: "#FF0000",
+                        fillOpacity: 0.35
+                      });
+
+                      bermudaTriangle.setMap(map);
+
+                      geofence[id] = bermudaTriangle;
+                  
+                  }
+                  
+                  if (data.type == "R") {
+                      var bermudaTriangle = []
+                      jQuery.each (data.polygon[0], function(key1,polygons) {
+                        
+                        var polygon = [];
+                        
+                        jQuery.each (polygons, function(key2,point) {
+                          var latlng = new google.maps.LatLng(point[1], point[0]);
+                          polygon.push(latlng)
+                        });
+                                                
+                        bermudaTriangle[key1] = new google.maps.Polygon({
+                          paths: polygon,
+                          strokeColor: "#FF0000",
+                          strokeOpacity: 0.8,
+                          strokeWeight: 2,
+                          fillColor: "#FF0000",
+                          fillOpacity: 0.35,
+                          map:map
+                        });
+                        
+                        // bermudaTriangle[key1].setMap(map);
+                        
+                        return false;
+
+                      });
+                      
+                      geofence[id] = bermudaTriangle;
                   }
 
                 }  
@@ -151,7 +190,15 @@ jQuery(document).ready(function(){
             }
             
             else {
-              geofence[id].setMap(null);
+              
+              try{
+                geofence[id].setMap(null);
+              }
+              catch(err) {
+                jQuery.each (geofence[id],function(key,value) {
+                  value.setMap(null);
+                });
+              }
             }
             
           } 
