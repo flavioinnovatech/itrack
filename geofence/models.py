@@ -15,7 +15,7 @@ class Geofence(models.Model):
             ('R', 'Rota')
         )
     type = models.CharField(max_length=1, choices=types)
-    polygon = models.PolygonField(null = True)
+    polygon = models.MultiPolygonField(null = True)
     objects = models.GeoManager()
 
     def __unicode__(self):

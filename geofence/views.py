@@ -71,8 +71,50 @@ def saveGeofence(request):
         
         return HttpResponse(g.id)
     elif parsed_dict['type'] == 'route':
-         print parsed_dict['coords']['polygon']
-         print parsed_dict['coords']['points']
+        system = System.objects.get(pk=request.session['system'])
+        
+        str_coords =  parsed_dict['coords']['polygon'].replace("(","").split(")")
+
+        
+        wkt = "MULTIPOLYGON("
+        '''
+        i = 0
+        firstpoint = ""
+        for coord in str_coords:
+            if not coord == "":
+                i = i+1
+                arraytemp = coord.split(",")
+                wkt += arraytemp[1]
+                wkt += " "
+                wkt += arraytemp[0]
+                
+                if i == 1:
+                  firstpoint += arraytemp[1] + " " + arraytemp[0] 
+                
+                wkt += ","
+        
+        wkt += firstpoint
+        wkt += ")"
+        '''
+              
+        for pnt in parsed_dict['coords']['points'].replace("(","").split(")"):
+            if not pnt == "":
+                arraytemp = pnt.split(",")
+                center = geos.Point(float(arraytemp[1]),float(arraytemp[0]))
+                radius = 100
+                circle = center.buffer(100/100)
+               
+                wkt += str(circle)[8:len(str(circle))] +","
+        wkt = wkt[:len(wkt)-1]
+        wkt += "))"
+        
+        
+        print wkt
+        
+        g = Geofence(name=parsed_dict['name'],system=system,type='R',polygon=wkt)
+        g.save()
+        
+        return HttpResponse('qqrcoisa')
     else:
         pass
    

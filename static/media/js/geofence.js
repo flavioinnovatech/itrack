@@ -584,13 +584,13 @@ function drawPolyRoute(result){
           
           if(geofencename){ 
             dict_to_send = {};
-            dict_to_send['polygon'] = [];
-            dict_to_send['points'] = []; 
+            dict_to_send['polygon'] = "";
+            dict_to_send['points'] = ""; 
             for(i=0; i < coords['polygon'].length; i++){
-                dict_to_send['polygon'].push({lat: coords['polygon'][i].lat(),lng: coords['polygon'][i].lng()});
+                dict_to_send['polygon'] += "("+coords['polygon'][i].lat()+","+coords['polygon'][i].lng()+")";
             }
             for(i=0; i < coords['points'].length; i++){
-                dict_to_send['points'].push({lat: coords['points'][i].lat(), lng: coords['points'][i].lng()});
+                dict_to_send['points'] += "("+coords['points'][i].lat()+","+coords['points'][i].lng()+")";
             }
             $.post(
                 "/geofence/save/",
