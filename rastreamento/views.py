@@ -49,6 +49,7 @@ def loadData(request):
   data = {}
   for i in vehicles:
     info = {}
+    # info["system"]
     info["id"] = i.id
     info["hora"] = {}
     info["veiculo"] = {}
