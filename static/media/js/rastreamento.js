@@ -220,7 +220,9 @@ function loadGrid() {
           var multimarkers = new Array;
           
           if (olddata == null) {
-            jQuery("#list4").jqGrid({   
+            jQuery("#list4").jqGrid({
+              pager: "#gridpager",
+              sortable:true,
               datatype: "local",
               height:h-250,
               width: 930,
@@ -259,6 +261,10 @@ function loadGrid() {
                 }
               }
             });
+            
+            jQuery("#list4").jqGrid('navGrid','#gridpager',{edit:false,add:false,del:false});
+            // jQuery("#list4").filterToolbar();
+            // jQuery("input[id^=gs]").css("height","85%");
           
           }
           
