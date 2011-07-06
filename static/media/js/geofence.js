@@ -38,8 +38,7 @@ function drawPolyRoute(result){
                             
                             p3 = p1.destinationPoint(brng-90,0.1);
                             p4 = p1.destinationPoint(brng+90,0.1);
-                    
-                    
+
                             p3_google = new google.maps.LatLng(p3.lat(),p3.lon());
                             p4_google = new google.maps.LatLng(p4.lat(),p4.lon());
                     
@@ -65,13 +64,6 @@ function drawPolyRoute(result){
             
                 }
                
-                for(j=1;j<result.routes[i].overview_path.length;j++){
-                    actual = result.routes[i].overview_path[j];
-
-                    //marker = new google.maps.Marker({position:actual, map: map, title: deltabrng.toString()});
-
-                    previous = actual;
-                }
                 
              /*
                 var p1 = new LatLon(result.routes[i].overview_path[j-2].lat(),result.routes[i].overview_path[j-2].lng());
