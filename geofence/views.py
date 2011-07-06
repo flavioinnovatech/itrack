@@ -27,7 +27,7 @@ def saveGeofence(request):
         
         radius = float(parsed_dict['coords']['radius'])
         
-        circle = center.buffer(radius/1000000)
+        circle = center.buffer(radius/40000*360)
 
         circle = str(circle)[8:len(str(circle))]
         
@@ -81,8 +81,8 @@ def saveGeofence(request):
         str_coords =  parsed_dict['coords']['polygon'].replace("(","").split(")")
 
         
-        wkt = "MULTIPOLYGON("
-        '''
+        wkt = "MULTIPOLYGON((("
+        
         i = 0
         firstpoint = ""
         for coord in str_coords:
@@ -99,16 +99,16 @@ def saveGeofence(request):
                 wkt += ","
         
         wkt += firstpoint
-        wkt += ")"
-        '''
+        wkt += ")),"
+        
               
         for pnt in parsed_dict['coords']['points'].replace("(","").split(")"):
             if not pnt == "":
                 arraytemp = pnt.split(",")
                 center = geos.Point(float(arraytemp[1]),float(arraytemp[0]))
-                print center
-                radius = 100
-                circle = center.buffer(0.08)
+
+                radius = 0.1
+                circle = center.buffer(0.1/40000*360)
                
                 wkt += str(circle)[8:len(str(circle))] +","
         wkt = wkt[:len(wkt)-1]
