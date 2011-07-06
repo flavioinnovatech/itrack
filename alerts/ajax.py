@@ -2,9 +2,12 @@ from django.db.models import Q
 from django.http import HttpResponse
 from querystring_parser import parser
 from itrack.alerts.models import Popup
+from django.contrib.auth.models import User
+from itrack.accounts.models import UserProfile
+from itrack.system.models import System
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-from itrack.system.tools import systemDepth
+from itrack.system.tools import lowestDepth
 
 
 def status(request):
@@ -14,11 +17,27 @@ def status(request):
         
         #checks if there's a popup for this system
         popups_list = Popup.objects.filter(Q(user = user))
-        print popups_list
+        
+        for popup in popups_list:
+          systemname = lowestDepth(popup.vehicle.equipment.system.all()).name
+        
+        systems = System.objects.filter(name=systemname)
+        
+        for sys in systems:
+          admins = User.objects.filter(username=sys.administrator)
+          
+        for admin in admins:
+          adminemail = admin.email
+          adminname = admin.first_name
+          adminprofiles = UserProfile.objects.filter(profile = admin.id)
+          
+        for adminprofile in adminprofiles:
+          admincelular = adminprofile.cellphone
+        
         data = {}
 
         for popup in popups_list:
-           data[popup.id] = {'name': popup.alert.name, 'date': popup.date, 'trigger': popup.alert.trigger, 'plate': popup.vehicle.license_plate, 'limit':popup.alert.linear_limit, 'state':popup.alert.state, 'system':systemDepth(popup.vehicle.equipment.system.all()).name }
+           data[popup.id] = {'name': popup.alert.name, 'date': popup.date, 'trigger': popup.alert.trigger, 'plate': popup.vehicle.license_plate, 'limit':popup.alert.linear_limit, 'state':popup.alert.state, 'system': systemname, 'adminemail': adminemail,'admincelular':admincelular,'adminname':adminname}
            popup.delete()
                    
         numalerts = len(data)

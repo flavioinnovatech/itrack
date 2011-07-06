@@ -8,8 +8,13 @@
         <div class="alert-wrapper">
             <h2 style="font-size:18px;font-variant:small-caps;">{{alert.name}}</h2>
             <hr />
-            <div style="margin:0 auto;width:250px">
+            <div style="margin:0 auto;width:250px;float:left;">
               <table>
+                <tr>
+                  <td colspan="2">
+                    <p align="center" style="float:none;"><b>Dados do veículo</b></p>
+                  </td>
+                </tr>  
                 <tr>
                   <td>
                     <span>Veículo:</span>
@@ -61,10 +66,52 @@
                   </td>
                 </tr>
                 {% endif %}
+                <tr>
+                  <td>
+                    <span>Sistema filho:</span>
+                  </td>
+                  <td>
+                    <p>{{alert.system}}</p>
+                  </td>
+                </tr>
               </table>
             </div>
             
-          {{alert.system}}
+            <div style="float:right;">
+              <table>
+                <tr>
+                  <td colspan="2">
+                    <p align="center" style="float:none;"><b>Dados do Administrador do Sistema</b></p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span>Nome:</span>
+                  </td>
+                  <td>
+                    <p>{{ adminname }}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span>Email:</span>
+                  </td>
+                  <td>
+                    <p>{{adminemail}}</p>
+                  </td>
+                </tr> 
+                <tr>
+                  <td>
+                    <span>Celular:</span>
+                  </td>
+                  <td>
+                    <p>{{admincelular}}</p>
+                  </td>
+                </tr>
+                
+              </table>
+            </div>
+          
         </div>
     {% endfor %}
 </div>

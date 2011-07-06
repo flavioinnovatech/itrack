@@ -104,9 +104,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django403.middleware.Django403Middleware',
-    'itrack.tracking.middleware.VisitorTrackingMiddleware',
-    'itrack.tracking.middleware.VisitorCleanUpMiddleware',
-    'itrack.accounts.middleware.UserRestrictMiddleware',
+    # 'itrack.tracking.middleware.VisitorTrackingMiddleware',
+    # 'itrack.tracking.middleware.VisitorCleanUpMiddleware',
+    # 'itrack.accounts.middleware.UserRestrictMiddleware',
 
 )
 
@@ -135,7 +135,7 @@ INSTALLED_APPS = (
      'south',
      'dajaxice',
      'dajax',
-     'tracking',
+     # 'tracking',
 
     'main',
     'equipments',
