@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.db import models
+
+from django.contrib.gis.db import models
 from itrack.system.models import System
 from itrack.equipments.models import Equipment
 # from itrack.alerts.models import Alert
@@ -14,10 +15,15 @@ class Geofence(models.Model):
             ('R', 'Rota')
         )
     type = models.CharField(max_length=1, choices=types)
-    type.default = 'C'
+    polygon = models.PolygonField(null = True)
+    objects = models.GeoManager()
+
     def __unicode__(self):
         return str(self.name)
-    
+
+
+
+'''    
 class GeoEntity(models.Model):
     geofence = models.ForeignKey(Geofence, verbose_name = "Cerca Eletrônica", null = True)
     lat = models.FloatField()
@@ -27,4 +33,4 @@ class GeoEntity(models.Model):
     def __unicode__(self):
         return str(self.lat)+','+str(self.lng)
 
-
+'''
