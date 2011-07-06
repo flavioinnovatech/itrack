@@ -475,7 +475,7 @@ function drawPolyRoute(result){
         coords = drawPolyRoute(result);
         
         
-        $("#routedistance").attr("value",distance);
+        $("#routedistance").attr("value",distance/1000);
         geofences.push(directionsDisplay);
         $("#saveroute").removeAttr('disabled');
       }
@@ -546,7 +546,7 @@ function drawPolyRoute(result){
 
                                       
              
-             $("#routedistance").attr("value",distance);
+             $("#routedistance").attr("value",distance/1000);
              geofences.push(directionsDisplay);
              $("#saveroute").removeAttr('disabled');
            }
