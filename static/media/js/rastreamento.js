@@ -196,6 +196,8 @@ function loadGrid() {
           colModel.push({name:"Hora",align:"center"});
           colNames.push("Endereço");
           colModel.push({name:"Endereço",align:"center"});
+          colNames.push("Sistema");
+          colModel.push({name:"Sistema",align:"center"});
           
           //para cada veículo
           var nequips = 0;
@@ -314,8 +316,10 @@ function loadGrid() {
                     
                   });
                                     
-                }
+                }else if(name == "Sistema"){
+                    object[name] = equip.veiculo.sistema;
                 
+                }
                 //Custom fields
                 else {
                   

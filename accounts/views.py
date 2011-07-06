@@ -183,6 +183,7 @@ def login(request):
         request.session['username'] = username
         request.session['user_id'] = user_id
         request.session['system_name'] = system_name
+        request.session['system_being_created'] = False
         
         # Redirect to a success page.
         return HttpResponseRedirect("/rastreamento/veicular")#render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))

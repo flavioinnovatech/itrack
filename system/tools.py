@@ -54,4 +54,18 @@ def systemDepth(system):
         return 0
     else:
         return systemDepth(system.parent) + 1
+
+
+#given a system list, return the system with the lowest depth        
+def lowestDepth(system_list):
+    lowest = systemDepth(system_list[0])
+    result = system_list[0]
+    for system in system_list[1:]:
+        depth = systemDepth(system)
+        if depth > lowest:
+            lowest = depth
+            result = system
+    
+    return result
+    
         

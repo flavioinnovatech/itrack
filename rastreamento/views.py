@@ -10,6 +10,7 @@ from django.utils import simplejson
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from itrack.vehicles.models import Vehicle
+from itrack.system.tools import lowestDepth
 import pprint
 
 
@@ -62,6 +63,8 @@ def loadData(request):
     info["veiculo"]["model"] = i.model
     info["veiculo"]["manufacturer"] = i.manufacturer
     info["veiculo"]["type"] = i.type
+    info["veiculo"]["sistema"] = lowestDepth(i.equipment.system.all()).name
+    
     for j in trackingData:
       try:
         cfn = CustomFieldName.objects.filter(system=system).get(custom_field=j.type)
@@ -74,7 +77,6 @@ def loadData(request):
             
     data[tracking.equipment.serial] =  info
        
-    print data 
 
   json = simplejson.dumps(data)
 
