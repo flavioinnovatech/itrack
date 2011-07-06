@@ -42,14 +42,7 @@ jQuery(document).ajaxSend(function(event, xhr, settings) {
     
     function timedCount()
     {
-      
-      soundManager.url = '/media/swf/soundmanager2_flash9.swf';
-      soundManager.flashVersion = 9; // optional: shiny features (default = 8)
-      soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
-      // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
-      // soundManager.useHTML5Audio = true;
-      soundManager.onready(function() {
-        // Ready to use; soundManager.createSound() etc. can now be called.
+
     
         $.post(
                "/alerts/status/",
@@ -59,6 +52,7 @@ jQuery(document).ajaxSend(function(event, xhr, settings) {
                     if (data != "\n") {
                         $('body').append(data);
                         $('.popup-content').dialog({
+                            width:600,
                             close: function() {
                                 $(this).remove();
                                 },
@@ -69,7 +63,6 @@ jQuery(document).ajaxSend(function(event, xhr, settings) {
                
         t=setTimeout("timedCount()",30000);
         
-      });
     }
     
 

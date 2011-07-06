@@ -570,10 +570,12 @@ img#maptools{
 }
 
 .popup-content p{}
+.alert-wrapper {margin-top:20px;padding:10px;}
 .alert-wrapper h2{ clear:both; margin-top:10px;}
 .alert-wrapper ul{padding:3px 3px 3px 10px; margin-bottom:35px;}
-.alert-wrapper ul li span { font-weight: bold; float:left;}
-.alert-wrapper ul li p { float:right; margin-bottom:0px;}
+.alert-wrapper td{text-align:center;}
+.alert-wrapper span { font-weight: bold; float:left;}
+.alert-wrapper p { float:right; margin-bottom:0px;}
 .alert-wrapper ul li {clear:both;}
 
 

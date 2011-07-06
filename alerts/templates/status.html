@@ -1,16 +1,44 @@
 {% if data %}
 <div class="popup-content" title="Notificação de alerta{{numalerts|pluralize}} ocorrido{{numalerts|pluralize}}">
-    <img class="ui-icon-alert ui-icon" style="float:left;margin-right:3px;" /><p>Você recebeu {{numalerts}} novo{{numalerts|pluralize}} alerta{{numalerts|pluralize}}:</p>
+    <img style="float:left;margin-right:3px;height:30px"  src="/media/img/siren.gif" border="1"/>
+    <p style="float:left;margin-left:90px;font-size:23px;font-variant:small-caps;padding:5px;font-weight:bold;" align="center">Você recebeu {{numalerts}} novo{{numalerts|pluralize}} alerta{{numalerts|pluralize}}</p>
+    <img style="float:right;margin-right:3px;height:30px"  src="/media/img/siren.gif" border="1"/>
+    
     {% for id,alert in data.items %}
         <div class="alert-wrapper">
-            <h2 style="font-size:18px;">{{alert.name}}</h2>
+            <h2 style="font-size:18px;font-variant:small-caps;">{{alert.name}}</h2>
             <hr />
-            <ul>
-                <li><span>Veículo:</span> <p>{{alert.plate}}</p></li>
-                <li><span>Data:</span> <p>{{alert.date}}</p></li>
-                <li><span>Trigger:</span> <p>{{alert.trigger}}</p></li>
-               
-                <li><span>Alertar quando:</span> 
+            <div style="margin:0 auto;width:250px">
+              <table>
+                <tr>
+                  <td>
+                    <span>Veículo:</span>
+                  </td>
+                  <td>
+                    <p>{{alert.plate}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span>Data:</span>
+                  </td>
+                  <td>
+                    <p>{{alert.date}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span>Trigger:</span>
+                  </td>
+                  <td>
+                    <p>{{alert.trigger}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span>Alertar quando:</span>
+                  </td>
+                  <td>
                     <p>{% if alert.limit %}
                             {% if alert.state %}Acima do limite
                             {% else %}Abaixo do limite
@@ -19,9 +47,24 @@
                             {% if alert.state %}Ligado
                             {% else %}Desligado
                             {% endif %}
-                      {% endif%}</p></li>
-                {% if alert.limit %}<li><span>Limite:</span> <p>{{alert.limit}}</p></li>{% endif %}
-            </ul>
+                      {% endif%}
+                    </p>
+                  </td>
+                </tr>
+                {% if alert.limit %}
+                <tr>
+                  <td>
+                    <span>Limite:</span>
+                  </td>
+                  <td>
+                    <p>{{alert.limit}}</p>
+                  </td>
+                </tr>
+                {% endif %}
+              </table>
+            </div>
+            
+          {{alert.system}}
         </div>
     {% endfor %}
 </div>
