@@ -23,3 +23,7 @@ def AlertComparison(command,alert,customfield,value):
 		    return True
            
     return False
+
+def GeofenceComparison(request):
+  
+  return False

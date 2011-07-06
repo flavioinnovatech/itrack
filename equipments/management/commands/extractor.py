@@ -21,7 +21,8 @@ from itrack.equipments.models import Equipment, Tracking, TrackingData,CustomFie
 from itrack.alerts.models import Alert,Popup
 from itrack.vehicles.models import Vehicle
 from itrack.accounts.models import UserProfile
-from comparison import AlertComparison
+from comparison import AlertComparison,GeofenceComparison
+from django.contrib.gis.geos import Point
 
 
 
@@ -257,20 +258,28 @@ class Command(BaseCommand):
                                   self.stdout.write('>> Alert threshold reached.\n')
                                   vehicle.last_alert_date = searchdate
                                   vehicle.save()
-                                
-                                  alerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True))
+               
+                                  # geofence check
+                                  # geoalerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True) & ~Q(geofence=None))
+                                  # point = Point(xmldict['GPS']['Lat'],xmldict['GPS']['Long'])
+                                  # self.stdout.write(str(point))
                                   
+                                  
+                                  # for geoalert in geoalerts:
+                                    
+               
+               
+                                
+                                  alerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True))                              
                                   
                                   #iterates over the inputs and checks if it is needed to send the alert
                                   for k_type,d_type in dict(xmldict['Input'].items() + xmldict['LinearInput'].items()).items():       
-                                              self.stdout.write(str(k_type)+'\n')
                                               try:
                                                   c = CustomField.objects.get(Q(tag=k_type)& ~Q(type='GPS'))
 
                                                   #function that returns true if the alert shall be sent, and false if not.
                                                   for alert in alerts:
                                                       if AlertComparison(self,alert,c,d_type):         
-                                                          self.stdout.write('entrou no Alert Comparison')
                                                           
                                                           if alert.receive_email:
                                                             for destinatary in alert.destinataries.values():
