@@ -58,9 +58,12 @@ def create(request,offset):
             
             a.save()
             
-            for g in form.data.getlist('geofence'):
-              geofence = Geofence.objects.get(pk=g)
-              a.geofence = geofence
+            try:
+              for g in form.data.getlist('geofence'):
+                geofence = Geofence.objects.get(pk=g)
+                a.geofence = geofence
+            except:
+              pass
       
             a.save()        
             

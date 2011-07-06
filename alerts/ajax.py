@@ -4,6 +4,7 @@ from querystring_parser import parser
 from itrack.alerts.models import Popup
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
+from itrack.system.tools import systemDepth
 
 
 def status(request):
@@ -17,7 +18,7 @@ def status(request):
         data = {}
 
         for popup in popups_list:
-           data[popup.id] = {'name': popup.alert.name, 'date': popup.date, 'trigger': popup.alert.trigger, 'plate': popup.vehicle.license_plate, 'limit':popup.alert.linear_limit, 'state':popup.alert.state }
+           data[popup.id] = {'name': popup.alert.name, 'date': popup.date, 'trigger': popup.alert.trigger, 'plate': popup.vehicle.license_plate, 'limit':popup.alert.linear_limit, 'state':popup.alert.state, 'system':systemDepth(popup.vehicle.equipment.system.all()).name }
            popup.delete()
                    
         numalerts = len(data)

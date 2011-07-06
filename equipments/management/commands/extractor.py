@@ -132,8 +132,8 @@ class XmlDictConfig(dict):
             else:
                 self.update({element.tag: element.text})
 
-
-TCP_IP = '187.115.25.240' 	# the server IP address
+TCP_IP = '192.168.1.119'
+# TCP_IP = '187.115.25.240'   # the server IP address
 TCP_PORT = 5000			# the server port
 BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
 USERNAME = "extractor"		# the user that will log on CPR
