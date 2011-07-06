@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group, Permission
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect,HttpResponseForbidden
-from itrack.geofence.models import Geofence,GeoEntity
+from itrack.geofence.models import Geofence
 from django.contrib.auth.decorators import login_required, user_passes_test,permission_required
 import pprint
 
@@ -63,11 +63,11 @@ def create(request,offset):
                 g.save()
                 geo_ids = map(lambda x : (int(x) if (x != '') else None),request.POST["geoentities"].split(","))
                 print geo_ids
-                for ent in GeoEntity.objects.filter(id__in=geo_ids):
-                    ent.geofence = g
-                    ent.save()
+                # for ent in GeoEntity.objects.filter(id__in=geo_ids):
+                #     ent.geofence = g
+                #     ent.save()
                 
-                GeoEntity.objects.filter(geofence = None).delete()
+                # GeoEntity.objects.filter(geofence = None).delete()
               
             
             return HttpResponseRedirect("/alerts/create/finish")

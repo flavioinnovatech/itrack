@@ -2,7 +2,7 @@
 from django.shortcuts import render_to_response
 from itrack.system.models import System,Settings
 from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType
-from itrack.geofence.models import GeoEntity,Geofence
+from itrack.geofence.models import Geofence
 from itrack.alerts.models import Alert
 from django.contrib.auth.decorators import login_required, user_passes_test
 from querystring_parser import parser
@@ -92,13 +92,13 @@ def loadGeofences(request):
   for g in geofence:
     
     if g.type == 'C':
-      geoentities = GeoEntity.objects.filter(geofence=g)
+      # geoentities = GeoEntity.objects.filter(geofence=g)
       for ge in geoentities:
         coords = {"radius":ge.radius,"lat":ge.lat,"lng":ge.lng}
         data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
         
     if g.type == 'P':
-      geoentities = GeoEntity.objects.filter(geofence=g).order_by('seq')
+      # geoentities = # GeoEntity.objects.filter(geofence=g).order_by('seq')
       coords = []
       for ge in geoentities:
         coord = {"lat":ge.lat,"lng":ge.lng}
