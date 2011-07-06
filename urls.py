@@ -4,7 +4,7 @@ from django.contrib.auth.views import login,logout,logout_then_login,password_re
 from django.conf import settings
 from itrack.system.forms import UserCompleteForm, SettingsForm, SystemForm, SystemWizard
 
-from django.contrib import admin
+from django.contrib.gis import admin
 admin.autodiscover()
 
 from dajaxice.core import dajaxice_autodiscover

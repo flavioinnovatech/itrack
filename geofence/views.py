@@ -23,29 +23,24 @@ def saveGeofence(request):
 
         system = System.objects.get(pk=request.session['system'])
         
-        center = geos.Point(float(parsed_dict['coords']['lat']), float(parsed_dict['coords']['lng']))
+        center = geos.Point(float(parsed_dict['coords']['lng']),float(parsed_dict['coords']['lat']))
         
         radius = float(parsed_dict['coords']['radius'])
         
-        circle = center.buffer(radius)
-        
-        print circle
-        
-        
-        # Save geofence first
-        # g = Geofence(name=parsed_dict['name'],system=system,type='C')
-        # g.save()
+        circle = center.buffer(radius/1000000)
 
-        # Links GeoEntity with the previous created Geofence
-        # p1 = GeoEntity(geofence=g,lat = float(parsed_dict['coords']['lat']), lng = float(parsed_dict['coords']['lng']), radius = float(parsed_dict['coords']['radius']))
-            
-        # p1.save()
-        return HttpResponse("p1.id")
+        # print circle
+                
+        g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=circle)
+        
+        g.save()
+
+        return HttpResponse(g.id)
+        
     elif parsed_dict['type'] == 'polygon':
       
         system = System.objects.get(pk=request.session['system'])
         g = Geofence(name=parsed_dict['name'],system=system,type='P')
-        g.save()
         
         str_coords =  parsed_dict['coords']['points'].replace("(","").split(")")
         coords = []
@@ -61,7 +56,11 @@ def saveGeofence(request):
                 
         wkt += "))"
         
-        print wkt 
+        g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=wkt)
+        
+        print g
+        
+        # g.save()
         
         # list_ids = []
         #         sequence = 0

@@ -1,7 +1,7 @@
 from itrack.geofence.models import Geofence
-from django.contrib import admin
+from django.contrib.gis import admin
 
 
 
-admin.site.register(Geofence)
+admin.site.register(Geofence,admin.GeoModelAdmin)
 # admin.site.register(GeoEntity)
