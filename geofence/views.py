@@ -47,18 +47,33 @@ def saveGeofence(request):
 
         wkt = "POLYGON(("
         i = 0
+        firstpoint = ""
         for coord in str_coords:
             if not coord == "":
                 i = i+1
-                wkt += coord.replace(","," ")
-                if i != len(str_coords) - 1:
-                  wkt += ","
+                arraytemp = coord.split(",")
+                wkt += arraytemp[1]
+                wkt += " "
+                wkt += arraytemp[0]
                 
+                if i == 1:
+                  firstpoint += arraytemp[1] + " " + arraytemp[0] 
+                
+                # wkt += coord.replace(","," ")
+                # if i != len(str_coords) - 1:
+                wkt += ","
+        
+        wkt += firstpoint
         wkt += "))"
+                
+        print wkt
         
-        g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=wkt)
+        g = Geofence(name=parsed_dict['name'],system=system,type='P',polygon=wkt)
+        g.save()
         
-        print g
+        # POLYGON((-11.112316760820072  -54.7505216875,-20.322675614289174  -54.3110685625,-15.727430115699335  -44.3794279375))
+        
+        # print wkt
         
         # g.save()
         
@@ -75,7 +90,7 @@ def saveGeofence(request):
         
         # print str_ids
         
-        return HttpResponse(str_ids)
+        return HttpResponse(g.id)
     elif parsed_dict['type'] == 'route':
         pass
     else:
