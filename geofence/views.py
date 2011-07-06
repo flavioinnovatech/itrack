@@ -47,35 +47,29 @@ def saveGeofence(request):
 
         wkt = "POLYGON(("
         i = 0
+        firstpoint = ""
         for coord in str_coords:
             if not coord == "":
                 i = i+1
-                wkt += coord.replace(","," ")
-                if i != len(str_coords) - 1:
-                  wkt += ","
+                arraytemp = coord.split(",")
+                wkt += arraytemp[1]
+                wkt += " "
+                wkt += arraytemp[0]
                 
+                if i == 1:
+                  firstpoint += arraytemp[1] + " " + arraytemp[0] 
+                
+                wkt += ","
+        
+        wkt += firstpoint
         wkt += "))"
+                
+        print wkt
         
-        g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=wkt)
+        g = Geofence(name=parsed_dict['name'],system=system,type='P',polygon=wkt)
+        g.save()
         
-        print g
-        
-        # g.save()
-        
-        # list_ids = []
-        #         sequence = 0
-        #         for ent in coords:
-            # p = GeoEntity(geofence=g,lat=float(ent[0]),lng=float(ent[1]),radius=0,seq=sequence)
-            # sequence += 1
-            # p.save()
-            # list_ids.append(p.id)
-
-        # for id in list_ids:
-            # str_ids+=str(id)+","
-        
-        # print str_ids
-        
-        return HttpResponse(str_ids)
+        return HttpResponse(g.id)
     elif parsed_dict['type'] == 'route':
         pass
     else:
@@ -89,21 +83,21 @@ def loadGeofences(request):
   data = []
   
   for g in geofence:
-    
-    if g.type == 'C':
+    data.append({"name":g.name,"id":g.id,"type":g.type,"polygon":g.polygon.coords})
+    # if g.type == 'C':
       # geoentities = GeoEntity.objects.filter(geofence=g)
-      for ge in geoentities:
-        coords = {"radius":ge.radius,"lat":ge.lat,"lng":ge.lng}
-        data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
-        
-    if g.type == 'P':
+      # for ge in geoentities:
+      #         coords = {"radius":ge.radius,"lat":ge.lat,"lng":ge.lng}
+      #         data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
+      #         
+      #     if g.type == 'P':
       # geoentities = # GeoEntity.objects.filter(geofence=g).order_by('seq')
-      coords = []
-      for ge in geoentities:
-        coord = {"lat":ge.lat,"lng":ge.lng}
-        coords.append(coord)
+      # coords = []
+      # for ge in geoentities:
+        # coord = {"lat":ge.lat,"lng":ge.lng}
+        # coords.append(coord)
         
-      data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
+      # data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
         
   # data.append({ "name" : g.name, "type": g.type })
   # data.append({ "name" : "g.name", "type": "g.type" })

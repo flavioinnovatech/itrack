@@ -46,29 +46,23 @@ def create(request,offset):
         if form.is_valid():           
             
             system_id = request.session['system']
-            v = form.save(commit=False)
-            v.system_id = system_id
-            v.save()
+            a = form.save(commit=False)
+            a.system_id = system_id
+            a.save()
             
             for dest in form.data.getlist('destinataries'):
-              v.destinataries.add(dest)
+              a.destinataries.add(dest)
               
             for vehi in form.data.getlist('vehicle'):
-              v.vehicle.add(vehi)
+              a.vehicle.add(vehi)
             
-            v.save()
+            a.save()
             
-            if request.POST.has_key("geoentities"):
-                g = Geofence(system = System.objects.get(pk=system_id),alert = v)
-                g.save()
-                geo_ids = map(lambda x : (int(x) if (x != '') else None),request.POST["geoentities"].split(","))
-                print geo_ids
-                # for ent in GeoEntity.objects.filter(id__in=geo_ids):
-                #     ent.geofence = g
-                #     ent.save()
-                
-                # GeoEntity.objects.filter(geofence = None).delete()
-              
+            for g in form.data.getlist('geofence'):
+              geofence = Geofence.objects.get(pk=g)
+              a.geofence = geofence
+      
+            a.save()        
             
             return HttpResponseRedirect("/alerts/create/finish")
         else:

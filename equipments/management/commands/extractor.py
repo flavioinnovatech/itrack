@@ -21,7 +21,8 @@ from itrack.equipments.models import Equipment, Tracking, TrackingData,CustomFie
 from itrack.alerts.models import Alert,Popup
 from itrack.vehicles.models import Vehicle
 from itrack.accounts.models import UserProfile
-from comparison import AlertComparison
+from comparison import AlertComparison,GeofenceComparison
+from django.contrib.gis.geos import Point
 
 
 
@@ -218,88 +219,103 @@ class Command(BaseCommand):
             if ([s],[],[]) == select.select([s],[],[],0):
                 outbox = s.recv(BUFFER_SIZE)
                 s.send(ack_msg)
-                xml =  ElementTree.fromstring(outbox.strip(""))
-                xmldict = XmlDictConfig(xml)
                 try:
-                    e = Equipment.objects.get(serial=xmldict['TCA']['SerialNumber'])
-                    searchdate = datetime.strptime(xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
-                    try:
-                        t = Tracking.objects.get(Q(equipment=e) & Q(eventdate=searchdate))
+                  xml =  ElementTree.fromstring(outbox.strip(""))
+                  xmldict = XmlDictConfig(xml)
+                  try:
+                      e = Equipment.objects.get(serial=xmldict['TCA']['SerialNumber'])
+                      searchdate = datetime.strptime(xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
+                      try:
+                          t = Tracking.objects.get(Q(equipment=e) & Q(eventdate=searchdate))
                     
-                    except ObjectDoesNotExist:
-                        t = Tracking(equipment=e, eventdate=searchdate, msgtype=xmldict['Datagram']['MsgType'])
-                        t.save()
-                        for k_type,d_type in xmldict.items():
-                            if type(d_type).__name__ == 'dict':
-                                for k_tag,d_tag in d_type.items():
-                                    try:
-                                        c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
-                                        tdata = TrackingData(tracking=t,type=c,value=d_tag)
-                                        tdata.save()
-                                    except ObjectDoesNotExist:
-                                        pass
-                        self.stdout.write('>> The tracking table sent on '+str(searchdate)+' for the equipment '+ xmldict['TCA']['SerialNumber'] +' has been saved successfully.\n')
+                      except ObjectDoesNotExist:
+                          t = Tracking(equipment=e, eventdate=searchdate, msgtype=xmldict['Datagram']['MsgType'])
+                          t.save()
+                          for k_type,d_type in xmldict.items():
+                              if type(d_type).__name__ == 'dict':
+                                  for k_tag,d_tag in d_type.items():
+                                      try:
+                                          c = CustomField.objects.get(Q(type=k_type)&Q(tag=k_tag))
+                                          tdata = TrackingData(tracking=t,type=c,value=d_tag)
+                                          tdata.save()
+                                      except ObjectDoesNotExist:
+                                          pass
+                          self.stdout.write('>> The tracking table sent on '+str(searchdate)+' for the equipment '+ xmldict['TCA']['SerialNumber'] +' has been saved successfully.\n')
                         
-    #      Here is the main alert handler. First, queries the database looking if there's some alert that matches the 
-    # received tracking. After that, for each alert in the result of the query, alert in each way available.
+      #      Here is the main alert handler. First, queries the database looking if there's some alert that matches the 
+      # received tracking. After that, for each alert in the result of the query, alert in each way available.
                         
-                        #get the vehicle object
-                        vehicle = Vehicle.objects.get(equipment = e)
-                        
-                        if vehicle.last_alert_date is not None:
-                            total_seconds = (searchdate - vehicle.last_alert_date).days * 24 * 60 * 60 + (searchdate - vehicle.last_alert_date).seconds
-                            self.stdout.write(str(total_seconds)+'\n')
-                            self.stdout.write(str(vehicle.threshold_time*60)+'\n')
+                          #get the vehicle object
+                          vehicle = Vehicle.objects.get(equipment = e)
+                          
+                          if vehicle.last_alert_date is not None:                            
+                              total_seconds = (searchdate - vehicle.last_alert_date).days * 24 * 60 * 60 + (searchdate - vehicle.last_alert_date).seconds
+                              self.stdout.write(str(total_seconds)+'\n')
+                              self.stdout.write(str(vehicle.threshold_time*60)+'\n')
                             
-                            #checks if there's enough time between the last alert sent and a possibly new one
-                            if total_seconds > vehicle.threshold_time*60:
-                                self.stdout.write('>> Alert threshold reached.\n')
-                                vehicle.last_alert_date = searchdate
-                                vehicle.save()
+                              #checks if there's enough time between the last alert sent and a possibly new one
+                              if total_seconds > vehicle.threshold_time*60:
+                                  self.stdout.write('>> Alert threshold reached.\n')
+                                  vehicle.last_alert_date = searchdate
+                                  vehicle.save()
+               
+                                  # geofence check
+                                  # geoalerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True) & ~Q(geofence=None))
+                                  # point = Point(xmldict['GPS']['Lat'],xmldict['GPS']['Long'])
+                                  # self.stdout.write(str(point))
+                                  
+                                  
+                                  # for geoalert in geoalerts:
+                                    
+               
+               
                                 
-                                
-                                alerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True))
-                                
-                                #iterates over the inputs and checks if it is needed to send the alert
-                                for k_type,d_type in dict(xmldict['Input'].items() + xmldict['LinearInput'].items()).items():
-                                            
-                                            try:
-                                                c = CustomField.objects.get(Q(tag=k_type)& ~Q(type='GPS'))
-                                                #function that returns true if the alert shall be sent, and false if not.
-                                                for alert in alerts:
-                                                    if AlertComparison(self,alert,c,d_type):
-                                                        if alert.receive_email:
-                                                          for destinatary in alert.destinataries.values():
-                                                            send_mail(str(alert), str(alert), "infotrack@infotrack.com.br", [destinatary['email']], fail_silently=False, auth_user=None, auth_password=None, connection=None)
-                                                            
-                                                        if alert.receive_sms:
-                                                            for destinatary in alert.destinataries.values():
-                                                                
-                                                                self.stdout.write(str(destinatary['username']) + '-> ')
-                                                                cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone                                               
-                                                                self.stdout.write(str(cellphone))
-                                                                self.stdout.write(SendSMS(cellphone,'[INFOTRACK] O alerta: "'+str(alert)+u'" foi disparado pelo veiculo '+str(vehicle)+'.')+'\n')                                                
+                                  alerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True))                              
+                                  
+                                  #iterates over the inputs and checks if it is needed to send the alert
+                                  for k_type,d_type in dict(xmldict['Input'].items() + xmldict['LinearInput'].items()).items():       
+                                              try:
+                                                  c = CustomField.objects.get(Q(tag=k_type)& ~Q(type='GPS'))
 
-                                                        if alert.receive_popup:
-                                                            for destinatary in alert.destinataries.all():
-                                                                popup = Popup(alert=alert,user=destinatary,vehicle=vehicle,date=searchdate)
-                                                                popup.save()             
-                                            except ObjectDoesNotExist:
-                                                pass
-                        else:
-                            vehicle.last_alert_date = searchdate
-                            vehicle.save()
+                                                  #function that returns true if the alert shall be sent, and false if not.
+                                                  for alert in alerts:
+                                                      if AlertComparison(self,alert,c,d_type):         
+                                                          
+                                                          if alert.receive_email:
+                                                            for destinatary in alert.destinataries.values():
+                                                              send_mail(str(alert), str(alert), "infotrack@infotrack.com.br", [destinatary['email']], fail_silently=False, auth_user=None, auth_password=None, connection=None)
+                                                            
+                                                          if alert.receive_sms:
+                                                              for destinatary in alert.destinataries.values():
+                                                                
+                                                                  self.stdout.write(str(destinatary['username']) + '-> ')
+                                                                  cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone                                               
+                                                                  self.stdout.write(str(cellphone))
+                                                                  self.stdout.write(SendSMS(cellphone,'[INFOTRACK] O alerta: "'+str(alert)+u'" foi disparado pelo veiculo '+str(vehicle)+'.')+'\n')                                                
+
+                                                          if alert.receive_popup:
+                                                              for destinatary in alert.destinataries.all():
+                                                                  popup = Popup(alert=alert,user=destinatary,vehicle=vehicle,date=searchdate)
+                                                                  popup.save()             
+                                              except ObjectDoesNotExist:
+                                                  self.stdout.write('Erro no Custom Field\n')
+                                                  pass
+                          else:
+                              vehicle.last_alert_date = searchdate
+                              vehicle.save()
                             
                                
                         
-                        #self.stdout.write(str(searchdate)+'\n')
-                        #self.stdout.write(str(a_set[1]["time_start"])+' >> '+str(a_set[1]["time_start"] < searchdate) +'\n')
-                        #self.stdout.write(str(a_set[1]["time_end"])+' >> '+str(a_set[1]["time_end"] > searchdate) +'\n')
+                          #self.stdout.write(str(searchdate)+'\n')
+                          #self.stdout.write(str(a_set[1]["time_start"])+' >> '+str(a_set[1]["time_start"] < searchdate) +'\n')
+                          #self.stdout.write(str(a_set[1]["time_end"])+' >> '+str(a_set[1]["time_end"] > searchdate) +'\n')
                         
                         
                         
                 
-                except ObjectDoesNotExist:
-                    pass
-                except KeyError:
-                    pass
+                  except ObjectDoesNotExist:
+                      pass
+                  except KeyError:
+                      pass
+                except:
+                  pass

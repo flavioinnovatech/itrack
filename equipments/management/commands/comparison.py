@@ -1,10 +1,15 @@
-
-
+from itrack.geofence.models import Geofence
+from django.contrib.gis.geos import Point
 
 
 def AlertComparison(command,alert,customfield,value):
+    self.stdout.write('aisdasoidhas')
+  
     if(alert.trigger.custom_field == customfield):
+      
         if customfield.type == 'Input':
+            print 'aidaidaidhaisdhashiu'
+          
             if value == 'ON': value = True 
             else: value = False
             if value == alert.state:
@@ -18,3 +23,7 @@ def AlertComparison(command,alert,customfield,value):
 		    return True
            
     return False
+
+def GeofenceComparison(request):
+  
+  return False

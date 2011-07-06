@@ -18,7 +18,7 @@ class Alert(models.Model):
     receive_email = models.BooleanField(verbose_name = 'Receber alerta por email')
     receive_sms = models.BooleanField(verbose_name = 'Receber alerta por SMS')
     receive_popup = models.BooleanField(verbose_name = 'Exibir popups na tela do usuário logado')
-    trigger = models.ForeignKey(CustomFieldName,verbose_name="Trigger",null=True)
+    trigger = models.ForeignKey(CustomFieldName,verbose_name="Evento",null=True)
     
     state = models.BooleanField(verbose_name = 'Alertar quando', choices=((True,"Ligado"),(False,"Desligado"),))
     geofence = models.ForeignKey(Geofence, verbose_name = "Cerca Eletrônica",null = True,blank = True)
