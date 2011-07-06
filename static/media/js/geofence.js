@@ -13,36 +13,93 @@ $(document).ready(function(){
 	var marker;
 	geocoder = new google.maps.Geocoder();
 	
-	function drawPolyRoute(result){
+function drawPolyRoute(result){
 	    for (i=0;i<result.routes.length;i++){
                 previous = result.routes[i].overview_path[0];
                 top_points = [];
                 bottom_points = [];
+                lastbrng = 0;
+                
+            /*
+                var p1 = new LatLon(result.routes[i].overview_path[1].lat(),result.routes[i].overview_path[1].lng());
+                var p2 = new LatLon(result.routes[i].overview_path[0].lat(),result.routes[i].overview_path[0].lng());
+                
+                brng = p1.bearingTo(p2);
+                p3 = p2.destinationPoint(brng-90,0.1);
+                p4 = p2.destinationPoint(brng+90,0.1);
+                
+                p3_google = new google.maps.LatLng(p3.lat(),p3.lon());
+                p4_google = new google.maps.LatLng(p4.lat(),p4.lon());
+                
+                top_points.push(p4_google);
+                bottom_points.push(p3_google);
+            */
+
+                for(j=0;j<result.routes[i].legs.length;j++){
+                    for(k=0;k<result.routes[i].legs[j].steps.length;k++){
+                        for(l=0; l<result.routes[i].legs[j].steps[k].path.length; l++){
+                            actual = result.routes[i].legs[j].steps[k].path[l];
+                            
+                            var p1 = new LatLon(previous.lat(),previous.lng());
+                            var p2 = new LatLon(actual.lat(),actual.lng());
+                    
+                            brng = p1.bearingTo(p2);
+                            deltabrng = lastbrng - brng;
+                            
+                            p3 = p1.destinationPoint(brng-90,0.1);
+                            p4 = p1.destinationPoint(brng+90,0.1);
+                    
+                    
+                            p3_google = new google.maps.LatLng(p3.lat(),p3.lon());
+                            p4_google = new google.maps.LatLng(p4.lat(),p4.lon());
+                    
+                            top_points.push(p3_google);
+                            bottom_points.push(p4_google);
+
+                            circle = new google.maps.Circle({
+                                center:actual,
+                                map:map,
+                                radius:100,
+                                strokeColor: "#FF0000",
+                                strokeOpacity: 0.8,
+                                strokeWeight: 2,
+                                fillColor: "#FF0000",
+                                fillOpacity: 0.35,
+                            });
+
+                            lastbrng = brng;
+                            previous = actual;
+                        }
+                    }
+                        
+            
+                }
+               
                 for(j=1;j<result.routes[i].overview_path.length;j++){
                     actual = result.routes[i].overview_path[j];
-                    
-                    //marker = new google.maps.Marker({position:actual, map: map});
-                    
-                    var p1 = new LatLon(previous.lat(),previous.lng());
-                    var p2 = new LatLon(actual.lat(),actual.lng());
-                    
-                    brng = p1.bearingTo(p2);
-                    
-                    p3 = p2.destinationPoint(brng-90,0.1);
-                    p4 = p2.destinationPoint(brng+90,0.1);
-                    
-                    p3_google = new google.maps.LatLng(p3.lat(),p3.lon());
-                    p4_google = new google.maps.LatLng(p4.lat(),p4.lon());
-                    
-                    top_points.push(p3_google);
-                    bottom_points.push(p4_google);
-                    
-                    //marker = new google.maps.Marker({position:p3_google, map: map});
-                    //marker = new google.maps.Marker({position:p4_google, map: map});
+
+                    //marker = new google.maps.Marker({position:actual, map: map, title: deltabrng.toString()});
 
                     previous = actual;
                 }
-                points_list = bottom_points.concat(top_points.reverse());
+                
+             /*
+                var p1 = new LatLon(result.routes[i].overview_path[j-2].lat(),result.routes[i].overview_path[j-2].lng());
+                var p2 = new LatLon(result.routes[i].overview_path[j-1].lat(),result.routes[i].overview_path[j-1].lng());
+                
+                brng = p1.bearingTo(p2);
+                p3 = p2.destinationPoint(brng-90,0.1);
+                p4 = p2.destinationPoint(brng+90,0.1);
+                
+                p3_google = new google.maps.LatLng(p3.lat(),p3.lon());
+                p4_google = new google.maps.LatLng(p4.lat(),p4.lon());
+                
+                top_points.push(p3_google);
+                bottom_points.push(p4_google);
+            */
+                
+                
+                points_list = top_points.concat(bottom_points.reverse());
                 poligono = new google.maps.Polygon({
                     paths: points_list,
                     strokeColor: "#FF0000",
@@ -51,10 +108,11 @@ $(document).ready(function(){
                     fillColor: "#FF0000",
                     fillOpacity: 0.35,
                     map:map
-                  });                      
+                  });
+                                 
          }
     }
-	
+                    
 	
 	
 	var input = "-22.896359,-47.060092";
@@ -283,7 +341,7 @@ $(document).ready(function(){
     });
     
      
-  })
+  });
   
   // Add inputs when desirable
   $("#addpoint").click(function(){
@@ -495,7 +553,7 @@ $(document).ready(function(){
              drawPolyRoute(result);
 
                                       
-             }
+             
              $("#routedistance").attr("value",distance);
              geofences.push(directionsDisplay);
              $("#saveroute").removeAttr('disabled');
@@ -507,8 +565,8 @@ $(document).ready(function(){
          });
        }
        
-     });
-  });
-  
-  
+       });
+    });
+
 });
+  
