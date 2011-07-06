@@ -105,6 +105,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django403.middleware.Django403Middleware',
     'itrack.tracking.middleware.VisitorTrackingMiddleware',
+    'itrack.tracking.middleware.VisitorCleanUpMiddleware',
     'itrack.accounts.middleware.UserRestrictMiddleware',
 
 )
