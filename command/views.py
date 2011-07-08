@@ -1,14 +1,25 @@
 # -*- coding:utf8 -*-
-from itrack.command.models import Command
-from itrack.vehicles.models import Vehicle
-from itrack.command.forms import CommandForm
-from itrack.equipments.models import Equipment,CustomFieldName,CustomField
-from itrack.system.models import System
+import sys 
+import socket
+import os
+import sys 
+import select
+from xml.etree import cElementTree as ElementTree
+import time
+from datetime import datetime
+
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required,user_passes_test
+from django.core.exceptions import ObjectDoesNotExist
+
+from itrack.command.models import Command, CPRSession
+from itrack.vehicles.models import Vehicle
+from itrack.command.forms import CommandForm
+from itrack.equipments.models import Equipment,CustomFieldName,CustomField, Tracking,TrackingData
+from itrack.system.models import System
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
@@ -16,29 +27,91 @@ def index(request):
     system = request.session['system']
     
     equipments = Command.objects.filter(system = system)
-    
     rendered_list = ""
     
+    display_list = []
     for c in equipments:
-        try:
-            rendered_list+=u"<tr style='width:5%;'><td style=\"width:100px\">"+c.equipment.name+" </td><td style=\"width:100px\">"+str(c.type)+"</td><td style=\"width:100px\">"+str(c.state)+"</td><td style=\"width:150px\">"+(str(c.time_sent) if (c.time_sent is not None) else "")+"</td><td style=\"width:150px\">"+(str(c.time_received) if (c.time_received is not None) else "")+"</td><td style=\"width:150px\">"+(str(c.time_executed) if (c.time_executed is not None) else "")+"</td><td> <a class='table-button'  href=\"/commands/delete/"+str(c.id)+"/\">Apagar</a></td></tr>"
-        except:
-            pass
+        
+        #checks the status of the command and update if matches the equipment tracking table
+        tracking = Tracking.objects.filter(equipment=c.equipment.equipment).order_by('eventdate').reverse()[0]
+        trackingdata = TrackingData.objects.filter(tracking=tracking).filter(type=c.type.custom_field)
+        if c.action == 'ON' and len(trackingdata) > 0:
+            c.state = u"2"
+            c.time_executed = tracking.eventdate
+            c.save()
+        elif c.action == 'OFF' and len(trackingdata) == 0 :
+            c.state = u"2"
+            c.time_executed = tracking.eventdate
+            c.save()
+        
+        display_list.append({
+            'plate': c.equipment.license_plate,
+            'type': c.type,
+            'state': str(c.state),
+            'time_sent': (c.time_sent),
+            'time_received': (c.time_received),
+            'time_executed': (c.time_executed),
+            'id': c.id,
+            'action' : c.action,
+        })    
     
     return render_to_response("command/templates/index.html",locals(),context_instance=RequestContext(request))
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
-def create(request,offset):
+def create(request,offset,vehicle=None):
     
     if request.method == 'POST':
         
         form = CommandForm(request.POST)
         if form.is_valid():
             s = System.objects.get(pk=int(offset))
+
             c = form.save(commit=False)
+            
+            #checks if the field exists for the selected equipment
+            try:
+                field_check = Vehicle.objects.get(equipment__type__custom_field=c.type.custom_field)
+            except ObjectDoesNotExist:
+                return render_to_response("command/templates/error.html",locals(),context_instance=RequestContext(request),)
+            
+            #checks if there's no other command in process for this equipment
+            
+            try:
+                command_check = Command.objects.filter(equipment = c.equipment)
+                print len(command_check)
+                if len(command_check) > 0:
+                    return render_to_response("command/templates/error2.html",locals(),context_instance=RequestContext(request),)
+            except:
+                pass
+            
+            #accessing the protocols to send the command
+            sess = CPRSession.objects.all()[0]
+            
+            TCP_IP = '187.115.25.240'   # the server IP address
+            TCP_PORT = 5000			# the server port
+            BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
+            
+            ack_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"98\" Reason=\"0\" Save=\"FALSE\"/><Data /></Package>"
+            
+            s_out = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s_out.connect((TCP_IP, TCP_PORT))
+            
+            seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+sess.key+"\" /></Package>"
+            
+            s_out.send(seckey_msg)
+            data2 = s_out.recv(BUFFER_SIZE)
+            
+            
+            blocker_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"6\" />\n  <Data Account=\"2\" ProductId=\""+str(c.equipment.equipment.type.product_id)+"\" Serial=\""+c.equipment.equipment.serial+"\" Priority=\"2\" />\n  <Command "+c.type.custom_field.tag+"=\""+c.action+"\"/>\n</Package>"
+            
+            s_out.send(blocker_msg)
+            data2 = s_out.recv(BUFFER_SIZE)
+            s_out.send(ack_msg)
+            
             c.system = s
-            c.state = "Enviado para o servidor"
+            c.state = 0
+            c.time_sent = datetime.now()
             c.save()
             return HttpResponseRedirect("/commands/create/finish")
         else:
@@ -74,6 +147,7 @@ def create(request,offset):
         form.fields["equipment"].queryset = Vehicle.objects.filter(id__in=v_set)
         form.fields["equipment"].label = "Veículo"
         form.fields["equipment"].empty_label = "(Selecione a placa)"
+        form.fields["equipment"].initial = vehicle
         form.fields["type"].queryset = CustomFieldName.objects.filter(Q(custom_field__type = 'Output') & Q(system = int(offset)) & Q(custom_field__availablefields__system = int(offset))).distinct()
         form.fields["type"].empty_label = "(selecione o Comando)"
         

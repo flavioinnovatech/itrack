@@ -1,0 +1,14 @@
+{% extends "templates/base.html" %}
+
+{%block title%}Infotrack - Envio de comando {% endblock %}
+{% block content %}
+
+
+<div  class="main-form">
+<h1><img class="icon" src="/media/img/command.png">Envio de comando</h1>
+<hr />
+<h2> Erro: Já existe um comando sendo processado para este veículo </h2>
+<em>O comando a ser enviado selecionou um veículo com um comando já existente. Por favor, exclua qualquer comando relacionado ao veículo selecionado antes de enviar outro comando. <a href="{% url command.views.index %}"> Clique aqui para voltar a tela de histórico de comandos. </a></em>
+
+</div>
+{% endblock %}
