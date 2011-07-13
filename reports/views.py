@@ -127,7 +127,7 @@ def report(request,offset):
             
             if request.POST['type'] == 'CSV':
                 response = HttpResponse(mimetype='text/csv')
-                response['Content-Disposition'] = 'attachment; filename=somefilename.csv'
+                response['Content-Disposition'] = 'attachment; filename=report.csv'
                 writer = UnicodeWriter(response)
                 writer.writerow(title_row)
                 print "aqui!"
