@@ -21,6 +21,12 @@ from itrack.command.forms import CommandForm
 from itrack.equipments.models import Equipment,CustomFieldName,CustomField, Tracking,TrackingData
 from itrack.system.models import System
 
+TCP_IP = '187.115.25.240'   # the server IP address
+#TCP_IP = '192.168.1.119'
+TCP_PORT = 5000			# the server port
+BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
+
+
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def index(request):
@@ -87,10 +93,6 @@ def create(request,offset,vehicle=None):
             
             #accessing the protocols to send the command
             sess = CPRSession.objects.all()[0]
-            
-            TCP_IP = '187.115.25.240'   # the server IP address
-            TCP_PORT = 5000			# the server port
-            BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
             
             ack_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"98\" Reason=\"0\" Save=\"FALSE\"/><Data /></Package>"
             

@@ -410,6 +410,12 @@ html[xmlns] #nav {
     margin-right:auto;
 }
 
+.item-alone{
+    float:left;
+    width:200px;
+    padding:10px;
+}
+
 .item-left{
     float:left;
     text-align:right;
@@ -432,7 +438,7 @@ html[xmlns] #nav {
     margin:40px;
     min-width:200px;
 }
-.item-right .errorlist{
+.errorlist{
     color:red;
     padding-left:10px;
 }

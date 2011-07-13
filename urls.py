@@ -102,6 +102,8 @@ url(r'^geofence/load/$','geofence.views.loadGeofences'),
 
 url(r'multispectral/$','main.views.multispectral'),
 
+url(r'reports/(\d+)/$','reports.views.report'),
+
 
 (r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 
