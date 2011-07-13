@@ -1,0 +1,100 @@
+{% extends "templates/base.html" %}
+
+{% block head %}
+
+<link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
+<script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+<script type="text/javascript" src="/media/js/jsi18n.js"></script>
+<script type="text/javascript" src="/media/js/jquery-ui-timepicker-addon.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('.datepicker').datetimepicker({
+        showSecond: true,
+        timeFormat: 'hh:mm:ss',
+        dateFormat: 'yy-mm-dd'
+    });
+    
+    
+    $('#exportCSV').click(function(){
+        $('input[name="type"]').attr("value","CSV");
+        document.forms["formz"].submit();
+    });
+    
+    
+    $('#exportPDF').click(function(){
+        $('input[name="type"]').attr("value","PDF");
+        document.forms["formz"].submit();
+    });
+    
+    $('#exportHTML').click(function(){
+        $('input[name="type"]').attr("value","HTML");
+        document.forms["formz"].submit();
+    });
+});
+</script>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div  class="main-form">
+{% block form_title %}
+<h1><img class="icon" src="/media/img/command.png">Processar Relatório </h1>
+<hr />
+<h2>Filtros</h2>
+<em>Informe qual o período e veículo do relatório, e quais campos devem aparecer na tabela.</em>
+{% endblock %}
+<form action="." method="post" enctype="multipart/form-data" id="formz">{% csrf_token %}
+      <table>
+    {% for field in form %}
+
+        <tr>
+        <div class="form-item">
+        {% if field.label == 'Fields' or field.label == 'Vehicle fields' %}
+        <td>
+            <div class="item-alone">          
+                  <p class="errorlist">{{ field.errors }} </p>
+                <p class="field">{{ field }} </p>          
+            </div>
+        </td>
+        <td>
+
+        </td>
+        {% else %}
+        <td>
+            <div class="item-left">          
+                  <p>{{ field.label_tag }} {%if field.field.required%} *{%endif%}</p>
+                  <p id="help">{{ field.help_text|wordwrap:"50"|linebreaksbr }} </p>
+            </div>
+        </td>
+        
+        <td>
+            <div class="item-right">
+                <p class="errorlist">{{ field.errors }} </p>
+                <p class="field">{{ field }} </p>          
+            </div>
+        </td>
+        {% endif %}
+        
+        </div>
+        </tr>
+    {% endfor %}
+    </table>
+{{ previous_fields|safe }}
+<input type="hidden" name="type" />
+<input type="submit" value="Exportar como CSV" class="table-button" style="padding:10px;float:right;" id="exportCSV" />
+<!-- <input type="submit" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" />
+<input type="submit" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" /> -->
+<p class="clear">
+</form>
+
+</div>
+{% endblock %}
