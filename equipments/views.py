@@ -19,10 +19,6 @@ from http403project.http import Http403
 from django.db.models import Q,Count
 
 from itrack.system.tools import findChild, isChild, serializeChild, findDirectChild
-
-
-
-
         
 #renders the HTML to edit childs
 def render_equipment_html(childs,father="",rendered_list=""):
@@ -124,41 +120,34 @@ def assoc_finish(request):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 @system_has_access()    
 def associations(request,offset):
-
-        childs = findChild(request.session['system'])
-        parent = System.objects.get(pk=int(offset)).parent
-    
-        system_name = System.objects.get(pk=int(offset))
-        
-        if request.method == 'POST':
-            form = EquipmentsForm(request.POST)
-            if form.is_valid():
-                eqset = Equipment.objects.filter(system=int(offset))
-                for eq in eqset:
-                    eq.system.remove(system_name)
-                
-                for eq in form.cleaned_data["equipments"]:
-                    eq.system.add(system_name)
-                    eq.save()
-                
-                if request.session["system_being_created"]:
-                    return HttpResponseRedirect("/equipment/permissions/"+offset)
-                else:  
-                    return HttpResponseRedirect("/equipment/associations/finish/")
-        else:
-            form = EquipmentsForm()
-            form.fields["equipments"].label = ""
-            form.fields["equipments"].initial = Equipment.objects.filter(system=int(offset))
+    if request.method == 'POST':
+        form = EquipmentsForm(request.session["system"],int(offset),request.POST)
+        if form.is_valid():
+            print form.__dict__
+            system_name = System.objects.get(pk=int(offset))
+            eqset = Equipment.objects.filter(system=int(offset))
             
-            #searching the brothers of the system: the not_systems list is here to guarantee that only one subsystem
-            #can have an equipment of the parent's equip list.
-            not_systems =  findDirectChild(parent.id)
-            not_systems.remove(int(offset))
-            print not_systems
-            if not_systems is None:
-                not_systems = []
-            form.fields["equipments"].queryset = Equipment.objects.filter(system=parent).exclude(system__in=not_systems).order_by('type')
-            return render_to_response("equipments/templates/associations.html",locals(),context_instance=RequestContext(request))
+            for eq in eqset:
+                
+                eq.system.remove(system_name)
+            
+            eqset = Equipment.objects.in_bulk(form.cleaned_data["equipments"])
+            print eqset
+            for k,eq in eqset.items():
+                eq.system.add(system_name)
+                eq.save()
+            
+            if request.session["system_being_created"]:
+                return HttpResponseRedirect("/equipment/permissions/"+offset)
+            else:  
+                return HttpResponseRedirect("/equipment/associations/finish/")
+    else:
+        
+        form = EquipmentsForm(request.session["system"],int(offset))
+        
+        print form
+
+        return render_to_response("equipments/templates/associations.html",locals(),context_instance=RequestContext(request))
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
