@@ -17,6 +17,7 @@ class Alert(models.Model):
     time_end = models.DateTimeField('fim do monitoramento')
     receive_email = models.BooleanField(verbose_name = 'Receber alerta por email')
     receive_sms = models.BooleanField(verbose_name = 'Receber alerta por SMS')
+    alerttext = models.CharField(max_length=160,verbose_name = 'Texto a ser enviado por SMS/Email',null=True,blank=True)
     receive_popup = models.BooleanField(verbose_name = 'Exibir popups na tela do usuário logado')
     trigger = models.ForeignKey(CustomFieldName,verbose_name="Evento",null=True)
     
