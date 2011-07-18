@@ -16,6 +16,7 @@ class Geofence(models.Model):
         )
     type = models.CharField(max_length=1, choices=types)
     polygon = models.MultiPolygonField(null = True)
+    linestring = models.LineStringField(null = True)
     objects = models.GeoManager()
 
     def __unicode__(self):

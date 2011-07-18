@@ -21,8 +21,6 @@ function drawPolyRoute(result){
                 bottom_points = [];
                 circle_points = [];
                 lastbrng = 0;
-                
-
                 for(j=0;j<result.routes[i].legs.length;j++){
                     for(k=0;k<result.routes[i].legs[j].steps.length;k++){
                         for(l=0; l<result.routes[i].legs[j].steps[k].path.length; l++){
@@ -418,9 +416,15 @@ function drawPolyRoute(result){
     creator.destroy();
     var directionDisplay;
     var directionsService = new google.maps.DirectionsService();
-    directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsDisplay.setMap(map);
-
+    directionsDisplay = new google.maps.DirectionsRenderer({
+       draggable: true
+     });
+     directionsDisplay.setMap(map);
+     google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+       distance = computeTotalDistance(directionsDisplay.directions);
+       $("#routedistance").attr("value",distance);
+     });
+   
     if (geofences.length > 0) {
       geofences[0].setMap(null);
       geofences.pop();
@@ -441,15 +445,15 @@ function drawPolyRoute(result){
       points.push(address);
       var waypoint = {location:address};
       waypoints.push(waypoint);
-
-         
+      realwaypoints = waypoints.slice();
+      realwaypoints.pop();       
     });
 
     var request = {
       origin:points[0], 
       destination:points[(points.length)-1],
       optimizeWaypoints:true,
-      waypoints:waypoints,
+      waypoints:realwaypoints,
       travelMode: google.maps.DirectionsTravelMode.DRIVING
     };
     directionsService.route(request, function(result, status) {
@@ -464,7 +468,7 @@ function drawPolyRoute(result){
         }
         
         //poligono cercando a rota
-        coords = drawPolyRoute(result);
+        // coords = drawPolyRoute(result);
         
         
         $("#routedistance").attr("value",distance/1000);
@@ -483,6 +487,16 @@ function drawPolyRoute(result){
 
   });
   
+  function computeTotalDistance(result) {
+    var total = 0;
+    var myroute = result.routes[0];
+    for (i = 0; i < myroute.legs.length; i++) {
+      total += myroute.legs[i].distance.value;
+    }
+    total = total / 1000.
+    return total;
+  }
+  
   //Route tool
   $("#routetool").click(function(){
 
@@ -490,8 +504,14 @@ function drawPolyRoute(result){
      if (typeof directionsDisplay != 'undefined') directionsDisplay.setMap(null);
      var directionDisplay;
      var directionsService = new google.maps.DirectionsService();
-     directionsDisplay = new google.maps.DirectionsRenderer();
+     directionsDisplay = new google.maps.DirectionsRenderer({
+       draggable: true
+     });
      directionsDisplay.setMap(map);
+     google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+       distance = computeTotalDistance(directionsDisplay.directions);
+       $("#routedistance").attr("value",distance);
+     });
      
      if (geofences.length > 0) {
        geofences[0].setMap(null);
@@ -500,22 +520,26 @@ function drawPolyRoute(result){
      if (typeof poligono != 'undefined') poligono.setMap(null);
      var points = [];
      waypoints = [];
+     var realwaypoints = [];
+     var route;
      
      google.maps.event.clearInstanceListeners(map);
      google.maps.event.addListener(map,"click",function(point){
 
        points.push(point);
-              
+           
        if (points.length >= 2) {
          
          var waypoint = {location:point.latLng};
          waypoints.push(waypoint);
-          
+         realwaypoints = waypoints.slice();
+         realwaypoints.pop();
+         
          var request = {
            origin:points[0].latLng, 
            destination:points[(points.length)-1].latLng,
            optimizeWaypoints:true,
-           waypoints:waypoints,
+           waypoints:realwaypoints,
            travelMode: google.maps.DirectionsTravelMode.DRIVING
          };
          if (typeof result != 'undefined') result.setMap(null);
@@ -523,42 +547,31 @@ function drawPolyRoute(result){
          directionsService.route(request, function(result, status) {
            if (status == google.maps.DirectionsStatus.OK) {
              directionsDisplay.setDirections(result);
-
-             var distance = 0;
              
-             for (i=0;i<result.routes.length;i++){
-               for (j=0;j<result.routes[i].legs.length;j++){ 
-                 distance += result.routes[i].legs[j].distance["value"];
-                 //$('#appendpoints').append(result.routes[i].legs[j]);
-               }
-             }
-
-            //poligono cercando a rota
-             coords = drawPolyRoute(result);
-
-                                      
+            for (i=0;i<result.routes.length;i++){
+              for(j=0;j<result.routes[i].legs.length;j++){
+                for(k=0;k<result.routes[i].legs[j].steps.length;k++){
+                  for(l=0; l<result.routes[i].legs[j].steps[k].path.length; l++){
+                      alert(result.routes[i].legs[j].steps[k].path);
+                  }
+                }
+              }
+            }
              
-             $("#routedistance").attr("value",distance/1000);
-             geofences.push(directionsDisplay);
-             $("#saveroute").removeAttr('disabled');
+             
            }
-
            else {
              alert('Rota inválida');
            }
          });
        }
-       
        });
        
        
     });
 
     $('#saveroute').click(function(){
-          
-    // var match = /\\(.+?\\)/.exec(creator.showData());
-        
-    // (-12.746114226507563, -52.9927091875)(-15.981071606666031, -43.9399748125)(-22.36906704273474, -56.4204435625)
+                  
 
     $('#id_geoentities').remove();
       
@@ -578,15 +591,17 @@ function drawPolyRoute(result){
             dict_to_send = {};
             dict_to_send['polygon'] = "";
             dict_to_send['points'] = ""; 
-            for(i=0; i < coords['polygon'].length; i++){
-                dict_to_send['polygon'] += "("+coords['polygon'][i].lat()+","+coords['polygon'][i].lng()+")";
-            }
-            for(i=0; i < coords['points'].length; i++){
-                dict_to_send['points'] += "("+coords['points'][i].lat()+","+coords['points'][i].lng()+")";
-            }
+            // for(i=0; i < coords['polygon'].length; i++){
+                // dict_to_send['polygon'] += "("+coords['polygon'][i].lat()+","+coords['polygon'][i].lng()+")";
+            // }
+            // for(i=0; i < coords['points'].length; i++){
+                // dict_to_send['points'] += "("+coords['points'][i].lat()+","+coords['points'][i].lng()+")";
+            // }
             $.post(
                 "/geofence/save/",
-                {name:geofencename,type:'route', coords: dict_to_send, system : window.location.pathname.split("/")[3]},
+                {name:geofencename,type:'route', system : window.location.pathname.split("/")[3]},
+                
+                // {name:geofencename,type:'route', coords: dict_to_send, system : window.location.pathname.split("/")[3]},
                 function(data){
                     $('form').append("<input type='hidden' name='geoentities' id='id_geoentities' value='"+data+"' />");
                     $("#dialog").dialog("close");
