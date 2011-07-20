@@ -4,4 +4,5 @@ from django.contrib.gis import admin
 
 
 admin.site.register(Geofence,admin.GeoModelAdmin)
+# ,admin.GeoModelAdmin
 # admin.site.register(GeoEntity)

@@ -460,18 +460,21 @@ function drawPolyRoute(result){
       if (status == google.maps.DirectionsStatus.OK) {
         directionsDisplay.setDirections(result);
         
-        distance = 0;
-        for (i=0;i<result.routes.length;i++){
-          for (j=0;j<result.routes[i].legs.length;j++){ 
-            distance += result.routes[i].legs[j].distance["value"];
+        for (i=0;i<result.routes.length;i++){ 
+          for(j=0;j<result.routes[i].legs.length;j++){
+            for(k=0;k<result.routes[i].legs[j].steps.length;k++){
+              for(l=0; l<result.routes[i].legs[j].steps[k].path.length; l++){
+                  var string =""
+                  string += result.routes[i].legs[j].steps[k].path[l]
+                  path.push(string);
+              }
+            }
           }
         }
         
-        //poligono cercando a rota
-        // coords = drawPolyRoute(result);
+
         
         
-        $("#routedistance").attr("value",distance/1000);
         geofences.push(directionsDisplay);
         $("#saveroute").removeAttr('disabled');
       }
@@ -498,6 +501,7 @@ function drawPolyRoute(result){
   }
   
   //Route tool
+  var path=[];
   $("#routetool").click(function(){
 
      creator.destroy();
@@ -548,17 +552,18 @@ function drawPolyRoute(result){
            if (status == google.maps.DirectionsStatus.OK) {
              directionsDisplay.setDirections(result);
              
-            for (i=0;i<result.routes.length;i++){
+            for (i=0;i<result.routes.length;i++){ 
               for(j=0;j<result.routes[i].legs.length;j++){
                 for(k=0;k<result.routes[i].legs[j].steps.length;k++){
                   for(l=0; l<result.routes[i].legs[j].steps[k].path.length; l++){
-                      alert(result.routes[i].legs[j].steps[k].path);
+                      var string =""
+                      string += result.routes[i].legs[j].steps[k].path[l]
+                      path.push(string);
                   }
                 }
               }
-            }
-             
-             
+            }          
+                           
            }
            else {
              alert('Rota inválida');
@@ -572,7 +577,7 @@ function drawPolyRoute(result){
 
     $('#saveroute').click(function(){
                   
-
+    // alert(path.toSource());
     $('#id_geoentities').remove();
       
     $("#generaldialog").html("");
@@ -588,18 +593,9 @@ function drawPolyRoute(result){
           geofencename = $("#geofencename").val();
           
           if(geofencename){ 
-            dict_to_send = {};
-            dict_to_send['polygon'] = "";
-            dict_to_send['points'] = ""; 
-            // for(i=0; i < coords['polygon'].length; i++){
-                // dict_to_send['polygon'] += "("+coords['polygon'][i].lat()+","+coords['polygon'][i].lng()+")";
-            // }
-            // for(i=0; i < coords['points'].length; i++){
-                // dict_to_send['points'] += "("+coords['points'][i].lat()+","+coords['points'][i].lng()+")";
-            // }
             $.post(
                 "/geofence/save/",
-                {name:geofencename,type:'route', system : window.location.pathname.split("/")[3]},
+                {name:geofencename,type:'route', system : window.location.pathname.split("/")[3],coords:path},
                 
                 // {name:geofencename,type:'route', coords: dict_to_send, system : window.location.pathname.split("/")[3]},
                 function(data){
