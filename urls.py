@@ -104,6 +104,8 @@ url(r'^geofence/load/$','geofence.views.loadGeofences'),
 url(r'^paths/$','paths.views.index'),
 url(r'^paths/load/$','paths.ajax.load'),
 
+url(r'^drivers/(\d+)/$','drivers.views.index'),
+
 url(r'multispectral/$','main.views.multispectral'),
 
 url(r'reports/(\d+)/$','reports.views.report'),
