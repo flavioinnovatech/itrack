@@ -73,6 +73,7 @@ url(r'^vehicles/swap/finish/$','vehicles.views.swap_finish'),
 
 url(r'^commands/$', 'command.views.index'),
 url(r'^commands/create/(\d+)/$','command.views.create'),
+url(r'^commands/load/$','command.views.load'),
 url(r'^commands/create/(\d+)/(\d+)/$','command.views.create'),
 url(r'^commands/create/finish/$','command.views.create_finish'),
 url(r'^commands/delete/(\d+)/$','command.views.delete'),
