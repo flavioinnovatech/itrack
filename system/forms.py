@@ -115,8 +115,18 @@ def change_css(new_setting):
           new_setting.css = '#topContainer .centerContainer{ background-image: url(/media/'+new_setting.logo.name+');}'
           new_setting.css +='body {background-color:#'+new_setting.color_site_background+';}'
           
-          new_setting.css += '.color1 {background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 95%);}'
+          color1 = hex_to_rgb(new_setting.color1)
+          color1 = ", ".join(map( str, color1 ))
+          
+          print color1
+          
+          new_setting.css += '.color1 {background-image: -moz-linear-gradient(rgba('+color1+', 0.2) 0%, rgba('+color1+', 1) 95%);}'
 
-          print new_setting.css
+          # print new_setting.css
           
           return new_setting
+
+def hex_to_rgb(value):
+    value = value.lstrip('#')
+    lv = len(value)
+    return tuple(int(value[i:i+lv/3], 16) for i in range(0, lv, lv/3))
