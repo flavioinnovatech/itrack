@@ -20,8 +20,17 @@ DATABASES = {
         'USER': 'postgres',                      # Not used with sqlite3.
         'PASSWORD': 'infotrack',                  # Not used with sqlite3.
         'HOST': '187.115.25.240',
-        # 'HOST': '192.168.1.197',                      # Set to empty string for localhost. Not used with sqlite3.
+        #'HOST': '192.168.1.197',                      # Set to empty string for localhost. Not used with sqlite3.
+
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
+	},
+	'geocode':{
+	    'ENGINE':'django.db.backends.sqlite3',
+	    'NAME': 'geocodes.db',
+	    'USER': '',
+	    'PASSWORD': '',
+	    'HOST': '',
+	    'PORT': '',	
 	}
 }
 

@@ -1,0 +1,46 @@
+{% extends "templates/base.html" %}
+
+{% block head %}
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false"></script>
+<script type="text/javascript" src="/media/js/polygon(1.0).js"></script>
+<script type="text/javascript" src="/media/js/paths.js"></script>
+<script type="text/javascript" src="/media/js/jquery-ui-timepicker-addon.js"></script>
+<script type="text/javascript" src="/media/js/ajaxsend.js"></script>
+<script type="text/javascript" src="/media/js/alertcheck.js"></script>
+{% endblock %}
+
+{% block content %}
+<div  class="main-form" id="geofencetool">
+    <h1><img class="icon" src="/media/img/command.png">Trajetos </h1><hr/>
+<h2>Consultar Trajeto</h2>
+<em></em>
+    <div style="float:left;width:190px;height:100%;">
+        <form style="margin:0;">
+            <fieldset style="border: 1px solid #999; width:190px; padding:5px;">
+            <legend style="font-weight:bold;">Trajeto</legend>
+                <p>{{form.vehicle.label}}:</p><p>{{form.vehicle}}</p>
+                <p>{{form.period_start.label}}:</p><p>{{form.period_start}}</p>
+                <p>{{form.period_end.label}}:</p><p>{{form.period_end}}</p>
+                <p>{{form.geofence.label}}:</p><p>{{form.geofence}}</p>
+                <div style="text-align:center;margin:10px;"><a href="#" id="send" class="table-button" style="margin: 5px; padding:5px;">Buscar</a></div>
+            </fieldset>
+        </form>
+        
+
+        <fieldset style="border: 1px solid #999; width:190px; padding:5px;">
+            <legend style="font-weight:bold;">Posição do cursor</legend>
+            <p><span style="text-align:right;">Latitude:</span><input id="lat" type="text" style="width: 118px;position:relative;left:14px;"></input></p>
+            <p><span style="text-align:right;">Longitude:</span><input id="lng" type="text" style="margin: 5px 0 5px 4px;width: 118px;"></input></p>
+        </fieldset>
+
+        
+    </div>
+    
+    
+    <div id="map" style="float:right;height:555px;width:76%;background-color:white;margin-top:10px;"></div>
+   </div>
+  
+  </div>
+
+   
+{% endblock %}

@@ -24,7 +24,8 @@ from itrack.system.models import System
 from querystring_parser import parser
 
 TCP_IP = '187.115.25.240'   # the server IP address
-# TCP_IP = '192.168.1.119'
+#TCP_IP = '192.168.1.119'
+
 TCP_PORT = 5000			# the server port
 BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
 

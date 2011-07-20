@@ -25,4 +25,4 @@ class ReportForm(Form):
         self.fields['vehicle'].queryset = Vehicle.objects.filter(system=system)
         self.fields['fields'].queryset = CustomFieldName.objects.filter(system=system).filter(custom_field__availablefields__system= system).distinct()
         
-        #
+

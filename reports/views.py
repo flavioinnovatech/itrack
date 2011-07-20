@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Create your views here.
 import csv,codecs, cStringIO
+from datetime import datetime
 
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
@@ -61,7 +62,19 @@ def report(request,offset):
         form = ReportForm(int(offset),request.POST)
         
         if form.is_valid():
+            
+            d1 = datetime.now()
+            total_geocode_time = 0
             trackings = Tracking.objects.filter(Q(eventdate__gte=form.cleaned_data['period_start']) & Q(eventdate__lte=form.cleaned_data['period_end']))
+            datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings)&(Q(type_tag='Lat')|Q(type_tag='Long')))
+
+            tdata_dict = {}
+            for tdata in datas:
+                tdata_dict.setdefault(tdata.tracking.eventdate, []).append(tdata)
+            
+            print "database query >>",(datetime.now() - d1).total_seconds() , 's'
+            d2 = datetime.now()
+            #print tdata_dict
             
             #initializing the resources that are going to be used to mount the table
             table_content = []
@@ -70,24 +83,23 @@ def report(request,offset):
             display_fields = map(lambda x: x.custom_field,form.cleaned_data["fields"])
 
             title_row = map(lambda x: firstRowTitles(str(x)), form.cleaned_data['vehicle_fields']) + map(lambda x: unicode(x),display_fields)
-
+            
+            equip_system = lowestDepth(vehicle.equipment.system.all()).name
+            
             #main loop for each tracking found
-            for tracking in trackings:
+            for date, tdata in tdata_dict.items():
                 item = {}
                 output_list = []
-                tdata = TrackingData.objects.filter(tracking=tracking)
                 
                 #data for vehicle fields
+                d4 = datetime.now()
                 for data in form.cleaned_data['vehicle_fields']:
                     if data != "address" and data != "date" and data !="system":
-                        item[data] = vehicle.__dict__[data]
                         output_list.append(vehicle.__dict__[data])
                     elif data == "date":
-                        item["date"] = str(tracking.eventdate)
-                        output_list.append(str(tracking.eventdate))
+                        output_list.append(str(date))
                     elif data == "system":
-                        item["system"] = lowestDepth(vehicle.equipment.system.all()).name
-                        output_list.append(lowestDepth(vehicle.equipment.system.all()).name)
+                        output_list.append(equip_system)
                     elif data == "address":
                         lat = ''
                         lng = ''
@@ -103,18 +115,19 @@ def report(request,offset):
                         
                         #if there's a lattitude and longitude to process    
                         if not lat == '' and not lng == '':
-                            
+                            d3 = datetime.now()
                             result = Geocoder.reverse_geocode(lat,lng)
                             addr = unicode(result[0])
+                            total_geocode_time += (datetime.now() - d3).total_seconds()
+                            print "geocode >>",(datetime.now() - d3).total_seconds() , 's'
                         else:
                             addr = u'Não disponível'
                         
-                        item['address'] = addr
                         output_list.append(addr)
-                
-                #data of the custom fields (inputs and outputs)        
+                print "vehicle loop >>",(datetime.now() - d4).total_seconds() , 's'
+                #data of the custom fields (inputs and outputs)
+                       
                 for x in display_fields:
-                    item[x.tag] = "OFF"
                     topush = "OFF"
                     for y in tdata:
                         if y.type == x:
@@ -123,14 +136,17 @@ def report(request,offset):
                     output_list.append(topush)
 
                 list_table.append(output_list)
-                table_content.append(item)
-            
+
+            print "total table loop >>",(datetime.now() - d2).total_seconds() , 's'
+            print "total geocode time >>",total_geocode_time , 's'
+            #print title_row
+            #print list_table
+
             if request.POST['type'] == 'CSV':
                 response = HttpResponse(mimetype='text/csv')
                 response['Content-Disposition'] = 'attachment; filename=report.csv'
                 writer = UnicodeWriter(response)
                 writer.writerow(title_row)
-                print "aqui!"
                 for line in list_table:
                     writer.writerow(line)
                     

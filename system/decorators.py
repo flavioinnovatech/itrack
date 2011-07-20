@@ -12,10 +12,8 @@ from django.http import HttpResponseForbidden
 def system_has_access():
     def decorator(func):
         def inner_decorator(request,*args, **kwargs):
-            print args
             system = args[0]
             childs = findChild(request.session["system"])
-            print childs
             if isChild(int(system),childs):
                 return func(request, *args, **kwargs)
             else:
