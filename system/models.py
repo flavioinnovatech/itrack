@@ -31,12 +31,10 @@ class Settings(models.Model):
     logo.default = 'img/logo.png'
     
     color_site_background = models.CharField(max_length=50, verbose_name='Cor de fundo do site')
-    color_table_background = models.CharField(max_length=50, verbose_name='cor de fundo das tabelas')
+    color_table_background = models.CharField(max_length=50, verbose_name='Cor de fundo das tabelas')
     
-    color_menu_gradient_final = models.CharField(max_length=50, verbose_name = 'Cor inicial do degrade do menu') 
-    color_menu_gradient_inicial = models.CharField(max_length=50, verbose_name= 'Cor final do degrade do menu')
-    color_menu_gradient_final_hover = models.CharField(max_length=50, verbose_name = 'Cor final do degrade do menu selecionado')
-    color_menu_gradient_inicial_hover = models.CharField(max_length=50,  verbose_name = 'Cor inicial do degrade do menu selecionado')
+    color1 = models.CharField(max_length=50, verbose_name = 'Cor #1') 
+    color2 = models.CharField(max_length=50, verbose_name = 'Cor #2')
     
     color_submenu_gradient_final = models.CharField(max_length=50, verbose_name = 'Cor final do degrade do submenu') 
     color_submenu_gradient_inicial = models.CharField(max_length=50, verbose_name = 'Cor inicial do degrade do submenu')
@@ -56,10 +54,13 @@ class Settings(models.Model):
     color_site_background.default = "#e0e0e0"
     color_table_background.default = "#ffffff"
     
-    color_menu_gradient_final.default = "#7a7a7a"
-    color_menu_gradient_inicial.default = "#a9a9a9"
-    color_menu_gradient_final_hover.default = "#a1a1a1"
-    color_menu_gradient_inicial_hover.default = "#ebebeb"
+    color1.default = '#7a7a7a'
+    color2.default = '#ebebeb'
+    
+    # color_menu_gradient_final.default = "#7a7a7a"
+    #   color_menu_gradient_inicial.default = "#a9a9a9"
+    #   color_menu_gradient_final_hover.default = "#a1a1a1"
+    #   color_menu_gradient_inicial_hover.default = "#ebebeb"
     
     color_submenu_gradient_final.default = "#cfcfcf"
     color_submenu_gradient_inicial.default = "#ffffff"

@@ -21,10 +21,8 @@ class SettingsForm(ModelForm):
             widgets = {
                 'color_site_background' : TextInput(attrs={'class':'color'}),
                 'color_table_background' : TextInput(attrs={'class':'color'}),
-                'color_menu_gradient_final' : TextInput(attrs={'class':'color'}),
-                'color_menu_gradient_inicial' : TextInput(attrs={'class':'color'}),
-                'color_menu_gradient_final_hover' : TextInput(attrs={'class':'color'}),
-                'color_menu_gradient_inicial_hover': TextInput(attrs={'class':'color'}),
+                'color1' : TextInput(attrs={'class':'color'}),
+                'color2' : TextInput(attrs={'class':'color'}),
                 'color_submenu_gradient_final': TextInput(attrs={'class':'color'}),
                 'color_submenu_gradient_inicial': TextInput(attrs={'class':'color'}),
                 'color_submenu_hover': TextInput(attrs={'class':'color'}),
@@ -113,37 +111,12 @@ class SystemWizard(FormWizard):
 
 
 def change_css(new_setting):
-          new_setting.css = ' #topContainer .centerContainer{ background-image: url(/media/'+new_setting.logo.name+');}'
-          new_setting.css = new_setting.css + ' body {background-color:#'+new_setting.color_site_background+';}'
 
-          #Menu
-          new_setting.css = new_setting.css + ' #nav {background: '+new_setting.color_menu_gradient_final+'; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_menu_gradient_inicial+', endColorstr=#'+new_setting.color_menu_gradient_final+');}'
-          new_setting.css = new_setting.css + ' #nav {background: -moz-linear-gradient(top,  #'+new_setting.color_menu_gradient_inicial+',  #'+new_setting.color_menu_gradient_final+');}'
-          new_setting.css = new_setting.css + '#nav {background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_menu_gradient_inicial+'), to(#'+new_setting.color_menu_gradient_final+'));}'
-          new_setting.css = new_setting.css + "#nav .current a, #nav li:hover > a {background-color: #"+new_setting.color_menu_gradient_final_hover+";}"
-          new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_menu_gradient_inicial_hover+', endColorstr=#'+new_setting.color_menu_gradient_final_hover+');}'
-          new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {background: -moz-linear-gradient(top,  #'+new_setting.color_menu_gradient_inicial_hover+',  #'+new_setting.color_menu_gradient_final_hover+');}'
-          new_setting.css = new_setting.css + '#nav .current a, #nav li:hover > a {background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_menu_gradient_inicial_hover+'), to(#'+new_setting.color_menu_gradient_final_hover+'));}'
-          new_setting.css = new_setting.css + '#nav a {color: #'+new_setting.color_menu_font+';}'
-          new_setting.css = new_setting.css + '#nav a:hover {color: #'+new_setting.color_menu_font_hover+';}'
+          new_setting.css = '#topContainer .centerContainer{ background-image: url(/media/'+new_setting.logo.name+');}'
+          new_setting.css +='body {background-color:#'+new_setting.color_site_background+';}'
+          
+          new_setting.css += '.color1 {background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 95%);}'
 
-          #Submenu
-          new_setting.css = new_setting.css + '#nav ul{background-color:#'+new_setting.color_submenu_gradient_final+';}'
-          new_setting.css = new_setting.css + ' #nav ul{filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_submenu_gradient_inicial+', endColorstr=#'+new_setting.color_submenu_gradient_final+');}'
-          new_setting.css = new_setting.css + ' #nav ul {background: -moz-linear-gradient(top,  #'+new_setting.color_submenu_gradient_inicial+',  #'+new_setting.color_submenu_gradient_final+');}'
-          new_setting.css = new_setting.css + '#nav ul{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
-          new_setting.css = new_setting.css + '#nav ul a:hover {background-color: #'+new_setting.color_submenu_hover+' !important; color:#'+new_setting.color_submenu_font_hover+' !important;}'
-          
-          # Login Status
-          new_setting.css = new_setting.css + '#loginstatus {background-color:#'+new_setting.color_submenu_gradient_final+';}'
-          new_setting.css = new_setting.css + '#loginstatus{progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_submenu_gradient_inicial+', endColorstr=#'+new_setting.color_submenu_gradient_final+');}'
-          new_setting.css = new_setting.css + ' #loginstatus {background: -moz-linear-gradient(top,  #'+new_setting.color_submenu_gradient_inicial+',  #'+new_setting.color_submenu_gradient_final+');}'
-          new_setting.css = new_setting.css + '#loginstatus{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
-          
-          # Botoes
-          new_setting.css = new_setting.css + '#actions a {background-color:#'+new_setting.color_submenu_gradient_final+';}'
-          new_setting.css = new_setting.css + '#loginstatus{progid:DXImageTransform.Microsoft.gradient(startColorstr=#'+new_setting.color_submenu_gradient_inicial+', endColorstr=#'+new_setting.color_submenu_gradient_final+');}'
-          new_setting.css = new_setting.css + ' #actions a {background: -moz-linear-gradient(top,  #'+new_setting.color_submenu_gradient_inicial+',  #'+new_setting.color_submenu_gradient_final+');}'
-          new_setting.css = new_setting.css + '#actions a{background: -webkit-gradient(linear, left top, left bottom, from(#'+new_setting.color_submenu_gradient_inicial+'), to(#'+new_setting.color_submenu_gradient_final+'));}'
+          print new_setting.css
           
           return new_setting

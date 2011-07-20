@@ -508,6 +508,10 @@ input[type="text"], input[type="password"] {
 	background: -webkit-gradient(linear, left top, left bottom, from(#CFCFCF), to(#FFFFFF)); /* for webkit browsers */
 }
 
+#map{
+  z-index:0;
+}
+
 #menuContainer{
   position:relative;
   z-index:1;
