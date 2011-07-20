@@ -10,7 +10,6 @@ jQuery(document).ready(function(){
         {id:id},
         
         function(data){
-          alert(data.toSource());
           $("#generaldialog").append("<p><b>Veículo:</b>  "+data['vehicle']+"</p>")
           $("#generaldialog").append("<p><b>"+data['type']+":</b>  "+data['action']+"</p>")
           $("#generaldialog").append("<p><b>Data enviada:</b>  "+data['time_sent']+"</p>")

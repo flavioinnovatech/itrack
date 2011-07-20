@@ -22,24 +22,27 @@ from itrack.drivers.forms import DriverForm, DriverReallocForm
 
 
 def index(request,offset):
-    #checks if system can alter the vehicle's drivers
+
     try:
-        if request.session['system'] in map(lambda x: x['id'],Vehicle.objects.get(pk=int(offset)).system.values()):
-            drivers = Driver.objects.filter(vehicle = int(offset))
-            rendered_list = {}
-            for d in drivers:
-                rendered_list[d.id] = { 'identification':d.identification,
-                                        'name':d.name,
-                                        'telephone1':d.telephone1,
-                                        'telephone2':d.telephone2,
-                                        'vehicle':d.vehicle,
-                                        'photo':d.photo,
-                                        'address':d.address
-                                      }
+      #Outdated
+        # if request.session['system'] in map(lambda x: x['id'],Vehicle.objects.get(pk=int(offset)).system.values()):
+        #           drivers = Driver.objects.filter(vehicle = int(offset))
+        #           rendered_list = {}
+        #           for d in drivers:
+        #               rendered_list[d.id] = { 'identification':d.identification,
+        #                                       'name':d.name,
+        #                                       'telephone1':d.telephone1,
+        #                                       'telephone2':d.telephone2,
+        #                                       'vehicle':d.vehicle,
+        #                                       'photo':d.photo,
+        #                                       'address':d.address
+        #                                     }
+        #       
+        #           return render_to_response("drivers/templates/index.html",locals(),context_instance=RequestContext(request))
+        #       else:
+        #           return HttpResponseForbidden(u"O seu sistema não pode alterar o veículo solicitado.")
         
-            return render_to_response("drivers/templates/index.html",locals(),context_instance=RequestContext(request))
-        else:
-            return HttpResponseForbidden(u"O seu sistema não pode alterar o veículo solicitado.")
+      drivers = Driver.objects.filter(system = request.session['system'])
     except ObjectDoesNotExist:
         return HttpResponseNotFound("O veículo solicitado não existe.")     
 
