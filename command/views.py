@@ -14,6 +14,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import simplejson
 
 from itrack.command.models import Command, CPRSession
 from itrack.vehicles.models import Vehicle
@@ -204,7 +205,7 @@ def load(request):
   send['action'] = str(c.action)
   send['type'] = str(c.type)
   send['state'] = str(c.state)
+    
+  json = simplejson.dumps(send)
   
-  print send
-  
-  return HttpResponse(send)
+  return HttpResponse(json, mimetype='application/json')
