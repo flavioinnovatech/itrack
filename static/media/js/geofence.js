@@ -63,23 +63,6 @@ function drawPolyRoute(result){
                         
             
                 }
-               
-                
-             /*
-                var p1 = new LatLon(result.routes[i].overview_path[j-2].lat(),result.routes[i].overview_path[j-2].lng());
-                var p2 = new LatLon(result.routes[i].overview_path[j-1].lat(),result.routes[i].overview_path[j-1].lng());
-                
-                brng = p1.bearingTo(p2);
-                p3 = p2.destinationPoint(brng-90,0.1);
-                p4 = p2.destinationPoint(brng+90,0.1);
-                
-                p3_google = new google.maps.LatLng(p3.lat(),p3.lon());
-                p4_google = new google.maps.LatLng(p4.lat(),p4.lon());
-                
-                top_points.push(p3_google);
-                bottom_points.push(p4_google);
-            */
-                
                 
                 points_list = top_points.concat(bottom_points.reverse());
                 poligono = new google.maps.Polygon({
