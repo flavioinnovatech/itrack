@@ -2,16 +2,8 @@
 {%block title%}Infotrack - Histórico de comandos {% endblock %}
 {% block head %}
 <script src="/media/js/jquery.jqGrid.min.js" type="text/javascript"></script>
-
+<script src="/media/js/command.js" type="text/javascript"></script>
 <script type="text/javascript">
-
-function confirmBox() {
-
-if (confirm("Deseja apagar os usuários selecionados?")) {
-
-location.href="pagina5.htm";}
-
-}
 
 ////////////////// Função para habiliar o POST
 $(document).ajaxSend(function(event, xhr, settings) {
@@ -97,7 +89,7 @@ jQuery(document).ready(function(){
 				  <tr class="ui-widget-content jqgrow ui-row-ltr" tabindex="-1" role="row" id="1">
 				    {% for item in display_list %}
 				    <tr style='width:5%;'>
-				        <td style="width:100px">{{item.plate}} </td>
+				        <td style="width:100px"><a id='{{item.id}}' class='commanddialog' href="#">{{item.plate}}</a> </td>
 				        <td style="width:100px">{{item.type}} : {{item.action}} </td>
 				        <td style="width:100px"> 
 				        {% if item.state == "0" %}

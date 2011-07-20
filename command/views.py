@@ -10,16 +10,19 @@ from datetime import datetime
 
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import simplejson
 
 from itrack.command.models import Command, CPRSession
 from itrack.vehicles.models import Vehicle
 from itrack.command.forms import CommandForm
 from itrack.equipments.models import Equipment,CustomFieldName,CustomField, Tracking,TrackingData
 from itrack.system.models import System
+
+from querystring_parser import parser
 
 TCP_IP = '187.115.25.240'   # the server IP address
 #TCP_IP = '192.168.1.119'
@@ -184,4 +187,25 @@ def delete(request,offset):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def delete_finish(request):
     return render_to_response("command/templates/delete_finish.html",locals())
+    
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
+def load(request):
+  
+  parsed_dict = parser.parse(request.POST.urlencode())
+  
+  c = Command.objects.get(pk=parsed_dict['id'])
 
+  send = {}
+
+  send['vehicle'] = str(c)
+  send['time_executed'] = str(c.time_executed)
+  send['time_sent'] = str(c.time_sent)
+  send['time_received'] = str(c.time_received)
+  send['action'] = str(c.action)
+  send['type'] = str(c.type)
+  send['state'] = str(c.state)
+    
+  json = simplejson.dumps(send)
+  
+  return HttpResponse(json, mimetype='application/json')
