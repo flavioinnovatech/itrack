@@ -18,6 +18,19 @@ jQuery(document).ready(function(){
           $("#generaldialog").append("<p><b>Data recebida:</b>  "+data['time_executed']+"</p>")
           $("#generaldialog").append("<p><b>Estado:</b></p>")
           
+          if (data['state'] == 0) {
+            $("#generaldialog").append('<p align="center"><img src="/media/img/command-1-big.png"></p>');
+          }
+          else if (data['state'] == 1) {
+            $("#generaldialog").append('<p align="center"><img src="/media/img/command-2-big.png"></p>');
+          }
+          else if (data['state'] == 2) {
+            $("#generaldialog").append('<p align="center"><img src="/media/img/command-3-big.png"></p>');
+          }
+          else if (data['state'] == 3) {
+            $("#generaldialog").append('<p align="center"><img src="/media/img/command-fail-big.png"></p>');
+          }
+          
         },'json'
      );
 
