@@ -111,7 +111,7 @@
                 
               </table>
             </div>
-            <div  style='clear:both; margin:5px; text-align:center; padding-top:10px;'><a class="table-button" style="padding:10px;" href="{% url command.views.create alert.system_id alert.vehicle_id %}">Enviar comando para este veículo</a></div>
+            <div  style='clear:both; margin:5px; text-align:center; padding-top:10px;'><a class="table-button" style="padding:10px;" href="{% url command.views.create request.session.system alert.vehicle_id %}">Enviar comando para este veículo</a></div>
         </div>
     {% endfor %}
 </div>
