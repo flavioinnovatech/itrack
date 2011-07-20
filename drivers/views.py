@@ -21,28 +21,36 @@ from django.core.exceptions import ObjectDoesNotExist
 from itrack.drivers.forms import DriverForm, DriverReallocForm
 
 
-def index(request,offset):
+def index(request):
 
     try:
-      #Outdated
-        # if request.session['system'] in map(lambda x: x['id'],Vehicle.objects.get(pk=int(offset)).system.values()):
-        #           drivers = Driver.objects.filter(vehicle = int(offset))
-        #           rendered_list = {}
-        #           for d in drivers:
-        #               rendered_list[d.id] = { 'identification':d.identification,
-        #                                       'name':d.name,
-        #                                       'telephone1':d.telephone1,
-        #                                       'telephone2':d.telephone2,
-        #                                       'vehicle':d.vehicle,
-        #                                       'photo':d.photo,
-        #                                       'address':d.address
-        #                                     }
-        #       
-        #           return render_to_response("drivers/templates/index.html",locals(),context_instance=RequestContext(request))
-        #       else:
-        #           return HttpResponseForbidden(u"O seu sistema não pode alterar o veículo solicitado.")
         
+      display_list = []
+      
       drivers = Driver.objects.filter(system = request.session['system'])
+      
+      for d in drivers:
+        
+        v_array = []
+        for v in d.vehicle.all():
+          v_array.append(v.license_plate)
+          
+        v_string = ', '.join(v_array)
+                  
+        display_list.append({
+                    'id':d.id,
+                    'name': d.name,
+                    'identification': d.identification,
+                    'telephone1': d.telephone1,
+                    'telephone2': d.telephone2,
+                    'photo': d.photo,
+                    'vehicle': v_string,
+                    'address': d.address,
+
+        })
+             
+      return render_to_response("drivers/templates/index.html",locals(),context_instance=RequestContext(request))
+      
     except ObjectDoesNotExist:
         return HttpResponseNotFound("O veículo solicitado não existe.")     
 
@@ -58,10 +66,10 @@ def profile(request,offset):
     else:
         return HttpResponseForbidden(u"O seu sistema não pode visualizar motoristas deste veículo.")
 
-def create(request,offset):
+def create(request):
     #checks if system can alter the vehicle's drivers
     try:
-        if request.session['system'] in map(lambda x: x['id'],Vehicle.objects.get(pk=int(offset)).system.values()):
+        # if request.session['system'] in map(lambda x: x['id'],Vehicle.objects.get(pk=int(offset)).system.values()):
             if request.method == "POST":
                 form = DriverForm(request.POST,request.FILES)
             else:                
@@ -69,24 +77,30 @@ def create(request,offset):
                 
             if form.is_valid():
                 driver = form.save(commit = False)
-                driver.vehicle = Vehicle.objects.get(pk=int(offset))
+                system = System.objects.get(pk=request.session['system'])
+                driver.system = system
+                driver.save()
+
+                vehicles = form.cleaned_data['vehicle']
+                for v in vehicles:
+                    driver.vehicle.add(v)
                 driver.save()
                 return HttpResponseRedirect("/drivers/create/finish")
 
             return render_to_response("drivers/templates/create.html",locals(),context_instance=RequestContext(request))
-        else:
-            return HttpResponseForbidden(u"O seu sistema não pode criar motoristas para este veículo.")
+        # else:
+            # return HttpResponseForbidden(u"O seu sistema não pode criar motoristas para este veículo.")
     except ObjectDoesNotExist:
         return HttpResponseNotFound("O veículo solicitado não existe.") 
         
         
 def create_finish(request):
-    return HttpResponse("Create_finish")
+    return render_to_response("drivers/templates/create_finish.html",locals())
     
 def edit(request,offset):
     #checks if system can alter the driver vehicle
     try:
-        if request.session['system'] in map(lambda x: x['id'],Driver.objects.get(pk=int(offset)).vehicle.system.values()):
+        # if request.session['system'] in map(lambda x: x['id'],Driver.objects.get(pk=int(offset)).vehicle.system.values()):
             
             d = Driver.objects.get(pk=int(offset))
             
@@ -97,23 +111,29 @@ def edit(request,offset):
                 
             if form.is_valid():
                 driver = form.save(commit = False)
-                driver.vehicle = Vehicle.objects.get(pk=int(offset))
+                system = System.objects.get(pk=request.session['system'])
+                driver.system = system
+                driver.save()
+                
+                vehicles = form.cleaned_data['vehicle']
+                for v in vehicles:
+                    driver.vehicle.add(v)
                 driver.save()
                 return HttpResponseRedirect("/drivers/edit/finish")
     
             return render_to_response("drivers/templates/create.html",locals(),context_instance=RequestContext(request))
-        else:
-            return HttpResponseForbidden(u"O seu sistema não pode editar motoristas para este veículo.")
+        # else:
+            # ret urn HttpResponseForbidden(u"O seu sistema não pode editar motoristas para este veículo.")
     except ObjectDoesNotExist:
         return HttpResponseNotFound("O veículo solicitado não existe.") 
         
 def edit_finish(request):
-    return HttpResponse("Edit_finish")
+    return render_to_response("drivers/templates/edit_finish.html",locals())
     
 def delete(request,offset):
     #checks if system can alter the vehicle's drivers
     try:
-        if request.session['system'] in map(lambda x: x['id'],Driver.objects.get(pk=int(offset)).vehicle.system.values()):
+        # if request.session['system'] in map(lambda x: x['id'],Driver.objects.get(pk=int(offset)).vehicle.system.values()):
             
             d = Driver.objects.get(pk=int(offset))
             
@@ -122,10 +142,10 @@ def delete(request,offset):
                 return HttpResponseRedirect("/drivers/delete/finish")
     
             return render_to_response("drivers/templates/delete.html",locals(),context_instance=RequestContext(request))
-        else:
-            return HttpResponseForbidden(u"O seu sistema não pode apagar motoristas para este veículo.")
+        # else:
+            # return HttpResponseForbidden(u"O seu sistema não pode apagar motoristas para este veículo.")
     except ObjectDoesNotExist:
         return HttpResponseNotFound("O veículo solicitado não existe.") 
         
 def delete_finish(request):
-    return HttpResponse("Delete_finish")
+    return render_to_response("drivers/templates/delete_finish.html",locals())

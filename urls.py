@@ -79,8 +79,8 @@ url(r'^commands/create/finish/$','command.views.create_finish'),
 url(r'^commands/delete/(\d+)/$','command.views.delete'),
 url(r'^commands/delete/finish/$','command.views.delete_finish'),
 
-url(r'^drivers/(\d+)/$', 'drivers.views.index'),
-url(r'^drivers/create/(\d+)/$','drivers.views.create'),
+url(r'^drivers/$', 'drivers.views.index'),
+url(r'^drivers/create/$','drivers.views.create'),
 url(r'^drivers/create/finish/$','drivers.views.create_finish'),
 url(r'^drivers/edit/(\d+)/$','drivers.views.edit'),
 url(r'^drivers/edit/finish/$','drivers.views.edit_finish'),
@@ -103,8 +103,6 @@ url(r'^geofence/load/$','geofence.views.loadGeofences'),
 
 url(r'^paths/$','paths.views.index'),
 url(r'^paths/load/$','paths.ajax.load'),
-
-url(r'^drivers/(\d+)/$','drivers.views.index'),
 
 url(r'multispectral/$','main.views.multispectral'),
 

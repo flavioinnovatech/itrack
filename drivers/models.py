@@ -13,10 +13,11 @@ class Driver(models.Model):
     identification = models.IntegerField(verbose_name=u"Matrícula")
     address = models.CharField(max_length=200, verbose_name=u"Endereço")
     telephone1 = models.CharField(max_length=20,verbose_name=u"Telefone 1")
-    telephone2 = models.CharField(max_length=20,verbose_name=u"Telefone 2")
+    telephone2 = models.CharField(max_length=20,verbose_name=u"Telefone 2",null=True,blank=True)
     photo = models.ImageField(upload_to='img/',verbose_name="Foto")
     photo.default="img/nophoto.jpg"
     system.default=2
+    
     
     def __unicode__(self):
         return self.name

@@ -7,14 +7,14 @@
 
 {% block content %}
 <div  class="main-form">
-    {% if not rendered_list %}
+    {% if not display_list %}
     <h1><img class="icon" src="/media/img/users.png">Lista de Motoristas </h1><hr/>
     <h2></h2>
     <em>Este veículo não possui nenhum motorista associado. <a href = "{% url drivers.views.create offset %}"> Clique aqui para criar um motorista para este veículo. </a></em>
 
     {% else %}
     <h1><img class="icon" src="/media/img/users.png">Lista de Motoristas </h1><hr/>
-    <h2></h2>
+    <h2>Motoristas desse sistema:</h2>
     <div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><p class="ui-jqgrid-title">&nbsp</p></div><div class="ui-state-default ui-jqgrid-hdiv"><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
 				  
 				  <thead>
@@ -37,36 +37,35 @@
 				  
 				  
 				  <tr class="ui-widget-content jqgrow ui-row-ltr" tabindex="-1" role="row" id="1">
-				    
-				    {% for id,driver in rendered_list.items %}
-				    <tr style='width:5%;'>
-				        <td style='width:381px;font-weight:bold;text-align:left;padding-left:10px;'><a href="#" class="driver" value="{{id}}">{{driver.name}}</a></td>
-				        <td style='width:150px;text-align:left;padding-left:10px;'>{{driver.identification}}</td>
-				        <td style='width:340px;' style='text-align:center;'>{{driver.telephone1}}</td>
-				        <div style="display:none" id="driverprofile-{{id}}" title="Profile do motorista" style="padding:10px; font-size:20px">
-				            <p style="float:right;"><img src="/media/{{driver.photo}}" style="max-width:100px;max-height:150px; border: 1px solid #aaa;padding:5px;" /></p>
-				            <p style="font-size:14px;"><span style="font-weight:bolder">Nome:</span> {{driver.name}}</p>
-                            <p style="font-size:14px;"><span style="font-weight:bold">Matrícula:</span> {{driver.identification}}</p>
+            {% for item in display_list %}
+            <tr style='width:5%;'>
+                <td style='width:381px;font-weight:bold;text-align:left;padding-left:10px;'><a href="#" class="driver" value="{{item.id}}">{{item.name}}</a></td>
+                <td style='width:150px;text-align:left;padding-left:10px;'>{{item.identification}}</td>
+                <td style='width:340px;' style='text-align:center;'>{{item.telephone1}}</td>
+                <div style="display:none" id="driverprofile-{{item.id}}" title="Profile do motorista" style="padding:10px; font-size:20px">
+                    <p style="float:right;"><img src="/media/{{driver.photo}}" style="max-width:100px;max-height:150px; border: 1px solid #aaa;padding:5px;" /></p>
+                    <p style="font-size:14px;"><span style="font-weight:bolder">Nome:</span> {{item.name}}</p>
+                            <p style="font-size:14px;"><span style="font-weight:bold">Matrícula:</span> {{item.identification}}</p>
                             
                             
-                            <p style="font-size:14px;"><span style="font-weight:bold;">Telefone 1:</span> {{driver.telephone1}}</p>
-                            <p style="font-size:14px;"><span style="font-weight:bold">Telefone 2:</span> {{driver.telephone2}}</p>
-                            <p style="font-size:14px;"><span style="font-weight:bold">Veículo:</span> {{driver.vehicle}}</p>
-                            <p style="height:50px;font-size:14px;"><span style="font-weight:bold;">Endereço:</span> {{driver.address}}</p>
+                            <p style="font-size:14px;"><span style="font-weight:bold;">Telefone 1:</span> {{item.telephone1}}</p>
+                            <p style="font-size:14px;"><span style="font-weight:bold">Telefone 2:</span> {{item.telephone2}}</p>
+                            <p style="font-size:14px;"><span style="font-weight:bold">Veículo(s):</span> {{item.vehicle}}</p>
+                            <p style="height:50px;font-size:14px;"><span style="font-weight:bold;">Endereço:</span> {{item.address}}</p>
                             <div id="actions" style="top:170px;left:120px;position:absolute;">
-                                <a href="{% url drivers.views.edit id %}" id="table-button" >Editar</a>
-                                <a href="{% url drivers.views.delete id%}" id="table-button">Apagar</a>
+                                <a href="{% url drivers.views.edit item.id %}" id="table-button" >Editar</a>
+                                <a href="{% url drivers.views.delete item.id%}" id="table-button">Apagar</a>
                             </div>
-				        </div>
-				    </tr>
-				    {% endfor %}
+                </div>
+            </tr>
+            {% endfor %}
 
   					
 
 				  </tr></tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div>
     
             <div id="actions" style="margin:10px;text-align:center;">
-                <a href="{% url drivers.views.create offset %}"> Adicionar novo motorista </a>
+                <a href="{% url drivers.views.create %}"> Adicionar novo motorista </a>
             </div>
 
     {% endif %}
