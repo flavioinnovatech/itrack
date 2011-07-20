@@ -22,18 +22,21 @@ def load(request):
         
         #getting the geofence points and mounting the list
         geofence = form.cleaned_data['geofence']
-        print geofence.type
-        print geofence.polygon.coords
+        geofencedata = {}
+        if geofence:
+            if geofence.type == 'R':
+                geofencedata = {'type': geofence.type, 'coords': geofence.linestring.coords}
+            else:
+                geofencedata = {'type': geofence.type, 'coords': geofence.polygon.coords}
         
+        print geofencedata
         #mounting the json list
         pathdata = {}
         for key,value in tdata_dict.items():
-            pathdata[key]= (value[0].value,value[1].value)
-        
-        
-        geofencedata = {}
-            
-        
-        print dumpdata
-        json = simplejson.dumps(pathdata)
+            try:
+                pathdata[key]= (value[0].value,value[1].value)
+            except:
+                pass    
+
+        json = simplejson.dumps([pathdata,geofencedata])
     return HttpResponse(json, mimetype='application/json')

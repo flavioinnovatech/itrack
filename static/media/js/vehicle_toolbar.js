@@ -93,7 +93,7 @@ jQuery(document).ready(function(){
           colNames: colNames, 
           colModel:colModel,
           multiselect: true, 
-          caption: "Cercas eletrõnicas",
+          caption: "Cercas eletrônicas",
           
           onSelectRow: function(id,status){ 
             
