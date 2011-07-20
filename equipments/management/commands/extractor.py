@@ -27,6 +27,7 @@ from comparison import AlertComparison,GeofenceComparison
 from django.contrib.gis.geos import Point
 
 
+
 #TCP_IP = '192.168.1.119'
 TCP_IP = '187.115.25.240'   # the server IP address
 TCP_PORT = 5000			# the server port
@@ -264,40 +265,50 @@ class Command(BaseCommand):
                                   
                                   #pick the alert records to check                                  
                                   alerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True))                              
-                                  
+                                                                    
                                   #iterates over the inputs and checks if it is needed to send the alert
-                                  for k_type,d_type in dict(xmldict['Input'].items() + xmldict['LinearInput'].items()).items():       
-                                      try:
+                                  for k_type,d_type in dict(xmldict['Input'].items() + xmldict['LinearInput'].items()).items():
                                       
+                                      try:
+                                          
                                           #dont look for GPS information now (will be done for the geofences)
                                           c = CustomField.objects.get(Q(tag=k_type)& ~Q(type='GPS'))
-
+                                          
                                           #function that returns true if the alert shall be sent, and false if not.
                                           for alert in alerts:
+                                              
                                               if AlertComparison(self,alert,c,d_type):         
-                                                  
                                                   #if the alert shall be sent by email
                                                   if alert.receive_email:
+                                                    
                                                     for destinatary in alert.destinataries.values():
-                                                        send_mail(str(alert), str(alert), "infotrack@infotrack.com.br", [destinatary['email']], fail_silently=False, auth_user=None, auth_password=None, connection=None)
+                                                        send_mail('[INFOTRACK] ' + str(alert), 'Veículo:'+str(vehicle)+'\n'+'Alerta:'+str(alert.alerttext), "infotrack@infotrack.com.br", [destinatary['email']], fail_silently=False, auth_user=None, auth_password=None, connection=None)
+                                                        self.stdout.write('>>>> Email de alerta enviado.\n')
                                                            
                                                   #if the alert shall be sent by SMS 
                                                   if alert.receive_sms:
                                                       for destinatary in alert.destinataries.values():
                                                           cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone                                               
-                                                          self.stdout.write(SendSMS(cellphone,'[INFOTRACK] O alerta: "'+str(alert)+u'" foi disparado pelo veiculo '+str(vehicle)+'.')+'\n')                                                
+                                                          self.stdout.write(SendSMS(cellphone,'[INFOTRACK]\n'+'Veiculo: '+str(vehicle)+'\n'+'Alerta:'+str(alert.alerttext)))
+                                                          # self.stdout.write(SendSMS(cellphone,'[INFOTRACK]\n'+'Alerta:'+str(alert.alerttext)))
+                                                          self.stdout.write('>>>> SMS de alerta enviado.\n')
 
                                                   #if the alert shall display a popup on the user screen
                                                   if alert.receive_popup:
                                                       for destinatary in alert.destinataries.all():
                                                           popup = Popup(alert=alert,user=destinatary,vehicle=vehicle,date=searchdate)
                                                           popup.save()
+                                                          
+                                              else:
+                                                pass
+                                                # self.stdout.write('>> Nao entrou no Alert Comparison.\n')
                                                                      
                                       except ObjectDoesNotExist:
+                                          # self.stdout.write('>> Entrou no except "objectdoesnotexist".\n')
                                           #exception thrown for the inputs and linear inputs that didn't match
                                           #any field in the database
                                           pass
-
+                                                                              
                           else: #if the vehicle never had thrown alerts, give him a last alert date
                               vehicle.last_alert_date = searchdate
                               vehicle.save()

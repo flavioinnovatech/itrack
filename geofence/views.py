@@ -5,6 +5,7 @@ from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData
 from itrack.geofence.models import Geofence
 from itrack.alerts.models import Alert
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.gis.geos.linestring import LineString
 from querystring_parser import parser
 from django.http import HttpResponse
 from django.utils import simplejson
@@ -78,46 +79,26 @@ def saveGeofence(request):
     elif parsed_dict['type'] == 'route':
         system = System.objects.get(pk=request.session['system'])
         
-        str_coords =  parsed_dict['coords']['polygon'].replace("(","").split(")")
+        coords = parsed_dict['coords']
+        line = coords[''][0] +','+ coords[''][1]
 
-        
-        wkt = "MULTIPOLYGON((("
-        
+        wkt="LINESTRING("
+
         i = 0
-        firstpoint = ""
-        for coord in str_coords:
-            if not coord == "":
-                i = i+1
-                arraytemp = coord.split(",")
-                wkt += arraytemp[1]
-                wkt += " "
-                wkt += arraytemp[0]
-                
-                if i == 1:
-                  firstpoint += arraytemp[1] + " " + arraytemp[0] 
-                
-                wkt += ","
-        
-        wkt += firstpoint
-        wkt += ")),"
-        
-              
-        for pnt in parsed_dict['coords']['points'].replace("(","").split(")"):
-            if not pnt == "":
-                arraytemp = pnt.split(",")
-                center = geos.Point(float(arraytemp[1]),float(arraytemp[0]))
+        for point in coords['']:
+          arraytemp = point.replace("(","").replace(")","").split(",")
+          wkt += arraytemp[1]
+          wkt += " "
+          wkt += arraytemp[0]
+          
+          i=i+1
+          if i != len(coords['']):
+            wkt += ","
 
-                radius = 0.1
-                circle = center.buffer(0.1/40000*360)
-               
-                wkt += str(circle)[8:len(str(circle))] +","
-        wkt = wkt[:len(wkt)-1]
-        wkt += "))"
-        
-        
+        wkt+=")"
         print wkt
         
-        g = Geofence(name=parsed_dict['name'],system=system,type='R',polygon=wkt)
+        g = Geofence(name=parsed_dict['name'],system=system,type='R',linestring=wkt)
         g.save()
         
         return HttpResponse('qqrcoisa')
@@ -132,7 +113,10 @@ def loadGeofences(request):
   data = []
   
   for g in geofence:
-    data.append({"name":g.name,"id":g.id,"type":g.type,"polygon":g.polygon.coords})
+    if g.type != 'R':
+      data.append({"name":g.name,"id":g.id,"type":g.type,"polygon":g.polygon.coords})
+    elif g.type == 'R':
+      data.append({"name":g.name,"id":g.id,"type":g.type,"route":g.linestring.coords})
     # if g.type == 'C':
       # geoentities = GeoEntity.objects.filter(geofence=g)
       # for ge in geoentities:
