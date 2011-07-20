@@ -12,7 +12,7 @@ from itrack.system.tools import findDirectChild, findChild
 
 class AvailableFieldsForm(Form):
     equip_type  = CharField(max_length=40,widget = TextInput(attrs={'readonly':True}), label="Modelo")
-    custom_fields = MultipleChoiceField(widget= ColoredFilteredSelectMultiple("Campos",False,attrs={'rows':'30'}))
+    custom_fields = ModelMultipleChoiceField(CustomFieldName.objects.all(),widget= ColoredFilteredSelectMultiple("Campos",False,attrs={'rows':'30'}))
     custom_fields.required = False
     
 class EquipmentsForm(Form):

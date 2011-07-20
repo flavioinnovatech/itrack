@@ -26,6 +26,7 @@
             need_to_confirm = false;
           });
   });
+  
 </script>
 
 {% endblock %}
@@ -79,7 +80,9 @@
     
 <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
 {{ previous_fields|safe }}
+
 <input type="submit" value="Prosseguir" class="submit" onclick="confirm_to_exit = false;">
+<input type="button" value="Cancelar" class="submit" onClick="window.location = '/system/';"/>
 <p class="clear">
 </form>
 

@@ -25,11 +25,11 @@ from itrack.command.models import CPRSession
 from itrack.command.models import Command as ItrackCommand
 from comparison import AlertComparison,GeofenceComparison
 from django.contrib.gis.geos import Point
-
+from django.conf import settings
 
 
 #TCP_IP = '192.168.1.119'
-TCP_IP = '187.115.25.240'   # the server IP address
+TCP_IP = settings.EXTRACTOR_IP   # the server IP address
 TCP_PORT = 5000			# the server port
 BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
 USERNAME = "extractor"		# the user that will log on CPR
@@ -325,7 +325,8 @@ class Command(BaseCommand):
                   # TODO: update the status for the given command
                     print xmldict
                     e = Vehicle.objects.get(equipment__serial=xmldict['Data']['Serial'])
-                    c = ItrackCommand.objects.get(equipment=e)
+                    c = ItrackCommand.objects.filter(equipment=e)
+                    c = c.get(state=u'0')
                     self.stdout.write(str(c)+","+xmldict['Data']['Status']+ "\n")
                     if xmldict['Data']['Status'] == '3': #message was sent to the GPRS network
                         #as we only have one command per time in the command table, change the command status

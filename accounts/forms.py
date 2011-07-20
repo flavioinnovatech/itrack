@@ -27,3 +27,9 @@ class UserTailForm(forms.ModelForm):
 
 class UserCompleteForm(UserForm,UserTailForm):
     pass
+
+class UserCompleteFormAdmin(UserForm,UserTailForm):
+    def __init__(self, *args, **kwargs):
+        super(UserCompleteFormAdmin, self).__init__(*args, **kwargs)
+        self.fields['alert'].widget = forms.HiddenInput()
+        self.fields['command'].widget = forms.HiddenInput()

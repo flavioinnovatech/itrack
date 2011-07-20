@@ -15,6 +15,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import simplejson
+from django.conf import settings
 
 from itrack.command.models import Command, CPRSession
 from itrack.vehicles.models import Vehicle
@@ -24,7 +25,8 @@ from itrack.system.models import System
 
 from querystring_parser import parser
 
-TCP_IP = '187.115.25.240'   # the server IP address
+
+TCP_IP = settings.EXTRACTOR_IP   # the server IP address
 #TCP_IP = '192.168.1.119'
 
 TCP_PORT = 5000			# the server port
@@ -88,7 +90,7 @@ def create(request,offset,vehicle=None):
             #checks if there's no other command in process for this equipment
             
             try:
-                command_check = Command.objects.filter(equipment = c.equipment)
+                command_check = Command.objects.filter(equipment = c.equipment).exclude(state=u'2')
                 print len(command_check)
                 if len(command_check) > 0:
                     return render_to_response("command/templates/error2.html",locals(),context_instance=RequestContext(request),)

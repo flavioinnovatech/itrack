@@ -11,7 +11,8 @@ from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.template.context import RequestContext
-from itrack.system.forms import SystemForm, SettingsForm, UserCompleteForm, SystemWizard, change_css, PermsForm
+from itrack.system.forms import SystemForm, SettingsForm, SystemWizard, change_css, PermsForm
+from itrack.accounts.forms import UserCompleteFormAdmin
 from itrack.equipments.forms import AvailableFieldsForm,EquipmentsForm,CustomNameForm
 from django.db.models import Q
 from itrack.system.tools import systemDepth
@@ -141,7 +142,7 @@ def create(request):
             ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
         
         
-        wiz = SystemWizard([UserCompleteForm,SystemForm,ModifiedSettingsForm])
+        wiz = SystemWizard([UserCompleteFormAdmin,SystemForm,ModifiedSettingsForm])
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 
     

@@ -63,8 +63,8 @@ def permissions(request,offset):
         childs = findChild(request.session['system'])
         parent = System.objects.get(pk=int(offset)).parent
         system_name = System.objects.get(pk=int(offset))
-        
-        equip_types = EquipmentType.objects.all()
+
+        equip_types = EquipmentType.objects.filter(equipment__system=int(offset)).distinct()
 
         AvailableFieldsFormset = formset_factory(AvailableFieldsForm, extra=len(equip_types))        
         if request.method == 'POST':
