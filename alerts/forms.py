@@ -10,6 +10,8 @@ from django.forms import *
 from itrack.vehicles.models import Vehicle
 from itertools import chain
 from django.utils.html import escape, conditional_escape
+from django.db.models import Q
+
 
 class SpecialSelect(Select):
     def render_option(self, selected_choices, option_value, option_label):
@@ -58,3 +60,24 @@ class AlertForm(ModelForm):
     vehicle = ModelMultipleChoiceField(Vehicle.objects.all(),widget= FilteredSelectMultiple(u"Veículos",False,attrs={'rows':'30'}))
 
     destinataries = ModelMultipleChoiceField(User.objects.all(),widget= FilteredSelectMultiple(u"Notificados",False,attrs={'rows':'30'}))
+    
+    def __init__(self,system, *args, **kwargs):
+        super(AlertForm,self).__init__(*args,**kwargs)
+        
+        adm_id = System.objects.get(pk=system).administrator.id
+        
+        e_set = Equipment.objects.filter(system = system)
+        v_set = []
+        for e in e_set:
+            try:
+                v_set.append(Vehicle.objects.get(equipment=e.id).id)
+            except:
+                pass
+        
+        self.fields["vehicle"].queryset = Vehicle.objects.filter(id__in=v_set)
+        self.fields["vehicle"].label = "Veículo"
+        self.fields["trigger"].queryset = CustomFieldName.objects.filter((Q(custom_field__type = 'Input')|Q(custom_field__type = 'LinearInput')) & Q(system = system) & Q(custom_field__availablefields__system = system)).distinct()
+        self.fields["trigger"].empty_label = "(selecione o evento)"
+        self.fields['destinataries'].queryset=User.objects.filter(Q(system=system) | Q(pk=adm_id) )
+    
+    

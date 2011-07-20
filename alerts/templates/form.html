@@ -53,38 +53,50 @@ jQuery(document).ready(function(){
         timeFormat: 'hh:mm:ss',
         dateFormat: 'yy-mm-dd'
     });
+    
+    initial_state = false;
+    if (jQuery('li label[for="id_state_0"] input').attr('checked') == "checked") initial_state = true;
+    
     if (jQuery('#id_trigger option:selected').attr('class') == 'linearinput'){
         jQuery('.geofenceinput').hide();
         jQuery('.limitclass').show();
         jQuery('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Sinal acima do limite");
-        jQuery('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Sinal abaixo do limite");
+        jQuery('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"False\" name=\"state\" /\> Sinal abaixo do limite");
     }
     
     if ($('#id_trigger option:selected').attr('class') == 'geofence'){
         $('.limitclass').hide();
         $('.geofenceinput').show();
         $('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Veículo entrar na cerca");
-        $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Veículo sair da cerca");
-
+        $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"False\" name=\"state\" /\> Veículo sair da cerca");
+        
+    }
+    
+    if(initial_state){
+        jQuery('li label[for="id_state_0"] input').attr('checked','checked');
+        jQuery('li label[for="id_state_1"] input').removeAttr('checked');
+    }else{
+        jQuery('li label[for="id_state_1"] input').attr('checked','checked');
+        jQuery('li label[for="id_state_0"] input').removeAttr('checked');
     }
     
     jQuery('#id_trigger').change(function(){
         if ($('#id_trigger option:selected').attr('class') == 'linearinput'){
            $('.geofenceinput').hide();
            $('.limitclass').show();
-           $('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Sinal acima do limite");
-           $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Sinal abaixo do limite");
+           $('li label[for="id_state_0"]').html("<input checked=\"checked\" type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Sinal acima do limite");
+           $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"False\" name=\"state\" /\> Sinal abaixo do limite");
         } else if ($('#id_trigger option:selected').attr('class') == 'geofence'){
           $('.limitclass').hide();
           $('.geofenceinput').show();
-          $('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Veículo entrar na cerca");
-          $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Veículo sair da cerca");
+          $('li label[for="id_state_0"]').html("<input checked=\"checked\" type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Veículo entrar na cerca");
+          $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"False\" name=\"state\" /\> Veículo sair da cerca");
         } else{
             $('.geofenceinput').hide();
             $('.limitclass').hide();
             $('#id_linear_limit').attr("value","")
-            $('li label[for="id_state_0"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Ligado");
-            $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Desligado");
+            $('li label[for="id_state_0"]').html("<input checked=\"checked\" type=\"radio\" id=\"id_state_0\" value=\"True\" name=\"state\" /\> Ligado");
+            $('li label[for="id_state_1"]').html("<input type=\"radio\" id=\"id_state_0\" value=\"False\" name=\"state\" /\> Desligado");
         }
     });
     
