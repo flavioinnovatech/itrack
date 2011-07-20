@@ -15,7 +15,7 @@ class PathForm(Form):
     vehicle = ModelChoiceField(Vehicle.objects.all(),label=u"Veículo",widget=Select(attrs={'style':'width: 178px;position:relative;height:25px;'}))
     period_start = DateTimeField(widget=DateTimeInput(attrs={'class':'datepicker','style':'width: 175px;position:relative;'}),label=u"Data inicial")
     period_end = DateTimeField(widget=DateTimeInput(attrs={'class':'datepicker','style':'width: 175px;position:relative;'}),label=u"Data final")
-    geofence = ModelChoiceField(Geofence.objects.all(),label=u'Cerca eletrônica',widget=Select(attrs={'style':'width: 178px;position:relative;height:25px;'}))
+    geofence = ModelChoiceField(Geofence.objects.all(),label=u'Cerca eletrônica',widget=Select(attrs={'style':'width: 178px;position:relative;height:25px;'}),required=False)
     
     
     
