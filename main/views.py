@@ -10,3 +10,5 @@ def index(request):
 def multispectral(request):
   return render_to_response("templates/temp.html",locals())
 
+def openlayers(request):
+  return render_to_response("templates/openlayers.html",locals())

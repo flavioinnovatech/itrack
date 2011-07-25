@@ -1,5 +1,7 @@
 jQuery(document).ready(function(){
   
+  jQuery("#tabs-3left").hide();
+  
   var toolnow = null;
   jQuery("img[id=maptools]").click(function() {
 
@@ -7,15 +9,23 @@ jQuery(document).ready(function(){
       toolnow = jQuery(this).attr('class');
     }
 
-    if(jQuery("#tabs-3left").css("width") == "0px") {
+    if(jQuery("#tabs-3left").css("display") == "none") {
       jQuery("#tabs-3right").css("width","79%");
+       jQuery("#tabs-4").css("width","79%");
       jQuery("#tabs-3left").css("width","20%");
+      jQuery("#tabs-3left").show();
       
     }
     else {
 
       if (jQuery(this).attr('class') == toolnow) {
+        jQuery("#tabs-3left").hide();
+        //Tab do Google
         jQuery("#tabs-3right").css("width","100%");
+        
+        //Tab da Multispectral
+        jQuery("#tabs-4").css("width","100%");
+        
         jQuery("#tabs-3left").css("width","0px");     
       }
       toolnow = jQuery(this).attr('class');
@@ -62,7 +72,7 @@ jQuery(document).ready(function(){
             
             jQuery.each(oldgeofences, function(key2,olditem) {
             	if (olditem.id == geofence.id) {
-                	jQuery("#list4").jqGrid('delRowData', equip.id);
+                	jQuery("#list4").jqGrid('delRowData', geofence.id);
                 }
           	});
           }

@@ -28,7 +28,7 @@ jQuery(document).ajaxSend(function(event, xhr, settings) {
             !(/^(\/\/|http:|https:).*/.test(url));
     }
     function safeMethod(method) {
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        return (/^(GET|HEAD|OPTIONS|TRACE)jQuery/.test(method));
     }
 
     if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
@@ -44,17 +44,17 @@ jQuery(document).ajaxSend(function(event, xhr, settings) {
     {
 
     
-        $.post(
+        jQuery.post(
                "/alerts/status/",
-               {system: $('#systemid').html(),
-                user: $('#userid').html()},
+               {system: jQuery('#systemid').html(),
+                user: jQuery('#userid').html()},
                function(data){
                     if (data != "\n") {
-                        $('body').append(data);
-                        $('.popup-content').dialog({
+                        jQuery('body').append(data);
+                        jQuery('.popup-content').dialog({
                             width:600,
                             close: function() {
-                                $(this).remove();
+                                jQuery(this).remove();
                                 },
                             modal:true
                         });

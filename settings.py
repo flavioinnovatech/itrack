@@ -19,8 +19,8 @@ DATABASES = {
         'NAME': 'infotrack',                      # Or path to database file if using sqlite3.
         'USER': 'postgres',                      # Not used with sqlite3.
         'PASSWORD': 'infotrack',                  # Not used with sqlite3.
-        #'HOST': '187.115.25.240',
-        'HOST': '192.168.1.197',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '187.115.25.240',
+        # 'HOST': '192.168.1.197',                      # Set to empty string for localhost. Not used with sqlite3.
 
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
 	},
@@ -34,8 +34,8 @@ DATABASES = {
 	}
 }
 
-EXTRACTOR_IP = '192.168.1.119'
-#EXTRACTOR_IP = '187.115.25.240'
+# EXTRACTOR_IP = '192.168.1.119'
+EXTRACTOR_IP = '187.115.25.240'
 
 
 DATABASE_ROUTERS = ['dbrouter.GeocodeCacheRouter']
