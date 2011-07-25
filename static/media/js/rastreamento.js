@@ -12,9 +12,8 @@ jQuery(document).ready(function(){
     doTimer();
   },1000); 
   
-  //desabilita vehicles toolbar quando gmaps nao é selecionado
+  //desabilita vehicles toolbar quando tabela é selecionada
   jQuery('a[href=#tabs-1]').click(function(){
-   
     jQuery("img[id=maptools]").hide();
   });
 
@@ -46,8 +45,12 @@ jQuery(document).ready(function(){
         jQuery('#tabs').css("position","absolute");
         jQuery('#tabs').css("top","0");
         jQuery('#tabs').css("left","0");
-        jQuery("#tabs-3").css("height","97%");
-        jQuery("#tabs-3").css("width","97%");
+        
+        //insert google permission here
+        // jQuery("#tabs-3").css("height","97%");
+        // jQuery("#tabs-3").css("width","97%");
+        
+        //insert multispextral permission here
         jQuery("#tabs-4").css("height","97%");
         jQuery("#tabs-4").css("width","97%");
         normal = 0;
@@ -67,7 +70,7 @@ jQuery(document).ready(function(){
       jQuery('#tabs').css("left",( left ) );
 
       jQuery("#tabs-3").css("width", "924px");
-      jQuery("#tabs-4").css("width", "924px");
+      jQuery("#tabs-4").css("width", "776px");
       normal = 1;
       
       //resize jqgrid
@@ -85,7 +88,7 @@ jQuery(document).ready(function(){
 
 
 
-/* --------------------------------------------- GOOGLE MAPS ------------------------------------------------------ */
+/* ---------------------------------------------  MAPS ------------------------------------------------------ */
 
 
 jQuery("#googlemap").click(function() {
@@ -98,12 +101,16 @@ jQuery("#googlemap").click(function() {
 });
 
 jQuery("#multispectralmap").click(function() {
+  
   w = jQuery(window).width();
   h = jQuery(window).height();
+  multimapa.Client.zoomIn("ErroCallback");
+  multimapa.Client.zoomOut("ErroCallback");
+
   //habilita botao vehicle
   jQuery("img[class=vehicle]").show();
   jQuery("img[class=geofence]").show();
-  
+  jQuery("#tabs-4").css("height",h-200);
 });
 
   //Insert google permission here
@@ -123,7 +130,7 @@ jQuery("#multispectralmap").click(function() {
 		mapTypeId: 'roadmap'
 	}
 	
-	jQuery("#tabs-4").css("height",h-200);
+	//Insert Google Permission here
   map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
   google.maps.event.trigger(map, 'resize');
   map.setZoom( map.getZoom() );
@@ -134,8 +141,10 @@ jQuery("#multispectralmap").click(function() {
   
   //Insert Multispectral permission here
   var Ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C";
-  // multimapa = new multispectral(-52.9, -14.5, 0, "tabs-4", Ticket, false, "ErroCallback");
-  function ErroCallback(valid, args) { alert('ae');
+  multimapa = new multispectral(-52.9, -14.5, 0, "tabs-4", Ticket, false, "ErroCallback");
+  multimapa.Client.addMarker(-47.06061,-22.89563,undefined,'Celta',undefined,'Placa X',14,27,true,undefined);
+  
+  function ErroCallback(valid, args) {
     if (valid == "false" || valid == false) {
       if (typeof args == "string") {
         alert(args);
@@ -148,7 +157,7 @@ jQuery("#multispectralmap").click(function() {
 
   
 // });
-/* --------------------------------------------- END GOOGLE MAPS ------------------------------------------------------ */
+/* --------------------------------------------- END  MAPS ------------------------------------------------------ */
 
 /* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
 
@@ -239,16 +248,16 @@ function loadGrid() {
                   lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
 
                   //Insert google permission here
-                  var latlng = new google.maps.LatLng(lat, lng);
-                  marker = new google.maps.Marker({
-                    position: latlng, 
-                    map: map
-                  });
-                  map.setCenter(latlng);
-                  googlemarkers[rowid] = marker;
+                  // var latlng = new google.maps.LatLng(lat, lng);
+                  // marker = new google.maps.Marker({
+                  //   position: latlng, 
+                  //   map: map
+                  // });
+                  // map.setCenter(latlng);
+                  // googlemarkers[rowid] = marker;
                   
                   //Insert multispectral permission here
-                  // multimapa.Client.addPoint("rowid",-46.67,-23.62,"http://www.geoportal.com.br/applet/images/icone40.gif","PT01","Teste A","Teste B","Teste C","Grupo01",true,20,20,"ErroCallback");
+                  multimapa.Client.addMarker(-47.06061,-22.89563,undefined,'Celta',undefined,'Placa X',14,27,true,'ErroCallback');
                   multimarkers[rowid] = rowid;
               
                 }

@@ -4,9 +4,13 @@
 
   <link rel="stylesheet" href="http://www.geoportal.com.br/Api_Js_v3/theme/default/style.css" type="text/css" />
   
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript">jQuery.noConflict();</script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"></script>
   <script type="text/javascript" src="/media/js/OpenLayers.js"></script>
+  <script type="text/javascript">
+    // jQuery.noConflict();
   
+    
+  </script>
   
   
   <script type="text/javascript" src="http://187.61.51.164/API_Js_v3/lib/OpenLayers/Util.js"></script>
@@ -159,9 +163,15 @@
 		
 		
 		function startup() {
-			multiMapa = new multispectral(-52.9, -14.5, 0, "map", Ticket, false, "ErroCallback");
+			multimapa = new multispectral(-52.9, -14.5, 0, "map", Ticket, false, "ErroCallback");
 			
-      // multiMapa.Client.routeGen(-46.6030065,-23.598228,-46.612194,-23.581085,true,"ErroCallback");
+      // multimapa.Client.addPoint("rowid",-46.6,-23.6,"http://www.geoportal.com.br/applet/images/icone40.gif","PT01","Teste A","Teste B","Teste C","Grupo01",false,20,20,"ErroCallback",false,'setZoom:=multimapa.Client.zoomIn("ErroCallback");');
+      
+      multimapa.Client.addMarker(-47.06061,-22.89563,undefined,'Celta',undefined,'Placa X',14,27,true,'ErroCallback');
+      alert('ae');a
+      // multimapa.Client.addMarker(-47.06061,-22.89563,undefined,'Celta',undefined,'Placa X',14,27,true,'ErroCallback',false,'setZoom:=multimapa.Client.zoomIn("ErroCallback");');
+			
+      // multimapa.Client.routeGen(-46.6030065,-23.598228,-46.612194,-23.581085,true,"ErroCallback");
 			
 		}
 		function load(){
@@ -173,14 +183,15 @@
                 }
             }
 			else {
-                alert(args);
+                // alert(args);
             }
         }
+    
 	</script>
 
 </head>
 
 <body onload="startup();">
-	<div id="map" style="width:800px; height:600px;" ></div>
+	<div id="map"  ></div>
 </body>
 </html>

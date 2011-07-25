@@ -105,6 +105,7 @@ url(r'^paths/$','paths.views.index'),
 url(r'^paths/load/$','paths.ajax.load'),
 
 url(r'multispectral/$','main.views.multispectral'),
+url(r'openlayers/$','main.views.openlayers'),
 
 url(r'reports/(\d+)/$','reports.views.report'),
 

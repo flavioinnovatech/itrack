@@ -6,7 +6,8 @@
 {%block title%}Infotrack - Rastreamento Veicular {% endblock %}
 
 {% block head %}
-<!-- <script type="text/javascript" src="/media/js/OpenLayers.js"></script>
+<link rel="stylesheet" href="http://www.geoportal.com.br/Api_Js_v3/theme/default/style.css" type="text/css" />
+<script type="text/javascript" src="/media/js/OpenLayers.js"></script>
 <script type="text/javascript" src="http://187.61.51.164/API_Js_v3/lib/OpenLayers/Util.js"></script>
 <script type="text/javascript" src="http://187.61.51.164/API_Js_v3/lib/OpenLayers/BaseTypes/Class.js"></script>
 <script type="text/javascript" src="http://187.61.51.164/API_Js_v3/lib/OpenLayers/BaseTypes.js"></script>
@@ -149,7 +150,8 @@
 <script type="text/javascript" src="http://187.61.51.164/API_Js_v3/lib/OpenLayers/Lang/en.js"></script>
 <script type="text/javascript" src="http://187.61.51.164/API_Js_v3/lib/OpenLayers/Control/DragMarker.js"></script>
 <script type="text/javascript" src="http://187.61.51.164/API_Js_v3/lib/jqcontextmenu.js"></script>
-<script type="text/javascript" src="http://187.61.51.164/API_Js_v3/lib/mult.js"></script> -->
+<!-- <script type="text/javascript" src="/media/js/mult.js"></script> -->
+<script type="text/javascript" src="http://187.61.51.164/API_Js_v3/lib/mult.js"></script>
 
 
 <link rel="stylesheet" type="text/css" media="screen" href="/media/css/ui.jqgrid.css" />
@@ -186,7 +188,7 @@
 	<ul>
 		<li id="grid"><a href="#tabs-1">Grid</a></li>
 		{%if map_google %}<li><a id="googlemap" href="#tabs-3">Google</a></li>{% endif %}
-		<li><a id="multispectralmap" href="#tabs-4" onClick="">Multispectral</a></li>
+		<li><a id="multispectralmap" href="#tabs-4">Multispectral</a></li>
 		{%if map_maplink %}<li><a class="fullscreen" href="#" onClick="">Maplink</a></li>{% endif %}
 		<li><a href="#tabs-6" id="configs">Configurações</li></a>
 		
@@ -194,7 +196,6 @@
 		<li style="float:right;"><img title="Listar veículos" id="maptools" class="vehicle" src="/media/img/vehicle.png"></li>
 		<li style="float:right;"><img title="Listar geofences" id="maptools" class="geofence" src="/media/img/geofence.png"></li>
 		
-
 	</ul>
 	<div id="tabs-1">
 	  <table id="list4" summary="tabela que mostra dados principais dos veículos e a sua posição"></table>

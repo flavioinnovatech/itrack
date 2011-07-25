@@ -1,5 +1,7 @@
 jQuery(document).ready(function(){
   
+  jQuery("#tabs-3left").hide();
+  
   var toolnow = null;
   jQuery("img[id=maptools]").click(function() {
 
@@ -9,13 +11,21 @@ jQuery(document).ready(function(){
 
     if(jQuery("#tabs-3left").css("width") == "0px") {
       jQuery("#tabs-3right").css("width","79%");
+       jQuery("#tabs-4").css("width","79%");
       jQuery("#tabs-3left").css("width","20%");
+      jQuery("#tabs-3left").show();
       
     }
     else {
 
       if (jQuery(this).attr('class') == toolnow) {
+        jQuery("#tabs-3left").hide();
+        //Tab do Google
         jQuery("#tabs-3right").css("width","100%");
+        
+        //Tab da Multispectral
+        jQuery("#tabs-4").css("width","100%");
+        
         jQuery("#tabs-3left").css("width","0px");     
       }
       toolnow = jQuery(this).attr('class');
