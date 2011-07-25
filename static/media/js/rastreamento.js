@@ -104,8 +104,6 @@ jQuery("#multispectralmap").click(function() {
   
   w = jQuery(window).width();
   h = jQuery(window).height();
-  multimapa.Client.zoomIn("ErroCallback");
-  multimapa.Client.zoomOut("ErroCallback");
 
   //habilita botao vehicle
   jQuery("img[class=vehicle]").show();
@@ -133,27 +131,47 @@ jQuery("#multispectralmap").click(function() {
 	//Insert Google Permission here
   map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
   google.maps.event.trigger(map, 'resize');
-  map.setZoom( map.getZoom() );
+  map.setZoom( map.getZoom() );jQuery(document).ready(function(){
+
+  jQuery('input[type="submit"]').mousedown(function(){
+    $(this).css("border-style","inset");
+  }).mouseup(function(){
+    $(this).css("border-style","solid");
+  }).mouseleave(function(){
+    $(this).css("border-style","solid");
+  });
+  
+  jQuery("ul#nav > li").hover(
+  	function() { $('ul', this).slideDown('fast', function(){}); },
+  	function() { $('ul', this).css('display', 'none'); 	
+  });
+  
+});
+
+
    
   google.maps.event.addListener(map, "mousemove", function(){
     google.maps.event.trigger(map, 'resize'); 
   });
   
   //Insert Multispectral permission here
-  var Ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C";
-  multimapa = new multispectral(-52.9, -14.5, 0, "tabs-4", Ticket, false, "ErroCallback");
-  multimapa.Client.addMarker(-47.06061,-22.89563,undefined,'Celta',undefined,'Placa X',14,27,true,undefined);
+  // jQuery('.ui-tabs').css("position","absolute");
+  // jQuery('.ui-tabs-hide').css("position","absolute");
+  // jQuery('.ui-tabs').css("left","-10000px");
+  // jQuery('.ui-tabs-hide').css("left","-10000px");
   
-  function ErroCallback(valid, args) {
-    if (valid == "false" || valid == false) {
-      if (typeof args == "string") {
-        alert(args);
-      }
-    }
-    else {
-      alert(args);
-    }
-  }
+  var multispectral = new OpenLayers.Map('tabs-4');
+
+  var dm_wms = new OpenLayers.Layer.WMS(
+      "Canadian Data",
+      "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
+      {
+          layers: "multispectral",
+          format: "image/gif"
+      },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256)});
+      
+  multispectral.addLayer(dm_wms);
+  multispectral.zoomToMaxExtent();
 
   
 // });

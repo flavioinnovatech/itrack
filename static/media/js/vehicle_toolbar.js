@@ -9,7 +9,7 @@ jQuery(document).ready(function(){
       toolnow = jQuery(this).attr('class');
     }
 
-    if(jQuery("#tabs-3left").css("width") == "0px") {
+    if(jQuery("#tabs-3left").css("display") == "none") {
       jQuery("#tabs-3right").css("width","79%");
        jQuery("#tabs-4").css("width","79%");
       jQuery("#tabs-3left").css("width","20%");
@@ -72,7 +72,7 @@ jQuery(document).ready(function(){
             
             jQuery.each(oldgeofences, function(key2,olditem) {
             	if (olditem.id == geofence.id) {
-                	jQuery("#list4").jqGrid('delRowData', equip.id);
+                	jQuery("#list4").jqGrid('delRowData', geofence.id);
                 }
           	});
           }

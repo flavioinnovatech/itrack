@@ -559,8 +559,9 @@ img#maptools{
 
 #tabs-3left{
   float:left;
-  width:0;
+/*  width:0;*/
   height:100%;
+  display:none;
 }
 
 #tabs-3right{
