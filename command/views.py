@@ -33,6 +33,62 @@ TCP_PORT = 5000			# the server port
 BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
 
 
+def systemCommandDetails(sysid):
+    lines = []
+    system = System.objects.get(pk=sysid)
+    alerts = Command.objects.filter(system=system)
+    if system.parent == None:
+        childof = None
+    else:
+        childof = system.parent.id
+    lines.append({  'id':system.id,
+                    'childof':childof,
+                    'sysname':system.name,
+                })
+    for alert in alerts:
+        lines.append({  'id':alert.id,
+                        'childof':system.id,
+                        'alertname':alert.name,
+                        'vehicle': alert.vehicle.all(),
+                        'timestart':alert.time_start,
+                        'timeend':alert.time_end,
+                    })
+    
+    if alerts: 
+        return lines    
+    else: 
+        return []
+
+def mountCommandTree(list_of_childs,parent):
+    table = []
+    
+    if type(list_of_childs).__name__ == 'list':
+        if(len(list_of_childs) > 0):
+            prev = list_of_childs[0]
+            if type(prev).__name__ != 'list':
+                lines = systemAlertDetails(prev)
+                for line in lines:
+                    table.append(line)
+            else:
+                pass
+                
+            for el in list_of_childs[1:]:
+                
+                if type(el).__name__ == 'list':
+                    lines = mountAlertTree(el,prev)
+                else:
+                    lines = mountAlertTree(el,parent)
+                
+                for line in lines:
+                    table.append(line)
+                    
+                prev = el
+    
+        return table
+           
+    else:
+        return systemAlertDetails(list_of_childs)
+
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def index(request):

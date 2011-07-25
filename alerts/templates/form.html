@@ -55,7 +55,7 @@ jQuery(document).ready(function(){
     });
     
     initial_state = false;
-    if (jQuery('li label[for="id_state_0"] input').attr('checked') == "checked") initial_state = true;
+    if (jQuery('li label[for="id_state_0"] input').attr('checked')) initial_state = true;
     
     if (jQuery('#id_trigger option:selected').attr('class') == 'linearinput'){
         jQuery('.geofenceinput').hide();

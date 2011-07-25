@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
+from itertools import chain
+
+from django.contrib.admin.widgets import *
+from django.contrib.auth.models import User
+from django.db.models import Q
+from django.template.context import RequestContext
+from django.forms import *
+from django.utils.html import escape, conditional_escape
 
 from itrack.alerts.models import Alert
 from itrack.equipments.models import  Equipment,CustomFieldName
-from django.contrib.admin.widgets import *
-from django.contrib.auth.models import User
+from itrack.system.tools import findChildInstance, flatten
 from itrack.system.models import System
-from django.template.context import RequestContext
-from django.forms import *
 from itrack.vehicles.models import Vehicle
-from itertools import chain
-from django.utils.html import escape, conditional_escape
-from django.db.models import Q
-
 
 class SpecialSelect(Select):
     def render_option(self, selected_choices, option_value, option_label):
@@ -58,13 +59,22 @@ class AlertForm(ModelForm):
         }
     
     vehicle = ModelMultipleChoiceField(Vehicle.objects.all(),widget= FilteredSelectMultiple(u"Veículos",False,attrs={'rows':'30'}))
-
     destinataries = ModelMultipleChoiceField(User.objects.all(),widget= FilteredSelectMultiple(u"Notificados",False,attrs={'rows':'30'}))
     
     def __init__(self,system, *args, **kwargs):
         super(AlertForm,self).__init__(*args,**kwargs)
         
-        adm_id = System.objects.get(pk=system).administrator.id
+        sys = System.objects.get(pk=system)
+        adm_id = sys.administrator.id
+        
+        childs = findChildInstance(system)
+        flatgenerator =  flatten(childs)
+        
+        flatlist = []
+        for i in flatgenerator:
+            flatlist.append(i)
+        
+        destinataries_id = sum(map(lambda x: sum([list(map(lambda y: y.id,x.users.all())),[x.administrator.id]],[]), flatlist),[])
         
         e_set = Equipment.objects.filter(system = system)
         v_set = []
@@ -78,6 +88,6 @@ class AlertForm(ModelForm):
         self.fields["vehicle"].label = "Veículo"
         self.fields["trigger"].queryset = CustomFieldName.objects.filter((Q(custom_field__type = 'Input')|Q(custom_field__type = 'LinearInput')) & Q(system = system) & Q(custom_field__availablefields__system = system)).distinct()
         self.fields["trigger"].empty_label = "(selecione o evento)"
-        self.fields['destinataries'].queryset=User.objects.filter(Q(system=system) | Q(pk=adm_id) )
+        self.fields['destinataries'].queryset=User.objects.filter((Q(system=system) | Q(pk=adm_id)) | Q(pk__in=destinataries_id) )
     
     

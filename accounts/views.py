@@ -95,20 +95,27 @@ def create_user(request,offset):
           user.set_password(password)
           user.save()
           
-          alert = request.POST["alert"]
-          command = request.POST["command"]
-          
+          try:
+            alert = request.POST["alert"]
+          except:
+            alert = None
+        
+          try:
+            command = request.POST["command"]
+          except:
+            command = None
+            
           if adm is not None:
             user.groups.add(1)
             
-          elif alert is not None and command is not None:
+          elif (alert is not None and command is not None) and adm is None:
             user.groups.add(2)
             user.groups.add(3)
             
-          elif command is not None:
+          elif command is not None and adm is None:
             user.groups.add(3)
             
-          elif alert is not None:
+          elif alert is not None and adm is None:
             user.groups.add(2)
           
           new_profile = form_profile.save(commit=False)
