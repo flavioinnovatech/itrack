@@ -475,7 +475,7 @@ hr{
   border:1px solid #d0d0d0
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="number"]{
   height:25px;
   border: 1px solid #aaa;
   border-radius: 5px;
@@ -584,6 +584,31 @@ img#maptools{
 
 #tabs{
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.steps{
+  margin-left:5px;
+  float:left;
+  width:300px;
+
+}
+
+.steps fieldset{
+  border:1px solid #ccc;
+  height:100px;
+  padding:10px;
+}
+
+.steps legend{
+  font-weight:bold;
+}
+
+.steps input[type=text]{
+  width:150px;
+}
+
+#geofence-tabs {
+  min-height:400px;
 }
 
 .popup-content p{}

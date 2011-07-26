@@ -1,7 +1,7 @@
 <html>
 <head>
   <title>OpenLayers Example</title>
-    <script src="http://openlayers.org/api/OpenLayers.js"></script>
+    <script type='text/javascript' src="http://openlayers.org/api/OpenLayers.js"></script>
     </head>
     <body>
       <div style="width:100%; height:100%" id="map"></div>
@@ -10,14 +10,22 @@
         var wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
             "http://vmap0.tiles.osgeo.org/wms/vmap0", {layers: 'basic'} );
             
+        var markers = new OpenLayers.Layer.Markers( "Markers" );
+        map.addLayer(markers);
+        var size = new OpenLayers.Size(21,25);
+        var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+        var icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png', size, offset);
+        markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(-47.060092,-22.896359),icon));
+            
         var dm_wms = new OpenLayers.Layer.WMS(
             "Canadian Data",
             "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
             {
                 layers: "multispectral",
                 format: "image/gif"
-            },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256)});
-            
+            },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),minScale: 30000000});
+          
+        
         map.addLayer(dm_wms);    
         // map.addLayer(wms);
         map.zoomToMaxExtent();
