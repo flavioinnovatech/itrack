@@ -48,6 +48,17 @@ jQuery(document).ready(function(){
 });
 
 </script>
+
+
+<script type="text/javascript" src="/media/js/jquery.treeTable.js"></script>
+<link rel="stylesheet" href="/media/css/jquery.treeTable.css" type="text/css" media="screen" /> 
+<script type="text/javascript">
+    $(document).ready(function()  {
+        $("#tree").treeTable({
+            initialState: "expanded"
+        });
+    });  
+</script>
 {% endblock  %}
 
 
@@ -66,7 +77,7 @@ jQuery(document).ready(function(){
 				  
 				  <thead>
 				    
-				    <tr role="rowheader" class="ui-jqgrid-labels" style="margin-bottom:5px;">
+				    <tr role="rowheader" class="ui-jqgrid-labels">
 				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 100px;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Veículo</div></th>
 				      	<th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 100px;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Comando</div></th>
 				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 100px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Estado</div></th>
@@ -76,52 +87,58 @@ jQuery(document).ready(function(){
 				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 100px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Ações</div></th></tr></thead></table></div></div><div class="ui-jqgrid-bdiv"><div style="margin-left:0px;"><div></div><table id="tree" cellspacing="0" cellpadding="0" border="0" id="list4" tabindex="1" role="grid" aria-multiselectable="true" aria-labelledby="gbox_list4" class="ui-jqgrid-btable" style="width:100%"><tbody>
 				      
 				      
-				  <tr style="height: auto; width:100%" role="row" class="jqgfirstrow">
+			  <tr style="height: auto; width:100%" role="row" class="jqgfirstrow">
+			  
+			  <td style="height: 0px; width: 20px;" role="gridcell"></td>
+			  
+			  <td style="height: 0px; width:20px" role="gridcell"></td
+			  <td style="height: 0px; width:20px" role="gridcell"></td>
+			  
+			  
+			  </tr>
+			    {% for item in command_tree %}
+			        {% if item.sysname %}
+			        <tr style='width:5%;' id='node-{{item.id}}' {% if item.childof %}class='child-of-node-{{item.childof}}'{% endif %}>
+			            <td style='width:50px;font-weight:bold;text-align:left;' >{{item.sysname}}</td>
+			        </tr>
+			        {% else %}
+			        <tr style = 'width:5%' {% if item.childof %}class='child-of-node-{{item.childof}}'{% endif %}>
+			            <td style='width:100px;text-align:left;' ><a id='{{item.id}}' class='commanddialog' href="#">{{item.plate}}</a></td>
+			            <td style="width:100px">{{item.type}} : {{item.action}} </td>
+			            <td style="width:100px"> 
+			            {% if item.state == "0" %}
+			                <img src="/media/img/command-1-thumb.png">
+			                {% else %}{% if item.state == "1" %}
+			                    <img src="/media/img/command-2-thumb.png">
+			                    {% else %}{% if item.state == "2" %}
+			                        <img src="/media/img/command-3-thumb.png">
+			                        {% else %}{% if item.state == "3" %}
+			                            <img src="/media/img/command-fail-thumb.png">
+			                        {% endif %}
+			                    {% endif %}
+			                {% endif %}
+			            {% endif %}  
+			            </td>
+			            <td style="width:150px">{% if item.time_sent %}{{item.time_sent}}{% endif %}</td>
+			            <td style="width:150px">{% if item.time_received %}{{item.time_received}}{% endif %}</td>
+			            <td style="width:150px">{% if item.time_executed %}{{item.time_executed}}{% endif %}</td>
+			        
+			            <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar</a></td>
+			        </tr>
+			        {% endif %}
+			    {% endfor %}
+			  
 				  
-				  <td style="height: 0px; width: 20px;" role="gridcell"></td>
 				  
-				  <td style="height: 0px; width:20px" role="gridcell"></td
-				  <td style="height: 0px; width:20px" role="gridcell"></td>
-				  
-				  
-				  </tr>
-				  
-				  <tr class="ui-widget-content jqgrow ui-row-ltr" tabindex="-1" role="row" id="1">
-				    {% for item in display_list %}
-				    <tr style='width:5%;'>
-				        <td style="width:100px"><a id='{{item.id}}' class='commanddialog' href="#">{{item.plate}}</a> </td>
-				        <td style="width:100px">{{item.type}} : {{item.action}} </td>
-				        <td style="width:100px"> 
-				        {% if item.state == "0" %}
-				            <img src="/media/img/command-1-thumb.png">
-				            {% else %}{% if item.state == "1" %}
-				                <img src="/media/img/command-2-thumb.png">
-				                {% else %}{% if item.state == "2" %}
-				                    <img src="/media/img/command-3-thumb.png">
-				                    {% else %}{% if item.state == "3" %}
-				                        <img src="/media/img/command-fail-thumb.png">
-				                    {% endif %}
-				                {% endif %}
-				            {% endif %}
-				        {% endif %}  
-				        </td>
-				        <td style="width:150px">{% if item.time_sent %}{{item.time_sent}}{% endif %}</td>
-				        <td style="width:150px">{% if item.time_received %}{{item.time_received}}{% endif %}</td>
-				        <td style="width:150px">{% if item.time_executed %}{{item.time_executed}}{% endif %}</td>
-				        
-				        <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar</a></td>
-				        
-				    </tr>
-  					{% endfor %}
-				  </tr></tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div>
-	      <div align="center" style="margin-top:30px;" id="actions">
-        <a href="{% url command.views.create request.session.system %}">Enviar um novo comando </a>
-         
-
+				    
+				  </tr></tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div>
+        <div align="center" style="margin-top:30px;" id="actions">
+            <a href="{% url command.views.create request.session.system %}">Enviar um novo comando </a>
+        </div>
+</div>
     </div>
       </div>
 
-</div>
 
 
 

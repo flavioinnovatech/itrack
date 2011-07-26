@@ -11,11 +11,13 @@ import urllib
 import time
 from datetime import datetime
 from xml.etree import cElementTree as ElementTree
+from xml.etree.ElementTree import ParseError
 
 from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
+from django.template.defaultfilters import lower,title
 
 from itrack.equipments.models import Equipment, Tracking, TrackingData,CustomField
 from itrack.alerts.models import Alert,Popup
@@ -24,6 +26,7 @@ from itrack.accounts.models import UserProfile
 from itrack.command.models import CPRSession
 from itrack.command.models import Command as ItrackCommand
 from comparison import AlertComparison,GeofenceComparison
+#from geocoding import ReverseGeocode
 from django.contrib.gis.geos import Point
 from django.conf import settings
 
@@ -186,7 +189,6 @@ class Command(BaseCommand):
         #s.connect((TCP_IP, TCP_PORT))
         #sending the auth message, receiving the response and sending an ack message
         key = authentication(s)
-        # TODO: save in the cprsession table the current session
         CPRSession.objects.all().delete()
         cprkey = CPRSession(key=key,time=datetime.now())
         cprkey.save()
@@ -201,7 +203,7 @@ class Command(BaseCommand):
         s.send(ack_msg)
 
         #listening all information given by CPR.
-
+        
         while 1:
         
             # if there is messages to read in the socket
@@ -242,6 +244,20 @@ class Command(BaseCommand):
                                               tdata.save()
                                           except ObjectDoesNotExist:
                                               pass
+                              
+                              
+                              ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C"
+                              url  = "http://www.geoportal.com.br/xgeocoder/cxinfo.aspx?x="+str(xmldict['GPS']['Long'])+"&y="+str(xmldict['GPS']['Lat'])+"&Ticket="+str(ticket)
+                              
+                              page = urllib.urlopen(url)
+                              
+                              conteudo = page.read()
+                              page.close()
+                              self.stdout.write(str(conteudo)+"\n")
+                              geocodexml = ElementTree.fromstring(conteudo)
+                              address = geocodexml.findall("INFO")
+                              
+                              self.stdout.write(address[0].text+","+address[0].get("NroIni")+"-"+address[0].get("NroFim")+","+address[0].get("Bairro")+","+address[1].text+"-"+address[2].text+","+address[0].get("CEP"))
                               
                               # print the success message            
                               self.stdout.write('>> The tracking table sent on '+str(searchdate)+' for the equipment '+ xmldict['TCA']['SerialNumber'] +' has been saved successfully.\n')
@@ -337,5 +353,5 @@ class Command(BaseCommand):
                                     
                                      
 
-                except:
+                except ParseError:
                   pass
