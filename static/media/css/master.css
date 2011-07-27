@@ -197,7 +197,7 @@ a {
 }
 
 #addpoint, #adddestiny {
-	float:right;
+/*  float:right;*/
 }
 
 #addpoint:hover, #adddestiny:hover {
@@ -595,7 +595,7 @@ img#maptools{
 
 .steps fieldset{
   border:1px solid #ccc;
-  height:100px;
+  height:160px;
   padding:10px;
 }
 
@@ -619,5 +619,3 @@ img#maptools{
 .alert-wrapper span { font-weight: bold; float:left;}
 .alert-wrapper p { float:right; margin-bottom:0px;}
 .alert-wrapper ul li {clear:both;}
-
-
