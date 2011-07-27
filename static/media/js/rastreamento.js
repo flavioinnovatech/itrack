@@ -7,8 +7,8 @@ jQuery(document).ready(function(){
   
   loadData();
   
-  jQuery("img[id=maptools]").easyTooltip();
-  jQuery("img[class=fullscreen]").easyTooltip();
+  jQuery("img[id=maptools]").tipTip();
+  jQuery("img[class=fullscreen]").tipTip();
   
   setTimeout(function(){
     doTimer();
@@ -267,7 +267,7 @@ function loadGrid() {
               sortable:true,
               datatype: "local",
               height:h-250,
-              width: 930,
+              width: 960,
               colNames: colNames, 
               colModel:colModel,
               multiselect: true, 
