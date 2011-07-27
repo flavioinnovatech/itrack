@@ -6,6 +6,7 @@ from django.db.models import Q
 from paths.forms import PathForm
 from equipments.models import Tracking, TrackingData,Equipment
 from geofence.models import Geofence
+from datetime import datetime
 
 def load(request):
     parsed_POST = parser.parse(request.POST.urlencode())
@@ -14,8 +15,10 @@ def load(request):
     
         # getting the path points and mounting the multidimensional list
         equipment = Equipment.objects.get(vehicle=form.cleaned_data['vehicle'])
+        d1 = datetime.now()
         trackings = Tracking.objects.filter(Q(equipment=equipment) & Q(eventdate__gte=form.cleaned_data['period_start']) & Q(eventdate__lte=form.cleaned_data['period_end']))
         datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings) & (Q(type__tag='Lat')|Q(type__tag='Long')))
+        print (datetime.now() - d1).total_seconds()
         tdata_dict = {}
         for tdata in datas:
             tdata_dict.setdefault(str(tdata.tracking.eventdate), []).append(tdata)

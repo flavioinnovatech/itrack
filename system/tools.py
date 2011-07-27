@@ -1,6 +1,16 @@
 from itrack.system.models import System
+from collections import Iterable
 
-#creates the list of childs for the system with id = 'parent'
+def flatten(l):
+    for el in l:
+        if isinstance(el, Iterable) and not isinstance(el, basestring):
+            for sub in flatten(el):
+                yield sub
+        else:
+            yield el
+
+# Creates the list of childs for the system with id = 'parent'. 
+# Returns the id's of the childs
 def findChild(parent):
     if (System.objects.filter(parent__id=parent).count() == 0):
 		return []
@@ -10,6 +20,21 @@ def findChild(parent):
             n = x.id
             u.append(n)
             el = findChild(n)
+            if el != []:
+                u.append(el)
+        return u
+        
+#creates the list of childs for the system with id ='parent'
+# Returns the instances of childs
+def findChildInstance(parent):
+    if (System.objects.filter(parent__id=parent).count() == 0):
+		return []
+    else:
+        u=[]
+        for x in System.objects.filter(parent__id=parent):
+            n = x
+            u.append(n)
+            el = findChildInstance(n.id)
             if el != []:
                 u.append(el)
         return u
