@@ -1,0 +1,195 @@
+{% extends "templates/base.html" %}
+
+{% block title %}
+Infotrack - Cercas Eletrônicas
+{% endblock %}
+
+{% block head %}
+<style type="text/css"> 
+  #id_polygon_map { width: 600px; height: 400px; }
+  #id_polygon_map .aligned label { float:inherit; }
+  #id_polygon_admin_map { position: relative; vertical-align: top; float: left; }
+  #id_polygon { display: none; }
+  .olControlEditingToolbar .olControlModifyFeatureItemActive { 
+     background-image: url("/static/admin/img/gis/move_vertex_on.png");
+     background-repeat: no-repeat;
+  }
+  .olControlEditingToolbar .olControlModifyFeatureItemInactive { 
+     background-image: url("/static/admin/img/gis/move_vertex_off.png");
+     background-repeat: no-repeat;
+  }
+</style>
+<script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+
+<script type="text/javascript">
+  //Global variables
+  var circle;
+  var polygon;
+
+  jQuery(document).ready(function(){
+    jQuery("#geofence-tabs").tabs();
+    
+    jQuery("#circlearea").html("<i>Nenhuma cerca eletrônica selecionada.</i>")
+    
+    vlayer = new OpenLayers.Layer.Vector( "Editable");
+    vlayer = new OpenLayers.Layer.Vector("Editable",{eventListeners: {sketchstarted: function(evt) {vlayer.destroyFeatures();}},onFeatureInsert: function(	feature	) { circle = (feature.geometry.getVertices()); area = (feature.geometry.getGeodesicArea()/1000000).toFixed(2); jQuery("#circlearea").html(area + " km²");} });
+    
+    multispectral = new OpenLayers.Map('map1');
+
+    var dm_wms = new OpenLayers.Layer.WMS(
+        "Canadian Data",
+        "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
+        {
+            layers: "multispectral",
+            format: "image/gif"
+        },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
+
+    multispectral.addLayer(dm_wms);
+    multispectral.addLayer(vlayer);
+    multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
+    
+    //Control Panel
+    panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});
+    var nav = new OpenLayers.Control.Navigation();
+    polyOptions = {sides: 40};
+    draw_ctl = new OpenLayers.Control.DrawFeature(vlayer, OpenLayers.Handler.RegularPolygon, {'displayClass': 'olControlDrawFeaturePolygon',handlerOptions: polyOptions});
+    var mod = new OpenLayers.Control.ModifyFeature(vlayer, {'displayClass': 'olControlModifyFeature'});
+    controls = [nav, draw_ctl];
+    panel.addControls(controls);
+    multispectral.addControl(panel);
+    multispectral.addControl(new OpenLayers.Control.MousePosition());
+    
+    jQuery("#circlesave").click(function(){
+      if(!circle) { 
+        alert("Por favor digite um nome para a cerca eletrônica.");
+      }
+      
+      else {
+        //Save geofence
+      }
+    });
+    
+    //Polygon
+    $("#addpoint").click(function(){
+      var i = $("input[id^=polygoninput]").size() + 1;
+       $('<p align="center"><span>'+i+'.</span><input placeholder="Ex.:Rua Anchieta,Campinas" type="text" id="polygoninput'+i+'" /></p>').appendTo('#polygoninputs');
+       i++;
+    });
+    
+    jQuery("#polygonarea").html("<i>Nenhuma cerca eletrônica selecionada.</i>")
+    
+    multispectral2 = new OpenLayers.Map('map2');
+    
+    var dm_wms2 = new OpenLayers.Layer.WMS(
+        "Canadian Data",
+        "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
+        {
+            layers: "multispectral",
+            format: "image/gif"
+        },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
+
+    vlayer2 = new OpenLayers.Layer.Vector( "Editable",{eventListeners: {sketchstarted: function(evt) {vlayer2.destroyFeatures();}},onFeatureInsert: function(	feature	) {polygon = (feature);area = (feature.geometry.getGeodesicArea()/1000000).toFixed(2); jQuery("#polygonarea").html(area + " km²");}});
+    vlayer2.events.on({"afterfeaturemodified": function(feature){
+          polygon = (feature.feature);
+          area = (feature.feature.geometry.getGeodesicArea()/1000000).toFixed(2);
+          jQuery("#polygonarea").html(area + " km²");
+   }});
+
+    multispectral2.addLayer(dm_wms2);
+    multispectral2.addLayer(vlayer2);
+    multispectral2.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
+    
+    //Control Panel
+    panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});
+    var nav = new OpenLayers.Control.Navigation();
+    draw_ctl = new OpenLayers.Control.DrawFeature(vlayer2, OpenLayers.Handler.Polygon, {'displayClass': 'olControlDrawFeaturePolygon'});
+    var mod = new OpenLayers.Control.ModifyFeature(vlayer2, {'displayClass': 'olControlModifyFeature'});
+    controls = [nav, draw_ctl,mod];
+    panel.addControls(controls);
+    multispectral2.addControl(panel);
+    multispectral2.addControl(new OpenLayers.Control.MousePosition());
+    
+    jQuery("#polygonsave").click(function(){
+      if(!polygon) { 
+        alert("Por favor digite um nome para a cerca eletrônica.");
+        }
+      else {
+        //Save geofence
+        alert(polygon.geometry.getVertices());
+      }
+     });
+    });
+  
+  
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div id="geofence-tabs">
+  <ul>
+  		<li><a href="#tabs-1">Círculo</a></li>
+  		<li><a href="#tabs-2">Polígono</a></li>
+  		<li><a href="#tabs-3">Rota</a></li>
+  	</ul>
+  	<div id="tabs-1" style="overflow:hidden;">
+  	  <div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
+    		<form id="step1" class="steps">
+    		  <fieldset>
+            <legend>1º Passo - Escolha um tamanho para o raio</legend>
+              <p>Digite abaixo um tamanho para o raio em metros:</p>
+               <p align="center"><input type="number" min="0" id="radius" placeholder="Digite um raio" autofocus></input> metros</p>
+          </fieldset>
+    		</form>
+    		<form id="step2" class="steps">
+    		  <fieldset>
+            <legend>2º Passo - Escolha um local para o centro</legend>
+            <p>Digite o endereço completo para o centro do círculo:</p>
+            <p align="center"><input id="circlecenter" placeholder="Ex.:Rua Anchieta,Campinas" type="text"></input><input type="submit" value="Buscar endereço" style="padding:4px 12px;"></p>
+          </fieldset>
+    		</form>
+    		<form id="step3" class="steps">
+    		  <fieldset>
+            <legend>3º Passo - Salvar cerca eletrônica</legend>
+            <p>Após confirmar a visualização da cerca no mapa e sua área, digite um nome para a cerca e clique em salvar:</p>
+            <p align="center"><b>Área da cerca eletrônica selecionada:</b></p><div align="center" id="circlearea"></div>
+            <p align="center"><input id="circlename" placeholder="Digite um nome para a cerca" type="text" required></input><input id="circlesave" type="submit" value="Salvar" style="padding:4px 12px;"></p>
+          </fieldset>
+    		</form>
+  		</div>
+  		<div id="map1" style="float:left;width:100%;height:300px;"></div>
+  	</div>
+  	<div id="tabs-2" style="overflow:hidden;">
+  		<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
+    		<form id="step1" class="steps" style="width:450px">
+    		  <fieldset>
+            <legend>1º Passo - Escolha os pontos para os vértices do polígono</legend>
+              <p>Digite o endereço para os vértices (mínimo 3):</p>
+              <div id="polygoninputs" style="overflow: auto; height: 81px;">
+                <ol>
+                  <li><p align="center"><span>1.</span><input id="polygoninput1" placeholder="Ex.:Rua Anchieta,Campinas" type="text"></input></p>
+                  <li><p align="center"><span>2.</span><input id="polygoninput2" placeholder="Ex.:Rua Anchieta,Campinas" type="text"></input></p>
+                  <li><p align="center"><span>3.</span><input id="polygoninput3" placeholder="Ex.:Rua Anchieta,Campinas" type="text"></input></p>
+                </ol>
+               </div>
+               <p align="center"><span id="addpoint"> + Adicionar ponto</span></p>
+               <p align="center"><input type="submit" value="Montar polígono com os endereços acima"/></p>
+          </fieldset>
+    		</form>
+    		<form id="step2" class="steps" style="width:450px">
+    		  <fieldset>
+            <legend>2º Passo - Salvar cerca eletrônica</legend>
+             <p>Após confirmar a visualização da cerca no mapa e sua área, digite um nome para a cerca e clique em salvar:</p>
+              <p align="center"><b>Área da cerca eletrônica selecionada:</b></p><div align="center" id="polygonarea"></div>
+              <p align="center"><input id="polygoname" placeholder="Digite um nome para a cerca" type="text" required></input><input id="polygonsave" type="button" value="Salvar" style="padding:4px 12px;"></p>
+          </fieldset>
+    		</form>
+  		</div>
+  		<div id="map2" style="float:left;width:100%;height:300px;"></div>
+  	</div>
+  	<div id="tabs-3">
+  		<p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
+  		<p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+  	</div>
+</div>
+{% endblock %}

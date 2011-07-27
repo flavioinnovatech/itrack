@@ -1,5 +1,7 @@
+//Global variables
 var map;
-var multimapa;
+var multispectral;
+var markers,size,icon;
 
 jQuery(document).ready(function(){ 
   
@@ -101,7 +103,7 @@ jQuery("#googlemap").click(function() {
 });
 
 jQuery("#multispectralmap").click(function() {
-  
+  multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
   w = jQuery(window).width();
   h = jQuery(window).height();
 
@@ -148,19 +150,12 @@ jQuery("#multispectralmap").click(function() {
   
 });
 
-
-   
   google.maps.event.addListener(map, "mousemove", function(){
     google.maps.event.trigger(map, 'resize'); 
   });
   
   //Insert Multispectral permission here
-  // jQuery('.ui-tabs').css("position","absolute");
-  // jQuery('.ui-tabs-hide').css("position","absolute");
-  // jQuery('.ui-tabs').css("left","-10000px");
-  // jQuery('.ui-tabs-hide').css("left","-10000px");
-  
-  var multispectral = new OpenLayers.Map('tabs-4');
+  multispectral = new OpenLayers.Map('tabs-4');
 
   var dm_wms = new OpenLayers.Layer.WMS(
       "Canadian Data",
@@ -168,11 +163,16 @@ jQuery("#multispectralmap").click(function() {
       {
           layers: "multispectral",
           format: "image/gif"
-      },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256)});
-      
+      },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
+    
   multispectral.addLayer(dm_wms);
-  multispectral.zoomToMaxExtent();
-
+  
+  markers = new OpenLayers.Layer.Markers( "Markers" );
+  multispectral.addLayer(markers);
+  size = new OpenLayers.Size(21,25);
+  offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+  icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png', size, offset);
+  
   
 // });
 /* --------------------------------------------- END  MAPS ------------------------------------------------------ */
@@ -281,17 +281,18 @@ function loadGrid() {
                   //lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
 
                   //Insert google permission here
-                  // var latlng = new google.maps.LatLng(lat, lng);
-                  // marker = new google.maps.Marker({
-                  //   position: latlng, 
-                  //   map: map
-                  // });
-                  // map.setCenter(latlng);
-                  // googlemarkers[rowid] = marker;
+                  var latlng = new google.maps.LatLng(lat, lng);
+                  marker = new google.maps.Marker({
+                    position: latlng, 
+                    map: map
+                  });
+                  map.setCenter(latlng);
+                  googlemarkers[rowid] = marker;
                   
                   //Insert multispectral permission here
-                  multimapa.Client.addMarker(-47.06061,-22.89563,undefined,'Celta',undefined,'Placa X',14,27,true,'ErroCallback');
-                  multimarkers[rowid] = rowid;
+                  multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
+                  markers.addMarker(multimarkers[rowid]);
+                  multispectral.setCenter(new OpenLayers.LonLat(lng,lat),1); 
               
                 }
               
@@ -300,8 +301,9 @@ function loadGrid() {
                   //Insert google permission here
                   googlemarkers[rowid].setMap(null);
                   
+                  
                   //Insert multispectral permission here
-                  // multimapa.Client.removePoints("rowid","ErroCallback");
+                  markers.removeMarker(multimarkers[rowid]);
                 }
               }
             });

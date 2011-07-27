@@ -13,9 +13,13 @@ from django.contrib.gis import geos
 
 def index(request):
     system = System.objects.filter(administrator__username=request.user.username)
-
         
     return render_to_response("geofence/templates/home.html",locals())
+    
+def index2(request):
+    system = System.objects.filter(administrator__username=request.user.username)
+
+    return render_to_response("geofence/templates/multispectral.html",locals())
     
 def saveGeofence(request):
   if request.method == "POST":

@@ -35,7 +35,9 @@ DATABASES = {
 }
 
 EXTRACTOR_IP = '192.168.1.119'
+
 #EXTRACTOR_IP = '187.115.25.240'
+
 
 #habilitar o roteador de banco de dados apenas em deploy.
 #DATABASE_ROUTERS = ['dbrouter.GeocodeCacheRouter']
