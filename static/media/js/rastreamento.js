@@ -186,7 +186,6 @@ function loadData() {
     jQuery.getJSON("/rastreamento/loadData",
         function(data){
             globaldata = data;
-            
             loadGrid();
             loadlateralgrid();
         
@@ -211,37 +210,51 @@ function loadGrid() {
           var colNames = [];
           
           //Campos fixos
-          colNames.push("Latitude");
-          colModel.push({name:"Latitude",hidden:true});
-          colNames.push("Longitude");
-          colModel.push({name:"Longitude",hidden:true});
+          //colNames.push("Latitude");
+          //colModel.push({name:"Latitude",hidden:true});
+          //colNames.push("Longitude");
+          //colModel.push({name:"Longitude",hidden:true});
           colNames.push("Placa");
-          colModel.push({name:"Placa",align:"center",formatter:currencyFmatter});
+          colModel.push({name:"Placa",align:"center",formatter:currencyFmatter,width:75});
           colNames.push("Tipo veículo");
-          colModel.push({name:"Tipo veículo",align:"center"});
+          colModel.push({name:"Tipo veículo",align:"center",width:75});
           colNames.push("Hora");
           colModel.push({name:"Hora",align:"center"});
-          colNames.push("Endereço");
-          colModel.push({name:"Endereço",align:"center"});
+          //colNames.push("Endereço");
+          //colModel.push({name:"Endereço",align:"center"});
           colNames.push("Sistema");
-          colModel.push({name:"Sistema",align:"center"});
+          colModel.push({name:"Sistema",align:"center",width:75});
           
           //para cada veículo
           var nequips = 0;
           jQuery.each(data, function(key, equip) {
             nequips++;
-            //para cada info
+            
+           //hack para colocar endereço em primeiro
+           addr = equip.geocode["Endereço"];
+           delete equip.geocode["Endereço"];
+
+            colNames.push("Endereço");
+            colModel.push({name:"Endereço",align:"center",width:200});
+            
+            //para cada info de geocode
+            jQuery.each(equip.geocode, function(key3,info){
+                colNames.push(key3);
+                colModel.push({name:key3,align:"center",width:60});
+            });
+            
+            //fim do hack para botar endereço em primeiro
+            equip.geocode["Endereço"] = addr;
+            
+            //para cada info do rastreador
             jQuery.each(equip.info, function(key2,info){
-
-              if (key2 == "Latitude" || key2 == "Longitude") {
-
-              }
-              
-              else {
+              if (!(key2 == "Latitude" || key2 == "Longitude")) {
                 colNames.push(key2);
-                colModel.push({name:key2,align:"center"});
+                colModel.push({name:key2,align:"center",width:50});
               }
             });
+            
+            
              
           });
           
@@ -260,10 +273,12 @@ function loadGrid() {
               multiselect: true, 
               loadui:"block",
               caption: "Rastreamento veicular",
+              autowidth: true,
+              shrinkToFit: true,
               onSelectRow: function(rowid,status){ 
                 if (status == true) {
-                  lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
-                  lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
+                  //lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
+                  //lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
 
                   //Insert google permission here
                   // var latlng = new google.maps.LatLng(lat, lng);
@@ -311,7 +326,6 @@ function loadGrid() {
           
           
           jQuery.each(data, function(key, equip) {
-          
             if (olddata != null) { 
             
                 jQuery.each(olddata, function(key2,olditem) {
@@ -320,39 +334,18 @@ function loadGrid() {
                     }
                 });
             }
-            
-              jQuery.each(colNames, function(key, name) {
-            
+              jQuery.each(colNames, function(keyx, name) {
+                
                 //Campos fixos
-                if (name == "Hora") {
-                  object[name] = equip.hora.eventdate;
-                }
-                
-                else if (name == "Tipo veículo") {
-                  object[name] = equip.veiculo.type;
-                }
-                
-                else if (name == "Placa") {
-                  object[name] = equip.veiculo.license_plate;
-                }
-                
-                //Geocode reverse RULES
-                else if (name == "Endereço") {
-                  var lat = object["Latitude"];
-                  var lng = object["Longitude"];
-                  var latlng = new google.maps.LatLng(lat,lng);
-                  geocoder = new google.maps.Geocoder();
-                  geocoder.geocode({'latLng': latlng}, function(results, status) {
-                    if (status == google.maps.GeocoderStatus.OK) {
-                      object[name] = results[0].formatted_address;
-                    }
-                    
-                  });
-                                    
-                }else if(name == "Sistema"){
-                    object[name] = equip.veiculo.sistema;
-                
-                }
+                if (name == "Hora")                 object[name] = equip.hora.eventdate;
+                else if (name == "Tipo veículo")    object[name] = equip.veiculo.type;
+                else if (name == "Placa")           object[name] = equip.veiculo.license_plate;
+                else if(name == "Sistema")          object[name] = equip.veiculo.sistema;
+                //Geocode fields
+                else if(name == "Endereço")         object[name] = equip.geocode["Endereço"];
+                else if(name =="Cidade")            object[name] = equip.geocode["Cidade"];
+                else if(name =="CEP")               object[name] = equip.geocode["CEP"];
+                else if(name =="Estado")            object[name] = equip.geocode["Estado"];
                 //Custom fields
                 else {
                   

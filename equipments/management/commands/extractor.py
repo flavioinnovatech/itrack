@@ -18,6 +18,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.template.defaultfilters import lower,title
+from django.contrib.gis.geos import Point
+from django.conf import settings
 
 from itrack.equipments.models import Equipment, Tracking, TrackingData,CustomField
 from itrack.alerts.models import Alert,Popup
@@ -25,10 +27,11 @@ from itrack.vehicles.models import Vehicle
 from itrack.accounts.models import UserProfile
 from itrack.command.models import CPRSession
 from itrack.command.models import Command as ItrackCommand
+from itrack.system.tools import lowestDepth
+
 from comparison import AlertComparison,GeofenceComparison
-#from geocoding import ReverseGeocode
-from django.contrib.gis.geos import Point
-from django.conf import settings
+from geocoding import ReverseGeocode
+
 
 
 #TCP_IP = '192.168.1.119'
@@ -222,6 +225,8 @@ class Command(BaseCommand):
                       try:
                           # tries to pick the equipment and the date of the tracking table
                           e = Equipment.objects.get(serial=xmldict['TCA']['SerialNumber'])
+                          v = Vehicle.objects.get(equipment=e)
+                          sys = lowestDepth(e.system.all())
                           searchdate = datetime.strptime(xmldict['Event']['EventDateTime'], "%Y/%m/%d %H:%M:%S")
 
                           try:
@@ -245,19 +250,28 @@ class Command(BaseCommand):
                                           except ObjectDoesNotExist:
                                               pass
                               
+                              #reverse geocoding in the background
+                              geocodeinfo = ReverseGeocode(str(xmldict['GPS']['Lat']),str(xmldict['GPS']['Long']))
                               
-                              ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C"
-                              url  = "http://www.geoportal.com.br/xgeocoder/cxinfo.aspx?x="+str(xmldict['GPS']['Long'])+"&y="+str(xmldict['GPS']['Lat'])+"&Ticket="+str(ticket)
+                              #get the custom fields for the right things
+                              geocodefields = CustomField.objects.filter(type='Geocode')
+                              geodict = {}
+                              for field in geocodefields:
+                                geodict[field.tag] = field
                               
-                              page = urllib.urlopen(url)
+                              #saving the tracking datas to the tracking
+                              TrackingData(tracking=t, type=geodict['Address'],value=geocodeinfo[1]).save()
+                              TrackingData(tracking=t, type=geodict['City'],value=geocodeinfo[2]).save()
+                              TrackingData(tracking=t, type=geodict['State'],value=geocodeinfo[3]).save()
+                              TrackingData(tracking=t, type=geodict['PostalCode'],value=geocodeinfo[4]).save()
                               
-                              conteudo = page.read()
-                              page.close()
-                              self.stdout.write(str(conteudo)+"\n")
-                              geocodexml = ElementTree.fromstring(conteudo)
-                              address = geocodexml.findall("INFO")
+                              #saving the vehicle tracking data
+                              field = CustomField.objects.get(tag="Vehicle")
+                              TrackingData(tracking=t,type=field,value=v.id).save()
                               
-                              self.stdout.write(address[0].text+","+address[0].get("NroIni")+"-"+address[0].get("NroFim")+","+address[0].get("Bairro")+","+address[1].text+"-"+address[2].text+","+address[0].get("CEP"))
+                              #saving the system tracking data
+                              field = CustomField.objects.get(tag="System")
+                              TrackingData(tracking=t,type=field,value=sys.id).save()
                               
                               # print the success message            
                               self.stdout.write('>> The tracking table sent on '+str(searchdate)+' for the equipment '+ xmldict['TCA']['SerialNumber'] +' has been saved successfully.\n')
