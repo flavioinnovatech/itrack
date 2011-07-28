@@ -11,7 +11,7 @@ import urllib
 import time
 from datetime import datetime
 from xml.etree import cElementTree as ElementTree
-from xml.etree.ElementTree import ParseError
+# from xml.etree.ElementTree import ParseError
 
 from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
@@ -366,6 +366,6 @@ class Command(BaseCommand):
                         c.save()
                                     
                                      
-
-                except ParseError:
+                # except ParseError:       
+                except:
                   pass

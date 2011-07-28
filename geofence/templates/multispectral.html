@@ -20,54 +20,13 @@ Infotrack - Cercas Eletrônicas
   }
 </style>
 <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
-
+<script type="text/javascript" src="/media/js/geofence_circle.js"></script>
 <script type="text/javascript">
   //Global variables
-  var circle;
   var polygon;
 
   jQuery(document).ready(function(){
     jQuery("#geofence-tabs").tabs();
-    
-    jQuery("#circlearea").html("<i>Nenhuma cerca eletrônica selecionada.</i>")
-    
-    vlayer = new OpenLayers.Layer.Vector( "Editable");
-    vlayer = new OpenLayers.Layer.Vector("Editable",{eventListeners: {sketchstarted: function(evt) {vlayer.destroyFeatures();}},onFeatureInsert: function(	feature	) { circle = (feature.geometry.getVertices()); area = (feature.geometry.getGeodesicArea()/1000000).toFixed(2); jQuery("#circlearea").html(area + " km²");} });
-    
-    multispectral = new OpenLayers.Map('map1');
-
-    var dm_wms = new OpenLayers.Layer.WMS(
-        "Canadian Data",
-        "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
-        {
-            layers: "multispectral",
-            format: "image/gif"
-        },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
-
-    multispectral.addLayer(dm_wms);
-    multispectral.addLayer(vlayer);
-    multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
-    
-    //Control Panel
-    panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});
-    var nav = new OpenLayers.Control.Navigation();
-    polyOptions = {sides: 40};
-    draw_ctl = new OpenLayers.Control.DrawFeature(vlayer, OpenLayers.Handler.RegularPolygon, {'displayClass': 'olControlDrawFeaturePolygon',handlerOptions: polyOptions});
-    var mod = new OpenLayers.Control.ModifyFeature(vlayer, {'displayClass': 'olControlModifyFeature'});
-    controls = [nav, draw_ctl];
-    panel.addControls(controls);
-    multispectral.addControl(panel);
-    multispectral.addControl(new OpenLayers.Control.MousePosition());
-    
-    jQuery("#circlesave").click(function(){
-      if(!circle) { 
-        alert("Por favor digite um nome para a cerca eletrônica.");
-      }
-      
-      else {
-        //Save geofence
-      }
-    });
     
     //Polygon
     $("#addpoint").click(function(){
@@ -153,7 +112,7 @@ Infotrack - Cercas Eletrônicas
             <legend>3º Passo - Salvar cerca eletrônica</legend>
             <p>Após confirmar a visualização da cerca no mapa e sua área, digite um nome para a cerca e clique em salvar:</p>
             <p align="center"><b>Área da cerca eletrônica selecionada:</b></p><div align="center" id="circlearea"></div>
-            <p align="center"><input id="circlename" placeholder="Digite um nome para a cerca" type="text" required></input><input id="circlesave" type="submit" value="Salvar" style="padding:4px 12px;"></p>
+            <p align="center"><input id="circlename" placeholder="Digite um nome para a cerca" type="text" required></input><input id="circlesave" type="button" value="Salvar" style="padding:4px 12px;"></p>
           </fieldset>
     		</form>
   		</div>
