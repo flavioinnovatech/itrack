@@ -39,8 +39,13 @@ jQuery(document).ready(function(){
 	
 
   jQuery("#circlesave").click(function(){
-  	var id;
-
+  	var id=null;
+  	
+  	if(g) {
+  		id = g['id'];
+  	}
+  	
+	geofencename = $("#polygoname").val();
     if(!geofencename) { 
       alert("Por favor digite um nome para a cerca eletrônica.");
     }

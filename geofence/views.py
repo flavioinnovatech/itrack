@@ -193,9 +193,16 @@ def saveGeofencev2(request):
       p = wkt.replace("POLYGON","MULTIPOLYGON(")
       p += ")"
             
-      g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=p)
-      
-      g.save()    
+      if (parsed_dict['id']):
+          g = Geofence.objects.get(pk=parsed_dict['id'])
+          g.name = parsed_dict['name']
+          g.type = 'C'
+          g.polygon = p
+          g.save()
+                                      
+      else:
+          g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=p)
+          g.save()    
           
       return HttpResponse('success')
       
