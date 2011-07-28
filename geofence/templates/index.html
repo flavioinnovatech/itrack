@@ -1,0 +1,70 @@
+{% extends "templates/base.html" %}
+
+{% block head %}
+<script src="/media/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/media/js/jquery.treeTable.js"></script>
+<link rel="stylesheet" href="/media/css/jquery.treeTable.css" type="text/css" media="screen" />
+<script type="text/javascript">
+    $(document).ready(function()  {
+        $("#tree").treeTable({
+            initialState: "expanded"
+        });
+    });  
+</script>
+{% endblock  %}
+
+{% block content %}
+<div id="config">
+    <div class="main-form">
+        <h1><img class="icon" src="/media/img/equipment.png">Gerenciamento de cercas eletrônicas</h1>
+        <hr/>
+        
+        <h2>Cercas eletrônicas desse sistema:</h2>
+				<em>  </em>
+				<div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><p class="ui-jqgrid-title">&nbsp</p></div><div class="ui-state-default ui-jqgrid-hdiv"><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
+				  
+				  <thead>
+				    
+				    <tr role="rowheader" class="ui-jqgrid-labels">
+				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 40%;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Nome da cerca eletrônica</div></th>
+				      	<th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 35%;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Tipo</div></th>
+				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 410px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Ação</div></th></tr></thead></table></div></div><div class="ui-jqgrid-bdiv"><div style="margin-left:19px;"><div></div><table id="tree" cellspacing="0" cellpadding="0" border="0" id="list4" tabindex="1" role="grid" aria-multiselectable="true" aria-labelledby="gbox_list4" class="ui-jqgrid-btable" style="width:100%"><tbody>
+				      
+				      
+				  <tr style="height: auto; width:100%" role="row" class="jqgfirstrow">
+				  
+				  <td style="height: 0px; width: 20px;" role="gridcell"></td>
+				  
+				  <td style="height: 0px; width:20px" role="gridcell"></td>
+				  <td style="height: 0px; width:20px" role="gridcell"></td>
+				  
+				  
+				  </tr>
+				  
+				  
+				    {% for line in geofence_tree %}
+				        {% if line.sysname %}
+				        <tr style='width:5%;' id='node-{{line.id}}' {% if line.childof %}class='child-of-node-{{line.childof}}'{% endif %}>
+				            <td style='width:25%;font-weight:bold;text-align:left;' >{{line.sysname}}</td>
+				        </tr>
+				        {% else %}
+				        <tr style = 'width:5%' {% if line.childof %}class='child-of-node-{{line.childof}}'{% endif %}>
+				            <td style='width:31%;text-align:left;' >{{line.geofence}}</td>
+				            <td style='width:28%'>{{line.type}}</td>
+				            <td style='width:28%'>{{line.timeend}}</td>
+				            <td style='width:110px; padding-right:5px;'>
+				                <a class='table-button' href='{% url alerts.views.edit line.id %}' >Editar</a>
+				                <a class='table-button'  href='{% url alerts.views.delete line.id %}'>Apagar</a>
+				            </td>
+				        </tr>
+				        {% endif %}
+				    {% endfor %}
+            </tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div>
+	         <div align="center" style="margin-top:10px;" id="actions">
+
+                    <a href="{% url alerts.views.create request.session.system %}">Criar cercas eletrônicas</a>
+              </div>
+      </div>
+     
+</div>
+{% endblock %}
