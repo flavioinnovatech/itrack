@@ -22,6 +22,7 @@ from itrack.vehicles.models import Vehicle
 from itrack.command.forms import CommandForm
 from itrack.equipments.models import Equipment,CustomFieldName,CustomField, Tracking,TrackingData
 from itrack.system.models import System
+from itrack.system.tools import findChild
 
 from querystring_parser import parser
 
@@ -36,7 +37,7 @@ BUFFER_SIZE = 20000		# the maximum buffer size (in chars) for a TCP packet
 def systemCommandDetails(sysid):
     lines = []
     system = System.objects.get(pk=sysid)
-    alerts = Command.objects.filter(system=system)
+    commands = Command.objects.filter(system=system)
     if system.parent == None:
         childof = None
     else:
@@ -45,16 +46,19 @@ def systemCommandDetails(sysid):
                     'childof':childof,
                     'sysname':system.name,
                 })
-    for alert in alerts:
-        lines.append({  'id':alert.id,
+    for command in commands:
+        lines.append({  'id':command.id,
                         'childof':system.id,
-                        'alertname':alert.name,
-                        'vehicle': alert.vehicle.all(),
-                        'timestart':alert.time_start,
-                        'timeend':alert.time_end,
+                        'type':command.type,
+                        'action':command.action,
+                        'plate': command.equipment,
+                        'state':command.state,
+                        'time_sent':command.time_sent,
+                        'time_received':command.time_received,
+                        'time_executed':command.time_executed,
                     })
     
-    if alerts: 
+    if commands: 
         return lines    
     else: 
         return []
@@ -66,7 +70,7 @@ def mountCommandTree(list_of_childs,parent):
         if(len(list_of_childs) > 0):
             prev = list_of_childs[0]
             if type(prev).__name__ != 'list':
-                lines = systemAlertDetails(prev)
+                lines = systemCommandDetails(prev)
                 for line in lines:
                     table.append(line)
             else:
@@ -75,9 +79,9 @@ def mountCommandTree(list_of_childs,parent):
             for el in list_of_childs[1:]:
                 
                 if type(el).__name__ == 'list':
-                    lines = mountAlertTree(el,prev)
+                    lines = mountCommandTree(el,prev)
                 else:
-                    lines = mountAlertTree(el,parent)
+                    lines = mountCommandTree(el,parent)
                 
                 for line in lines:
                     table.append(line)
@@ -87,7 +91,7 @@ def mountCommandTree(list_of_childs,parent):
         return table
            
     else:
-        return systemAlertDetails(list_of_childs)
+        return systemCommandDetails(list_of_childs)
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
@@ -121,7 +125,10 @@ def index(request):
             'time_executed': (c.time_executed),
             'id': c.id,
             'action' : c.action,
-        })    
+        })
+        
+    childs = findChild(system)
+    command_tree = mountCommandTree([system,childs],system)    
     
     return render_to_response("command/templates/index.html",locals(),context_instance=RequestContext(request))
 

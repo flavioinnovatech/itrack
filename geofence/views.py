@@ -1,21 +1,85 @@
-# Create your views here.
+# -*- coding:utf8 -*-
 from django.shortcuts import render_to_response
 from itrack.system.models import System,Settings
 from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType
 from itrack.geofence.models import Geofence
-from itrack.alerts.models import Alert
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.gis.geos.linestring import LineString
+from django.contrib.gis.geos import Polygon,MultiPolygon,MultiPoint
 from querystring_parser import parser
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.contrib.gis import geos
+from itrack.system.tools import findChild
+
+def systemGeofenceDetails(sysid):
+    lines = []
+    system = System.objects.get(pk=sysid)
+    geofences = Geofence.objects.filter(system=system)
+    if system.parent == None:
+        childof = None
+    else:
+        childof = system.parent.id
+    lines.append({  'id':system.id,
+                    'childof':childof,
+                    'sysname':system.name,
+                })
+    for geofence in geofences:
+        lines.append({  'id':geofence.id,
+                        'childof':system.id,
+                        'geofence':geofence.name,
+                        'type':geofence.type,
+                    })
+    
+    if geofences: 
+        return lines    
+    else: 
+        return []
+
+def mountGeofenceTree(list_of_childs,parent):
+    table = []
+    
+    if type(list_of_childs).__name__ == 'list':
+        if(len(list_of_childs) > 0):
+            prev = list_of_childs[0]
+            if type(prev).__name__ != 'list':
+                lines = systemGeofenceDetails(prev)
+                for line in lines:
+                    table.append(line)
+            else:
+                pass
+                
+            for el in list_of_childs[1:]:
+                
+                if type(el).__name__ == 'list':
+                    lines = mountGeofenceTree(el,prev)
+                else:
+                    lines = mountGeofenceTree(el,parent)
+                
+                for line in lines:
+                    table.append(line)
+                    
+                prev = el
+    
+        return table
+           
+    else:
+        return systemGeofenceDetails(list_of_childs)
+    
+
 
 def index(request):
+    system_id = request.session['system']
+        
+    childs = findChild(system_id)
+    geofence_tree = mountGeofenceTree([system_id,childs],system_id)
+    
+    return render_to_response("geofence/templates/index.html",locals())
+    
+def index2(request):
     system = System.objects.filter(administrator__username=request.user.username)
 
-        
-    return render_to_response("geofence/templates/home.html",locals())
+    return render_to_response("geofence/templates/multispectral.html",locals())
     
 def saveGeofence(request):
   if request.method == "POST":
@@ -25,6 +89,7 @@ def saveGeofence(request):
         system = System.objects.get(pk=request.session['system'])
         
         center = geos.Point(float(parsed_dict['coords']['lng']),float(parsed_dict['coords']['lat']))
+        
         
         radius = float(parsed_dict['coords']['radius'])
         
@@ -104,8 +169,45 @@ def saveGeofence(request):
         return HttpResponse('qqrcoisa')
     else:
         pass
+        
+def saveGeofencev2(request):
+  
+  if request.method == "POST":
+    parsed_dict = parser.parse(request.POST.urlencode())
+    if parsed_dict['type'] == 'circle':
+      
+      system = System.objects.get(pk=request.session['system'])
+      wkt = (parsed_dict['coords'])
+          
+      p = wkt.replace("POLYGON","MULTIPOLYGON(")
+      p += ")"
+            
+      g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=p)
+      
+      g.save()    
+          
+      return HttpResponse('success')
+      
+    if parsed_dict['type'] == 'polygon':
+
+      system = System.objects.get(pk=request.session['system'])
+      wkt = (parsed_dict['coords'])
+
+      p = wkt.replace("POLYGON","MULTIPOLYGON(")
+      p += ")"
+
+      g = Geofence(name=parsed_dict['name'],system=system,type='P',polygon=p)
+
+      g.save()    
+
+      return HttpResponse('success')
+      
+    else:
+      pass
+      
+  else:
+    pass
    
-  #return render_to_response("alerts/templates/create.html",locals())
 def loadGeofences(request):
   system = request.session["system"]
   geofence = Geofence.objects.filter(system=system)
@@ -117,23 +219,7 @@ def loadGeofences(request):
       data.append({"name":g.name,"id":g.id,"type":g.type,"polygon":g.polygon.coords})
     elif g.type == 'R':
       data.append({"name":g.name,"id":g.id,"type":g.type,"route":g.linestring.coords})
-    # if g.type == 'C':
-      # geoentities = GeoEntity.objects.filter(geofence=g)
-      # for ge in geoentities:
-      #         coords = {"radius":ge.radius,"lat":ge.lat,"lng":ge.lng}
-      #         data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
-      #         
-      #     if g.type == 'P':
-      # geoentities = # GeoEntity.objects.filter(geofence=g).order_by('seq')
-      # coords = []
-      # for ge in geoentities:
-        # coord = {"lat":ge.lat,"lng":ge.lng}
-        # coords.append(coord)
-        
-      # data.append({"name":g.name,"id":g.id,"type":g.type,"coords":coords})
-        
-  # data.append({ "name" : g.name, "type": g.type })
-  # data.append({ "name" : "g.name", "type": "g.type" })
+    
   print data
   json = simplejson.dumps(data)
   

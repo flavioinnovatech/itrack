@@ -197,7 +197,7 @@ a {
 }
 
 #addpoint, #adddestiny {
-	float:right;
+/*  float:right;*/
 }
 
 #addpoint:hover, #adddestiny:hover {
@@ -475,7 +475,7 @@ hr{
   border:1px solid #d0d0d0
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="number"]{
   height:25px;
   border: 1px solid #aaa;
   border-radius: 5px;
@@ -586,6 +586,31 @@ img#maptools{
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
+.steps{
+  margin-left:5px;
+  float:left;
+  width:300px;
+
+}
+
+.steps fieldset{
+  border:1px solid #ccc;
+  height:160px;
+  padding:10px;
+}
+
+.steps legend{
+  font-weight:bold;
+}
+
+.steps input[type=text]{
+  width:150px;
+}
+
+#geofence-tabs {
+  min-height:400px;
+}
+
 .popup-content p{}
 .alert-wrapper {margin-top:20px;padding:10px;}
 .alert-wrapper h2{ clear:both; margin-top:10px;}
@@ -594,5 +619,3 @@ img#maptools{
 .alert-wrapper span { font-weight: bold; float:left;}
 .alert-wrapper p { float:right; margin-bottom:0px;}
 .alert-wrapper ul li {clear:both;}
-
-

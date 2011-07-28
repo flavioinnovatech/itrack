@@ -40,7 +40,7 @@
 				  
 				  <td style="height: 0px; width: 20px;" role="gridcell"></td>
 				  
-				  <td style="height: 0px; width:20px" role="gridcell"></td
+				  <td style="height: 0px; width:20px" role="gridcell"></td>
 				  <td style="height: 0px; width:20px" role="gridcell"></td>
 				  
 				  
@@ -57,14 +57,13 @@
 				            <td style='width:31%;text-align:left;' >{{line.alertname}}</td>
 				            <td style='width:28%'>{{line.timestart}}</td>
 				            <td style='width:28%'>{{line.timeend}}</td>
-				            <td style='width:110px; padding-left:5px;'>
+				            <td style='width:110px; padding-right:5px;'>
 				                <a class='table-button' href='{% url alerts.views.edit line.id %}' >Editar</a>
 				                <a class='table-button'  href='{% url alerts.views.delete line.id %}'>Apagar</a>
 				            </td>
 				        </tr>
 				        {% endif %}
 				    {% endfor %}
-
             </tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div>
 	         <div align="center" style="margin-top:10px;" id="actions">
 

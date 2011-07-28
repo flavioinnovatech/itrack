@@ -13,13 +13,24 @@ class GeocodeCacheRouter(object):
         if model._meta.app_label == 'geocodecache':
             return 'geocode'
         return None
-
+    
+    def allow_relation(self, obj1, obj2, **hints):
+        return None
 
 
     def allow_syncdb(self, db, model):
-        "Make sure the myapp app only appears on the 'other' db"
-        if db == 'geocode':
+        allowed = ['south']
+        if model._meta.app_label in allowed:
+            return True
+        elif db == 'geocode':
             return model._meta.app_label == 'geocodecache'
         elif model._meta.app_label == 'geocodecache':
             return False
         return None
+        
+        #"Make sure the myapp app only appears on the 'other' db"
+        #if db == 'geocode':
+        #    return model._meta.app_label == 'geocodecache'
+        #elif model._meta.app_label == 'geocodecache':
+        #    return False
+        #return None
