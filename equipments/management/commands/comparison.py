@@ -38,8 +38,24 @@ def AlertComparison(command,alert,customfield,value):
     return False
 
 def GeofenceComparison(command,alert,lat,lng):
-    lat = float(lat)
-    lng = float(lng)
+    
+    #mounting the GEOS point
+    pnt = Point(float(lng),float(lat))
+    #getting the type of the geofence
+    geotype = alert.geofence.type
+    
+    if geotype == 'R':
+        return False
+    else:
+        poly = alert.geofence.polygon
+        command.stdout.write(str(alert.state)+"->"+str(poly.contains(pnt))+"\n")
+        if alert.state:
+            if poly.contains(pnt):
+                return True
+        else:
+            if not poly.contains(pnt):
+                return True
+    
     return False
 
 def SendSMS(to,msg):
@@ -84,7 +100,7 @@ def SendSMS(to,msg):
 	    return conteudo
 
   
-def AlertSender(command,alert,vehicle):
+def AlertSender(command,alert,vehicle,searchdate):
     #if the alert shall be sent by email
     if alert.receive_email:
 
@@ -106,3 +122,4 @@ def AlertSender(command,alert,vehicle):
       for destinatary in alert.destinataries.all():
           popup = Popup(alert=alert,user=destinatary,vehicle=vehicle,date=searchdate)
           popup.save()
+          command.stdout.write('>>>> Popup Cadastrado. \n')

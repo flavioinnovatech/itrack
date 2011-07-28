@@ -11,7 +11,7 @@ import urllib
 import time
 from datetime import datetime
 from xml.etree import cElementTree as ElementTree
-# from xml.etree.ElementTree import ParseError
+from xml.etree.ElementTree import ParseError
 
 from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
@@ -242,7 +242,7 @@ class Command(BaseCommand):
                                   
                                   #pick the alert records to check                                  
                                   alerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True))                              
-
+                                  
                                   #iterates over the inputs and checks if it is needed to send the alert
                                   for k_type,d_type in dict(xmldict['Input'].items() + xmldict['LinearInput'].items()).items():
                                       
@@ -256,10 +256,10 @@ class Command(BaseCommand):
                                               
                                               if AlertComparison(self,alert,c,d_type):         
                                                   #function that sends in the proper ways the alerts
-                                                  AlertSender(self,alert,vehicle)
+                                                  AlertSender(self,alert,vehicle,searchdate)
                                               else:
-                                                pass
-                                                # self.stdout.write('>> Nao entrou no Alert Comparison.\n')
+                                                  pass
+                                                  # self.stdout.write('>> Nao entrou no Alert Comparison.\n')
                                                                      
                                       except ObjectDoesNotExist:
                                           # self.stdout.write('>> Entrou no except "objectdoesnotexist".\n')
@@ -271,11 +271,12 @@ class Command(BaseCommand):
 # >> ==================================================== | GEOFENCE COMPARISONS          |  >
 # >> ==================================================== +-------------------------------+-/
 
-                                  #check if the position is inside (or outside) some geofence
-                                  geoalerts = alerts.objects.filter(trigger.custom_field.tag == 'GeoFence')
+                                  #check if the position is inside (or outside) some geofence alert
+                                  geoalerts = alerts.filter(trigger__custom_field__tag='GeoFence')
+
                                   for alert in geoalerts:
                                     if GeofenceComparison(self,alert,xmldict["GPS"]["Lat"], xmldict["GPS"]["Long"]):
-                                        AlertSender(self,alert,vehicle)
+                                        AlertSender(self,alert,vehicle,searchdate)
                           else: #if the vehicle never had thrown alerts, give him a last alert date
                               vehicle.last_alert_date = searchdate
                               vehicle.save()
@@ -303,6 +304,6 @@ class Command(BaseCommand):
                         c.save()
                                     
                                      
-                # except ParseError:       
-                except:
+                except ParseError:       
+                #except:
                   pass
