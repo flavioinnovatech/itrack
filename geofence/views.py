@@ -11,6 +11,10 @@ from django.http import HttpResponse
 from django.utils import simplejson
 from django.contrib.gis import geos
 from itrack.system.tools import findChild
+from django.template.context import RequestContext
+from django.http import HttpResponseRedirect,HttpResponseForbidden
+from django.core.exceptions import ObjectDoesNotExist
+
 
 def systemGeofenceDetails(sysid):
     lines = []
@@ -25,10 +29,18 @@ def systemGeofenceDetails(sysid):
                     'sysname':system.name,
                 })
     for geofence in geofences:
+        
+        if geofence.type == 'C':
+            type = 'Círculo'
+        elif geofence.type == 'P':
+            type = 'Polígono'
+        elif geofence.type == 'R':
+            type = 'Rota'
+        
         lines.append({  'id':geofence.id,
                         'childof':system.id,
                         'geofence':geofence.name,
-                        'type':geofence.type,
+                        'type':type,
                     })
     
     if geofences: 
@@ -67,7 +79,6 @@ def mountGeofenceTree(list_of_childs,parent):
         return systemGeofenceDetails(list_of_childs)
     
 
-
 def index(request):
     system_id = request.session['system']
         
@@ -75,12 +86,12 @@ def index(request):
     geofence_tree = mountGeofenceTree([system_id,childs],system_id)
     
     return render_to_response("geofence/templates/index.html",locals())
-    
-def index2(request):
+
+def create(request):
     system = System.objects.filter(administrator__username=request.user.username)
 
-    return render_to_response("geofence/templates/multispectral.html",locals())
-    
+    return render_to_response("geofence/templates/create.html",locals())
+
 def saveGeofence(request):
   if request.method == "POST":
     parsed_dict = parser.parse(request.POST.urlencode())
@@ -169,7 +180,7 @@ def saveGeofence(request):
         return HttpResponse('qqrcoisa')
     else:
         pass
-        
+
 def saveGeofencev2(request):
   
   if request.method == "POST":
@@ -225,3 +236,47 @@ def loadGeofences(request):
   
   return HttpResponse(json, mimetype='application/json')
   
+def delete(request,offset):
+  g = Geofence.objects.get(pk=int(offset))
+  if request.method == 'POST':
+    
+    g.delete()
+    
+    return HttpResponseRedirect("/geofence/delete/finish")
+    
+  else:
+      return render_to_response("geofence/templates/delete.html",locals(),context_instance=RequestContext(request))
+
+  
+def delete_finish(request):
+    return render_to_response("geofence/templates/delete_finish.html",locals())
+
+def edit(request,offset):
+    try:
+            
+            g = Geofence.objects.get(pk=int(offset))
+            
+            type = g.type
+                
+            return render_to_response("geofence/templates/create.html",locals(),context_instance=RequestContext(request))
+                    
+#                form = DriverForm(instance=d)
+                
+#            if form.is_valid():
+#                driver = form.save(commit = False)
+#                system = System.objects.get(pk=request.session['system'])
+#                driver.system = system
+#                driver.save()
+#                
+#                vehicles = form.cleaned_data['vehicle']
+#                for v in vehicles:
+#                    driver.vehicle.add(v)
+#                driver.save()
+#                return HttpResponseRedirect("/drivers/edit/finish")
+    
+        # else:
+            # ret urn HttpResponseForbidden(u"O seu sistema não pode editar motoristas para este veículo.")
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound("A cerca eletrônica solicitado não existe.") 
+
+    

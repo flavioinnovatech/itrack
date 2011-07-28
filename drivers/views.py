@@ -98,9 +98,7 @@ def create_finish(request):
     return render_to_response("drivers/templates/create_finish.html",locals())
     
 def edit(request,offset):
-    #checks if system can alter the driver vehicle
     try:
-        # if request.session['system'] in map(lambda x: x['id'],Driver.objects.get(pk=int(offset)).vehicle.system.values()):
             
             d = Driver.objects.get(pk=int(offset))
             
@@ -122,10 +120,8 @@ def edit(request,offset):
                 return HttpResponseRedirect("/drivers/edit/finish")
     
             return render_to_response("drivers/templates/create.html",locals(),context_instance=RequestContext(request))
-        # else:
-            # ret urn HttpResponseForbidden(u"O seu sistema não pode editar motoristas para este veículo.")
     except ObjectDoesNotExist:
-        return HttpResponseNotFound("O veículo solicitado não existe.") 
+        return HttpResponseNotFound("O motorista solicitado não existe.") 
         
 def edit_finish(request):
     return render_to_response("drivers/templates/edit_finish.html",locals())

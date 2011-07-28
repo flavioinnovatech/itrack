@@ -2,7 +2,6 @@
 var polygon;
 
 jQuery(document).ready(function(){
-  jQuery("#geofence-tabs").tabs();
   
   //Polygon
   $("#addpoint").click(function(){
@@ -43,6 +42,12 @@ jQuery(document).ready(function(){
   panel.addControls(controls);
   multispectral2.addControl(panel);
   multispectral2.addControl(new OpenLayers.Control.MousePosition());
+  
+  if (g) {
+  	var wkt_f = new OpenLayers.Format.WKT();
+	var ploaded = wkt_f.read(g['polygon']);
+	vlayer2.addFeatures([ploaded]);
+  }
   
   jQuery("#polygonsave").click(function(){
    geofencename = $("#polygoname").val();

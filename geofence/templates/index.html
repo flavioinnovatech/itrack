@@ -53,8 +53,8 @@
 				            <td style='width:28%'>{{line.type}}</td>
 				            <td style='width:28%'>{{line.timeend}}</td>
 				            <td style='width:110px; padding-right:5px;'>
-				                <a class='table-button' href='{% url alerts.views.edit line.id %}' >Editar</a>
-				                <a class='table-button'  href='{% url alerts.views.delete line.id %}'>Apagar</a>
+				                <a class='table-button' href='{% url geofence.views.edit line.id %}' >Editar</a>
+				                <a class='table-button'  href='{% url geofence.views.delete line.id %}'>Apagar</a>
 				            </td>
 				        </tr>
 				        {% endif %}
@@ -62,7 +62,7 @@
             </tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div>
 	         <div align="center" style="margin-top:10px;" id="actions">
 
-                    <a href="{% url alerts.views.create request.session.system %}">Criar cercas eletrônicas</a>
+                    <a href="{% url geofence.views.create%}">Criar cercas eletrônicas</a>
               </div>
       </div>
      

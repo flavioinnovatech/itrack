@@ -98,9 +98,12 @@ url(r'^alerts/delete/finish/$','alerts.views.delete_finish'),
 url(r'^alerts/status/$','alerts.ajax.status'),
 
 url(r'^geofence/$','geofence.views.index'),
-url(r'^geofencev2/$','geofence.views.index2'),
+url(r'^geofence/create/$','geofence.views.create'),
 url(r'^geofence/save/$','geofence.views.saveGeofencev2'),
 url(r'^geofence/load/$','geofence.views.loadGeofences'),
+url(r'^geofence/edit/(\d+)/$','geofence.views.edit'),
+url(r'^geofence/delete/(\d+)/$','geofence.views.delete'),
+url(r'^geofence/delete/finish/$','geofence.views.delete_finish'),
 
 url(r'^paths/$','paths.views.index'),
 url(r'^paths/load/$','paths.ajax.load'),

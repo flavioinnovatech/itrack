@@ -1,5 +1,6 @@
 var circle;
 jQuery(document).ready(function(){
+	
   jQuery("#circlearea").html("<i>Nenhuma cerca eletrônica selecionada.</i>")
 
   vlayer = new OpenLayers.Layer.Vector( "Editable");
@@ -29,9 +30,17 @@ jQuery(document).ready(function(){
   panel.addControls(controls);
   multispectral.addControl(panel);
   multispectral.addControl(new OpenLayers.Control.MousePosition());
+  
+  if (g) {
+  	var wkt_f = new OpenLayers.Format.WKT();
+	var ploaded = wkt_f.read(g['polygon']);
+	vlayer.addFeatures([ploaded]);
+  }
+	
 
   jQuery("#circlesave").click(function(){
-    geofencename = $("#circlename").val();
+  	var id;
+
     if(!geofencename) { 
       alert("Por favor digite um nome para a cerca eletrônica.");
     }
@@ -44,7 +53,7 @@ jQuery(document).ready(function(){
       //Save geofence
       $.post(
         "/geofence/save/",
-        {name:geofencename,type:'circle', coords: circle.toString()},
+        {name:geofencename,type:'circle', coords: circle.toString(),id:id},
         function(data){
           if (data == 'success') {
             alert('Cerca eletrônica salva com sucesso.');
