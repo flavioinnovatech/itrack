@@ -1,10 +1,11 @@
-# Create your views here.
+# -*- coding:utf8 -*-
 from django.shortcuts import render_to_response
 from itrack.system.models import System,Settings
 from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType
 from itrack.geofence.models import Geofence
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.gis.geos.linestring import LineString
+from django.contrib.gis.geos import Polygon,MultiPolygon,MultiPoint
 from querystring_parser import parser
 from django.http import HttpResponse
 from django.utils import simplejson
@@ -170,15 +171,42 @@ def saveGeofence(request):
         pass
         
 def saveGeofencev2(request):
+  
   if request.method == "POST":
     parsed_dict = parser.parse(request.POST.urlencode())
     if parsed_dict['type'] == 'circle':
-      print 'ae'
       
       system = System.objects.get(pk=request.session['system'])
-      wkt = float(parsed_dict['coords'])
+      wkt = (parsed_dict['coords'])
+          
+      p = wkt.replace("POLYGON","MULTIPOLYGON(")
+      p += ")"
+            
+      g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=p)
       
+      g.save()    
+          
       return HttpResponse('success')
+      
+    if parsed_dict['type'] == 'polygon':
+
+      system = System.objects.get(pk=request.session['system'])
+      wkt = (parsed_dict['coords'])
+
+      p = wkt.replace("POLYGON","MULTIPOLYGON(")
+      p += ")"
+
+      g = Geofence(name=parsed_dict['name'],system=system,type='P',polygon=p)
+
+      g.save()    
+
+      return HttpResponse('success')
+      
+    else:
+      pass
+      
+  else:
+    pass
    
 def loadGeofences(request):
   system = request.session["system"]
