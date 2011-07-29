@@ -30,7 +30,7 @@ def load(request):
             if geofence.type == 'R':
                 geofencedata = {'type': geofence.type, 'coords': geofence.linestring.coords}
             else:
-                geofencedata = {'type': geofence.type, 'coords': geofence.polygon.coords}
+                geofencedata = {'type': geofence.type, 'coords': str(geofence.polygon)}
         
         print geofencedata
         #mounting the json list
