@@ -23,6 +23,7 @@
 		<!-- <script type="text/javascript">jQuery.noConflict();</script> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"></script> 
 		<script src="/media/js/ajaxsend.js" type="text/javascript"></script> 
+		<script src="/media/js/loading.js" type="text/javascript"></script> 
 	  <!--<script src="/media/js/soundmanager2.js" type="text/javascript"></script>-->
 	  
 	  <script type="text/javascript" src="/media/js/master.js"></script>
@@ -120,6 +121,11 @@
 		<div id="userid" style="display:none;">{{request.user.id}}</div>
 		<div id="vehicledialog" style="display:none;"></div>
 		<div id="generaldialog" style="display:none;"></div>
+		<div id="loadingScreen" style="display:none;" title="Carregando">
+		    <p align="center">Por favor espere...</p>
+		    <p align="center"><img src="/media/img/ajax-loader.gif"></p>
+		</div>  
+		</div>
 	</body>
 	
 </html>

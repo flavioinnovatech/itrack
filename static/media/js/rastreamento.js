@@ -5,7 +5,10 @@ var markers,size,icon;
 
 jQuery(document).ready(function(){ 
   
+  openloading();
+  
   loadData();
+  loadmaps();
   
   jQuery("img[id=maptools]").tipTip();
   jQuery("img[class=fullscreen]").tipTip();
@@ -83,10 +86,10 @@ jQuery(document).ready(function(){
     }
     
     
+    
   }); //end .fullscreen click function
     
   
-// }); //end document.ready
 
 
 
@@ -113,6 +116,8 @@ jQuery("#multispectralmap").click(function() {
   jQuery("#tabs-4").css("height",h-200);
 });
 
+function loadmaps() {
+
   //Insert google permission here
 	var geocoder;
 	var infowindow = new google.maps.InfoWindow();
@@ -131,9 +136,9 @@ jQuery("#multispectralmap").click(function() {
 	}
 	
 	//Insert Google Permission here
-  map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
-  google.maps.event.trigger(map, 'resize');
-  map.setZoom( map.getZoom() );jQuery(document).ready(function(){
+  // map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
+  //   google.maps.event.trigger(map, 'resize');
+  //   map.setZoom( map.getZoom() );jQuery(document).ready(function(){
 
   jQuery('input[type="submit"]').mousedown(function(){
     $(this).css("border-style","inset");
@@ -150,12 +155,12 @@ jQuery("#multispectralmap").click(function() {
   
 });
 
-  google.maps.event.addListener(map, "mousemove", function(){
-    google.maps.event.trigger(map, 'resize'); 
-  });
+  // google.maps.event.addListener(map, "mousemove", function(){
+  //   google.maps.event.trigger(map, 'resize'); 
+  // });
   
   //Insert Multispectral permission here
-  multispectral = new OpenLayers.Map('tabs-4');
+  multispectral = new OpenLayers.Map('tabs-3right');
 
   var dm_wms = new OpenLayers.Layer.WMS(
       "Canadian Data",
@@ -173,12 +178,11 @@ jQuery("#multispectralmap").click(function() {
   offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
   icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png', size, offset);
   
-  
-// });
+}  
 /* --------------------------------------------- END  MAPS ------------------------------------------------------ */
 
 /* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
-
+  closeloading(5000);
 });
 
 var globaldata;
