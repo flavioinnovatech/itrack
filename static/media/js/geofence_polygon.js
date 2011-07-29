@@ -42,14 +42,20 @@ jQuery(document).ready(function(){
   panel.addControls(controls);
   multispectral2.addControl(panel);
   multispectral2.addControl(new OpenLayers.Control.MousePosition());
-  
+    
   if (g) {
   	var wkt_f = new OpenLayers.Format.WKT();
-	var ploaded = wkt_f.read(g['polygon']);
-	vlayer2.addFeatures([ploaded]);
+  	var ploaded = wkt_f.read(g['polygon']);
+  	vlayer2.addFeatures([ploaded]);
   }
   
   jQuery("#polygonsave").click(function(){
+    var id="";
+  	
+  	if(g) {
+  		id = g['id'];
+  	}  
+    
    geofencename = $("#polygoname").val();
     if(!geofencename) { 
       alert("Por favor digite um nome para a cerca eletrônica.");
@@ -61,15 +67,18 @@ jQuery(document).ready(function(){
       //Save geofence
       $.post(
         "/geofence/save/",
-        {name:geofencename,type:'polygon', coords: polygon.geometry.toString()},
-        function(data){
-          if (data == 'success') {
-            alert('Cerca eletrônica salva com sucesso.');
+        {name:geofencename,type:'polygon', coords: polygon.geometry.toString(),id:id},
+        function (data) {
+          if (data == 'create_finish') {
+            location.href = "/geofence/create/finish";
+          }
+          else if (data == 'edit_finish') {
+            location.href = "/geofence/edit/finish";
           }
           else {
-            alert('Erro na criação da cerca eletrônica.');
+            alert ('Erro na criação de cerca eletrônica.')
           }
-
+          
         }
       );
     }

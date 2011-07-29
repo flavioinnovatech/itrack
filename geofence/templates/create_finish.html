@@ -1,0 +1,14 @@
+{% extends "templates/base.html" %}
+
+{%block title%}Infotrack - Criação de Cerca eletrônica {% endblock %}
+{% block content %}
+
+
+<div  class="main-form">
+<h1><img class="icon" src="/media/img/equipment.png">Criação de Cerca eletrônica</h1>
+<hr />
+<h2>Cerca eletrônica finalizada com sucesso </h2>
+<em>A Cerca eletrônica foi criada com sucesso. <a href="{% url geofence.views.index %}"> Clique aqui para voltar a tela de administração de Cercas eletrônicas. </a></em>
+
+</div>
+{% endblock %}

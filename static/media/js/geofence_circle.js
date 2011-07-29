@@ -59,15 +59,19 @@ jQuery(document).ready(function(){
       $.post(
         "/geofence/save/",
         {name:geofencename,type:'circle', coords: circle.toString(),id:id},
-        function(data){
-          if (data == 'success') {
-            alert('Cerca eletrônica salva com sucesso.');
+        function (data) {
+          if (data == 'create_finish') {
+            location.href = "/geofence/create/finish";
+          }
+          else if (data == 'edit_finish') {
+            location.href = "/geofence/edit/finish";
           }
           else {
-            alert('Erro na criação da cerca eletrônica.');
+            alert ('Erro na criação de cerca eletrônica.')
           }
-
+          
         }
+       
       );
     }
   });

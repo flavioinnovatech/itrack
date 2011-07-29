@@ -109,13 +109,10 @@ def saveGeofence(request):
         circle = str(circle)[8:len(str(circle))]
         
         circle = "MULTIPOLYGON(" + circle + ")"
-        
-        print circle
-                
+                        
         g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=circle)
         
         g.save()
-      
 
         return HttpResponse(g.id)
         
@@ -199,32 +196,52 @@ def saveGeofencev2(request):
           g.type = 'C'
           g.polygon = p
           g.save()
+          
+          return HttpResponse('edit_finish')
                                       
       else:
           g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=p)
           g.save()    
           
-      return HttpResponse('success')
+          return HttpResponse('create_finish')
+          
+      return HttpResponse('fail')
       
     if parsed_dict['type'] == 'polygon':
 
       system = System.objects.get(pk=request.session['system'])
       wkt = (parsed_dict['coords'])
 
-      p = wkt.replace("POLYGON","MULTIPOLYGON(")
-      p += ")"
+      if (parsed_dict['id'] != ""):
+          g = Geofence.objects.get(pk=parsed_dict['id'])
+          g.name = parsed_dict['name']
+          g.type = 'P'
+          g.polygon = wkt
+          g.save()
+          
+          return HttpResponse('edit_finish')
+                                      
+      else:
+          p = wkt.replace("POLYGON","MULTIPOLYGON(")
+          p += ")"
+          g = Geofence(name=parsed_dict['name'],system=system,type='P',polygon=p)
+          g.save()
+          
+          return HttpResponseRedirect("create_finish")
 
-      g = Geofence(name=parsed_dict['name'],system=system,type='P',polygon=p)
-
-      g.save()    
-
-      return HttpResponse('success')
+      return HttpResponse('fail')
       
     else:
       pass
       
   else:
     pass
+
+def create_finish(request):
+  return render_to_response("geofence/templates/create_finish.html",locals())
+  
+def edit_finish(request):
+  return render_to_response("geofence/templates/edit_finish.html",locals())
    
 def loadGeofences(request):
   system = request.session["system"]
