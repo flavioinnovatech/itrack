@@ -28,7 +28,7 @@ def load(request):
         geofencedata = {}
         if geofence:
             if geofence.type == 'R':
-                geofencedata = {'type': geofence.type, 'coords': geofence.linestring.coords}
+                geofencedata = {'type': geofence.type, 'coords': str(geofence.linestring)}
             else:
                 geofencedata = {'type': geofence.type, 'coords': str(geofence.polygon)}
         

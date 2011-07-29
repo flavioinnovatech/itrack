@@ -167,7 +167,7 @@ jQuery(document).ready(function(){
           thevector = new OpenLayers.Feature.Vector(collection);
           vlayer.addFeatures(thevector);
           
-          map.setCenter(center,1);
+          map.setCenter(center,2);
           
         });
     });
