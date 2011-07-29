@@ -3,7 +3,7 @@ jQuery(document).ready(function(){
 	
   jQuery("#circlearea").html("<i>Nenhuma cerca eletrônica selecionada.</i>")
 
-  vlayer = new OpenLayers.Layer.Vector( "Editable");
+  
   vlayer = new OpenLayers.Layer.Vector("Editable",{eventListeners: {sketchstarted: function(evt) {vlayer.destroyFeatures();}},onFeatureInsert: function(	feature	) { circle = (feature.geometry.toString()); area = (feature.geometry.getGeodesicArea()/1000000).toFixed(2); jQuery("#circlearea").html(area + " km²");} });
 
   multispectral = new OpenLayers.Map('map1');
