@@ -5,7 +5,7 @@ from django.forms import *
 class VehicleForm(ModelForm):
     class Meta:
         model = Vehicle
-        exclude=['equipment','system','last_alert_date']
+        exclude=['equipment','system','last_alert_date','erased']
         
 class SwapForm(Form):
     equipment = ModelChoiceField(Equipment.objects.all())

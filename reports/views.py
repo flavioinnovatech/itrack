@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Create your views here.
-import csv,codecs, cStringIO
+import csv,codecs, StringIO
 from datetime import datetime
 
 from django.shortcuts import render_to_response
@@ -8,40 +8,38 @@ from django.template.context import RequestContext
 from django.db.models import Q
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
+from django.core.exceptions import ObjectDoesNotExist
 
 from itrack.reports.forms import ReportForm
 from itrack.equipments.models import CustomFieldName, Tracking, TrackingData
 from itrack.system.models import System
 from itrack.vehicles.models import Vehicle
-from itrack.system.tools import lowestDepth
+from itrack.system.tools import lowestDepth,findParents
 from itrack.pygeocoder import Geocoder
 
 
-class UnicodeWriter:
-    """
-    A CSV writer which will write rows to CSV file "f",
-    which is encoded in the given encoding.
-    """
-
-    def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
+class UnicodeWriter(object):
+   
+    def __init__(self, f, dialect=csv.excel_tab, encoding="utf-16", **kwds):
         # Redirect output to a queue
-        self.queue = cStringIO.StringIO()
+        self.queue = StringIO.StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
         self.stream = f
-        self.encoder = codecs.getincrementalencoder(encoding)()
-
+        self.encoding = encoding
+    
     def writerow(self, row):
-        self.writer.writerow([s.encode("utf-8") for s in row])
+        # Modified from original: now using unicode(s) to deal with e.g. ints
+        self.writer.writerow([unicode(s).encode("utf-8") for s in row])
         # Fetch UTF-8 output from the queue ...
         data = self.queue.getvalue()
         data = data.decode("utf-8")
         # ... and reencode it into the target encoding
-        data = self.encoder.encode(data)
+        data = data.encode(self.encoding)
         # write to the target stream
         self.stream.write(data)
         # empty queue
         self.queue.truncate(0)
-
+    
     def writerows(self, rows):
         for row in rows:
             self.writerow(row)
@@ -63,10 +61,48 @@ def report(request,offset):
         
         if form.is_valid():
             
+            system = request.session["system"]
+            s = System.objects.get(pk=system)
+            parents = findParents(s,[s])
+            
             d1 = datetime.now()
             total_geocode_time = 0
-            trackings = Tracking.objects.filter(Q(eventdate__gte=form.cleaned_data['period_start']) & Q(eventdate__lte=form.cleaned_data['period_end']))
-            datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings)&(Q(type_tag='Lat')|Q(type_tag='Long')))
+            
+            #TODO: A business logic pra cá ficou assim:
+            #TODO: criar campo indicando se o veículo foi deletado no model do veículo, e sumir com os veículos apagados
+            #TODO: apenas por esse campo. Aqui vamos ter a busca sem checar esse campo, assim o sistema pode consultar infos
+            #TODO: antigas sobre os veículos que ele não mais usa. Além disso, sistemas apagados só podem ter suas
+            #TODO: informações vistas pelo sistema root. Não esquecer de checar qual sistema está vendo a informação, e pegar
+            #TODO: trackings apenas para o sistema logado.            
+            
+            vehicle = Vehicle.objects.get(license_plate=form.cleaned_data["vehicle"])
+            
+            if s.parent == None:
+                equip_system = s.name
+                trackings = Tracking.objects.filter(
+                    Q(eventdate__gte=form.cleaned_data['period_start'])  
+                    &Q(eventdate__lte=form.cleaned_data['period_end'])
+                    &(
+                        Q(trackingdata__type__type = 'Vehicle')
+                        &Q(trackingdata__value = vehicle.id)
+                    )
+                )
+            else:
+                equip_system = lowestDepth(vehicle.equipment.system.all()).name
+                trackings = Tracking.objects.filter(
+                    Q(eventdate__gte=form.cleaned_data['period_start'])  
+                    &Q(eventdate__lte=form.cleaned_data['period_end'])
+                    &(
+                        Q(trackingdata__type__type = 'Vehicle')
+                        &Q(trackingdata__value = vehicle.id)
+                    )
+                    &(
+                        Q(trackingdata__type__type = 'System')
+                        &Q(trackingdata__value__in = parents)
+                    )
+                )
+            
+            datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings)&Q(type__type='Geocode'))
 
             tdata_dict = {}
             for tdata in datas:
@@ -79,20 +115,25 @@ def report(request,offset):
             #initializing the resources that are going to be used to mount the table
             table_content = []
             list_table = []
-            vehicle = Vehicle.objects.get(license_plate=form.cleaned_data["vehicle"])
+            
             display_fields = map(lambda x: x.custom_field,form.cleaned_data["fields"])
 
             title_row = map(lambda x: firstRowTitles(str(x)), form.cleaned_data['vehicle_fields']) + map(lambda x: unicode(x),display_fields)
             
-            equip_system = lowestDepth(vehicle.equipment.system.all()).name
+            
             
             #main loop for each tracking found
             for date, tdata in tdata_dict.items():
                 item = {}
                 output_list = []
                 
+                #FUNCTIONAL PROGRAMMING RULEZ THE NATION: mount the list of elements of the address,
+                #sorted by the customfields names, or ["CEP","Cidade","Endereço","Estado"]
+                addrs = [x.value for x in sorted(tdata,key=lambda d: d.type.name) if x.type.type == 'Geocode']
+                addrs = str(addrs[2]+" - "+addrs[1]+", "+addrs[3]+" - "+addrs[0])
+                
                 #data for vehicle fields
-                d4 = datetime.now()
+               
                 for data in form.cleaned_data['vehicle_fields']:
                     if data != "address" and data != "date" and data !="system":
                         output_list.append(vehicle.__dict__[data])
@@ -101,30 +142,8 @@ def report(request,offset):
                     elif data == "system":
                         output_list.append(equip_system)
                     elif data == "address":
-                        lat = ''
-                        lng = ''
-                        for j in tdata:
+                        output_list.append(addrs)
 
-                            #getting the lat and long 
-                            if j.type.tag == 'Lat':
-                                lat = float(j.value)
-                                #output_list.append(j.value)
-                            elif j.type.tag == 'Long':
-                               lng = float(j.value)
-                                #output_list.append(j.value)
-                        
-                        #if there's a lattitude and longitude to process    
-                        if not lat == '' and not lng == '':
-                            d3 = datetime.now()
-                            result = Geocoder.reverse_geocode(lat,lng)
-                            addr = unicode(result[0])
-                            total_geocode_time += (datetime.now() - d3).total_seconds()
-                            print "geocode >>",(datetime.now() - d3).total_seconds() , 's'
-                        else:
-                            addr = u'Não disponível'
-                        
-                        output_list.append(addr)
-                print "vehicle loop >>",(datetime.now() - d4).total_seconds() , 's'
                 #data of the custom fields (inputs and outputs)
                        
                 for x in display_fields:

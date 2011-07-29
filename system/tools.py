@@ -92,5 +92,12 @@ def lowestDepth(system_list):
             result = system
     
     return result
+ 
+#find all parents of a system. you can pass initial values to the return list if needed.    
+def findParents(child,parents):
     
-        
+    while child.parent != None:
+        parents.append(child.parent)
+        child = child.parent
+            
+    return parents

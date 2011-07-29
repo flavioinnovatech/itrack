@@ -12,7 +12,7 @@ from itrack.vehicles.models import Vehicle
 VEHICLE_CHOICES = (("license_plate","Placa"),("date","Data"),("type","Tipo de veículo"),("address","Endereço"),("system","Sistema"),("color","Cor"),("year","Ano"),("model","Modelo"),("manufacturer","Fabricante"),("chassi","Chassi"))
 
 class ReportForm(Form):
-
+    title = CharField(max_length=200,label=u"Título",required=False)
     vehicle = ModelChoiceField(Vehicle.objects.all(),label=u"Veículo")
     period_start = DateTimeField(widget=DateTimeInput(attrs={'class':'datepicker'}),label=u"Data inicial")
     period_end = DateTimeField(widget=DateTimeInput(attrs={'class':'datepicker'}),label=u"Data final")
@@ -23,6 +23,8 @@ class ReportForm(Form):
     def __init__(self, system, *args, **kwargs):
         super(ReportForm, self).__init__(*args, **kwargs)
         self.fields['vehicle'].queryset = Vehicle.objects.filter(system=system)
+        self.fields['vehicle_fields'].initial = ["license_plate","date","type","address","system","color","year","model","manufacturer","chassi"]
+        #["license_plate","date","type","address","system","color","year","model","manufacturer","chassi"]
         self.fields['fields'].queryset = CustomFieldName.objects.filter(system=system).filter(custom_field__availablefields__system= system).distinct()
         
 

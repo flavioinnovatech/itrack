@@ -51,18 +51,8 @@
 		<div id="menuContainer">
 			<div class="centerContainer" align="center">
 				<ul id="nav" class="color1">
-					<li><a href="{% url rastreamento.views.index %}">Rastreamentos</a>
-						
-						
-					</li>
-					<li><a href="#">Relatórios</a>
-						<ul>
-							<li><a href="{% url reports.views.report request.session.system %}">Percurso veicular</a></li>
-							<!-- <li><a href="">Paradas</a></li>
-							<li><a href="#">Percurso portátil</a></li>
-							<li><a href="#">Telemetria</a></li> -->
-						</ul>
-					</li>
+					<li><a href="{% url rastreamento.views.index %}">Rastreamentos</a></li>
+					<li><a href="{% url reports.views.report request.session.system %}">Relatórios</a></li>
 					
 							{% for grp in request.user.groups.all %}
 							    {% if grp.name  == "administradores" or grp.name == "comando" %}

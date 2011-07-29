@@ -5,20 +5,22 @@ from itrack.vehicles.forms import VehicleForm,SwapForm
 from itrack.equipments.models import Equipment
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
+from django.db.models import Q
 
 def index(request):
     system = request.session['system']
     
     
-    equipments = Equipment.objects.filter(system = system)
+    equipments = Equipment.objects.filter(Q(system = system))
     
     rendered_list = ""
     
     for item in equipments:
         
         try:
-            v = Vehicle.objects.get(equipment__id=item.id)
+            v = Vehicle.objects.get(Q(equipment__id=item.id) & Q(erased=False))
             rendered_list+=u"<tr style='width:5%;'><td style='width:340px'>"+item.name+" </td><td style='width:338px'>"+str(v.license_plate)+"</td><td style=\"width:300px\"><a class='table-button' href=\"/vehicles/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/vehicles/delete/"+str(v.id)+"/\">Apagar</a><a class='table-button'  href=\"/vehicles/swap/"+str(v.id)+"/\">Remanejar</a></td></tr>"
         except:
             v_str = "<a class='table-button' href=\"/vehicles/create/"+str(item.id)+"/\">Criar veiculo</a>"
@@ -31,11 +33,18 @@ def create(request,offset):
     
     if request.method == 'POST':
         
-        form = VehicleForm(request.POST)
+        try:
+            v = Vehicle.objects.get(Q(license_plate__iexact = request.POST["license_plate"])&Q(erased=True))
+            form = VehicleForm(request.POST,instance=v)
+            print form
+        except ObjectDoesNotExist:
+            form = VehicleForm(request.POST)
+            
         if form.is_valid():
-            e = Equipment.objects.get(pk=int(offset))
+            e = Equipment.objects.get(pk=int(offset))         
             v = form.save(commit=False)
             v.equipment = e
+            v.erased = False
             v.save()
             return HttpResponseRedirect("/vehicles/create/finish")
         else:
@@ -72,7 +81,9 @@ def edit_finish(request):
 def delete(request,offset):
   v = Vehicle.objects.get(pk=int(offset))
   if request.method == 'POST':
-    v.delete()
+    v.erased = True
+    v.equipment = None
+    v.save()
     
     return HttpResponseRedirect("/vehicles/delete/finish")
     
