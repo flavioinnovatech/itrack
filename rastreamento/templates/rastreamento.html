@@ -178,6 +178,20 @@
 	<style>
 	  #tabs { bottom:0; width:960px;z-index:0;height:100%;}
 	</style>
+	<style type="text/css"> 
+    #id_polygon_map { width: 600px; height: 400px; }
+    #id_polygon_map .aligned label { float:inherit; }
+    #id_polygon_admin_map { position: relative; vertical-align: top; float: left; }
+    #id_polygon { display: none; }
+    .olControlEditingToolbar .olControlModifyFeatureItemActive { 
+       background-image: url("/static/admin/img/gis/move_vertex_on.png");
+       background-repeat: no-repeat;
+    }
+    .olControlEditingToolbar .olControlModifyFeatureItemInactive { 
+       background-image: url("/static/admin/img/gis/move_vertex_off.png");
+       background-repeat: no-repeat;
+    }
+  </style>
 
 {% endblock %}
 

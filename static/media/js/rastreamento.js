@@ -284,17 +284,17 @@ function loadGrid() {
               shrinkToFit: true,
               onSelectRow: function(rowid,status){ 
                 if (status == true) {
-                  //lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
-                  //lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
+                  lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
+                  lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
 
                   //Insert google permission here
-                  var latlng = new google.maps.LatLng(lat, lng);
-                  marker = new google.maps.Marker({
-                    position: latlng, 
-                    map: map
-                  });
-                  map.setCenter(latlng);
-                  googlemarkers[rowid] = marker;
+                  // var latlng = new google.maps.LatLng(lat, lng);
+                  // marker = new google.maps.Marker({
+                  //   position: latlng, 
+                  //   map: map
+                  // });
+                  // map.setCenter(latlng);
+                  // googlemarkers[rowid] = marker;
                   
                   //Insert multispectral permission here
                   multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
@@ -306,7 +306,7 @@ function loadGrid() {
                 else {
                   
                   //Insert google permission here
-                  googlemarkers[rowid].setMap(null);
+                  // googlemarkers[rowid].setMap(null);
                   
                   
                   //Insert multispectral permission here
