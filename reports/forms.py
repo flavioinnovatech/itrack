@@ -22,6 +22,10 @@ class ReportForm(Form):
     
     def __init__(self, system, *args, **kwargs):
         super(ReportForm, self).__init__(*args, **kwargs)
+        try:
+            print args[0].has_key('vehicle_other')
+        except:
+            pass
         #self.fields['vehicle'].queryset = Vehicle.objects.filter(system=system)
         self.fields['vehicle_fields'].initial = ["license_plate","date","type","address","system","color","year","model","manufacturer","chassi"]
         self.fields['fields'].queryset = CustomFieldName.objects.filter(system=system).filter(custom_field__availablefields__system= system).distinct()
