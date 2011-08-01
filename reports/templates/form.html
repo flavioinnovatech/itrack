@@ -11,16 +11,85 @@
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
 <script type="text/javascript" src="/media/js/jquery-ui-timepicker-addon.js"></script>
+<style type="text/css">
 
+    .field #id_vehicle{
+        width:165px;
+    }
+    .field {
+        height:30px;
+    }
+    .field #id_vehicle_other{
+        margin:0;
+    }
+    .field .switcher{
+        width:165px;
+        height:20px;
+    }
+    .vehiclass{
+        margin-left: 15px;
+    }
+    
+</style>
 <script type="text/javascript">
 $(document).ready(function(){
-    $('.datepicker').datetimepicker({
-        showSecond: true,
-        timeFormat: 'hh:mm:ss',
-        dateFormat: 'yy-mm-dd'
+  
+    //limiting the maximum and minimum dates
+    dates = $( "#id_period_end, #id_period_start " ).datetimepicker({
+			showSecond: true,
+            timeFormat: 'hh:mm:ss',
+            dateFormat: 'yy-mm-dd',
+			onSelect: function( selectedDate ) {
+				var option = this.id == "id_period_start" ? "minDate" : "maxDate",
+					instance = $( this ).data( "datepicker" ),
+					date = $.datepicker.parseDate(
+						instance.settings.dateFormat ||
+						$.datepicker._defaults.dateFormat,
+						selectedDate, instance.settings );
+				
+				date2  = new Date(date);
+				date2.setMonth(date.getMonth()+ (this.id == "id_period_start" ? 1 : -1));
+                
+				var option2 = this.id == "id_period_start" ? "maxDate" : "minDate";				    
+					
+				dates.not( this ).datetimepicker( "option", option, date );
+				dates.not( this ).datetimepicker( "option", option2, date2);
+			}
+		});
+    
+    if ($('.switcher option:selected').text() == 'Outro:'){
+        this.id = 'id_vehicle_other';
+        $(this).attr('name','vehicle_other');
+        $(this).parent().append("<input type=\"text\" placeholder=\"Digite a placa\" id=\"id_vehicle\" class=\"vehiclass\" name=\"vehicle\" >");
+    }else if(this.id == 'id_vehicle_other'){
+        $('#id_vehicle').remove()
+        this.id = 'id_vehicle';
+        $(this).attr('name','vehicle');
+    }
+    
+    
+    $('.switcher').change(function(){
+        if ($('.switcher option:selected').text() == 'Outro:'){
+            this.id = 'id_vehicle_other';
+            $(this).attr('name','vehicle_other');
+            $(this).parent().append("<input type=\"text\" placeholder=\"Digite a placa\" id=\"id_vehicle\" class=\"vehiclass\" name=\"vehicle\" >");
+        }else if(this.id == 'id_vehicle_other'){
+            $('#id_vehicle').remove()
+            this.id = 'id_vehicle';
+            $(this).attr('name','vehicle');
+        }
+    
+        
     });
     
-    
+    /*
+    <p class="field">
+        <select name="vehicle" id="id_vehicle">
+            <option value="1">CXP1337</option>
+            <option value="-1">Outro</option>
+        </select> 
+    </p>
+    */
     $('#exportCSV').click(function(){
         $('input[name="type"]').attr("value","CSV");
         document.forms["formz"].submit();

@@ -54,12 +54,31 @@ def firstRowTitles(item):
 
 def report(request,offset):
     
+    
     if request.method != 'POST':
         form = ReportForm(int(offset))
     else:
-        form = ReportForm(int(offset),request.POST)
+        print request.POST
+        try:
+        
+            if request.POST.has_key("vehicle_other"):
+                v = Vehicle.objects.get(license_plate=request.POST["vehicle"])
+                request.POST["vehicle"] = v.id
+                # TODO: caso receba um vehicle_other aqui, fazer passar a validação de veículo, dentro do ReportForm
+                form = ReportForm(int(offset),request.POST)
+                
+        except ObjectDoesNotExist:
+                form = ReportForm(int(offset),request.POST)    
+        
+        
+        
+                                
         
         if form.is_valid():
+            print form.fields["vehicle"]
+            assert False
+            
+            
             
             system = request.session["system"]
             s = System.objects.get(pk=system)
