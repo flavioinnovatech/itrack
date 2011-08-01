@@ -298,7 +298,7 @@ function loadGrid() {
                   
                   //Insert multispectral permission here
                   multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
-                  markers.addMarker(multimarkers[rowid]);
+                  markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon));
                   multispectral.setCenter(new OpenLayers.LonLat(lng,lat),1); 
               
                 }
