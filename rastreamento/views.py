@@ -67,19 +67,25 @@ def loadData(request):
     info["veiculo"]["type"] = i.type
     info["veiculo"]["sistema"] = lowestDepth(i.equipment.system.all()).name
     
+        
     for j in trackingData:
+      
       try:
+        if j.type.tag == 'Lat':
+          info["lat"] = j.value
+        if j.type.tag == 'Long':
+          info["lng"] = j.value  
         cfn = CustomFieldName.objects.filter(system=system).get(custom_field=j.type)
         if cfn.custom_field in CustomField.objects.filter(system=system):
             info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value          
       except:
         if j.type.type == "GPS" or j.type.type == "Geocode":
+
             info["geocode"][smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
         pass
             
     data[tracking.equipment.serial] =  info
        
-  print data
   json = simplejson.dumps(data)
 
   return HttpResponse(json, mimetype='application/json')

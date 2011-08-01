@@ -106,7 +106,7 @@ jQuery("#googlemap").click(function() {
 });
 
 jQuery("#multispectralmap").click(function() {
-  multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
+  // multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
   w = jQuery(window).width();
   h = jQuery(window).height();
 
@@ -140,22 +140,7 @@ function loadmaps() {
   // google.maps.event.trigger(map, 'resize');
   // map.setZoom( map.getZoom() );
   
-  jQuery(document).ready(function(){
 
-  jQuery('input[type="submit"]').mousedown(function(){
-    $(this).css("border-style","inset");
-  }).mouseup(function(){
-    $(this).css("border-style","solid");
-  }).mouseleave(function(){
-    $(this).css("border-style","solid");
-  });
-  
-  jQuery("ul#nav > li").hover(
-  	function() { $('ul', this).slideDown('fast', function(){}); },
-  	function() { $('ul', this).css('display', 'none'); 	
-  });
-  
-});
 
   // google.maps.event.addListener(map, "mousemove", function(){
   //   google.maps.event.trigger(map, 'resize'); 
@@ -216,10 +201,10 @@ function loadGrid() {
           var colNames = [];
           
           //Campos fixos
-          //colNames.push("Latitude");
-          //colModel.push({name:"Latitude",hidden:true});
-          //colNames.push("Longitude");
-          //colModel.push({name:"Longitude",hidden:true});
+          colNames.push("Latitude");
+          colModel.push({name:"Latitude",hidden:true});
+          colNames.push("Longitude");
+          colModel.push({name:"Longitude",hidden:true});
           colNames.push("Placa");
           colModel.push({name:"Placa",align:"center",formatter:currencyFmatter,width:75});
           colNames.push("Tipo veículo");
@@ -233,7 +218,7 @@ function loadGrid() {
           
           //para cada veículo
           var nequips = 0;
-          jQuery.each(data, function(key, equip) {
+          jQuery.each(data, function(key, equip) { 
             nequips++;
             
            //hack para colocar endereço em primeiro
@@ -355,6 +340,8 @@ function loadGrid() {
                 else if(name =="Cidade")            object[name] = equip.geocode["Cidade"];
                 else if(name =="CEP")               object[name] = equip.geocode["CEP"];
                 else if(name =="Estado")            object[name] = equip.geocode["Estado"];
+                else if(name =="Latitude")          object[name] = equip["lat"];
+                else if(name =="Longitude")          object[name] = equip["lng"];
                 //Custom fields
                 else {
                   
@@ -366,9 +353,7 @@ function loadGrid() {
                 
             
 
-            setTimeout(function(){
               myData.push(object);
-            },400);
             
 
             

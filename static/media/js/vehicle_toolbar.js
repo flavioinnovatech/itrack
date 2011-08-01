@@ -295,16 +295,12 @@ function loadlateralgrid () {
             if (status == true) {
               lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
               lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
+              alert (lat);
               var latlng = new google.maps.LatLng(lat, lng);
               
-              marker = new google.maps.Marker({
-                position: latlng, 
-                map: map
-              });
-              
-              map.setCenter(latlng);
-              
-              markers[rowid] = marker;
+              multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
+              markers.addMarker(multimarkers[rowid]);
+              multispectral.setCenter(new OpenLayers.LonLat(lng,lat),1);
             
             }
             
