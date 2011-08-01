@@ -58,13 +58,15 @@ def report(request,offset):
     if request.method != 'POST':
         form = ReportForm(int(offset))
     else:
-        print request.POST
+        #print request.POST
         try:
         
             if request.POST.has_key("vehicle_other"):
                 v = Vehicle.objects.get(license_plate=request.POST["vehicle"])
                 request.POST["vehicle"] = v.id
                 # TODO: caso receba um vehicle_other aqui, fazer passar a validação de veículo, dentro do ReportForm
+                form = ReportForm(int(offset),request.POST)
+            else:
                 form = ReportForm(int(offset),request.POST)
                 
         except ObjectDoesNotExist:
