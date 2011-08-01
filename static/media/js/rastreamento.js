@@ -137,8 +137,10 @@ function loadmaps() {
 	
 	//Insert Google Permission here
   // map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
-  //   google.maps.event.trigger(map, 'resize');
-  //   map.setZoom( map.getZoom() );jQuery(document).ready(function(){
+  // google.maps.event.trigger(map, 'resize');
+  // map.setZoom( map.getZoom() );
+  
+  jQuery(document).ready(function(){
 
   jQuery('input[type="submit"]').mousedown(function(){
     $(this).css("border-style","inset");
@@ -265,6 +267,7 @@ function loadGrid() {
           var googlemarkers = new Array;
           var multimarkers = new Array;
           
+          h = jQuery(window).height();
           if (olddata == null) {
             jQuery("#list4").jqGrid({
               pager: "#gridpager",
