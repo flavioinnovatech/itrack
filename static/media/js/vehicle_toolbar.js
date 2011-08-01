@@ -72,9 +72,10 @@ jQuery(document).ready(function(){
             
             jQuery.each(oldgeofences, function(key2,olditem) {
             	if (olditem.id == geofence.id) {
-                	jQuery("#list4").jqGrid('delRowData', geofence.id);
-                }
-          	});
+                	jQuery("#list1").jqGrid('delRowData', geofence.id);
+              }
+
+            });
           }
           
           object = new Object;
@@ -112,76 +113,24 @@ jQuery(document).ready(function(){
               jQuery.each(globalgeofences, function(key,data) {
 
                 if (data.id == id) {
-
-                  if(data.type == 'C') {
-                    
-                    var polygon = [];
-                    
-                    jQuery.each (data.polygon[0][0], function(key1,point) {
-                      var latlng = new google.maps.LatLng(point[1], point[0]);
-                      polygon.push(latlng)
-                      
-                    });
+                  if(data.type == 'C' || data.type == 'P') {
                                         
-                    bermudaTriangle = new google.maps.Polygon({
-                      paths: polygon,
-                      strokeColor: "#FF0000",
-                      strokeOpacity: 0.8,
-                      strokeWeight: 2,
-                      fillColor: "#FF0000",
-                      fillOpacity: 0.35
-                    });
+                    var wkt_f = new OpenLayers.Format.WKT();
+                  	var ploaded = wkt_f.read(data['polygon']);
+                  	vlayer.addFeatures([ploaded]);
+                  	multispectral.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
                     
-                    bermudaTriangle.setMap(map);
-                    
-                    geofence[id] = bermudaTriangle;
+                    geofence[id] = ploaded;
                   }
                   
-                  if(data.type == "P") {
-                    
-                     var polygon = [];
-
-                      jQuery.each (data.polygon[0][0], function(key1,point) {
-                        var latlng = new google.maps.LatLng(point[1], point[0]);
-                        polygon.push(latlng)
-
-                      });
-
-                      bermudaTriangle = new google.maps.Polygon({
-                        paths: polygon,
-                        strokeColor: "#FF0000",
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                        fillColor: "#FF0000",
-                        fillOpacity: 0.35
-                      });
-
-                      bermudaTriangle.setMap(map);
-
-                      geofence[id] = bermudaTriangle;
-                  
-                  }
                   
                   if (data.type == "R") {
-                    var flightPlanCoordinates = []
+                    var wkt_f = new OpenLayers.Format.WKT();
+                  	var ploaded = wkt_f.read(data['polygon']);
+                  	vlayer.addFeatures([ploaded]);
+                  	multispectral.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
                     
-                    jQuery.each (data.route, function(key1,point) {
-                      var latlng = new google.maps.LatLng(point[1], point[0]);
-                      flightPlanCoordinates.push(latlng);
-                    });
-                                        
-                    var flightPath = new google.maps.Polyline({
-                        path: flightPlanCoordinates,
-                        strokeColor: "#FF0000",
-                        strokeOpacity: 1.0,
-                        strokeWeight: 2
-                    });
-
-                    flightPath.setMap(map);
-                    
-                    map.setCenter(flightPlanCoordinates[0]);
-                    
-                    geofence[id] = flightPath;
+                    geofence[id] = ploaded;
                       
                   }
 
@@ -194,7 +143,7 @@ jQuery(document).ready(function(){
             else {
               
               try{
-                geofence[id].setMap(null);
+                vlayer.removeFeatures(geofence[id]);
               }
               catch(err) {
                 jQuery.each (geofence[id],function(key,value) {
@@ -215,7 +164,7 @@ jQuery(document).ready(function(){
         });
           
         jQuery("table#list1").css("width","180px");
-        jQuery("table.ui-jqgrid-htable").css("width","180px");
+        jQuery("table[aria-labelledby=gbox_list1]").css("width","180px");
 
       });
     }
@@ -228,16 +177,7 @@ function loadlateralgrid () {
 
 	if (globaldata == null)
 		return;
-    // if ( jQuery("#tabs-3left").css("width") > "0px" ) {
-      
-      // jQuery.getJSON("/rastreamento/loadData",function(data){
-        // if (olddata != null) {
-        //   alert (olddata.toSource());
-        // }
-        // else{
-        //   alert ('null');
-        // }
-
+		
         //montar cabeçalhos
         var data = globaldata;
         var colModel = [];
@@ -281,8 +221,7 @@ function loadlateralgrid () {
           myData.push(object);
         });
                 
-        var markers = new Array;
-        
+                        
         jQuery("#list").jqGrid({   
          	datatype: "local",
          	height:h-250,
@@ -295,8 +234,6 @@ function loadlateralgrid () {
             if (status == true) {
               lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
               lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
-              alert (lat);
-              var latlng = new google.maps.LatLng(lat, lng);
               
               multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
               markers.addMarker(multimarkers[rowid]);
@@ -305,7 +242,7 @@ function loadlateralgrid () {
             }
             
             else {
-              markers[rowid].setMap(null);
+              markers.removeMarker(multimarkers[rowid]);
             }
           }
         
@@ -329,7 +266,7 @@ function loadlateralgrid () {
           
           //jQuery("#list_cb").css("width","180px");
           jQuery("table#list").css("width","180px");
-          jQuery("table.ui-jqgrid-htable").css("width","180px");
+          jQuery("table[aria-labelledby=gbox_list]").css("width","180px");
           
       
       olddata = data;

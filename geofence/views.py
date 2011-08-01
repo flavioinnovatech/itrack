@@ -250,7 +250,7 @@ def loadGeofences(request):
   
   for g in geofence:
     if g.type != 'R':
-      data.append({"name":g.name,"id":g.id,"type":g.type,"polygon":g.polygon.coords})
+      data.append({"name":g.name,"id":g.id,"type":g.type,"polygon":str(g.polygon)})
     elif g.type == 'R':
       data.append({"name":g.name,"id":g.id,"type":g.type,"route":g.linestring.coords})
     

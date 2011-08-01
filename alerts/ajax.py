@@ -9,6 +9,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from itrack.system.tools import lowestDepth
 from django.contrib.auth.decorators import login_required
+from querystring_parser import parser
 
 @login_required
 def status(request):
@@ -60,3 +61,27 @@ def status(request):
 
     else:
        return HttpResponse("fail") 
+
+@login_required       
+def load(request):
+
+ parsed_dict = parser.parse(request.POST.urlencode())
+
+ a = Alert.objects.get(pk=parsed_dict['id'])
+
+ print a.__dict__
+
+ send = {}
+
+ # send['vehicle'] = str(c)
+ # send['time_executed'] = str(c.time_executed)
+ # send['time_sent'] = str(c.time_sent)
+ # send['time_received'] = str(c.time_received)
+ # send['action'] = str(c.action)
+ # send['type'] = str(c.type)
+ # send['state'] = str(c.state)
+
+ json = simplejson.dumps(send)
+
+ return HttpResponse(json, mimetype='application/json')
+

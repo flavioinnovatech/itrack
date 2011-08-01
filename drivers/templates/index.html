@@ -10,7 +10,7 @@
     {% if not display_list %}
     <h1><img class="icon" src="/media/img/users.png">Lista de Motoristas </h1><hr/>
     <h2></h2>
-    <em>Este veículo não possui nenhum motorista associado. <a href = "{% url drivers.views.create offset %}"> Clique aqui para criar um motorista para este veículo. </a></em>
+    <em>Este veículo não possui nenhum motorista associado. <a href = "{% url drivers.views.create %}"> Clique aqui para criar um motorista para este veículo. </a></em>
 
     {% else %}
     <h1><img class="icon" src="/media/img/users.png">Lista de Motoristas </h1><hr/>

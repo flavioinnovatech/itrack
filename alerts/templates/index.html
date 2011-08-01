@@ -3,6 +3,7 @@
 {% block head %}
 <script src="/media/js/jquery.jqGrid.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="/media/js/jquery.treeTable.js"></script>
+<script type="text/javascript" src="/media/js/alerts.js"></script>
 <link rel="stylesheet" href="/media/css/jquery.treeTable.css" type="text/css" media="screen" /> 
 <script type="text/javascript">
     $(document).ready(function()  {
@@ -54,7 +55,7 @@
 				        </tr>
 				        {% else %}
 				        <tr style = 'width:5%' {% if line.childof %}class='child-of-node-{{line.childof}}'{% endif %}>
-				            <td style='width:31%;text-align:left;' >{{line.alertname}}</td>
+				            <td style='width:31%;text-align:left;' ><a class="alertdialog"  id="{{line.id}}"  href="#">{{line.alertname}}</a></td>
 				            <td style='width:28%'>{{line.timestart}}</td>
 				            <td style='width:28%'>{{line.timeend}}</td>
 				            <td style='width:110px; padding-right:5px;'>
