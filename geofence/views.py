@@ -216,7 +216,10 @@ def saveGeofencev2(request):
           g = Geofence.objects.get(pk=parsed_dict['id'])
           g.name = parsed_dict['name']
           g.type = 'P'
-          g.polygon = wkt
+          p = wkt.replace("MULTI","")
+          p = wkt.replace("POLYGON","MULTIPOLYGON(")
+          p += ")"
+          g.polygon = p
           g.save()
           
           return HttpResponse('edit_finish')
