@@ -54,34 +54,21 @@ def firstRowTitles(item):
 
 def report(request,offset):
     
+    no_information = 0
     
     if request.method != 'POST':
         form = ReportForm(int(offset))
     else:
-        #print request.POST
+        print request.POST['token']
         try:
-        
             if request.POST.has_key("vehicle_other"):
                 v = Vehicle.objects.get(license_plate=request.POST["vehicle"])
-                request.POST["vehicle"] = v.id
-                # TODO: caso receba um vehicle_other aqui, fazer passar a validação de veículo, dentro do ReportForm
-                form = ReportForm(int(offset),request.POST)
-            else:
-                form = ReportForm(int(offset),request.POST)
-                
+                request.POST["vehicle"] = str(v.id)
         except ObjectDoesNotExist:
-                form = ReportForm(int(offset),request.POST)    
-        
-        
-        
-                                
+            pass        
+        form = ReportForm(int(offset),request.POST)    
         
         if form.is_valid():
-            print form.fields["vehicle"]
-            assert False
-            
-            
-            
             system = request.session["system"]
             s = System.objects.get(pk=system)
             parents = findParents(s,[s])
@@ -95,8 +82,8 @@ def report(request,offset):
             #TODO: antigas sobre os veículos que ele não mais usa. Além disso, sistemas apagados só podem ter suas
             #TODO: informações vistas pelo sistema root. Não esquecer de checar qual sistema está vendo a informação, e pegar
             #TODO: trackings apenas para o sistema logado.            
-            
-            vehicle = Vehicle.objects.get(license_plate=form.cleaned_data["vehicle"])
+            print form.cleaned_data['vehicle']
+            vehicle = Vehicle.objects.get(pk=form.cleaned_data["vehicle"])
             
             if s.parent == None:
                 equip_system = s.name
@@ -122,6 +109,10 @@ def report(request,offset):
                         &Q(trackingdata__value__in = parents)
                     )
                 )
+            
+            if trackings.count() == 0:
+                no_information = 1
+                return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
             
             datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings)&Q(type__type='Geocode'))
 
@@ -181,14 +172,15 @@ def report(request,offset):
             print "total geocode time >>",total_geocode_time , 's'
             #print title_row
             #print list_table
-
+            
             if request.POST['type'] == 'CSV':
                 response = HttpResponse(mimetype='text/csv')
                 response['Content-Disposition'] = 'attachment; filename=report.csv'
+                
                 writer = UnicodeWriter(response)
                 writer.writerow(title_row)
                 for line in list_table:
                     writer.writerow(line)
-                    
+                response.set_cookie("fileDownloadToken", request.POST['token'])    
                 return response
     return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
