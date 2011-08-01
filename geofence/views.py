@@ -187,8 +187,7 @@ def saveGeofencev2(request):
       system = System.objects.get(pk=request.session['system'])
       wkt = (parsed_dict['coords'])
           
-      p = wkt.replace("POLYGON","MULTIPOLYGON(")
-      p += ")"
+      p = wkt
             
       if (parsed_dict['id'] != ""):
           g = Geofence.objects.get(pk=parsed_dict['id'])
@@ -216,17 +215,14 @@ def saveGeofencev2(request):
           g = Geofence.objects.get(pk=parsed_dict['id'])
           g.name = parsed_dict['name']
           g.type = 'P'
-          p = wkt.replace("MULTI","")
-          p = wkt.replace("POLYGON","MULTIPOLYGON(")
-          p += ")"
+          print wkt
           g.polygon = p
           g.save()
           
           return HttpResponse('edit_finish')
                                       
       else:
-          p = wkt.replace("POLYGON","MULTIPOLYGON(")
-          p += ")"
+          p = wkt
           g = Geofence(name=parsed_dict['name'],system=system,type='P',polygon=p)
           g.save()
           
