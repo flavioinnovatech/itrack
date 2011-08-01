@@ -611,6 +611,14 @@ img#maptools{
   min-height:400px;
 }
 
+#loadingScreen {
+  z-index:999999999999999999999999999999999;
+}
+
+.loadingScreenWindow .ui-dialog-titlebar-close {
+  display: none;
+}
+
 .popup-content p{}
 .alert-wrapper {margin-top:20px;padding:10px;}
 .alert-wrapper h2{ clear:both; margin-top:10px;}
