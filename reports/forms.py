@@ -3,7 +3,7 @@
 from django.forms import *
 from django.db.models import Q
 from django.contrib.admin.widgets import *
-
+from django.core.exceptions import ObjectDoesNotExist
 from itrack.equipments.models import CustomFieldName
 from itrack.system.models import System
 from itrack.vehicles.models import Vehicle
@@ -22,10 +22,7 @@ class ReportForm(Form):
     
     def __init__(self, system, *args, **kwargs):
         super(ReportForm, self).__init__(*args, **kwargs)
-        try:
-            print args[0].has_key('vehicle_other')
-        except:
-            pass
+                
         #self.fields['vehicle'].queryset = Vehicle.objects.filter(system=system)
         self.fields['vehicle_fields'].initial = ["license_plate","date","type","address","system","color","year","model","manufacturer","chassi"]
         self.fields['fields'].queryset = CustomFieldName.objects.filter(system=system).filter(custom_field__availablefields__system= system).distinct()
@@ -33,8 +30,18 @@ class ReportForm(Form):
         choices = [(v.id, unicode(v)) for v in Vehicle.objects.filter(system=system)]
         choices.extend([("-1","Outro:")])
         
-        self.fields['vehicle'].choices = choices
+        try:
+            if args[0].has_key('vehicle_other'):
+                try:
+                    v_oth = Vehicle.objects.get(pk=int(args[0]['vehicle']))
+                    choices.extend([(v_oth.id,unicode(v_oth))])
+                except ObjectDoesNotExist:
+                    pass
+        except IndexError:
+            pass
         
+        
+        self.fields['vehicle'].choices = choices
         
         
         

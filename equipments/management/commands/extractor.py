@@ -148,6 +148,7 @@ class Command(BaseCommand):
 # >> ==================================================== +-------------------------------+-/
                 
                   # parse the received xml and turns it into a dict
+                  self.stdout.write("================================\n"+inbox+"\n================================\n")
                   xml =  ElementTree.fromstring(inbox.strip(""))
                   xmldict = XmlDictConfig(xml)
                   # checks if it's a tracking table
