@@ -47,6 +47,7 @@ jQuery(document).ready(function(){
   	var wkt_f = new OpenLayers.Format.WKT();
   	var ploaded = wkt_f.read(g['polygon']);
   	vlayer2.addFeatures([ploaded]);
+  	multispectral2.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
   }
   
   jQuery("#polygonsave").click(function(){
@@ -60,8 +61,8 @@ jQuery(document).ready(function(){
     if(!geofencename) { 
       alert("Por favor digite um nome para a cerca eletrônica.");
     }
-    if(!polygon) { 
-      alert("Por favor digite um nome para a cerca eletrônica.");
+    else if(!polygon) { 
+      alert("Por favor digite um escolha uma cerca eletrônica.");
       }
     else {
       //Save geofence

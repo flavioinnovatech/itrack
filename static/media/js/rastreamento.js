@@ -2,7 +2,7 @@
 var map;
 var multispectral;
 var markers,size,icon;
-
+var multimarkers = new Array;
 jQuery(document).ready(function(){ 
   
   openloading();
@@ -89,10 +89,6 @@ jQuery(document).ready(function(){
     
   }); //end .fullscreen click function
     
-  
-
-
-
 /* ---------------------------------------------  MAPS ------------------------------------------------------ */
 
 
@@ -117,34 +113,6 @@ jQuery("#multispectralmap").click(function() {
 });
 
 function loadmaps() {
-
-  //Insert google permission here
-	var geocoder;
-	var infowindow = new google.maps.InfoWindow();
-	var marker;
-	geocoder = new google.maps.Geocoder();
-	
-	var input = "-22.896359,-47.060092";
-	var latlngStr = input.split(",",2); 
-	var lat = parseFloat(latlngStr[0]);
-	var lng = parseFloat(latlngStr[1]);
-	var latlng = new google.maps.LatLng(lat, lng);
-	var myOptions = {
-		zoom: 4,
-		center: latlng,
-		mapTypeId: 'roadmap'
-	}
-	
-	//Insert Google Permission here
-  // map = new google.maps.Map(document.getElementById("tabs-3right"), myOptions);
-  // google.maps.event.trigger(map, 'resize');
-  // map.setZoom( map.getZoom() );
-  
-
-
-  // google.maps.event.addListener(map, "mousemove", function(){
-  //   google.maps.event.trigger(map, 'resize'); 
-  // });
   
   //Insert Multispectral permission here
   multispectral = new OpenLayers.Map('tabs-3right');
@@ -156,8 +124,11 @@ function loadmaps() {
           layers: "multispectral",
           format: "image/gif"
       },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
-    
+  
+  vlayer = new OpenLayers.Layer.Vector();
   multispectral.addLayer(dm_wms);
+  multispectral.addLayer(vlayer);
+  multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
   
   markers = new OpenLayers.Layer.Markers( "Markers" );
   multispectral.addLayer(markers);
@@ -187,16 +158,8 @@ function loadData() {
 //var globaldata;
 var olddata = null;
 function loadGrid() {
-  //jQuery('#list4').jqGrid('GridUnload');     
 
-      //jQuery.getJSON("/rastreamento/loadData",
-      //  function(data){
           var data = globaldata;
-
-          //loadlateralgrid(data);
-          
-          //globaldata = data;
-          //montar cabeçalhos
           var colModel = [];
           var colNames = [];
           
@@ -211,8 +174,6 @@ function loadGrid() {
           colModel.push({name:"Tipo veículo",align:"center",width:75});
           colNames.push("Hora");
           colModel.push({name:"Hora",align:"center"});
-          //colNames.push("Endereço");
-          //colModel.push({name:"Endereço",align:"center"});
           colNames.push("Sistema");
           colModel.push({name:"Sistema",align:"center",width:75});
           
@@ -227,31 +188,25 @@ function loadGrid() {
 
             colNames.push("Endereço");
             colModel.push({name:"Endereço",align:"center",width:200});
-            
+    
             //para cada info de geocode
             jQuery.each(equip.geocode, function(key3,info){
                 colNames.push(key3);
                 colModel.push({name:key3,align:"center",width:60});
             });
-            
+    
             //fim do hack para botar endereço em primeiro
             equip.geocode["Endereço"] = addr;
-            
+    
             //para cada info do rastreador
             jQuery.each(equip.info, function(key2,info){
               if (!(key2 == "Latitude" || key2 == "Longitude")) {
                 colNames.push(key2);
-                colModel.push({name:key2,align:"center",width:50});
+                colModel.push({name:key2.replace(" ","_"),align:"center",width:50});
               }
             });
-            
-            
-             
           });
-          
-          var googlemarkers = new Array;
-          var multimarkers = new Array;
-          
+                    
           h = jQuery(window).height();
           if (olddata == null) {
             jQuery("#list4").jqGrid({
@@ -271,38 +226,22 @@ function loadGrid() {
                 if (status == true) {
                   lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
                   lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
-
-                  //Insert google permission here
-                  // var latlng = new google.maps.LatLng(lat, lng);
-                  // marker = new google.maps.Marker({
-                  //   position: latlng, 
-                  //   map: map
-                  // });
-                  // map.setCenter(latlng);
-                  // googlemarkers[rowid] = marker;
                   
-                  //Insert multispectral permission here
                   multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
                   markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon));
                   multispectral.setCenter(new OpenLayers.LonLat(lng,lat),1); 
-              
                 }
               
                 else {
-                  
-                  //Insert google permission here
-                  // googlemarkers[rowid].setMap(null);
-                  
-                  
-                  //Insert multispectral permission here
                   markers.removeMarker(multimarkers[rowid]);
                 }
               }
             });
             
-            jQuery("#list4").jqGrid('navGrid','#gridpager',{edit:false,add:false,del:false});
-            // jQuery("#list4").filterToolbar();
-            // jQuery("input[id^=gs]").css("height","85%");
+            // jQuery("#list4").jqGrid('navGrid','#gridpager',{edit:false,add:false,del:false});
+            jQuery("#list4").filterToolbar();
+            jQuery("input[id^=gs]").css("height","85%");
+            jQuery("input[id^=gs]").css("wodth","100%");
           
           }
           
@@ -344,24 +283,14 @@ function loadGrid() {
                 else if(name =="Longitude")          object[name] = equip["lng"];
                 //Custom fields
                 else {
-                  
-                  object[name] = equip.info[name];
-                  
+                  object[name.replace(" ","_")] = equip.info[name];
                 }
                 
             });
-                
-            
-
               myData.push(object);
-            
-
-            
           });
 
-          var time = nequips*400 + 500;  
-          
-          setTimeout(function(){
+
               var i = 0;
               jQuery.each(myData, function(key, item) {
               
@@ -374,13 +303,9 @@ function loadGrid() {
               
               //HACK
               jQuery("table#list4").css("width","931px");
-              jQuery("table.ui-jqgrid-htable").css("width","931px");
+              jQuery("table[aria-labelledby=gbox_list4]").css("width","931px");
             
-          },time);
-          
-          olddata = data;
-
-    //});
+              olddata = data;
   
 
 }
@@ -388,8 +313,6 @@ function loadGrid() {
 function doTimer() {
   setTimeout(function(){
     loadData();
-    //loadlateralgrid();
-    //loadGrid();
     doTimer();
   },30000);
 }

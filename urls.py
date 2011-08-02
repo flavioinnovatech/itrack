@@ -96,6 +96,7 @@ url(r'^alerts/edit/finish/$','alerts.views.edit_finish'),
 url(r'^alerts/delete/(\d+)/$','alerts.views.delete'),
 url(r'^alerts/delete/finish/$','alerts.views.delete_finish'),
 url(r'^alerts/status/$','alerts.ajax.status'),
+url(r'^alerts/load/$','alerts.ajax.load'),
 
 url(r'^geofence/$','geofence.views.index'),
 url(r'^geofence/create/$','geofence.views.create'),

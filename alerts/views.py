@@ -205,6 +205,8 @@ def delete(request,offset):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='alerta').count() != 0)    
 def delete_finish(request):
     return render_to_response("alerts/templates/delete_finish.html",locals())
+    
+  
 
 
         
