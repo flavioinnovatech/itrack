@@ -59,7 +59,7 @@ def report(request,offset):
     if request.method != 'POST':
         form = ReportForm(int(offset))
     else:
-        print request.POST['token']
+
         try:
             if request.POST.has_key("vehicle_other"):
                 v = Vehicle.objects.get(license_plate=request.POST["vehicle"])
@@ -82,7 +82,7 @@ def report(request,offset):
             #TODO: antigas sobre os veículos que ele não mais usa. Além disso, sistemas apagados só podem ter suas
             #TODO: informações vistas pelo sistema root. Não esquecer de checar qual sistema está vendo a informação, e pegar
             #TODO: trackings apenas para o sistema logado.            
-            print form.cleaned_data['vehicle']
+
             vehicle = Vehicle.objects.get(pk=form.cleaned_data["vehicle"])
             
             if s.parent == None:

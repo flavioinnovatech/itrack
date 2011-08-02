@@ -149,7 +149,8 @@ jQuery(document).ready(function(){
             vehicle: jQuery("#id_vehicle").val(),
             period_start: jQuery("#id_period_start").val(),
             period_end: jQuery("#id_period_end").val(),
-            geofence: jQuery("#id_geofence").val()
+            geofence: jQuery("#id_geofence").val(),
+            vehicle_other:jQuery("#id_vehicle_other").val()
         },
         function(data){
           
@@ -193,11 +194,6 @@ jQuery(document).ready(function(){
         });
     });
 
-    jQuery('.datepicker').datetimepicker({
-        showSecond: true,
-        timeFormat: 'hh:mm:ss',
-        dateFormat: 'yy-mm-dd'
-    });
     
     jQuery(".main-form").css("height","700px");
 

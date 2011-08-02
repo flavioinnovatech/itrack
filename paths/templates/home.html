@@ -1,13 +1,79 @@
 {% extends "templates/base.html" %}
 
 {% block head %}
+
+<style type="text/css">
+
+    #id_vehicle{
+        width:178px;
+    }
+    .field {
+        height:30px;
+    }
+    .field #id_vehicle_other{
+        margin:0;
+    }
+
+    
+</style>
+
 <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
 
 <script type="text/javascript" src="/media/js/paths.js"></script>
 <script type="text/javascript" src="/media/js/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" src="/media/js/ajaxsend.js"></script>
 <script type="text/javascript" src="/media/js/alertcheck.js"></script>
-
+<script type="text/javascript">
+//limiting the maximum and minimum dates
+    $(document).ready(function(){
+        dates = $( "#id_period_end, #id_period_start " ).datetimepicker({
+			    showSecond: true,
+                timeFormat: 'hh:mm:ss',
+                dateFormat: 'yy-mm-dd',
+			    onSelect: function( selectedDate ) {
+				    var option = this.id == "id_period_start" ? "minDate" : "maxDate",
+					    instance = $( this ).data( "datepicker" ),
+					    date = $.datepicker.parseDate(
+						    instance.settings.dateFormat ||
+						    $.datepicker._defaults.dateFormat,
+						    selectedDate, instance.settings );
+				
+				    date2  = new Date(date);
+				    date2.setMonth(date.getMonth()+ (this.id == "id_period_start" ? 1 : -1));
+                    
+				    var option2 = this.id == "id_period_start" ? "maxDate" : "minDate";				    
+					
+				    dates.not( this ).datetimepicker( "option", option, date );
+				    dates.not( this ).datetimepicker( "option", option2, date2);
+			    }
+	    });
+	    
+	    
+	    if ($('.switcher option:selected').text() == 'Outro:'){
+            this.id = 'id_vehicle_other';
+            $(this).attr('name','vehicle_other');
+            $(this).parent().append("<input type=\"text\" placeholder=\"Digite a placa\" id=\"id_vehicle\" class=\"vehiclass\" name=\"vehicle\" >");
+        }else if(this.id == 'id_vehicle_other'){
+            $('#id_vehicle').remove()
+            this.id = 'id_vehicle';
+            $(this).attr('name','vehicle');
+        }
+    
+    
+        $('.switcher').change(function(){
+            if ($('.switcher option:selected').text() == 'Outro:'){
+                this.id = 'id_vehicle_other';
+                $(this).attr('name','vehicle_other');
+                $(this).parent().append("<input type=\"text\" placeholder=\"Digite a placa\" id=\"id_vehicle\" class=\"vehiclass\" name=\"vehicle\" >");
+            }else if(this.id == 'id_vehicle_other'){
+                $('#id_vehicle').remove()
+                this.id = 'id_vehicle';
+                $(this).attr('name','vehicle');
+            } 
+        });
+	    
+	});
+</script>
 {% endblock %}
 
 {% block content %}
