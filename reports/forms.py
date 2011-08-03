@@ -27,7 +27,7 @@ class ReportForm(Form):
         self.fields['vehicle_fields'].initial = ["license_plate","date","type","address","system","color","year","model","manufacturer","chassi"]
         self.fields['fields'].queryset = CustomFieldName.objects.filter(system=system).filter(custom_field__availablefields__system= system).distinct()
                 
-        choices = [(v.id, unicode(v)) for v in Vehicle.objects.filter(system=system)]
+        choices = [(v.id, unicode(v)) for v in Vehicle.objects.filter(Q(equipment__system=system)&Q(erased=False))]
         choices.extend([("-1","Outro:")])
         
         try:
