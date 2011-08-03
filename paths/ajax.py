@@ -82,7 +82,7 @@ def load(request):
         pathdata = {}
         for key,value in tdata_dict.items():
             try:
-                pathdata[key]= (value[1].value,value[0].value)
+                pathdata[key]= (value[0].value,value[1].value)
             except:
                 pass    
 
