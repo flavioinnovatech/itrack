@@ -14,7 +14,7 @@ from itrack.reports.forms import ReportForm
 from itrack.equipments.models import CustomFieldName, Tracking, TrackingData
 from itrack.system.models import System
 from itrack.vehicles.models import Vehicle
-from itrack.system.tools import lowestDepth,findParents
+from itrack.system.tools import lowestDepth,findParents,findChild,serializeChild,findChildInstance
 from itrack.pygeocoder import Geocoder
 
 
@@ -73,6 +73,8 @@ def report(request,offset):
             s = System.objects.get(pk=system)
             parents = findParents(s,[s])
             
+            parents = serializeChild(findChild(system),[])
+            print parents
             d1 = datetime.now()
             
             #TODO: A business logic pra cá ficou assim:
@@ -81,9 +83,11 @@ def report(request,offset):
             #TODO: antigas sobre os veículos que ele não mais usa. Além disso, sistemas apagados só podem ter suas
             #TODO: informações vistas pelo sistema root. Não esquecer de checar qual sistema está vendo a informação, e pegar
             #TODO: trackings apenas para o sistema logado.            
-
-            vehicle = Vehicle.objects.get(pk=form.cleaned_data["vehicle"])
-            
+            try:
+                vehicle = Vehicle.objects.get(pk=form.cleaned_data["vehicle"])
+            except:
+                no_information = 1
+                return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
             if s.parent == None:
                 equip_system = s.name
                 trackings = Tracking.objects.filter(
@@ -96,17 +100,17 @@ def report(request,offset):
                 )
             else:
                 equip_system = lowestDepth(vehicle.equipment.system.all()).name
+                print vehicle.id
                 trackings = Tracking.objects.filter(
                     Q(eventdate__gte=form.cleaned_data['period_start'])  
                     &Q(eventdate__lte=form.cleaned_data['period_end'])
                     &(
                         Q(trackingdata__type__type = 'Vehicle')
                         &Q(trackingdata__value = vehicle.id)
-                    )
-                    &(
-                        Q(trackingdata__type__type = 'System')
-                        &Q(trackingdata__value__in = parents)
-                    )
+                     )   
+                ).filter( #extra filter for the system
+                    Q(trackingdata__type__type = 'System')
+                    &Q(trackingdata__value__in = parents)
                 )
             
             if trackings.count() == 0:
