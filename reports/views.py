@@ -74,7 +74,6 @@ def report(request,offset):
             parents = findParents(s,[s])
             
             d1 = datetime.now()
-            total_geocode_time = 0
             
             #TODO: A business logic pra cá ficou assim:
             #TODO: criar campo indicando se o veículo foi deletado no model do veículo, e sumir com os veículos apagados
@@ -120,7 +119,6 @@ def report(request,offset):
             for tdata in datas:
                 tdata_dict.setdefault(tdata.tracking.eventdate, []).append(tdata)
             
-            print "database query >>",(datetime.now() - d1).total_seconds() , 's'
             d2 = datetime.now()
             #print tdata_dict
             
@@ -168,10 +166,7 @@ def report(request,offset):
 
                 list_table.append(output_list)
 
-            print "total table loop >>",(datetime.now() - d2).total_seconds() , 's'
-            print "total geocode time >>",total_geocode_time , 's'
-            #print title_row
-            #print list_table
+            
             
             if request.POST['type'] == 'CSV':
                 response = HttpResponse(mimetype='text/csv')
