@@ -77,10 +77,38 @@ def load(request):
  
  c = CustomFieldName.objects.get(pk=a.trigger_id)
  
+ vehicles = a.vehicle.all()
  
  send = {}
  
- if (a.geofence_id != None):
+ v_array = []
+ 
+ for v in vehicles:
+   v_array.append(v.license_plate)
+ 
+ v_string = ', '.join(v_array)
+ 
+ send['vehicles'] = v_string
+ 
+ dests = a.destinataries.all()
+ 
+ d_array = []
+ 
+ for d in dests:
+   d_array.append(d.username)
+   
+ d_string = ', '.join(d_array)
+ 
+ send['destinataries'] = d_string
+
+ if (c.custom_field.type == 'LinearInput'):
+   send['event'] = smart_str(c.name, encoding='utf-8', strings_only=False, errors='strict')
+   if a.state == True:
+      send['when'] = 'Sinal acima do limite'
+   else:
+      send['when'] = 'Sinal abaixo do limite'  
+   
+ elif (c.custom_field.tag == 'GeoFence'):
    g = Geofence.objects.get(pk=a.geofence_id)
    send['event'] = smart_str(c.name, encoding='utf-8', strings_only=False, errors='strict') +" - "+smart_str(g.name, encoding='utf-8', strings_only=False, errors='strict')
    if a.state == True:
@@ -88,9 +116,15 @@ def load(request):
    else:
      send['when'] = 'Veículo sair da cerca'
  
+ else:
+   send['event'] = smart_str(c.name, encoding='utf-8', strings_only=False, errors='strict')
+   if a.state == True:
+       send['when'] = 'Ligado'
+   else:
+       send['when'] = 'Desligado'
 
 
- print a.__dict__
+ # print a.__dict__
 
  
  send['name'] = smart_str(a.name, encoding='utf-8', strings_only=False, errors='strict')
