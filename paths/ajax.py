@@ -63,7 +63,7 @@ def load(request):
         print trackings
             
         datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings) & (Q(type__tag='Lat')|Q(type__tag='Long')))
-        print (datetime.now() - d1).total_seconds()
+        
         tdata_dict = {}
         for tdata in datas:
             tdata_dict.setdefault(str(tdata.tracking.eventdate), []).append(tdata)
