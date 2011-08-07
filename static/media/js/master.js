@@ -9,9 +9,14 @@ jQuery(document).ready(function(){
   });
   
   jQuery("ul#nav > li").hover(
-  	function() { $('ul', this).slideDown('fast', function(){}); },
-  	function() { $('ul', this).css('display', 'none'); 	
-  });
+  	function(){  //hover in
+        $('ul', this).slideDown('fast', function(){});
+        $('ul', this).css('display','block');
+  	},
+  	function(){ //hover out
+  	    $("ul#nav > li ul").fadeOut(0);
+  	    $("ul#nav > li ul").css('display', 'none'); 	
+    });
   
 });
 
