@@ -23,6 +23,8 @@ from itrack.command.forms import CommandForm
 from itrack.equipments.models import Equipment,CustomFieldName,CustomField, Tracking,TrackingData
 from itrack.system.models import System
 from itrack.system.tools import findChild
+from itrack.vehicles.models import Vehicle
+from django.contrib.auth.models import User
 
 from querystring_parser import parser
 
@@ -144,6 +146,10 @@ def create(request,offset,vehicle=None):
 
             c = form.save(commit=False)
             
+            sender = User.objects.get(pk=request.session['user_id'])
+            
+            c.sender = sender
+            
             #checks if the field exists for the selected equipment
             try:
                 field_check = Vehicle.objects.get(equipment__type__custom_field=c.type.custom_field)
@@ -261,6 +267,8 @@ def load(request):
   
   c = Command.objects.get(pk=parsed_dict['id'])
 
+  s = User.objects.get(pk=c.sender.id)
+
   send = {}
 
   send['vehicle'] = str(c)
@@ -270,6 +278,7 @@ def load(request):
   send['action'] = str(c.action)
   send['type'] = str(c.type)
   send['state'] = str(c.state)
+  send['sender'] = str(s.username)
     
   json = simplejson.dumps(send)
   

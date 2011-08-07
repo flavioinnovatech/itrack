@@ -14,7 +14,7 @@ from itrack.system.tools import findChild
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.utils.encoding import smart_str
 
 def systemGeofenceDetails(sysid):
     lines = []
@@ -182,6 +182,9 @@ def saveGeofencev2(request):
   
   if request.method == "POST":
     parsed_dict = parser.parse(request.POST.urlencode())
+    
+    parsed_dict['name'] = smart_str(parsed_dict['name'], encoding='utf-8', strings_only=False, errors='strict')
+    
     if parsed_dict['type'] == 'circle':
       
       system = System.objects.get(pk=request.session['system'])

@@ -18,6 +18,7 @@ class Command(models.Model):
     time_sent = models.DateTimeField('data enviada',blank=True,null=True)
     time_received = models.DateTimeField('data recebida',blank=True,null=True)
     time_executed = models.DateTimeField('data executada',blank=True,null=True)
+    sender = models.ForeignKey(User,blank=True,null=True)
     def __unicode__(self):
         return self.equipment.license_plate
         

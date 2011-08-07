@@ -119,9 +119,9 @@ jQuery(document).ready(function(){
 			                {% endif %}
 			            {% endif %}  
 			            </td>
-			            <td style="width:150px">{% if item.time_sent %}{{item.time_sent}}{% endif %}</td>
-			            <td style="width:150px">{% if item.time_received %}{{item.time_received}}{% endif %}</td>
-			            <td style="width:150px">{% if item.time_executed %}{{item.time_executed}}{% endif %}</td>
+			            <td style="width:150px">{% if item.time_sent %}{{item.time_sent|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
+			            <td style="width:150px">{% if item.time_received %}{{item.time_received|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
+			            <td style="width:150px">{% if item.time_executed %}{{item.time_executed|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
 			        
 			            <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar</a></td>
 			        </tr>
