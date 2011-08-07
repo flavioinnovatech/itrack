@@ -59,6 +59,122 @@ jQuery(document).ready(function(){
         });
     });  
 </script>
+
+<style type="text/css">
+/*
+Pretty Little Table
+------------------------------------------------------------------ */
+table.table a:link {
+ color: #666;
+ font-weight: bold;
+ text-decoration:none;
+}
+table.table a:visited {
+ color: #999999;
+ font-weight:bold;
+ text-decoration:none;
+}
+table.table a:active,
+table.table a:hover {
+ color: #bd5a35;
+ text-decoration:underline;
+}
+table.table {
+ color:#666;
+ font-size:11px;
+ text-shadow: 1px 1px 0px #fff;
+/* background:#eaebec;*/
+ margin:20px;
+ border:#ccc 1px solid;
+ 
+ background: #fafafa;
+ background: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#fafafa));
+ background: -moz-linear-gradient(top,  #fbfbfb,  #fafafa);
+ 
+ -moz-border-radius:3px;
+ -webkit-border-radius:3px;
+ border-radius:3px;
+ 
+ -moz-box-shadow: 0 1px 2px #d1d1d1;
+ -webkit-box-shadow: 0 1px 2px #d1d1d1;
+ box-shadow: 0 1px 2px #d1d1d1;
+}
+table.table th {
+ padding:21px 25px 22px 25px;
+ border-top:1px solid #fafafa;
+ border-bottom:1px solid #e0e0e0;
+ font-size:12px;
+ 
+ background: #ededed;
+ background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#ebebeb));
+ background: -moz-linear-gradient(top,  #ededed,  #ebebeb);
+}
+table.table th:first-child{
+ text-align: left;
+ padding-left:20px;
+}
+table.table tr:first-child th:first-child{
+ -moz-border-radius-topleft:3px;
+ -webkit-border-top-left-radius:3px;
+ border-top-left-radius:3px;
+}
+table.table tr:first-child th:last-child{
+ -moz-border-radius-topright:3px;
+ -webkit-border-top-right-radius:3px;
+ border-top-right-radius:3px;
+}
+table.table tr{
+ text-align: center;
+ padding-left:20px;
+}
+table.table tr td:first-child{
+ text-align: left;
+ padding-left:20px;
+ border-left: 0;
+}
+table.table tr td {
+ padding:18px;
+/* border-top: 1px solid #ffffff;
+ border-bottom:1px solid #e0e0e0;
+ border-left: 1px solid #e0e0e0;*/
+ 
+ background: #fafafa;
+ background: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#fafafa));
+ background: -moz-linear-gradient(top,  #fbfbfb,  #fafafa);
+}
+
+table.table tr{
+ background: #fafafa;
+ background: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#fafafa));
+ background: -moz-linear-gradient(top,  #fbfbfb,  #fafafa);
+}
+
+table.table tr.even td{
+ background: #f6f6f6;
+ background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6));
+ background: -moz-linear-gradient(top,  #f8f8f8,  #f6f6f6);
+}
+table.table tr:last-child td{
+ border-bottom:0;
+}
+table.table tr:last-child td:first-child{
+ -moz-border-radius-bottomleft:3px;
+ -webkit-border-bottom-left-radius:3px;
+ border-bottom-left-radius:3px;
+}
+table.table tr:last-child td:last-child{
+ -moz-border-radius-bottomright:3px;
+ -webkit-border-bottom-right-radius:3px;
+ border-bottom-right-radius:3px;
+}
+table.table tr:hover td{
+ background: #f2f2f2;
+ background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f0f0f0));
+ background: -moz-linear-gradient(top,  #f2f2f2,  #f0f0f0);
+}
+</style>
+
+
 {% endblock  %}
 
 
@@ -73,69 +189,118 @@ jQuery(document).ready(function(){
         <h2>Comandos desse sistema:</h2>
 				<em>  </em>
         
-        <div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><p class="ui-jqgrid-title">&nbsp</p></div><div class="ui-state-default ui-jqgrid-hdiv" style="margin-bottom:5px;><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
-				  
-				  <thead>
-				    
-				    <tr role="rowheader" class="ui-jqgrid-labels">
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 100px;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Veículo</div></th>
-				      	<th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 100px;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Comando</div></th>
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 100px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Estado</div></th>
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 150px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Data enviada</div></th>
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 150px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Data recebida</div></th>
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 150px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Data executada</div></th>
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 100px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Ações</div></th></tr></thead></table></div></div><div class="ui-jqgrid-bdiv"><div style="margin-left:0px;"><div></div><table id="tree" cellspacing="0" cellpadding="0" border="0" id="list4" tabindex="1" role="grid" aria-multiselectable="true" aria-labelledby="gbox_list4" class="ui-jqgrid-btable" style="width:100%"><tbody>
-				      
-				      
-			  <tr style="height: auto; width:100%" role="row" class="jqgfirstrow">
-			  
-			  <td style="height: 0px; width: 20px;" role="gridcell"></td>
-			  
-			  <td style="height: 0px; width:20px" role="gridcell"></td
-			  <td style="height: 0px; width:20px" role="gridcell"></td>
-			  
-			  
-			  </tr>
-			    {% for item in command_tree %}
-			        {% if item.sysname %}
-			        <tr style='width:5%;' id='node-{{item.id}}' {% if item.childof %}class='child-of-node-{{item.childof}}'{% endif %}>
-			            <td style='width:50px;font-weight:bold;text-align:left;' >{{item.sysname}}</td>
-			        </tr>
-			        {% else %}
-			        <tr style = 'width:5%' {% if item.childof %}class='child-of-node-{{item.childof}}'{% endif %}>
-			            <td style='width:100px;text-align:left;' ><a id='{{item.id}}' class='commanddialog' href="#">{{item.plate}}</a></td>
-			            <td style="width:100px">{{item.type}} : {{item.action}} </td>
-			            <td style="width:100px"> 
-			            {% if item.state == "0" %}
-			                <img src="/media/img/command-1-thumb.png">
-			                {% else %}{% if item.state == "1" %}
-			                    <img src="/media/img/command-2-thumb.png">
-			                    {% else %}{% if item.state == "2" %}
-			                        <img src="/media/img/command-3-thumb.png">
-			                        {% else %}{% if item.state == "3" %}
-			                            <img src="/media/img/command-fail-thumb.png">
-			                        {% endif %}
-			                    {% endif %}
-			                {% endif %}
-			            {% endif %}  
-			            </td>
-			            <td style="width:150px">{% if item.time_sent %}{{item.time_sent|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
-			            <td style="width:150px">{% if item.time_received %}{{item.time_received|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
-			            <td style="width:150px">{% if item.time_executed %}{{item.time_executed|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
-			        
-			            <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar</a></td>
-			        </tr>
-			        {% endif %}
-			    {% endfor %}
-			  
-				  
-				  
-				    
-				  </tr></tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div>
-        <div align="center" style="margin-top:30px;" id="actions">
-            <a href="{% url command.views.create request.session.system %}">Enviar um novo comando </a>
-        </div>
-</div>
+        <!-- <div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><p class="ui-jqgrid-title">&nbsp</p></div><div class="ui-state-default ui-jqgrid-hdiv" style="margin-bottom:5px;><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
+                  
+                  <thead>
+                    
+                    <tr role="rowheader" class="ui-jqgrid-labels">
+                      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 100px;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Veículo</div></th>
+                        <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 100px;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Comando</div></th>
+                      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 100px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Estado</div></th>
+                      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 150px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Data enviada</div></th>
+                      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 150px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Data recebida</div></th>
+                      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 150px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Data executada</div></th>
+                      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 100px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Ações</div></th></tr></thead></table></div></div><div class="ui-jqgrid-bdiv"><div style="margin-left:0px;"><div></div><table id="tree2" cellspacing="0" cellpadding="0" border="0" id="list4" tabindex="1" role="grid" aria-multiselectable="true" aria-labelledby="gbox_list4" class="ui-jqgrid-btable" style="width:100%"><tbody>
+                      
+                      
+                <tr style="height: auto; width:100%" role="row" class="jqgfirstrow">
+                
+                <td style="height: 0px; width: 20px;" role="gridcell"></td>
+                
+                <td style="height: 0px; width:20px" role="gridcell"></td
+                <td style="height: 0px; width:20px" role="gridcell"></td>
+                
+                
+                </tr>
+                  {% for item in command_tree %}
+                      {% if item.sysname %}
+                      <tr style='width:5%;' id='node-{{item.id}}' {% if item.childof %}class='child-of-node-{{item.childof}}'{% endif %}>
+                          <td style='width:50px;font-weight:bold;text-align:left;' >{{item.sysname}}</td>
+                      </tr>
+                      {% else %}
+                      <tr style = 'width:5%' {% if item.childof %}class='child-of-node-{{item.childof}}'{% endif %}>
+                          <td style='width:100px;text-align:left;' ><a id='{{item.id}}' class='commanddialog' href="#">{{item.plate}}</a></td>
+                          <td style="width:100px">{{item.type}} : {{item.action}} </td>
+                          <td style="width:100px"> 
+                          {% if item.state == "0" %}
+                              <img src="/media/img/command-1-thumb.png">
+                              {% else %}{% if item.state == "1" %}
+                                  <img src="/media/img/command-2-thumb.png">
+                                  {% else %}{% if item.state == "2" %}
+                                      <img src="/media/img/command-3-thumb.png">
+                                      {% else %}{% if item.state == "3" %}
+                                          <img src="/media/img/command-fail-thumb.png">
+                                      {% endif %}
+                                  {% endif %}
+                              {% endif %}
+                          {% endif %}  
+                          </td>
+                          <td style="width:150px">{% if item.time_sent %}{{item.time_sent|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
+                          <td style="width:150px">{% if item.time_received %}{{item.time_received|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
+                          <td style="width:150px">{% if item.time_executed %}{{item.time_executed|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
+                      
+                          <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar</a></td>
+                      </tr>
+                      {% endif %}
+                  {% endfor %}
+                
+                  
+                  
+                    
+                  </tr></tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div>
+                <div align="center" style="margin-top:30px;" id="actions">
+                    <a href="{% url command.views.create request.session.system %}">Enviar um novo comando </a>
+                </div> -->
+<!-- </div> -->
+      <table cellspacing="0" id="tree" class="table">
+      <!-- to create a darker table row, you must add the class even to a tr eg.
+      <tr class="even">…</tr>
+      --><!-- Table Header -->
+      <thead>
+        <tr>
+          <th>Veículo</th>
+          <th>Comando</th>
+          <th>Estado</th>
+          <th>Data enviada</th>
+          <th>Data recebida</th>
+          <th>Data executada</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in command_tree %}
+          {% if item.sysname %}
+            <tr id='node-{{item.id}}' {% if item.childof and forloop.counter0 != 0 %}class='child-of-node-{{item.childof}}'{% endif %}>
+              <td style='font-weight:bold;text-align:left;' >{{item.sysname}}</td>
+            </tr>
+          {% else %}
+            <tr {% if item.childof %}class='child-of-node-{{item.childof}}'{% endif %}>
+               <td style='text-align:left;' ><a id='{{item.id}}' class='commanddialog' href="#">{{item.plate}}</a></td>
+               <td>{{item.type}} : {{item.action}} </td>
+               <td> 
+               {% if item.state == "0" %}
+                   <img src="/media/img/command-1-thumb.png">
+                   {% else %}{% if item.state == "1" %}
+                       <img src="/media/img/command-2-thumb.png">
+                       {% else %}{% if item.state == "2" %}
+                           <img src="/media/img/command-3-thumb.png">
+                           {% else %}{% if item.state == "3" %}
+                               <img src="/media/img/command-fail-thumb.png">
+                           {% endif %}
+                       {% endif %}
+                   {% endif %}
+               {% endif %}  
+               </td>
+               <td>{% if item.time_sent %}{{item.time_sent|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
+               <td>{% if item.time_received %}{{item.time_received|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
+               <td>{% if item.time_executed %}{{item.time_executed|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
+               <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar</a></td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+      </table>
+      
     </div>
       </div>
 
