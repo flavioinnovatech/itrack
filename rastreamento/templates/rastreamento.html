@@ -173,6 +173,14 @@
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
 <script type="text/javascript" src="/media/js/alertcheck.js"></script>
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#last-tracking-observation').click(function(){
+            $('#last-tracking-observation').fadeOut('fast');
+        });
+    
+    });
+</script>
   
   
 	<style>
@@ -190,6 +198,12 @@
     .olControlEditingToolbar .olControlModifyFeatureItemInactive { 
        background-image: url("/static/admin/img/gis/move_vertex_off.png");
        background-repeat: no-repeat;
+    }
+    #last-tracking-observation{
+        display:block;
+        margin:0 35px 10px 35px;
+        padding:0.7em;
+        
     }
   </style>
 
@@ -211,8 +225,12 @@
 		<li style="float:right;"><img title="Listar geofences" id="maptools" class="geofence" src="/media/img/geofence.png"></li>
 		
 	</ul>
+	
+	
 	<div id="tabs-1">
+	<div id="last-tracking-observation" class="ui-state-highlight ui-corner-all"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Observação:</strong> As informações exibidas são os últimos dados recebidos pelo veículo.<span class="ui-icon ui-icon-close" style="float:right;"></span></div>
 	  <table id="list4" summary="tabela que mostra dados principais dos veículos e a sua posição"></table>
+	  
 	  <div id="gridpager"></div>
 	</div>
   <div id="tabs-2" style="z-index:-1">
