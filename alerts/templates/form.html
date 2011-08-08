@@ -3,7 +3,6 @@
 
 {% block head %}
 <link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
-<script type="text/javascript" src="http://jscolor.com/jscolor/jscolor.js"></script>
 <script type="text/javascript" src="/static/admin/js/core.js"></script>
 <script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
 <script type="text/javascript" src="/static/admin/js/actions.js"></script>
@@ -20,11 +19,39 @@ state0 = null;
 state1 = null;
 jQuery(document).ready(function(){
         
+    // CONFIGURAÇÃO DO DATEPICKER DO JQUERYUI PARA PT-BR
+	$.datepicker.setDefaults({dateFormat: 'dd/mm/yy',
+        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
+        dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro', 'Outubro','Novembro','Dezembro'],
+        monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set', 'Out','Nov','Dez'],
+        nextText: 'Próximo',
+    	prevText: 'Anterior'
+    });    
+        
+    $.timepicker.setDefaults({
+		timeOnlyTitle: 'Выберите время',
+		timeText: 'Horário',
+		hourText: 'Hora',
+		minuteText: 'Minuto',
+		secondText: 'Segundo',
+		currentText: 'Hora atual',
+		closeText: 'Ok',
+		ampm: false
+	});
+    
+        
     jQuery('.datepicker').datetimepicker({
         showSecond: true,
         timeFormat: 'hh:mm:ss',
         dateFormat: 'yy-mm-dd'
     });
+    
+    
+    
+
+
     
     initial_state = false;
     if (jQuery('li label[for="id_state_0"] input').attr('checked')) initial_state = true;

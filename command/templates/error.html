@@ -7,8 +7,8 @@
 <div  class="main-form">
 <h1><img class="icon" src="/media/img/command.png">Envio de comando</h1>
 <hr />
-<h2> Erro: O atuador selecionado não existe </h2>
-<em>O comando a ser enviado selecionou um atuador inexistente para o tipo de equipamento cadastrado. <a href="{% url command.views.index %}"> Clique aqui para voltar a tela de histórico de comandos. </a></em>
+<h2>{{error_title}} </h2>
+<em>{{error}} <a href="{% url command.views.index %}"> Clique aqui para voltar a tela de histórico de comandos. </a></em>
 
 </div>
 {% endblock %}

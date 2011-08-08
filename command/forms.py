@@ -1,6 +1,8 @@
 # -*- coding: utf8 -*-
 from itrack.command.models import Command
 from django.forms import *
+from django import forms
+
 
 class CommandForm(ModelForm):
     class Meta:
@@ -9,5 +11,9 @@ class CommandForm(ModelForm):
         widgets = {
             'action': RadioSelect()
         }
+    
+    username = CharField(label="Usuário")
+    password = forms.CharField(label="Senha",widget=forms.PasswordInput(render_value=True),)
+
     #activate = ChoiceField(choices = (("ON","Ativar"),("OFF","Desativar"),),widget=RadioSelect(),label=u"Ação")
         

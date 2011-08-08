@@ -117,8 +117,9 @@ jQuery(document).ready(function(){
                                         
                     var wkt_f = new OpenLayers.Format.WKT();
                   	var ploaded = wkt_f.read(data['polygon']);
+                  	
                   	vlayer.addFeatures([ploaded]);
-                  	multispectral.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
+                  	multispectral.zoomToExtent(vlayer.getDataExtent());
                     
                     geofence[id] = ploaded;
                   }
@@ -127,8 +128,9 @@ jQuery(document).ready(function(){
                   if (data.type == "R") {
                     var wkt_f = new OpenLayers.Format.WKT();
                   	var ploaded = wkt_f.read(data['polygon']);
+                  	
                   	vlayer.addFeatures([ploaded]);
-                  	multispectral.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
+					multispectral.zoomToExtent(vlayer.getDataExtent());
                     
                     geofence[id] = ploaded;
                       
@@ -144,6 +146,7 @@ jQuery(document).ready(function(){
               
               try{
                 vlayer.removeFeatures(geofence[id]);
+                multispectral.zoomToExtent(vlayer.getDataExtent());
               }
               catch(err) {
                 jQuery.each (geofence[id],function(key,value) {
@@ -237,7 +240,7 @@ function loadlateralgrid () {
               
               multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
               markers.addMarker(multimarkers[rowid]);
-              multispectral.setCenter(new OpenLayers.LonLat(lng,lat),1);
+              multispectral.setCenter(new OpenLayers.LonLat(lng,lat),2);
             
             }
             

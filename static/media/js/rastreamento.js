@@ -282,7 +282,7 @@ function loadGrid() {
                 else if(name =="CEP")               object[name] = equip.geocode["CEP"];
                 else if(name =="Estado")            object[name] = equip.geocode["Estado"];
                 else if(name =="Latitude")          object[name] = equip["lat"];
-                else if(name =="Longitude")          object[name] = equip["lng"];
+                else if(name =="Longitude")         object[name] = equip["lng"];
                 //Custom fields
                 else {
                   object[name.replace(" ","_")] = equip.info[name];
@@ -291,7 +291,6 @@ function loadGrid() {
             });
               myData.push(object);
           });
-
 
               var i = 0;
               jQuery.each(myData, function(key, item) {
