@@ -43,7 +43,7 @@ def render_user_html(childs,father="",rendered_list=""):
             list_users.append(u.id)
           
           # rendered_list+=System.objects.get(pk=x).name
-          rendered_list+=u"<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:331px;font-weight:bold;text-align:left;'>"+System.objects.get(pk=x).name+" </td><td style='width:150px;text-align:left;padding-left:10px;'>Sistema</td><td style='width:340px;' style='text-align:center;'><a class='table-button' href=\"/accounts/create/"+str(x)+"/\">Criar novo usuario</a> </td></tr>\n"
+          rendered_list+=u"<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:331px;font-weight:bold;text-align:left;'>"+System.objects.get(pk=x).name+" </td><td style='width:150px;text-align:left;padding-left:10px;'>Cliente</td><td style='width:340px;' style='text-align:center;'><a class='table-button' href=\"/accounts/create/"+str(x)+"/\">Criar novo usuario</a> </td></tr>\n"
           
           userfunc = lambda y: y.groups.filter(name='administradores').count() != 0
           posifunc = lambda j,k: j[0] == k
@@ -167,7 +167,7 @@ def login(request):
 
             #if the user doesn't have a system
             if (len(system) == 0):
-              erro = u"Usuário não possui sistema associado."
+              erro = u"Usuário não possui Cliente associado."
               return render_to_response("accounts/templates/login.html",locals(),context_instance=RequestContext(request),)
             
             for item in system:
