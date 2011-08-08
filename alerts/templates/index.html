@@ -12,7 +12,7 @@
         });
     });  
 </script>
-
+<link rel="stylesheet" href="/media/css/crud.css" type="text/css" media="screen" /> 
 {% endblock  %}
 
 
@@ -22,56 +22,49 @@
     <div class="main-form">
         <h1><img class="icon" src="/media/img/equipment.png">Gerenciamento de Alertas</h1>
         <hr/>
-        
         <h2>Alertas desse sistema:</h2>
-				<em>  </em>
-        
-        <div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><p class="ui-jqgrid-title">&nbsp</p></div><div class="ui-state-default ui-jqgrid-hdiv"><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
-				  
-				  <thead>
-				    
-				    <tr role="rowheader" class="ui-jqgrid-labels">
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 31%;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Nome do Alerta</div></th>
-				      	<th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 28%;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Início do monitoramento</div></th>
-				      	<th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_id" style="width: 28%;text-align:center;"><div id="jqgh_id" class="ui-jqgrid-sortable">Fim do monitoramento</div></th>
-				      <th class="ui-state-default ui-th-column ui-th-ltr" role="columnheader" id="list4_invdate" style="width: 110px;text-align:center;"><div id="jqgh_invdate" class="ui-jqgrid-sortable">Ação</div></th></tr></thead></table></div></div><div class="ui-jqgrid-bdiv"><div style="margin-left:19px;"><div></div><table id="tree" cellspacing="0" cellpadding="0" border="0" id="list4" tabindex="1" role="grid" aria-multiselectable="true" aria-labelledby="gbox_list4" class="ui-jqgrid-btable" style="width:100%"><tbody>
-				      
-				      
-				  <tr style="height: auto; width:100%" role="row" class="jqgfirstrow">
-				  
-				  <td style="height: 0px; width: 20px;" role="gridcell"></td>
-				  
-				  <td style="height: 0px; width:20px" role="gridcell"></td>
-				  <td style="height: 0px; width:20px" role="gridcell"></td>
-				  
-				  
-				  </tr>
-				  
-				  
-				    {% for line in alert_tree %}
-				        {% if line.sysname %}
-				        <tr style='width:5%;' id='node-{{line.id}}' {% if line.childof %}class='child-of-node-{{line.childof}}'{% endif %}>
-				            <td style='width:25%;font-weight:bold;text-align:left;' >{{line.sysname}}</td>
-				        </tr>
-				        {% else %}
-				        <tr style = 'width:5%' {% if line.childof %}class='child-of-node-{{line.childof}}'{% endif %}>
-				            <td style='width:31%;text-align:left;' ><a class="alertdialog"  id="{{line.id}}"  href="#">{{line.alertname}}</a></td>
-				            <td style='width:28%'>{{line.timestart}}</td>
-				            <td style='width:28%'>{{line.timeend}}</td>
-				            <td style='width:110px; padding-right:5px;'>
-				                <a class='table-button' href='{% url alerts.views.edit line.id %}' >Editar</a>
-				                <a class='table-button'  href='{% url alerts.views.delete line.id %}'>Apagar</a>
-				            </td>
-				        </tr>
-				        {% endif %}
-				    {% endfor %}
-            </tbody></table></div></div></div><div id="rs_mlist4" class="ui-jqgrid-resize-mark">&nbsp;</div></div>
-	         <div align="center" style="margin-top:10px;" id="actions">
+				<em> </em>
+    
+    <table cellspacing="0" id="tree" class="table">
+    <!-- to create a darker table row, you must add the class even to a tr eg.
+    <tr class="even">…</tr>
+    --><!-- Table Header -->
+    <thead>
+      <tr>
+        <th>Nome do Alerta</th>
+        <th>Enviado por:</th>
+        <th>Início do monitoramento</th>
+        <th>Fim do monitoramento</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for line in alert_tree %}      
+  	        {% if line.sysname %}
+  	        <tr id='node-{{line.id}}' {% if line.childof and forloop.counter0 != 0%}class='child-of-node-{{line.childof}}'{% endif %}>
+  	            <td style='font-weight:bold;text-align:left;' >{{line.sysname}}</td>
+  	        </tr>
+  	        {% else %}
+  	        <tr {% if line.childof %}class='child-of-node-{{line.childof}}'{% endif %}>
+  	            <td style='text-align:left;' ><a class="alertdialog"  id="{{line.id}}"  href="#">{{line.alertname}}</a></td>
+  	            <td>{{line.sender}}</td>
+  	            <td>{{line.timestart|date:"SHORT_DATETIME_FORMAT"}}</td>
+  	            <td>{{line.timeend|date:"SHORT_DATETIME_FORMAT"}}</td>
+  	            <td style='padding-right:5px;'>
+  	                <a class='table-button' href='{% url alerts.views.edit line.id %}' >Editar</a>
+  	                <a class='table-button'  href='{% url alerts.views.delete line.id %}'>Apagar</a>
+  	            </td>
+  	        </tr>
+  	        {% endif %}
+  	    {% endfor %}
+  	    
+      </tbody>
+    </table>
+    <div align="center" style="margin-top:10px;" id="actions">
+      <a href="{% url alerts.views.create request.session.system %}">Criar alertas</a>
+    </div>
 
-                    <a href="{% url alerts.views.create request.session.system %}">Criar alertas</a>
-              </div>
-      </div>
-     
+  </div>     
 </div>
 
 {% block dialog %}

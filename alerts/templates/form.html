@@ -1,33 +1,5 @@
+
 {% extends "templates/base.html" %}
-
-{% block fullscreen %}
-  <div id="dialog" class="window" style="display:none;">
-    
-  <div id="accordion" style="float:left;height:100%;width:20%;">
-    <h3><a href="#">Círculo</a></h3>
-      <div>
-        <p>Digite um raio e em seguida clique no botão abaixo para traçar o centro no mapa:</p><br/>
-        <input type="text" id="radius"></input> metros <br/><br/>
-        <p align="center"><span class="table-button" id="circletool" style="cursor:pointer;padding:5px;">Traçar centro</span></p><br><br/>
-        <input id="savecircle" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>
-      </div>
-    <h3><a href="#">Polígono</a></h3>
-      <div>
-        <p>Clique no botão abaixo para selecionar os vértices do polígono no mapa:</p><br/>
-        <p align="center"><span class="table-button"  id="polygontool" style="cursor:pointer;padding:5px;">Traçar polígono</span></p><br><br/>
-        <input id="savepolygon" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>      </div>
-    <h3><a href="#">Rota</a></h3>
-      <div>
-        <p>Clique no botão abaixo e em seguida selecione uma rua para origem e uma rua para destino</p><br/>
-        <p align="center"><span class="table-button"  id="routetool"  style="cursor:pointer;padding:5px;">Selecionar rota</span></p><br/><br/>
-        <input id="saveroute" type="submit" value="Salvar cerca eletrônica" style="float:right;"></input>
-      </div>
-  </div>
-  
-  <div id="map" style="float:right;height:100%;width:79%"></div>
-  </div>
-
-{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
@@ -173,7 +145,7 @@ jQuery(document).ready(function(){
             <td>
             <div class="item-right">
                 <p class="errorlist">{{ field.errors }} </p>
-                 <p class="field">{{ field }} </p>          
+                 <p class="field">{{ field }}</p>          
             </div>
             </td>
             

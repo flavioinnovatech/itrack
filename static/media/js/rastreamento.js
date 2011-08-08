@@ -3,6 +3,8 @@ var map;
 var multispectral;
 var markers,size,icon;
 var multimarkers = new Array;
+var collection = new OpenLayers.Geometry.Collection();
+
 jQuery(document).ready(function(){ 
   
   openloading();

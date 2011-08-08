@@ -49,6 +49,7 @@ def systemCommandDetails(sysid):
                     'sysname':system.name,
                 })
     for command in commands:
+        sender = User.objects.get(pk=command.sender_id)
         lines.append({  'id':command.id,
                         'childof':system.id,
                         'type':command.type,
@@ -58,6 +59,8 @@ def systemCommandDetails(sysid):
                         'time_sent':command.time_sent,
                         'time_received':command.time_received,
                         'time_executed':command.time_executed,
+                        'sender': str(sender.username),
+                        
                     })
     
     if commands: 
@@ -118,6 +121,8 @@ def index(request):
             c.time_executed = tracking.eventdate
             c.save()
         
+        sender = User.objects.get(pk=c.sender_id)
+        
         display_list.append({
             'plate': c.equipment.license_plate,
             'type': c.type,
@@ -127,8 +132,9 @@ def index(request):
             'time_executed': (c.time_executed),
             'id': c.id,
             'action' : c.action,
+            'sender': str(sender.username),
         })
-        
+                
     childs = findChild(system)
     command_tree = mountCommandTree([system,childs],system)    
     

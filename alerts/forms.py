@@ -50,7 +50,7 @@ class SpecialSelect(Select):
 class AlertForm(ModelForm):
     class Meta:
         model = Alert
-        exclude = ('system')
+        exclude = ['system','sender']
         widgets = {
             'time_start' : DateTimeInput(attrs={'class':'datepicker'}),
             'time_end': DateTimeInput(attrs={'class':'datepicker'}),

@@ -35,6 +35,7 @@ def systemAlertDetails(sysid):
                         'vehicle': alert.vehicle.all(),
                         'timestart':alert.time_start,
                         'timeend':alert.time_end,
+                        'sender':alert.sender.username,
                     })
     
     if alerts: 
@@ -109,6 +110,9 @@ def create(request,offset):
             a.system_id = system_id
             a.save()
             
+            sender = User.objects.get(pk=request.session['user_id'])
+            a.sender = sender
+            
             for dest in form.data.getlist('destinataries'):
               a.destinataries.add(dest)
               
@@ -167,7 +171,8 @@ def edit(request,offset):
     if form.is_valid():
         v = form.save(commit=False)
         v.destinataries.clear()
-        print v.state
+        sender = User.objects.get(pk=request.session['user_id'])
+        v.sender = sender
         for u in form.data.getlist("destinataries"):
             v.destinataries.add(u)
         v.system_id = system_id

@@ -100,6 +100,8 @@ def load(request):
  d_string = ', '.join(d_array)
  
  send['destinataries'] = d_string
+ 
+ send['sender'] = a.sender.username
 
  if (c.custom_field.type == 'LinearInput'):
    send['event'] = smart_str(c.name, encoding='utf-8', strings_only=False, errors='strict')

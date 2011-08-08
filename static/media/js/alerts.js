@@ -10,6 +10,7 @@ $(document).ready( function() {
 
             function(data){
               $("#generaldialog").append("<p style='font-size:16px'><b>  "+data['name']+" </b></p><hr/>")
+              $("#generaldialog").append("<p><b>Enviado por:</b>  "+data['sender']+"</p>")
               $("#generaldialog").append("<p><b>Ativo:</b>  "+data['active']+"</p>")
               $("#generaldialog").append("<p><b>Início do monitoramento:</b>  "+data['time_start']+"</p>")
               $("#generaldialog").append("<p><b>Fim do monitoramento:</b>  "+data['time_end']+"</p>")
