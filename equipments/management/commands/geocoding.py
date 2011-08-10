@@ -1,4 +1,5 @@
 import urllib
+import sys, httplib
 from xml.etree import cElementTree as ElementTree
 
 from django.db.models import Q
@@ -40,7 +41,7 @@ def MultispectralGeocode(lat,lng):
     page.close()
     geocodexml = ElementTree.fromstring(conteudo)
     address = geocodexml.findall("INFO")
-     #self.stdout.write(address[0].text+","+address[0].get("NroIni")+"-"+address[0].get("NroFim")+","+address[0].get("Bairro")+","+address[1].text+"-"+address[2].text+","+address[0].get("CEP"))
+
     c = CachedGeocode(
         lat = float(lat),
         lng = float(lng),
@@ -65,4 +66,27 @@ def GoogleGeocode(lat,lng):
     #addr = unicode(result[0])
 
 def MaplinkGeocode(lat,lng):
-    raise NotImplementedError
+    
+    ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
+    
+    url = "teste.webservices.apontador.com.br/webservices/v3/AddressFinder/AddressFinder.asmx"
+    
+    xml = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'
+    xml += str(lng)
+    xml += '</x><y>'
+    xml += str(lat)
+    xml += '</point><token>'+ticket+'</token><tolerance>10</tolerance></getAddress></soap:Body></soap:Envelope>'
+    
+    webservice = httplib.HTTP(url)
+    webservice.putrequest("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx HTTP/1.1")
+    webservice.putheader("Host", "teste.webservices.apontador.com.br")
+    webservice.putheader("Content-type", "text/xml; charset=\"UTF-8\"")
+    webservice.putheader("Content-length", "%d" % len(xml))
+    webservice.putheader("SOAPAction", "http://webservices.maplink2.com.br/getAddress")
+    webservice.endheaders()
+    webservice.send(xml)
+
+    statuscode, statusmessage, header = webservice.getreply()
+    res = webservice.getfile().read()
+    
+    return res
