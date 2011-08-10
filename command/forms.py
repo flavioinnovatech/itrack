@@ -9,11 +9,12 @@ class CommandForm(ModelForm):
         model = Command
         exclude = ['time_sent','time_executed','time_received','system','state','sender']
         widgets = {
-            'action': RadioSelect()
+            'action': RadioSelect(attrs={'disabled':'disabled'})
         }
     
     username = CharField(label="Usuário")
     password = forms.CharField(label="Senha",widget=forms.PasswordInput(render_value=True),)
 
-    #activate = ChoiceField(choices = (("ON","Ativar"),("OFF","Desativar"),),widget=RadioSelect(),label=u"Ação")
+#    activate = ChoiceField(choices = (("ON","Ativar"),("OFF","Desativar"),),widget=RadioSelect(),label=u"Ação")
         
+

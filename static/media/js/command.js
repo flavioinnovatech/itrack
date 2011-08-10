@@ -1,4 +1,6 @@
 jQuery(document).ready(function(){
+
+  //command dialog	
   jQuery('.commanddialog').click(function(){
     jQuery("#generaldialog").html("");
     jQuery("#generaldialog").attr("title","Dados do comando");
@@ -36,4 +38,25 @@ jQuery(document).ready(function(){
 
     jQuery("#generaldialog").dialog({show: "blind",modal:true});
   });
+  
+  jQuery("#id_type").change(function(){
+  	if (jQuery("#id_equipment option:selected").html()!="(Selecione a placa)" && jQuery("#id_type option:selected").html()!="(selecione o Comando)"){
+  		
+  		vehicle = jQuery("#id_equipment option:selected");
+  		command = jQuery("#id_type option:selected").html();
+  		
+  		
+  		// jQuery.post(
+        // "/commands/checkstatus/",
+        // {vehicle:vehicle,command:command},
+//         
+        // function(data){
+//           
+//           
+        // },'json'
+     	// );
+  	}
+  });
+  
+  
 });

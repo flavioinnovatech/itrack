@@ -1,10 +1,12 @@
-#Mon Aug 08 18:14:33 BRT 2011
+#Wed Aug 10 14:30:37 BRT 2011
 eclipse.preferences.version=1
 encoding//accounts/forms.py=utf-8
 encoding//accounts/views.py=utf-8
 encoding//alerts/forms.py=utf-8
 encoding//alerts/views.py=utf8
+encoding//command/ajax.py=utf8
 encoding//command/forms.py=utf8
+encoding//command/models.py=utf8
 encoding//command/views.py=utf8
 encoding//drivers/views.py=utf-8
 encoding//equipments/forms.py=utf-8
