@@ -39,24 +39,49 @@ jQuery(document).ready(function(){
     jQuery("#generaldialog").dialog({show: "blind",modal:true});
   });
   
-  jQuery("#id_type").change(function(){
-  	if (jQuery("#id_equipment option:selected").html()!="(Selecione a placa)" && jQuery("#id_type option:selected").html()!="(selecione o Comando)"){
+  jQuery("#id_action_0").attr('checked',false);
+  jQuery("#id_action_1").attr('checked',false);
+  check();
+  jQuery("#id_type").change(function(){check();});
+  jQuery("#id_equipment").change(function(){check();});
+  
+});
+
+function check() {
+	if (jQuery("#id_equipment option:selected").html()!="(Selecione a placa)" && jQuery("#id_type option:selected").html()!="(selecione o Comando)"){
   		
-  		vehicle = jQuery("#id_equipment option:selected");
+  		vehicle = jQuery("#id_equipment option:selected").html();
   		command = jQuery("#id_type option:selected").html();
   		
   		
-  		// jQuery.post(
-        // "/commands/checkstatus/",
-        // {vehicle:vehicle,command:command},
-//         
-        // function(data){
-//           
-//           
-        // },'json'
-     	// );
-  	}
-  });
-  
-  
-});
+  		jQuery.post(
+        "/commands/check/",
+        {vehicle:vehicle,command:command},
+        
+        function(data){
+          
+          if (data['action'] == "OFF") {
+          	jQuery("#id_action_1").attr('disabled',false);
+          	jQuery("#id_action_1").attr('checked',true);
+          	
+          	jQuery("#id_action_0").attr('disabled',true);
+          	jQuery("#id_action_0").attr('checked',false);
+          } 
+          
+          else if (data['action'] == "ON"){
+          	jQuery("#id_action_0").attr('disabled',false);
+          	jQuery("#id_action_0").attr('checked',true);
+          	
+          	jQuery("#id_action_1").attr('disabled',true);
+          	jQuery("#id_action_1").attr('checked',false);
+          }
+          
+          else {
+          	jQuery("#id_action_0").attr('disabled',false);
+          	jQuery("#id_action_1").attr('disabled',false);
+          }
+          
+        },'json'
+     	);
+  	}	
+}

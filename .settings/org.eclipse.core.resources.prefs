@@ -1,4 +1,4 @@
-#Wed Aug 10 14:30:37 BRT 2011
+#Wed Aug 10 15:08:03 BRT 2011
 eclipse.preferences.version=1
 encoding//accounts/forms.py=utf-8
 encoding//accounts/views.py=utf-8
@@ -10,6 +10,8 @@ encoding//command/models.py=utf8
 encoding//command/views.py=utf8
 encoding//drivers/views.py=utf-8
 encoding//equipments/forms.py=utf-8
+encoding//equipments/models.py=utf8
 encoding//geofence/views.py=utf8
 encoding//rastreamento/views.py=utf8
 encoding//system/forms.py=utf-8
+encoding//vehicles/models.py=utf8
