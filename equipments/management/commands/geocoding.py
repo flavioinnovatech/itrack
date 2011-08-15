@@ -1,5 +1,5 @@
 import urllib
-import sys, httplib
+import sys, httplib,urllib
 from xml.etree import cElementTree as ElementTree
 
 from django.db.models import Q
@@ -69,24 +69,38 @@ def MaplinkGeocode(lat,lng):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     
-    url = "teste.webservices.apontador.com.br/webservices/v3/AddressFinder/AddressFinder.asmx"
+    url = "teste.webservices.apontador.com.br"
     
-    xml = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'
-    xml += str(lng)
-    xml += '</x><y>'
-    xml += str(lat)
-    xml += '</point><token>'+ticket+'</token><tolerance>10</tolerance></getAddress></soap:Body></soap:Envelope>'
+    xml = '''
+        <?xml version="1.0" encoding="utf-8"?>
+            <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+            <getAddress xmlns="http://webservices.maplink2.com.br">
+            <point>
+                <x>'''+str(lng)+'''</x>
+                <y>'''+str(lat)+'''</y>
+            </point>
+            <token>'''+str(ticket)+'''</token>
+            <tolerance>'''+str(10)+'''</tolerance>
+            </getAddress>
+            </soap:Body>
+            </soap:Envelope>'''
     
     webservice = httplib.HTTP(url)
-    webservice.putrequest("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx HTTP/1.1")
+    webservice.putrequest("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx")
     webservice.putheader("Host", "teste.webservices.apontador.com.br")
     webservice.putheader("Content-type", "text/xml; charset=\"UTF-8\"")
     webservice.putheader("Content-length", "%d" % len(xml))
     webservice.putheader("SOAPAction", "http://webservices.maplink2.com.br/getAddress")
     webservice.endheaders()
     webservice.send(xml)
-
     statuscode, statusmessage, header = webservice.getreply()
-    res = webservice.getfile().read()
+    print "Response: ", statuscode, statusmessage
     
-    return res
+    #headers = {"Content-type": "text/xml; charset=\"UTF-8\"","Host": "teste.webservices.apontador.com.br","Content-length": "%d" % len(xml),"SOAPAction": "http://webservices.maplink2.com.br/getAddress"}
+    #conn = httplib.HTTPConnection(url)
+    #conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
+    #print conn.__dict__
+    #response = conn.getresponse()
+    
+    return 'ae'
