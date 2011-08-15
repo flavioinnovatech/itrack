@@ -13,7 +13,7 @@ class System(Site):
     users.null = True
     users.blank = True
     administrator = models.ForeignKey(User,related_name='usuarios',verbose_name="Administrador")
-    parent = models.ForeignKey('self',verbose_name="Sistema pai")
+    parent = models.ForeignKey('self',verbose_name="Cliente pai")
 
     parent.null = True
     parent.blank = True

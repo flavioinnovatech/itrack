@@ -1,18 +1,18 @@
 {% extends "templates/base.html" %}
 
-{%block title%}Infotrack - Remoção de usuário {% endblock %}
+{%block title%}Infotrack - Remoção de Cliente {% endblock %}
 {% block content  %}
 
 <div class="main-form">
-  <h1><img src="/media/img/configuration.png" class="icon">Gerenciamento de sistemas</h1>
+  <h1><img src="/media/img/configuration.png" class="icon">Gerenciamento de Clientes</h1>
   <hr />
-					<h2>Confirmar remoção de sistema</h2>
-					<em> Tem certeza que deseja remover o sistema {{main_system}}? Todos os usuários de cada sistema removido também serão removidos no processo. </em>
+					<h2>Confirmar remoção de Cliente</h2>
+					<em> Tem certeza que deseja remover o Cliente {{main_system}}? Todos os usuários desse Cliente também serão removidos nesse processo. </em>
 					
 					{% if childs  %}
 					    <p>
 					        <em>
-					        Removendo este sistema, você também estará deletando os seus sistemas filhos listados abaixo:</em>
+					        Removendo este sistema, você também estará deletando os seus Clientes filhos listados abaixo:</em>
 					        <ul style="margin:10px;margin-left:50px;">
 					        {% for s in childs %}
 					            <li style="list-style:circle;">{{s}}</li>
