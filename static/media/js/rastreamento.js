@@ -176,8 +176,8 @@ function loadGrid() {
           colModel.push({name:"Tipo veículo",align:"center",width:75});
           colNames.push("Hora");
           colModel.push({name:"Hora",align:"center"});
-          colNames.push("Sistema");
-          colModel.push({name:"Sistema",align:"center",width:75});
+          colNames.push("Cliente");
+          colModel.push({name:"Cliente",align:"center",width:75});
           
           //para cada veículo
           var nequips = 0;
@@ -275,7 +275,7 @@ function loadGrid() {
                 if (name == "Hora")                 object[name] = equip.hora.eventdate;
                 else if (name == "Tipo veículo")    object[name] = equip.veiculo.type;
                 else if (name == "Placa")           object[name] = equip.veiculo.license_plate;
-                else if(name == "Sistema")          object[name] = equip.veiculo.sistema;
+                else if(name == "Cliente")          object[name] = equip.veiculo.sistema;
                 //Geocode fields
                 else if(name == "Endereço")         object[name] = equip.geocode["Endereço"];
                 else if(name =="Cidade")            object[name] = equip.geocode["Cidade"];

@@ -77,7 +77,7 @@ jQuery(document).ready(function(){
         <h1><img class="icon" src="/media/img/command.png">Histórico de comandos</h1>
         <hr/>
         
-        <h2>Comandos desse sistema:</h2>
+        <h2>Lista de Comandos:</h2>
 				<em> </em>
         
         <!-- <div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><p class="ui-jqgrid-title">&nbsp</p></div><div class="ui-state-default ui-jqgrid-hdiv" style="margin-bottom:5px;><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
@@ -164,7 +164,7 @@ jQuery(document).ready(function(){
         
         {% for item in command_tree %}
           {% if item.sysname %}
-            <tr style="" id='node-{{item.id}}' {% if item.childof and forloop.counter0 != 0 %}class='child-of-node-{{item.childof}}'{% endif %}>
+            <tr style="" id='node-{{item.id}}' {% if item.childof and line.sysid != request.session.system0 != 0 %}class='child-of-node-{{item.childof}}'{% endif %}>
               <td style='font-weight:bold;text-align:left;' >{{item.sysname}}</td>
             </tr>
           {% else %}

@@ -19,7 +19,7 @@
         <h1><img class="icon" src="/media/img/equipment.png">Gerenciamento de cercas eletrônicas</h1>
         <hr/>
         
-        <h2>Cercas eletrônicas desse sistema:</h2>
+        <h2>Lista de Cercas eletrônicas:</h2>
 				<em>  </em>
 				<div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><p class="ui-jqgrid-title">&nbsp</p></div><div class="ui-state-default ui-jqgrid-hdiv"><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
 				  
@@ -44,7 +44,7 @@
 				  
 				    {% for line in geofence_tree %}
 				        {% if line.sysname %}
-				        <tr style='width:5%;' id='node-{{line.id}}' {% if line.childof %}class='child-of-node-{{line.childof}}'{% endif %}>
+				        <tr style='width:5%;' id='node-{{line.id}}' {% if line.childof and line.sysid != request.session.system %}class='child-of-node-{{line.childof}}' {% endif %}>
 				            <td style='width:25%;font-weight:bold;text-align:left;' >{{line.sysname}}</td>
 				        </tr>
 				        {% else %}

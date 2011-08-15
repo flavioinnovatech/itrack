@@ -22,7 +22,7 @@
     <div class="main-form">
         <h1><img class="icon" src="/media/img/equipment.png">Gerenciamento de Alertas</h1>
         <hr/>
-        <h2>Alertas:</h2>
+        <h2>Lista de Alertas:</h2>
 				<em> </em>
     
     <table cellspacing="0" id="tree" class="table">
@@ -41,7 +41,7 @@
     <tbody>
         {% for line in alert_tree %}      
   	        {% if line.sysname %}
-  	        <tr id='node-{{line.id}}' {% if line.childof and forloop.counter0 != 0%}class='child-of-node-{{line.childof}}'{% endif %}>
+  	        <tr id='node-{{line.id}}' {% if line.childof and line.sysid != request.session.system %}class='child-of-node-{{line.childof}}'{% endif %}>
   	            <td style='font-weight:bold;text-align:left;' >{{line.sysname}}</td>
   	        </tr>
   	        {% else %}

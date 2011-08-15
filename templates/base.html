@@ -53,9 +53,9 @@
 		<div id="topContainer">
 			<div class="centerContainer">
 				<a href="#" title="Titulo Dinamico" class="logo fl"></a>
- 				<div id="loginstatus" align="right" style="top: 0pt;float:right;width:auto; height:40px;">
+ 				<div id="loginstatus" align="right" style="">
  				  <p> Usuário: <a href="{% url accounts.views.edit request.session.user_id %}"> {{request.user}}</a></p>
- 				  <p> Sistema: {{request.session.domain}}</p>
+ 				  <p> Cliente: {{request.session.domain}}</p>
  				</div>
 				
 			</div> <!-- end centerContainer -->
@@ -106,11 +106,12 @@
 							    {% if grp.name  == "administradores" %}
 							    <li><a href="#">Configurações</a>
 						            <ul>
+						                <li><a href="{% url system.views.index %}"> Clientes </a></li>
 							            <li><a href="{% url equipments.views.index %}">Equipamentos</a></li>
-							            <li><a href="{% url vehicles.views.index %}">Veículos</a></li>
 							            <li><a href="{% url drivers.views.index %}"> Motoristas </a></li>
 							            <li><a href="{% url accounts.views.index %}">Usuários</a></li>
-							            <li><a href="{% url system.views.index %}"> Sistemas </a></li>
+							            <li><a href="{% url vehicles.views.index %}">Veículos</a></li>
+							            
 							    	</ul>
 					            </li>
 							    {% endif %}

@@ -49,6 +49,7 @@ def systemCommandDetails(sysid):
     lines.append({  'id':system.id,
                     'childof':childof,
                     'sysname':system.name,
+                    'sysid':system.id
                 })
     for command in commands:
         sender = User.objects.get(pk=command.sender_id)

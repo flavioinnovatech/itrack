@@ -4,15 +4,6 @@
 <script src="/media/js/jquery.jqGrid.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-
-function confirmBox() {
-
-if (confirm("Deseja apagar os usuários selecionados?")) {
-
-location.href="pagina5.htm";}
-
-}
-
 ////////////////// Função para habiliar o POST
 $(document).ajaxSend(function(event, xhr, settings) {
     function getCookie(name) {
@@ -79,7 +70,7 @@ jQuery(document).ready(function(){
         <h1><img src="/media/img/users.png" class="icon">Gerenciamento de usuários</h1>
         <hr/>
         
-        <h2>Usuários:</h2>
+        <h2>Lista de Usuários:</h2>
 				<em>  </em>
         
         <div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_list4" dir="ltr"><div id="load_list4" class="loading ui-state-default ui-state-active" style="display: none;">Loading...</div><div class="ui-jqgrid-view" id="gview_list4"><div class="ui-jqgrid-titlebar ui-widget-header ui-corner-top ui-helper-clearfix"><a href="javascript:void(0)" role="link" class="ui-jqgrid-titlebar-close HeaderButton" style="right: 0px;"></a><p class="ui-jqgrid-title">&nbsp</p></div><div class="ui-state-default ui-jqgrid-hdiv"><div class="ui-jqgrid-hbox"><table cellspacing="0" cellpadding="0" border="0" aria-labelledby="gbox_list4" role="grid"  class="ui-jqgrid-htable">
