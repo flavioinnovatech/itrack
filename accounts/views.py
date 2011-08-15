@@ -191,9 +191,9 @@ def login(request):
         request.session['user_id'] = user_id
         request.session['system_name'] = system_name
         request.session['system_being_created'] = False
-        
+        request.session.set_expiry(10)
         # Redirect to a success page.
-        return HttpResponseRedirect("/rastreamento/veicular")#render_to_response("templates/base.html",locals(),context_instance=RequestContext(request))
+        return HttpResponseRedirect("/rastreamento/veicular")
     else:
         # Show an error page
         erro = u"Usuário ou senha incorretos."
