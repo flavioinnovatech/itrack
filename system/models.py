@@ -17,7 +17,7 @@ class System(Site):
     parent.null = True
     parent.blank = True
     
-    sessiontime = models.IntegerField(verbose_name="Tempo para expiração da sessão",null=True)
+    sessiontime = models.IntegerField(verbose_name="Tempo para expiração da sessão",default=0)
     
     def __unicode__(self):
         return self.name

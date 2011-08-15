@@ -191,7 +191,7 @@ def login(request):
         request.session['user_id'] = user_id
         request.session['system_name'] = system_name
         request.session['system_being_created'] = False
-        request.session.set_expiry(10)
+        request.session.set_expiry(system.sessiontime)
         # Redirect to a success page.
         return HttpResponseRedirect("/rastreamento/veicular")
     else:
