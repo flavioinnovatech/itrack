@@ -31,9 +31,7 @@ jQuery(document).ready(function(){
   
   tabw = (jQuery("#tabs-1").width());
   tabh = (jQuery("#tabs-1").height());
-  
-  // document.body.style.overflow-x = "hidden";
-  
+    
   normal = 1;
   jQuery('img.fullscreen').click(function() {
     switch (normal) {
@@ -90,7 +88,10 @@ jQuery(document).ready(function(){
     
     
   }); //end .fullscreen click function
-    
+  
+  jQuery('#filter-by-plate').keypress(function() {
+  	loadData(jQuery('#filter-by-plate').attr("value"));
+  });
 /* ---------------------------------------------  MAPS ------------------------------------------------------ */
 
 
@@ -146,7 +147,20 @@ function loadmaps() {
 });
 
 var globaldata;
-function loadData() {
+function loadData(plate) {
+	
+	jQuery.post(
+    	"/rastreamento/loadData/",
+        {plate:plate},
+        
+		function(data){
+          globaldata = data;
+          loadGrid();
+          loadlateralgrid();
+        },'json'
+	);
+	
+	/*
     jQuery.getJSON("/rastreamento/loadData",
         function(data){
             globaldata = data;
@@ -154,6 +168,7 @@ function loadData() {
             loadlateralgrid();
         
     });
+    */
 }
 
 //var globaldata;

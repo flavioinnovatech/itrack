@@ -1,5 +1,6 @@
 import urllib
 import sys, httplib,urllib
+import time
 from xml.etree import cElementTree as ElementTree
 
 from django.db.models import Q
@@ -90,21 +91,27 @@ def MaplinkGeocode(lat,lng):
             </soap:Body>
             </soap:Envelope>'''
     
-    webservice = httplib.HTTP(url)
-    webservice.putrequest("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx")
-    webservice.putheader("Host", "teste.webservices.apontador.com.br")
-    webservice.putheader("Content-type", "text/xml; charset=\"UTF-8\"")
-    webservice.putheader("Content-length", "%d" % len(xml))
-    webservice.putheader("SOAPAction", "http://webservices.maplink2.com.br/getAddress")
-    webservice.endheaders()
-    webservice.send(xml)
-    statuscode, statusmessage, header = webservice.getreply()
-    print "Response: ", statuscode, statusmessage
+    #webservice = httplib.HTTP(url)
+    #webservice.putrequest("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx")
     
-    #headers = {"Content-type": "text/xml; charset=\"UTF-8\"","Host": "teste.webservices.apontador.com.br","Content-length": "%d" % len(xml),"SOAPAction": "http://webservices.maplink2.com.br/getAddress"}
-    #conn = httplib.HTTPConnection(url)
-    #conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
-    #print conn.__dict__
-    #response = conn.getresponse()
+    #webservice.putheader("Host", "teste.webservices.apontador.com.br")
+    #webservice.putheader("Content-type", "text/xml; charset=\"UTF-8\"")
+    #webservice.putheader("Content-length", "%d" % len(xml))
+    #webservice.putheader("SOAPAction", "http://webservices.maplink2.com.br/getAddress")
+    #webservice.endheaders()
+    
+    #webservice.send(xml)
+    #statuscode, statusmessage, header = webservice.getreply()
+    
+    #print "Response: ", statuscode, statusmessage
+    
+    #webservice.close()
+    
+    conn = httplib.HTTPConnection(url)
+    headers = {"Content-type":"text/xml; charset=\"UTF-8\"","SOAPAction":"http://webservices.maplink2.com.br/getAddress","Host":"teste.webservices.apontador.com.br"}
+    conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, {})
+    response = conn.getresponse()
+    print response.status, response.reason
+    conn.close()
     
     return 'ae'

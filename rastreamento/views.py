@@ -12,6 +12,7 @@ from django.utils.encoding import smart_str
 from itrack.vehicles.models import Vehicle
 from itrack.system.tools import lowestDepth
 import pprint
+from querystring_parser import parser
 
 
 @login_required
@@ -30,8 +31,14 @@ def index(request):
   form.fields["custom_names"].initial = CustomFieldName.objects.filter(custom_field__system = request.session["system"])
   form.fields["vehicles"].initial = Vehicle.objects.filter(system = request.session["system"])
   return render_to_response("rastreamento/templates/rastreamento.html",locals(),context_instance=RequestContext(request),)
-  
+
+@login_required  
 def loadData(request):
+    
+  parsed_dict = parser.parse(request.POST.urlencode())
+  
+  print parsed_dict['plate']
+    
   system = request.session["system"]
   equips = Equipment.objects.filter(system=system)
   v_set = []
@@ -42,8 +49,13 @@ def loadData(request):
     except:
         print "Veículo não encontrado."
         
-  vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
-  
+  if (parsed_dict['plate']):      
+      vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
+      
+  else:
+    print 'aasdasdsadsadasdsade'
+    vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
+    
   available_fields = CustomFieldName.objects.filter(system = request.session["system"]).filter(custom_field__availablefields__system = request.session["system"]).distinct().filter(custom_field__system = request.session["system"]).order_by('name')
   #print available_fields
   #data needs vehicle identification here
