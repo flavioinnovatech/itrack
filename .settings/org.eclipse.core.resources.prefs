@@ -1,4 +1,4 @@
-#Mon Aug 15 16:40:22 BRT 2011
+#Wed Aug 17 11:37:50 BRT 2011
 eclipse.preferences.version=1
 encoding//accounts/forms.py=utf-8
 encoding//accounts/models.py=utf-8
@@ -17,4 +17,5 @@ encoding//geofence/views.py=utf8
 encoding//rastreamento/views.py=utf8
 encoding//system/forms.py=utf-8
 encoding//system/models.py=utf-8
+encoding//system/views.py=utf-8
 encoding//vehicles/models.py=utf8

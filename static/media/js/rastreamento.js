@@ -156,7 +156,6 @@ function loadData() {
     });
 }
 
-  
 //var globaldata;
 var olddata = null;
 function loadGrid() {
@@ -215,13 +214,14 @@ function loadGrid() {
               pager: "#gridpager",
               sortable:true,
               datatype: "local",
-              height:h-250,
-              width: 960,
+              //height:h-250,
+              //width: 960,
               colNames: colNames, 
               colModel:colModel,
               multiselect: true, 
               loadui:"block",
               caption: "Rastreamento veicular",
+              autoheight:true,
               autowidth: true,
               shrinkToFit: true,
               onSelectRow: function(rowid,status){ 
@@ -241,9 +241,9 @@ function loadGrid() {
             });
             
             // jQuery("#list4").jqGrid('navGrid','#gridpager',{edit:false,add:false,del:false});
-            jQuery("#list4").filterToolbar();
+            //jQuery("#list4").filterToolbar();
             jQuery("input[id^=gs]").css("height","85%");
-            jQuery("input[id^=gs]").css("wodth","100%");
+            jQuery("input[id^=gs]").css("width","100%");
           
           }
           

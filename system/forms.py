@@ -13,7 +13,7 @@ class SystemForm(ModelForm):
     class Meta:
         model = System
         exclude = ('parent','users','administrator','available_fields')
-
+    
 class SettingsForm(ModelForm):
     class Meta:
             model = Settings
