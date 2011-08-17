@@ -12,7 +12,7 @@ from itrack.system.tools import lowestDepth
 from django.contrib.auth.decorators import login_required
 from querystring_parser import parser
 from django.utils import simplejson
-from itrack.equipments.models import CustomFieldName
+from itrack.equipments.models import CustomFieldName,TrackingData
 from django.utils.encoding import smart_str
 from itrack.geofence.models import Geofence
 
@@ -44,6 +44,19 @@ def status(request):
             data = {}
 
             for popup in popups_list:
+               
+               #TODO: otimization could be done, doing only one query on the database, but...
+               geocs = TrackingData.objects.filter(
+                    Q(tracking__eventdate=popup.date)
+                    &Q(type__type='Geocode')
+               )
+               geodict = {}
+               for field in geocs:
+                   geodict[field.type.tag] = field.value
+                                 
+               print geodict
+               
+               
                data[popup.id] = {
                 'name': popup.alert.name, 
                 'date': popup.date, 
@@ -57,7 +70,10 @@ def status(request):
                 'adminname':adminname,
                 'vehicle_id':popup.vehicle.id, 
                 'system_id':systemname.id,
+                'address': geodict['Address']+"-"+geodict['City']+", "+geodict['State']+" - "+geodict['PostalCode'],
                }
+               
+               #data[popup.id].setdefault()
                        
             numalerts = len(data)
          

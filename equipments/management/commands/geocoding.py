@@ -41,23 +41,26 @@ def MultispectralGeocode(lat,lng):
     geocodexml = ElementTree.fromstring(conteudo)
     address = geocodexml.findall("INFO")
      #self.stdout.write(address[0].text+","+address[0].get("NroIni")+"-"+address[0].get("NroFim")+","+address[0].get("Bairro")+","+address[1].text+"-"+address[2].text+","+address[0].get("CEP"))
-    c = CachedGeocode(
-        lat = float(lat),
-        lng = float(lng),
-        full_address = "",
-        number = address[0].get("NroIni")+"-"+address[0].get("NroFim"),
-        street = title(lower(address[0].text)),
-        city = title(lower(address[1].text)),
-        state = address[2].text,
-        country = "Brasil",
-        postal_code = address[0].get("CEP"),
-        administrative_area = title(lower(address[0].get("Bairro")))
-    )
-    c.full_address = c.street+" "+c.number+", "+c.administrative_area+" - "+c.city+", "+c.state
-    c.save()
+    if (address != []):
+        c = CachedGeocode(
+            lat = float(lat),
+            lng = float(lng),
+            full_address = "",
+            number = address[0].get("NroIni")+"-"+address[0].get("NroFim"),
+            street = title(lower(address[0].text)),
+            city = title(lower(address[1].text)),
+            state = address[2].text,
+            country = "Brasil",
+            postal_code = address[0].get("CEP"),
+            administrative_area = title(lower(address[0].get("Bairro")))
+        )
+        c.full_address = c.street+" "+c.number+", "+c.administrative_area+" - "+c.city+", "+c.state
+        c.save()
+        
+        return [c.full_address,c.street+" "+c.number+", "+c.administrative_area,c.city,c.state,c.postal_code]
+    else: 
+        return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
     
-    return [c.full_address,c.street+" "+c.number+", "+c.administrative_area,c.city,c.state,c.postal_code]
-
 def GoogleGeocode(lat,lng):
     #result = Geocoder.reverse_geocode(lat,lng)
     raise NotImplementedError

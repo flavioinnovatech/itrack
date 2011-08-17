@@ -100,12 +100,20 @@ def SendSMS(to,msg):
 	    return conteudo
 
   
-def AlertSender(command,alert,vehicle,searchdate):
+def AlertSender(command,alert,vehicle,searchdate,geocodeinfo):
+    
+    #mounting the message to be sent:
+    message  = '[INFOTRACK] '+ str(alert)+'\n'
+    message += 'Veículo:'+str(vehicle)+'\n'
+    message += 'Alerta:'+str(alert.alerttext)
+    if geocodeinfo[1] != "":
+        message += '\nEndereço:'+str(geocodeinfo[0].encode('latin-1'))
+    
     #if the alert shall be sent by email
     if alert.receive_email:
 
         for destinatary in alert.destinataries.values():
-            send_mail('[INFOTRACK] ' + str(alert), 'Veículo:'+str(vehicle)+'\n'+'Alerta:'+str(alert.alerttext), "infotrack@infotrack.com.br", [destinatary['email']], fail_silently=False, auth_user=None, auth_password=None, connection=None)
+            send_mail(message, "infotrack@infotrack.com.br", [destinatary['email']], fail_silently=False, auth_user=None, auth_password=None, connection=None)
             command.stdout.write('>>>> Email de alerta enviado.\n')
                
         #if the alert shall be sent by SMS 
@@ -113,7 +121,7 @@ def AlertSender(command,alert,vehicle,searchdate):
     if alert.receive_sms:
       for destinatary in alert.destinataries.values():
           cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone                                               
-          command.stdout.write(SendSMS(cellphone,'[INFOTRACK]\n'+'Veiculo: '+str(vehicle)+'\n'+'Alerta:'+str(alert.alerttext)))
+          command.stdout.write(SendSMS(cellphone,message.encode('latin-1')))
           # self.stdout.write(SendSMS(cellphone,'[INFOTRACK]\n'+'Alerta:'+str(alert.alerttext)))
           command.stdout.write('>>>> SMS de alerta enviado.\n')
 

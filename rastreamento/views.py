@@ -2,7 +2,7 @@
 
 from django.shortcuts import render_to_response
 from itrack.system.models import System,Settings
-from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType,CustomFieldName
+from itrack.equipments.models import CustomField,Equipment,Tracking,TrackingData,EquipmentType,CustomFieldName,AvailableFields
 from itrack.rastreamento.forms import ConfigForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template.context import RequestContext
@@ -43,10 +43,12 @@ def loadData(request):
         print "Veículo não encontrado."
         
   vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
-
-
+  
+  available_fields = CustomFieldName.objects.filter(system = request.session["system"]).filter(custom_field__availablefields__system = request.session["system"]).distinct().filter(custom_field__system = request.session["system"]).order_by('name')
+  #print available_fields
   #data needs vehicle identification here
   data = {}
+  
   for i in vehicles:
     info = {}
     # info["system"]
@@ -69,7 +71,6 @@ def loadData(request):
     
         
     for j in trackingData:
-      
       try:
         if j.type.tag == 'Lat':
           info["lat"] = j.value
@@ -80,11 +81,25 @@ def loadData(request):
             info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value          
       except:
         if j.type.type == "GPS" or j.type.type == "Geocode":
-
             info["geocode"][smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
         pass
+    
+    fields_list = [x.name for x in available_fields.distinct()]
+    items = info["info"].keys()
+    
+    
+    # this mapping adds items that are OFF but should be displayed saved in the configs
+    map(lambda k: k not in items and info["info"].setdefault(k,"OFF"),fields_list)
+    
+    print info["info"]
+    
+    #for field in fields_list:
+    #    if field not in items:
             
+        
+           
     data[tracking.equipment.serial] =  info
+    
        
   json = simplejson.dumps(data)
 

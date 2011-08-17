@@ -11,7 +11,7 @@ import urllib
 import time
 from datetime import datetime
 from xml.etree import cElementTree as ElementTree
-#from xml.etree.ElementTree import ParseError
+from xml.etree.ElementTree import ParseError
 
 from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
@@ -109,7 +109,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((TCP_IP, TCP_PORT))
-
         #s.connect((TCP_IP, TCP_PORT))
         #sending the auth message, receiving the response and sending an ack message
         key = authentication(s)
@@ -119,20 +118,19 @@ class Command(BaseCommand):
         #mounting the XML response to server
         seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+key+"\" /></Package>"
         close_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"99\" />\n  <Data SessionId=\""+key+"\" />\n</Package>"
-
+        self.stdout.write('>> Starting main loop.\n')
         #sending the response to the server, and awaiting the outbox message
         s.send(ack_msg)
         s.send(seckey_msg)
         data = s.recv(BUFFER_SIZE)
         s.send(ack_msg)
-
         #listening all information given by CPR.
 
 # >> ==================================================== +-------------------------------+-\
 # >> ==================================================== | MAIN EXTRACTOR LOOP           |  >
 # >> ==================================================== +-------------------------------+-/
 
-        
+        self.stdout.write('>> Starting main loop.\n')
         while 1:
         
             # if there is messages to read in the socket
@@ -229,18 +227,16 @@ class Command(BaseCommand):
                         
                           #queries the vehicle in the database
                           vehicle = v #(has been done before)
-                              
+                          
                           #if the last alert sent for the vehicle is not null
                           if vehicle.last_alert_date is not None:
                               #calculate the difference between the last alert and a possibly new one                        
                               total_seconds = (searchdate - vehicle.last_alert_date).days * 24 * 60 * 60 + (searchdate - vehicle.last_alert_date).seconds
-                            
                               #check if there's enough time between the last alert sent and a possibly new one
                               if total_seconds > vehicle.threshold_time*60:
                                   self.stdout.write('>> Alert threshold reached.\n')
                                   vehicle.last_alert_date = searchdate
                                   vehicle.save()
-                                  
                                   #pick the alert records to check                                  
                                   alerts = Alert.objects.filter(Q(vehicle=vehicle) & Q(time_end__gte=searchdate) & Q(time_start__lte=searchdate) & Q(active=True))                              
                                   
@@ -257,7 +253,7 @@ class Command(BaseCommand):
                                               
                                               if AlertComparison(self,alert,c,d_type):         
                                                   #function that sends in the proper ways the alerts
-                                                  AlertSender(self,alert,vehicle,searchdate)
+                                                  AlertSender(self,alert,vehicle,searchdate,geocodeinfo)
                                               else:
                                                   pass
                                                   # self.stdout.write('>> Nao entrou no Alert Comparison.\n')
@@ -305,8 +301,8 @@ class Command(BaseCommand):
                         c.save()
                                     
                                      
-                #except ParseError:       
+                except ParseError:       
                 #TODO : parse the things when two tracking tables comes to the inbox - this case is kind of rare,
                 #TODO : but makes the extractor crash when the 'except ParseError' is turned on.
-                except:
+                #except:
                   pass
