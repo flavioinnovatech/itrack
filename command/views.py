@@ -12,17 +12,19 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Q
+from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import simplejson
 from django.conf import settings
+
 
 from itrack.command.models import Command, CPRSession
 from itrack.vehicles.models import Vehicle
 from itrack.command.forms import CommandForm
 from itrack.equipments.models import Equipment,CustomFieldName,CustomField, Tracking,TrackingData
 from itrack.system.models import System
-from itrack.system.tools import findChild
+from itrack.system.tools import findChild,findParents
 from itrack.vehicles.models import Vehicle
 from django.contrib.auth.models import User
 
@@ -47,6 +49,7 @@ def systemCommandDetails(sysid):
     lines.append({  'id':system.id,
                     'childof':childof,
                     'sysname':system.name,
+                    'sysid':system.id
                 })
     for command in commands:
         sender = User.objects.get(pk=command.sender_id)
@@ -152,51 +155,78 @@ def create(request,offset,vehicle=None):
 
             c = form.save(commit=False)
             
-            sender = User.objects.get(pk=request.session['user_id'])
+            u = str(form.cleaned_data['username'])
+            p = str(form.cleaned_data['password'])
             
-            c.sender = sender
-            
-            #checks if the field exists for the selected equipment
-            try:
-                field_check = Vehicle.objects.get(equipment__type__custom_field=c.type.custom_field)
-            except ObjectDoesNotExist:
+            user = authenticate(username=u, password=p)
+            if user is None:
+                error_title = 'Erro: Usuário e/ou senha incorretos'
+                error = 'Usuário e/ou senha incorretos'
                 return render_to_response("command/templates/error.html",locals(),context_instance=RequestContext(request),)
-            
-            #checks if there's no other command in process for this equipment
-            
-            try:
-                command_check = Command.objects.filter(equipment = c.equipment).exclude(state=u'2')
-                print len(command_check)
-                if len(command_check) > 0:
-                    return render_to_response("command/templates/error2.html",locals(),context_instance=RequestContext(request),)
-            except:
-                pass
-            
-            #accessing the protocols to send the command
-            sess = CPRSession.objects.all()[0]
-            
-            ack_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"98\" Reason=\"0\" Save=\"FALSE\"/><Data /></Package>"
-            
-            s_out = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s_out.connect((TCP_IP, TCP_PORT))
-            
-            seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+sess.key+"\" /></Package>"
-            
-            s_out.send(seckey_msg)
-            data2 = s_out.recv(BUFFER_SIZE)
-            
-            
-            blocker_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"6\" />\n  <Data Account=\"2\" ProductId=\""+str(c.equipment.equipment.type.product_id)+"\" Serial=\""+c.equipment.equipment.serial+"\" Priority=\"2\" />\n  <Command "+c.type.custom_field.tag+"=\""+c.action+"\"/>\n</Package>"
-            
-            s_out.send(blocker_msg)
-            data2 = s_out.recv(BUFFER_SIZE)
-            s_out.send(ack_msg)
-            
-            c.system = s
-            c.state = 0
-            c.time_sent = datetime.now()
-            c.save()
-            return HttpResponseRedirect("/commands/create/finish")
+
+            else:
+                sender = User.objects.get(username=u)
+
+                #checks if the sender has permission to send command from this system
+                if (s.administrator_id != sender.id):
+                    
+                    parents = findParents(s,[])
+                    
+                    userisparent = 0;
+                    for p in parents:
+                        if (p.administrator_id == sender.id):
+                            userisparent = 1
+
+                    if (userisparent == 0):                    
+                        error_title = 'Erro: Usuário sem permissão'
+                        error = 'O usuário não tem permissão para enviar comandos nesse cliente.'
+                        return render_to_response("command/templates/error.html",locals(),context_instance=RequestContext(request),)
+                    
+                            
+                c.sender = sender
+                #checks if the field exists for the selected equipment
+                try:
+                    field_check = Vehicle.objects.get(equipment__type__custom_field=c.type.custom_field)
+                except ObjectDoesNotExist:
+                    error_title = 'Erro: O atuador selecionado não existe'
+                    error = 'O comando a ser enviado selecionou um atuador inexistente para o tipo de equipamento cadastrado.'
+                    return render_to_response("command/templates/error.html",locals(),context_instance=RequestContext(request),)
+                
+                #checks if there's no other command in process for this equipment
+                
+                try:
+                    command_check = Command.objects.filter(equipment = c.equipment).exclude(state=u'2')
+                    print len(command_check)
+                    if len(command_check) > 0:
+                        return render_to_response("command/templates/error2.html",locals(),context_instance=RequestContext(request),)
+                except:
+                    pass
+                
+                #accessing the protocols to send the command
+                sess = CPRSession.objects.all()[0]
+                
+                ack_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"98\" Reason=\"0\" Save=\"FALSE\"/><Data /></Package>"
+                
+                s_out = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s_out.connect((TCP_IP, TCP_PORT))
+                
+                seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+sess.key+"\" /></Package>"
+                
+                s_out.send(seckey_msg)
+                data2 = s_out.recv(BUFFER_SIZE)
+                
+                
+                blocker_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"6\" />\n  <Data Account=\"2\" ProductId=\""+str(c.equipment.equipment.type.product_id)+"\" Serial=\""+c.equipment.equipment.serial+"\" Priority=\"2\" />\n  <Command "+c.type.custom_field.tag+"=\""+c.action+"\"/>\n</Package>"
+                
+                s_out.send(blocker_msg)
+                data2 = s_out.recv(BUFFER_SIZE)
+                s_out.send(ack_msg)
+                
+                c.system = s
+                c.state = 0
+                c.time_sent = datetime.now()
+                c.save()
+                return HttpResponseRedirect("/commands/create/finish")
         else:
         
             e_set = Equipment.objects.filter(system = int(offset))
@@ -265,27 +295,3 @@ def delete(request,offset):
 def delete_finish(request):
     return render_to_response("command/templates/delete_finish.html",locals())
     
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
-def load(request):
-  
-  parsed_dict = parser.parse(request.POST.urlencode())
-  
-  c = Command.objects.get(pk=parsed_dict['id'])
-
-  s = User.objects.get(pk=c.sender.id)
-
-  send = {}
-
-  send['vehicle'] = str(c)
-  send['time_executed'] = str(c.time_executed)
-  send['time_sent'] = str(c.time_sent)
-  send['time_received'] = str(c.time_received)
-  send['action'] = str(c.action)
-  send['type'] = str(c.type)
-  send['state'] = str(c.state)
-  send['sender'] = str(s.username)
-    
-  json = simplejson.dumps(send)
-  
-  return HttpResponse(json, mimetype='application/json')

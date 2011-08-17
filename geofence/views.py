@@ -27,6 +27,7 @@ def systemGeofenceDetails(sysid):
     lines.append({  'id':system.id,
                     'childof':childof,
                     'sysname':system.name,
+                    'sysid':system.id
                 })
     for geofence in geofences:
         
@@ -44,6 +45,7 @@ def systemGeofenceDetails(sysid):
                     })
     
     if geofences: 
+        print lines
         return lines    
     else: 
         return []

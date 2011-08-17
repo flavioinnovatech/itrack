@@ -20,8 +20,6 @@ url(r'^accounts/password/reset/done/$', password_reset_done, {'template_name': '
 url(r'^accounts/password/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', password_reset_confirm, {'template_name': 'accounts/templates/password_reset_confirm.html','post_reset_redirect' : '/accounts/password/done/'}), 
 url(r'^accounts/password/done/$',password_reset_complete, {'template_name': 'accounts/templates/password_reset_complete.html'}),
 
-
-
 url(r'^admin/', include(admin.site.urls)),
 url(r'^media/(.*)$', 'django.views.static.serve', {'document_root' : settings.MEDIA_ROOT}),
 url(r'^accounts/profile/$', 'main.views.index'),
@@ -73,7 +71,8 @@ url(r'^vehicles/swap/finish/$','vehicles.views.swap_finish'),
 
 url(r'^commands/$', 'command.views.index'),
 url(r'^commands/create/(\d+)/$','command.views.create'),
-url(r'^commands/load/$','command.views.load'),
+url(r'^commands/load/$','command.ajax.load'),
+url(r'^commands/check/$','command.ajax.check'),
 url(r'^commands/create/(\d+)/(\d+)/$','command.views.create'),
 url(r'^commands/create/finish/$','command.views.create_finish'),
 url(r'^commands/delete/(\d+)/$','command.views.delete'),

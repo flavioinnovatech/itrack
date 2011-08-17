@@ -27,6 +27,7 @@ def systemAlertDetails(sysid):
     lines.append({  'id':system.id,
                     'childof':childof,
                     'sysname':system.name,
+                    'sysid':system.id
                 })
     for alert in alerts:
         lines.append({  'id':alert.id,
