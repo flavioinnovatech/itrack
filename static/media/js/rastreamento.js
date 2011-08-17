@@ -192,8 +192,10 @@ function loadGrid() {
     
             //para cada info de geocode
             jQuery.each(equip.geocode, function(key3,info){
-                colNames.push(key3);
-                colModel.push({name:key3,align:"center",width:60});
+                if (info != ""){
+                    colNames.push(key3);
+                    colModel.push({name:key3,align:"center",width:100});
+                }
             });
     
             //fim do hack para botar endereço em primeiro
@@ -203,7 +205,7 @@ function loadGrid() {
             jQuery.each(equip.info, function(key2,info){
               if (!(key2 == "Latitude" || key2 == "Longitude")) {
                 colNames.push(key2);
-                colModel.push({name:key2.replace(" ","_"),align:"center",width:50});
+                colModel.push({name:key2.replace(" ","_"),align:"center",width:75});
               }
             });
           });
@@ -223,7 +225,7 @@ function loadGrid() {
               caption: "Rastreamento veicular",
               autoheight:true,
               autowidth: true,
-              shrinkToFit: true,
+              shrinkToFit: false,
               onSelectRow: function(rowid,status){ 
                 if (status == true) {
                   lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
