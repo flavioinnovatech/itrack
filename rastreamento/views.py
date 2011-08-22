@@ -35,9 +35,10 @@ def index(request):
 @login_required  
 def loadData(request):
     
-  parsed_dict = parser.parse(request.POST.urlencode())
+  if request.method == 'POST':  
+    parsed_dict = parser.parse(request.POST.urlencode())
   
-  print parsed_dict['plate']
+  #print parsed_dict['plate']
     
   system = request.session["system"]
   equips = Equipment.objects.filter(system=system)
@@ -49,11 +50,12 @@ def loadData(request):
     except:
         print "Veículo não encontrado."
         
-  if (parsed_dict['plate']):      
-      vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
+  if parsed_dict.has_key('plate'):
+
+      vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system).filter(license_plate__icontains=parsed_dict['plate'])
+      print vehicles
       
   else:
-    print 'aasdasdsadsadasdsade'
     vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
     
   available_fields = CustomFieldName.objects.filter(system = request.session["system"]).filter(custom_field__availablefields__system = request.session["system"]).distinct().filter(custom_field__system = request.session["system"]).order_by('name')

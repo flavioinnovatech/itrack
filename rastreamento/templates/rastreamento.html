@@ -36,7 +36,7 @@
             $('#last-tracking-observation').fadeOut('fast');
         });
         
-        setTimeout(function(){$('#last-tracking-observation').fadeOut('fast');},10000);
+       setTimeout(function(){$('#last-tracking-observation').fadeOut('fast');},5000);
     
     });
 </script>
@@ -61,7 +61,50 @@
         display:block;
         margin:0 35px 10px 35px;
         padding:0.7em;
-        
+        overflow:auto;
+    }
+    
+    .searchform {
+    background: -moz-linear-gradient(center top , #FFFFFF, #EDEDED) repeat scroll 0 0 transparent;
+    border: 1px solid #D2D2D2;
+    border-radius: 2em 2em 2em 2em;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    padding: 3px 5px;
+    }
+    input[type=button].searchbutton {
+    background-image: url('/media/img/search16.png');
+    //background: -moz-linear-gradient(center top , #9E9E9E, #454545) repeat scroll 0 0 transparent;
+    border: 1px solid #494949;
+    border-radius: 2em 2em 2em 2em;
+    color: #FFFFFF;
+    font-size: 11px;
+    height: 27px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+    width: 27px;
+    }
+    input[type=text].searchfield {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #BCBBBB;
+    border-radius: 2em 2em 2em 2em;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) inset;
+    outline: medium none;
+    padding: 6px 6px 6px 8px;
+    width: 202px;
+    height:auto;
+    }
+    a.icon{
+        display:block;
+        height:16px;
+        width:16px;
+        background-image: url('/media/img/search16.png');
+        backgroud-repeat: no-repeat;
+        position:absolute;
+        top:51px;
+        left:915px
+    }
+    #gbox_list4{
+        overflow:auto;
     }
   </style>
 
@@ -86,11 +129,21 @@
 	
 	
 	<div id="tabs-1">
-	  <div id="last-tracking-observation" class="ui-state-highlight ui-corner-all"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Observação:</strong> As informações exibidas são os últimos dados recebidos pelo veículo.<span class="ui-icon ui-icon-close" style="float:right;"></span></div>
 	  
-	  <div style="padding-bottom:10px;">
-	  	Filtrar veículo pela placa: <input type="text" id="filter-by-plate">
+	  <div style="float:left;width:100%;">
+	  
+	      <div style="padding-bottom:10px;float:right;">
+	      	<div class="searchform">
+	      	    <a class="icon"></a>
+                <input class="searchfield" type="text" onblur="if (this.value == '') {this.value = 'Filtrar veículo pela placa...';}" onfocus="if (this.value == 'Filtrar veículo pela placa...') {this.value = '';}" value="Filtrar veículo pela placa...">
+                
+                <!--<input class="searchbutton" type="button" value="">-->
+            </div>
+	      </div>
+	  
 	  </div>
+	  
+	  <div id="last-tracking-observation" class="ui-state-highlight ui-corner-all"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Observação:</strong> As informações exibidas são os últimos dados recebidos pelo veículo.<span class="ui-icon ui-icon-close" style="float:right;"></span></div>
 	  
 	  <table id="list4" summary="tabela que mostra dados principais dos veículos e a sua posição"></table>
 	  

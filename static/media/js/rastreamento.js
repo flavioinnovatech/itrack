@@ -89,9 +89,11 @@ jQuery(document).ready(function(){
     
   }); //end .fullscreen click function
   
-  jQuery('#filter-by-plate').keypress(function() {
-  	loadData(jQuery('#filter-by-plate').attr("value"));
+  jQuery('.searchfield').keyup(function() {
+  	loadData(jQuery('.searchfield').attr("value"));
+
   });
+  
 /* ---------------------------------------------  MAPS ------------------------------------------------------ */
 
 
@@ -148,12 +150,13 @@ function loadmaps() {
 
 var globaldata;
 function loadData(plate) {
-	
+
 	jQuery.post(
     	"/rastreamento/loadData/",
         {plate:plate},
         
 		function(data){
+
           globaldata = data;
           loadGrid();
           loadlateralgrid();
@@ -277,14 +280,24 @@ function loadGrid() {
           });
           
           
+          if (olddata != null) {
+              jQuery.each(olddata, function(key2,olditem) {
+                            jQuery("#list4").jqGrid('delRowData', olditem.id);
+
+              });
+          }
+          
           jQuery.each(data, function(key, equip) {
-            if (olddata != null) { 
+            if (olddata != null) {
             
+                //Deleta info antiga e repoe info nova
+                /*
                 jQuery.each(olddata, function(key2,olditem) {
                     if (olditem.id == equip.id) {
-                        jQuery("#list4").jqGrid('delRowData', equip.id);
+                        jQuery("#list4").jqGrid('delRowData', olditem.id);
                     }
                 });
+                */
             }
               jQuery.each(colNames, function(keyx, name) {
                 
@@ -325,7 +338,7 @@ function loadGrid() {
               jQuery("table[aria-labelledby=gbox_list4]").css("width","931px");
             
               olddata = data;
-  
+              
 
 }
 

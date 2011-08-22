@@ -564,6 +564,10 @@ img#maptools{
   display:none;
 }
 
+#tabs-1{
+  overflow:auto;
+}
+
 #tabs-3left{
   float:left;
 /*  width:0;*/
