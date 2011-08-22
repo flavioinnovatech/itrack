@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import urllib
 import sys, httplib,urllib
 import time
@@ -98,7 +99,38 @@ def MaplinkGeocode(lat,lng):
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","SOAPAction":"http://webservices.maplink2.com.br/getAddress","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
     response = conn.getresponse()
-    print response.status, response.reason, response.read()
+    #print response.status, response.reason, response.read()
+    conteudo = response.read()
+    print conteudo
     conn.close()
+   
+    gxml = ElementTree.fromstring(conteudo)
     
-    return 'ae'
+    street = gxml.find(".//{http://webservices.maplink2.com.br}street")
+    city = gxml.find(".//{http://webservices.maplink2.com.br}city")
+    state = gxml.find(".//{http://webservices.maplink2.com.br}state")
+    number = gxml.find(".//{http://webservices.maplink2.com.br}houseNumber")
+    postal = gxml.find(".//{http://webservices.maplink2.com.br}zip")
+    
+    c = CachedGeocode(
+        lat = float(lat),
+        lng = float(lng),
+        full_address = "",
+        number = number,
+        street = title(lower(street)),
+        city = title(city),
+        state = state,
+        country = "Brasil",
+        postal_code = postal,
+            #administrative_area = title(lower(address[0].get("Bairro")))
+    )
+    c.save()
+    #c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
+    print c
+    #print geocodexml
+    
+    if response.status == '200':
+        return 'ae'
+    else:
+        return 'error'  
+    
