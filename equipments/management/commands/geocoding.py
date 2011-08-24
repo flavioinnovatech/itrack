@@ -11,6 +11,12 @@ from django.template.defaultfilters import lower,title
 from itrack.pygeocoder import Geocoder
 from itrack.geocodecache.models import CachedGeocode
 
+def Geocode(address):
+
+    
+    
+
+    return (0,0)
 
 def ReverseGeocode(lat,lng):
     #first,tries to search in the database the lat lng pair
@@ -26,16 +32,16 @@ def ReverseGeocode(lat,lng):
         except NotImplementedError:
             #tries to reverse geocode by multispectral
             try:
-                return MultispectralGeocode(lat,lng)
+                return MultispectralRGeocode(lat,lng)
             except NotImplementedError:
                 #tries to reverse geocode by maplink
                 try:
-                    return MaplinkGeocode(lat,lng)
+                    return MaplinkRGeocode(lat,lng)
                 except NotImplementedError:
                     #fails silently returning empty strings
                     return [str(lat)+","+str(lng),"","",""]
             
-def MultispectralGeocode(lat,lng):
+def MultispectralRGeocode(lat,lng):
     ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C"
     url  = "http://www.geoportal.com.br/xgeocoder/cxinfo.aspx?x="+lng+"&y="+lat+"&Ticket="+str(ticket)
     page = urllib.urlopen(url)
@@ -71,66 +77,55 @@ def GoogleGeocode(lat,lng):
     #print
     #addr = unicode(result[0])
 
-def MaplinkGeocode(lat,lng):
+def MaplinkRGeocode(lat,lng):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     
     url = "teste.webservices.apontador.com.br"
     
     xml = '''<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'''+str(lng)+'''</x><y>'''+str(lat)+'''</y></point><token>'''+str(ticket)+'''</token><tolerance>'''+str(10)+'''</tolerance></getAddress></soap:Body></soap:Envelope>'''
-    #print xml
-    #webservice = httplib.HTTP(url)
-    #webservice.putrequest("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx")
-    
-    #webservice.putheader("Host", "teste.webservices.apontador.com.br")
-    #webservice.putheader("Content-type", "text/xml; charset=\"UTF-8\"")
-    #webservice.putheader("Content-length", "%d" % len(xml))
-    #webservice.putheader("SOAPAction", "http://webservices.maplink2.com.br/getAddress")
-    #webservice.endheaders()
-    
-    #webservice.send(xml)
-    #statuscode, statusmessage, header = webservice.getreply()
-    
-    #print "Response: ", statuscode, statusmessage
-    
-    #webservice.close()
-    
+
     conn = httplib.HTTPConnection(url,timeout=10)
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","SOAPAction":"http://webservices.maplink2.com.br/getAddress","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
     response = conn.getresponse()
     #print response.status, response.reason, response.read()
+    print response.status
+    print "\n"
     conteudo = response.read()
-    print conteudo
     conn.close()
    
-    gxml = ElementTree.fromstring(conteudo)
-    
-    street = gxml.find(".//{http://webservices.maplink2.com.br}street")
-    city = gxml.find(".//{http://webservices.maplink2.com.br}city")
-    state = gxml.find(".//{http://webservices.maplink2.com.br}state")
-    number = gxml.find(".//{http://webservices.maplink2.com.br}houseNumber")
-    postal = gxml.find(".//{http://webservices.maplink2.com.br}zip")
-    
-    c = CachedGeocode(
-        lat = float(lat),
-        lng = float(lng),
-        full_address = "",
-        number = number,
-        street = title(lower(street)),
-        city = title(city),
-        state = state,
-        country = "Brasil",
-        postal_code = postal,
+    #conteudo = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><getAddressResponse xmlns="http://webservices.maplink2.com.br"><getAddressResult><key /><address><street>Estr dos Cunha</street><houseNumber>768</houseNumber><zip>13860-000</zip><district /><city><name>Aguaí</name><state>SP</state></city></address><zipL>13860-000</zipL><zipR>13860-000</zipR><carAccess>true</carAccess><dataSource /><point><x>-47.000186</x><y>-22.021521</y></point></getAddressResult></getAddressResponse></soap:Body></soap:Envelope>'
+    if response.status == 200:
+        print conteudo
+        gxml = ElementTree.fromstring(conteudo)
+        
+        street = gxml.find(".//{http://webservices.maplink2.com.br}street")
+        city = gxml.find(".//{http://webservices.maplink2.com.br}name")
+        state = gxml.find(".//{http://webservices.maplink2.com.br}state")
+        number = gxml.find(".//{http://webservices.maplink2.com.br}houseNumber")
+        postal = gxml.find(".//{http://webservices.maplink2.com.br}zip")
+        
+        c = CachedGeocode(
+            lat = float(lat),
+            lng = float(lng),
+            full_address = "",
+            number = number.text,
+            street = title(lower(street.text)),
+            city = title(city.text),
+            state = state.text,
+            country = "Brasil",
+            postal_code = postal.text,
             #administrative_area = title(lower(address[0].get("Bairro")))
-    )
-    c.save()
-    #c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
-    print c
-    #print geocodexml
+        )
     
-    if response.status == '200':
-        return 'ae'
+        c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
+        
+        c.save()
+    
+        return [c.full_address,c.street+" "+c.number+", "+c.city,c.state,c.postal_code]
+
+
     else:
-        return 'error'  
+        return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
     

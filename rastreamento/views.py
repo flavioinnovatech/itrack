@@ -74,12 +74,12 @@ def loadData(request):
     tracking = Tracking.objects.filter(equipment=i.equipment.id).order_by('eventdate').reverse()[0]
     trackingData = TrackingData.objects.filter(tracking=tracking.id)
     info["hora"]["eventdate"] = smart_str(tracking.eventdate, encoding='utf-8', strings_only=False, errors='strict')
-    info["veiculo"]["chassi"] = i.chassi
+    info["veiculo"]["Chassi"] = i.chassi
     info["veiculo"]["license_plate"] = i.license_plate
-    info["veiculo"]["color"] = i.color
-    info["veiculo"]["year"] = i.year
-    info["veiculo"]["model"] = i.model
-    info["veiculo"]["manufacturer"] = i.manufacturer
+    info["veiculo"]["Cor"] = i.color
+    info["veiculo"]["Ano de fabricação"] = i.year
+    info["veiculo"]["Modelo"] = i.model
+    info["veiculo"]["Fabricante"] = i.manufacturer
     info["veiculo"]["type"] = i.type
     info["veiculo"]["sistema"] = lowestDepth(i.equipment.system.all()).name
     

@@ -531,7 +531,7 @@ input[type="text"], input[type="password"], input[type="number"]{
 .ui-timepicker-div td { font-size: 90%; }
 
 #gbox_list4 {
-  width:92%;
+  //width:92%;
   margin:0 auto;
 }
 

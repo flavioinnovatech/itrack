@@ -240,7 +240,7 @@ function loadGrid() {
               colModel:colModel,
               multiselect: true, 
               loadui:"block",
-              caption: "Rastreamento veicular",
+              caption: "Selecione os veículos na tabela e clique no botão abaixo para visualizá-los no mapa:",
               autoheight:true,
               autowidth: true,
               shrinkToFit: false,
@@ -366,7 +366,19 @@ function showVehicle(vehicle) {
       if (key1 == "veiculo" && equipdata.license_plate == vehicle) {
                 
         jQuery.each(equipdata,function(key2,vehicledata) {
-          jQuery("#vehicledialog").append("<p><b>"+key2+":</b>  "+vehicledata+"</p>");
+        	
+          if (key2 == 'license_plate') {
+          	jQuery("#vehicledialog").append("<p><b>Placa:</b>  "+vehicledata+"</p>");
+          }
+          else if (key2 == 'type') {
+          	jQuery("#vehicledialog").append("<p><b>Tipo:</b>  "+vehicledata+"</p>");
+          }
+          else if (key2 == 'sistema') {
+          	jQuery("#vehicledialog").append("<p><b>Cliente:</b>  "+vehicledata+"</p>");
+          }
+          else {
+          	jQuery("#vehicledialog").append("<p><b>"+key2+":</b>  "+vehicledata+"</p>");
+          }
           jQuery("#vehicledialog").dialog({show: "blind",modal:true});
         });  
       }     
