@@ -11,12 +11,54 @@ from django.template.defaultfilters import lower,title
 from itrack.pygeocoder import Geocoder
 from itrack.geocodecache.models import CachedGeocode
 
-def Geocode(address):
+def Geocode(street,number,city,state):
 
+    ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     
+    url = "teste.webservices.apontador.com.br"
+    
+    xml = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getXY xmlns="http://webservices.maplink2.com.br"><address><street>'+street+'</street><houseNumber>'+number+'</houseNumber><zip></zip><district></district><city><name>'+city+'</name><state>'+state+'</state></city></address><token>'+ticket+'</token></getXY></soap12:Body></soap12:Envelope>'
+
+    conn = httplib.HTTPConnection(url,timeout=10)
+    headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
+    conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
+    response = conn.getresponse()
+    #print response.status, response.reason, response.read()
+    #print response.status
+    print "\n"
+    conteudo = response.read()
+    conn.close()
+    
+    if response.status == 200:
+        print conteudo
+        gxml = ElementTree.fromstring(conteudo)
+        
+        lng = gxml.find(".//{http://webservices.maplink2.com.br}x")
+        lat = gxml.find(".//{http://webservices.maplink2.com.br}y")
+        
+        try:
+            c = CachedGeocode.objects.get(Q(lng=lng.text) & Q(lat=lat.text))
+        
+        except ObjectDoesNotExist:    
+            c = CachedGeocode(
+                lat = float(lat.text),
+                lng = float(lng.text),
+                full_address = "",
+                number = number,
+                street = title(lower(street)),
+                city = title(city),
+                state = state,
+                country = "Brasil",
+                #postal_code = postal.text,
+                #administrative_area = title(lower(address[0].get("Bairro")))
+            )
     
 
-    return (0,0)
+            c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
+        
+            c.save()
+
+    return (lng.text,lat.text)
 
 def ReverseGeocode(lat,lng):
     #first,tries to search in the database the lat lng pair
