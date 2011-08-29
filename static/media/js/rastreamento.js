@@ -4,6 +4,7 @@ var multispectral;
 var markers,size,icon;
 var multimarkers = new Array;
 var collection = new OpenLayers.Geometry.Collection();
+var tab;
 
 jQuery(document).ready(function(){ 
   
@@ -26,8 +27,12 @@ jQuery(document).ready(function(){
 
   w = jQuery(window).width();
   h = jQuery(window).height();
-  jQuery( "#tabs" ).tabs();
-  // jQuery( "#tabs" ).css("top","130px");
+  tab = jQuery( "#tabs" ).tabs();
+
+  $('.css3button').click(function(){
+    tab.tabs('select', 1);
+    jQuery("#tabs-3").css("height",h-200);
+  });
   
   tabw = (jQuery("#tabs-1").width());
   tabh = (jQuery("#tabs-1").height());
