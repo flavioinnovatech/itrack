@@ -57,6 +57,7 @@ var g;
 </script>
 <script type="text/javascript" src="/media/js/geofence_circle.js"></script>
 <script type="text/javascript" src="/media/js/geofence_polygon.js"></script>
+<script type="text/javascript" src="http://teste.webservices.apontador.com.br/maplinkapi2/api.ashx?v=4&key=yxd0a03YeKHKN1z4yvdwRxpDaAkFRmLnzJVNa03OPuOFeZONeuO2P0Zuc0HITu9pzYLaT0SxGAkFRDSk"></script> 
 
 {% endblock %}
 
@@ -76,11 +77,70 @@ var g;
                <p align="center"><input type="number" min="0" id="radius" placeholder="Digite um raio" autofocus></input> metros</p>
           </fieldset>
     		</form>
-    		<form id="step2" class="steps">
+    		<form id="step2circle" class="steps" action="">
     		  <fieldset>
             <legend>2º Passo - Escolha um local para o centro</legend>
             <p>Digite o endereço completo para o centro do círculo:</p>
-            <p align="center"><input id="circlecenter" placeholder="Ex.:Rua Anchieta,Campinas" type="text"></input><input type="submit" value="Buscar endereço" style="padding:4px 12px;"></p>
+            <table style="border-spacing:5px">
+                <tr>
+                    <td>
+                        Endereço:
+                    </td>
+                    <td>
+                        <input id="circleaddress" placeholder="Ex.:Rua Anchieta" type="text"/> n.º <input id="circlenumber" placeholder="" type="number" style="width:40px" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Cidade:
+                    </td>
+                    <td>
+                         <input id="circlecity" placeholder="Ex.:Campinas" type="text"></input>
+                    </td>
+                   
+                </tr>
+                <tr>
+                    <td>
+                        Estado:
+                    </td>
+                    <td>
+                        <select id="circleselect">
+                        <option value="0" selected="selected">&nbsp;</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goias</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                        </select>
+                    </td>
+                   
+                </tr>
+            </table>
+            
+            
+            <p align="center"><input id="caddresssubmit" type="submit" value="Buscar endereço" style="padding:4px 12px;" /></p>
           </fieldset>
     		</form>
     		<form id="step3" class="steps">

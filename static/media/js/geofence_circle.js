@@ -38,6 +38,27 @@ jQuery(document).ready(function(){
   	multispectral.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
   }
 	
+  //calculates the center of the circle
+  $('#step2circle').submit(function() {
+  	address =  $('#circleaddress').attr("value");
+  	number = $('#circlenumber').attr("value");
+  	city = $('#circlecity').attr("value");
+  	state = $("#circleselect option:selected").text();
+	
+	//MODULARIZAR ESSA FUNÇÃO
+	$.post(
+        "/geofence/geocode/",
+        {address:address,number:number,city:city,state:state},
+        function (data) {
+          alert(data.toSource());
+          
+        },'json'
+       
+	);
+	
+	return false;
+	
+  });
 
   jQuery("#circlesave").click(function(){
   	var id="";
