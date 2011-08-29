@@ -37,6 +37,10 @@
         });
         
        setTimeout(function(){$('#last-tracking-observation').fadeOut('fast');},5000);
+       
+       $('.css3button').click(function(){
+            alert('ae');
+       });
     
     });
 </script>
@@ -189,8 +193,7 @@
 	<ul>
 		<li id="grid"><a href="#tabs-1">Tabela de veículos</a></li>
 		{%if map_google %}<li><a id="googlemap" href="#tabs-3">Ver mapa</a></li>{% endif %}
-    <!-- <li><a id="multispectralmap" href="#tabs-4">Multispectral</a></li> -->
-    <!-- <li><a class="fullscreen" href="#" onClick="">Maplink</a></li> -->
+
 		<li><a href="#tabs-6" id="configs">Configurações</li></a>
 		
 		<li class="fullscreen" style="float:right;"><img title="Modo tela cheia" class="fullscreen" src="/media/img/fullscreen.png"></li>
@@ -203,6 +206,10 @@
 	<div id="tabs-1">
 	  
 	  <div style="float:left;width:100%;">
+  	
+ 
+	  	  <button class="css3button">Mostrar veículos selecionados no mapa</button>
+	  
 	      <div style="padding-bottom:10px;float:right;">
 	      	<div class="searchform">
 	      	    <a class="icon"></a>
@@ -217,7 +224,11 @@
 	  <table id="list4" summary="tabela que mostra dados principais dos veículos e a sua posição"></table>
 	  
 	  <div id="gridpager"></div>
+<<<<<<< HEAD
 	  <p align="center"><button onClick="jQuery( '#tabs' ).tabs('select', 1);" class="css3button">Mostrar veículos selecionados no mapa</button></p>
+=======
+	  
+>>>>>>> 95b3daf3cee7d2931395c0a221ec6683cafe92fa
 	</div>
   <div id="tabs-2" style="z-index:-1">
     <table id="list5"></table> 
