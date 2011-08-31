@@ -30,14 +30,14 @@ def Routecalc(request):
   
       <rs>
         <RouteStop>
-          <description>string</description>
+          <description>Nicaragua</description>
           <point>
             <x>'''+x0+'''</x>
             <y>'''+y0+'''</y>
           </point>
         </RouteStop>
         <RouteStop>
-          <description>string</description>
+          <description>Henrique Martins Torres</description>
           <point>
             <x>'''+x1+'''</x>
             <y>'''+y1+'''</y>
@@ -83,7 +83,7 @@ def Routecalc(request):
           </RouteLine>
         </routeLine>
       </ro>
-      <token>string</token>
+      <token>'''+ticket+'''</token>
     </getRoute>
   </soap12:Body>
 </soap12:Envelope>
@@ -94,7 +94,7 @@ def Routecalc(request):
     begin = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getRoute xmlns="http://webservices.maplink2.com.br">'
     xml = begin + xml 
     
-    #print xml
+    print xml
     
     conn = httplib.HTTPConnection(url,timeout=5)
     headers = {"Content-type":"application/soap+xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}

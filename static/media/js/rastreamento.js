@@ -236,7 +236,7 @@ function loadGrid() {
           h = jQuery(window).height();
           if (olddata == null) {
             jQuery("#list4").jqGrid({
-              pager: "#gridpager",
+              //pager: "#gridpager",
               sortable:true,
               datatype: "local",
               //height:h-250,
