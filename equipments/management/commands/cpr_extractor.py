@@ -76,7 +76,8 @@ def authentication(s):
     except:
         exit(1)
 
-# Product name conversion function: returns one internal identification, shared with the other brand trackers, based on the TCA id
+# Product name conversion function: returns one internal identification, 
+# shared with the other brand trackers, based on the TCA id
 # Here's the table of conversion:
 
 #   Product name                Product Brand ID    Internal ID
