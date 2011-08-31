@@ -7,9 +7,30 @@ from xml.etree import cElementTree as ElementTree
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.defaultfilters import lower,title
+from django.utils.encoding import smart_str
+from django.utils import simplejson
+from django.http import HttpResponseRedirect, HttpResponse
 
 from itrack.pygeocoder import Geocoder
 from itrack.geocodecache.models import CachedGeocode
+
+def Maploader(request):
+    
+    ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
+    
+    url = "teste.webservices.apontador.com.br"
+    
+    xml = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getMap xmlns="http://webservices.maplink2.com.br"><routeId>string</routeId><extent><XMin>100</XMin><YMin>100</YMin><XMax>150</XMax><YMax>150</YMax></extent><mo><scaleBar>0</scaleBar><mapSize><width>200</width><height>200</height></mapSize></mo><token>'+ticket+'</token></getMap></soap12:Body></soap12:Envelope>'
+    conn = httplib.HTTPConnection(url,timeout=5)
+    headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
+    conn.request("POST", "/webservices/v3/MapRender/MapRender.asmx", xml, headers)
+    response = conn.getresponse()
+    conteudo = response.read()
+    conn.close()
+    
+    print conteudo
+    
+    return 'ae'
 
 def Geocode(street,number,city,state):
 
@@ -19,7 +40,7 @@ def Geocode(street,number,city,state):
     
     xml = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getXY xmlns="http://webservices.maplink2.com.br"><address><street>'+street+'</street><houseNumber>'+number+'</houseNumber><zip></zip><district></district><city><name>'+city+'</name><state>'+state+'</state></city></address><token>'+ticket+'</token></getXY></soap12:Body></soap12:Envelope>'
 
-    conn = httplib.HTTPConnection(url,timeout=10)
+    conn = httplib.HTTPConnection(url,timeout=5)
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
     response = conn.getresponse()
@@ -45,8 +66,8 @@ def Geocode(street,number,city,state):
                 lng = float(lng.text),
                 full_address = "",
                 number = number,
-                street = title(lower(street)),
-                city = title(city),
+                street = title(lower(smart_str(street, encoding='utf-8', strings_only=False, errors='strict'))),
+                city = title(smart_str(city, encoding='utf-8', strings_only=False, errors='strict')),
                 state = state,
                 country = "Brasil",
                 #postal_code = postal.text,
@@ -54,11 +75,17 @@ def Geocode(street,number,city,state):
             )
     
 
-            c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
+            c.full_address = smart_str(c.street, encoding='utf-8', strings_only=False, errors='strict')+" "+str(c.number)+", "+smart_str(c.city, encoding='utf-8', strings_only=False, errors='strict')+", "+str(c.state)
         
             c.save()
 
-    return (lng.text,lat.text)
+        result = {}
+        result['lng'] = lng.text
+        result['lat'] = lat.text
+        json = simplejson.dumps(result)
+        return HttpResponse(json, mimetype='application/json')
+    
+    return 'ae'
 
 def ReverseGeocode(lat,lng):
     #first,tries to search in the database the lat lng pair
