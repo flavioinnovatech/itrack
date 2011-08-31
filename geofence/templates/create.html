@@ -57,8 +57,8 @@ var g;
 </script>
 <script type="text/javascript" src="/media/js/geofence_circle.js"></script>
 <script type="text/javascript" src="/media/js/geofence_polygon.js"></script>
-<script type="text/javascript" src="http://teste.webservices.apontador.com.br/maplinkapi2/api.ashx?v=4&key=yxd0a03YeKHKN1z4yvdwRxpDaAkFRmLnzJVNa03OPuOFeZONeuO2P0Zuc0HITu9pzYLaT0SxGAkFRDSk"></script> 
-
+<!--<script type="text/javascript" src="http://teste.webservices.apontador.com.br/maplinkapi2/api.ashx?v=4&key=yxd0a03YeKHKN1z4yvdwRxpDaAkFRmLnzJVNa03OPuOFeZONeuO2P0Zuc0HITu9pzYLaT0SxGAkFRDSk"></script> 
+-->
 {% endblock %}
 
 {% block content %}
@@ -183,8 +183,66 @@ var g;
   		<div id="map2" style="float:left;width:100%;height:300px;"></div>
   	</div>
   	<div id="tabs-3">
-  		<p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
-  		<p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+  		<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
+    		<form id="step1" class="steps" style="width:60%">
+    		  <fieldset>
+            <legend>1º Passo - Escolha os pontos para os vértices da rota</legend>
+              <p>Digite o endereço para a rota (mínimo 2):</p>
+              <div id="routeinputs" style="overflow: auto; height: 81px;">
+                <ol>
+                  <li>
+                  	<p align="center">
+	                  	<span>1. Endereço: </span><input id="routeinput1" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+	                  	 n.º <input id="routenumber1" placeholder="" type="number" style="width:40px" />
+	                  	  Cidade: <input id="routecity1" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
+                 		  Estado: <select id="circleselect">
+                        <option value="0" selected="selected">&nbsp;</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goias</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                        </select>
+                 	</p>
+                  <li><p align="center"><span>2. Endereço: </span><input id="routeinput2" placeholder="Ex.:Rua Anchieta" type="text" /></p>
+                </ol>
+               </div>
+               <p align="center"><span id="addpoint"> + Adicionar ponto</span></p>
+               <p align="center"><input type="submit" value="Montar polígono com os endereços acima"/></p>
+          </fieldset>
+    		</form>
+    		<form id="step2" class="steps" style="width:38%;">
+    		  <fieldset>
+            <legend>2º Passo - Salvar cerca eletrônica</legend>
+             <p>Após confirmar a visualização da cerca no mapa e sua distância, digite um nome para a cerca e clique em salvar:</p>
+              <p align="center"><b>Área da cerca eletrônica selecionada:</b></p><div align="center" id="polygonarea"></div>
+              <p align="center"><input id="polygoname" placeholder="Digite um nome para a cerca" type="text" required value="{{g.name}}"></input><input id="polygonsave" type="button" value="Salvar" style="padding:4px 12px;"></p>
+          </fieldset>
+    		</form>
+  		</div>
+  		<div id="map2" style="float:left;width:100%;height:300px;"></div>
   	</div>
 </div>
 {% endblock %}

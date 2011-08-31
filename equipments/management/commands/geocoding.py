@@ -14,17 +14,111 @@ from django.http import HttpResponseRedirect, HttpResponse
 from itrack.pygeocoder import Geocoder
 from itrack.geocodecache.models import CachedGeocode
 
+def Routecalc(request):
+    
+    ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
+    
+    url = "teste.webservices.apontador.com.br"
+    
+    x0 = "-49.2411452173913"
+    y0 = "-25.4008260869565"
+    
+    x1 = "-49.2499139449541"
+    y1 = "-25.5094316513761"
+    
+    xml = '''
+  
+      <rs>
+        <RouteStop>
+          <description>string</description>
+          <point>
+            <x>'''+x0+'''</x>
+            <y>'''+y0+'''</y>
+          </point>
+        </RouteStop>
+        <RouteStop>
+          <description>string</description>
+          <point>
+            <x>'''+x1+'''</x>
+            <y>'''+y1+'''</y>
+          </point>
+        </RouteStop>
+      </rs>
+      <ro>
+        <language>portugues</language>
+        <routeDetails>
+          <descriptionType>0</descriptionType>
+          <routeType>0</routeType>
+          <optimizeRoute>false</optimizeRoute>
+          <poiRoute>
+            <string></string>
+            <string></string>
+          </poiRoute>
+          <barriersList>
+            <string></string>
+            <string></string>
+          </barriersList>
+          <barrierPoints>
+            <Point xsi:nil="true" />
+            <Point xsi:nil="true" />
+          </barrierPoints>
+        </routeDetails>
+        <vehicle>
+          <tankCapacity>64</tankCapacity>
+          <averageConsumption>10</averageConsumption>
+          <fuelPrice>2.15</fuelPrice>
+          <averageSpeed>70</averageSpeed>
+          <tollFeeCat>2</tollFeeCat>
+        </vehicle>
+        <routeLine>
+          <RouteLine>
+            <width></width>
+            <RGB></RGB>
+            <transparency></transparency>
+          </RouteLine>
+          <RouteLine>
+            <width></width>
+            <RGB></RGB>
+            <transparency></transparency>
+          </RouteLine>
+        </routeLine>
+      </ro>
+      <token>string</token>
+    </getRoute>
+  </soap12:Body>
+</soap12:Envelope>
+'''
+    
+    xml = xml.replace('\n','').replace(' ','')
+    
+    begin = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getRoute xmlns="http://webservices.maplink2.com.br">'
+    xml = begin + xml 
+    
+    #print xml
+    
+    conn = httplib.HTTPConnection(url,timeout=5)
+    headers = {"Content-type":"application/soap+xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
+    conn.request("POST", "/webservices/v3/Route/Route.asmx", xml, headers)
+    response = conn.getresponse()
+    conteudo = response.read()
+    conn.close()
+    
+    print conteudo
+    
+    return 'ae'
+
 def Maploader(request):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     
     url = "teste.webservices.apontador.com.br"
     
-    xml = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getMap xmlns="http://webservices.maplink2.com.br"><routeId>string</routeId><extent><XMin>100</XMin><YMin>100</YMin><XMax>150</XMax><YMax>150</YMax></extent><mo><scaleBar>0</scaleBar><mapSize><width>200</width><height>200</height></mapSize></mo><token>'+ticket+'</token></getMap></soap12:Body></soap12:Envelope>'
+    xml = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getMap xmlns="http://webservices.maplink2.com.br"><routeId>string</routeId><extent><XMin>-49.2962338995702</XMin><YMin>-25.4429948584803</YMin><XMax>-43.2075</XMax><YMax>-22.902778</YMax></extent><mo><scaleBar>true</scaleBar><mapSize><width>600</width><height>600</height></mapSize><showPoint>false</showPoint><icon><Icon><iconType>int</iconType><iconID>int</iconID><point xsi:nil="true" /></Icon><Icon><iconType>int</iconType><iconID>int</iconID><point xsi:nil="true" /></Icon></icon></mo><token>'+ticket+'</token></getMap></soap:Body></soap:Envelope>'
     conn = httplib.HTTPConnection(url,timeout=5)
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/MapRender/MapRender.asmx", xml, headers)
     response = conn.getresponse()
+    print response.status, response.reason, response.read()
     conteudo = response.read()
     conn.close()
     
@@ -38,7 +132,7 @@ def Geocode(street,number,city,state):
     
     url = "teste.webservices.apontador.com.br"
     
-    xml = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getXY xmlns="http://webservices.maplink2.com.br"><address><street>'+street+'</street><houseNumber>'+number+'</houseNumber><zip></zip><district></district><city><name>'+city+'</name><state>'+state+'</state></city></address><token>'+ticket+'</token></getXY></soap12:Body></soap12:Envelope>'
+    xml = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getXY xmlns="http://webservices.maplink2.com.br"><address><street>'+street+'</street><houseNumber>'+str(number)+'</houseNumber><zip></zip><district></district><city><name>'+city+'</name><state>'+state+'</state></city></address><token>'+ticket+'</token></getXY></soap12:Body></soap12:Envelope>'
 
     conn = httplib.HTTPConnection(url,timeout=5)
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
@@ -49,6 +143,9 @@ def Geocode(street,number,city,state):
     print "\n"
     conteudo = response.read()
     conn.close()
+    
+    #<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><getMapResponse xmlns="http://webservices.maplink2.com.br"><getMapResult><url>http://teste.webservices.maplink2.com.br/output/</url><extent><XMin>-49.2962339</XMin><YMin>-26.94037873</YMin><XMax>-43.2075</XMax><YMax>-21.356430578</YMax></extent></getMapResult></getMapResponse></soap:Body></soap:Envelope>
+
     
     if response.status == 200:
         print conteudo
