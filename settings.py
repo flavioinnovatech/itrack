@@ -8,7 +8,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-     #('smurf', 'fabiothiroki@gmail.com'),
+
 )
 
 MANAGERS = ADMINS
@@ -34,9 +34,14 @@ DATABASES = {
 	}
 }
 
+CPR_IP = '192.168.1.119'
+MXT_IP = '192.168.1.114'
+PROCESSOR_IP = '127.0.0.1'
+PROCESSOR_PORT = 9000
+
 EXTRACTOR_IP = '192.168.1.119'
 
-# EXTRACTOR_IP = '187.115.25.240'
+#EXTRACTOR_IP = '187.115.25.240'
 
 
 

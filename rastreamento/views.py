@@ -17,6 +17,7 @@ from querystring_parser import parser
 
 @login_required
 def index(request):
+  
   settings = Settings.objects.get(system=request.session["system"])
   if settings.map_google:
     map_google = 1
