@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import simplejson
 
 from itrack.reports.forms import ReportForm
 from itrack.equipments.models import CustomFieldName, Tracking, TrackingData
@@ -182,4 +183,10 @@ def report(request,offset):
                     writer.writerow(line)
                 response.set_cookie("fileDownloadToken", request.POST['token'])    
                 return response
+                
+            if request.POST['type'] == 'HTML':
+                json = simplejson.dumps(list_table)
+                return HttpResponse(json, mimetype='application/json')
+
+             
     return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
