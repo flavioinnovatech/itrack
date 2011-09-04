@@ -255,10 +255,10 @@ def MaplinkRGeocode(lat,lng):
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","SOAPAction":"http://webservices.maplink2.com.br/getAddress","Host":"teste.webservices.apontador.com.br"}
     try:
         conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
+        response = conn.getresponse()
     except:
         raise NotImplementedError
     finally:
-        response = conn.getresponse()
         #print response.status, response.reason, response.read()
         print response.status
         print "\n"
