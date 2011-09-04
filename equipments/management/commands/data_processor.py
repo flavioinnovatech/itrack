@@ -67,8 +67,9 @@ class ClientThread(threading.Thread):
                     try:
                         #second, if the vehicle exists, for that equipment, 
                         # insert the tracking head on the tracking table
-                        v = Vehicle.objects.get(equipment=e)
+                        vehicle = Vehicle.objects.get(equipment=e)
                         sys = lowestDepth(e.system.all())
+                        
                         searchdate = datetime.strptime( 
                             datadict['Identification']['Date'],
                             "%Y/%m/%d %H:%M:%S")
@@ -136,8 +137,11 @@ class ClientThread(threading.Thread):
                                     ).save()
                         
                         # and adding extra vehicle and system custom fields
+                        print vehicleField
                         TrackingData(   tracking=t,
-                                        type=vehicleField,value=v.id).save()
+                                        type=vehicleField,
+                                        value=vehicle.id).save()
+                                        
                         TrackingData(   tracking=t,
                                         type=systemField,value=sys.id).save()
                                                                 
@@ -145,7 +149,7 @@ class ClientThread(threading.Thread):
                         exit(0)
                         
                         #queries the vehicle in the database
-                        vehicle = v # FIX: has been done before
+                        
                         #if the last alert sent for the vehicle is not null
                         if vehicle.last_alert_date is not None:
                           total_seconds = (
@@ -166,8 +170,9 @@ class ClientThread(threading.Thread):
                                 Q(time_start__lte=searchdate) & 
                                 Q(active=True)
                                 )                              
-                            #iterates over the inputs and checks if it is needed to send the alert
                             
+                            # iterates over the inputs and checks if it 
+                            # is needed to send the alert
                             for k,v in io_filtered.items():
                                 if k.type in ['Input','LinearInput']:
                                     for alert in alerts:

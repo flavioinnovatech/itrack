@@ -251,15 +251,12 @@ def MaplinkRGeocode(lat,lng):
     
     xml = '''<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'''+str(lng)+'''</x><y>'''+str(lat)+'''</y></point><token>'''+str(ticket)+'''</token><tolerance>'''+str(10)+'''</tolerance></getAddress></soap:Body></soap:Envelope>'''
 
-    conn = httplib.HTTPConnection(url,timeout=10)
+    conn = httplib.HTTPConnection(url,timeout=3)
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","SOAPAction":"http://webservices.maplink2.com.br/getAddress","Host":"teste.webservices.apontador.com.br"}
+    
     try:
         conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
         response = conn.getresponse()
-    except:
-        raise NotImplementedError
-    finally:
-        #print response.status, response.reason, response.read()
         print response.status
         print "\n"
         conteudo = response.read()
@@ -298,4 +295,10 @@ def MaplinkRGeocode(lat,lng):
 
         else:
             raise NotImplementedError
+    except:
+        raise NotImplementedError
+        
+    
+        #print response.status, response.reason, response.read()
+        
     
