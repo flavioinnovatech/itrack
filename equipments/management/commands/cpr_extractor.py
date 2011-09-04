@@ -158,12 +158,11 @@ class Command(BaseCommand):
                     formatted_output['Identification']['EquipType'] = productName(xmldict['TCA']['ProductId'])
                     formatted_output['Identification']['Serial'] = xmldict['TCA']['SerialNumber']
                     formatted_output['Identification']['Date'] = xmldict['Event']['EventDateTime']
-                    formatted_output['Input'] = {}
-                    formatted_output['Input']['Input'] = xmldict['Input']
-                    formatted_output['Input']['LinearInput'] = xmldict['LinearInput']
-                    formatted_output['Output'] = {}
-                    formatted_output['Output']['Output'] = xmldict['Output']
-                    formatted_output['Output']['GPS'] = xmldict['GPS']
+
+                    formatted_output['Input'] = xmldict['Input']
+                    formatted_output['LinearInput'] = xmldict['LinearInput']
+                    formatted_output['Output'] = xmldict['Output']
+                    formatted_output['GPS'] = xmldict['GPS']
                 
                 #the XML is a command response
                 elif xmldict['Header']['Id'] == '106': 
@@ -179,3 +178,5 @@ class Command(BaseCommand):
                 processor_client.send(json.dumps(formatted_output))
                 processor_client.close()
                 print "----------------------------------------------------------------"
+                #remove that after debugging
+                exit(0)
