@@ -226,6 +226,7 @@ class Command(BaseCommand):
             geoDict[field.tag] = field
         
         #System and Vehicle custom fields
+            #TODO: precisa ver porque não tá pegando os veículos
             systemField = CustomField.objects.get(tag="System")
             vehicleField = CustomField.objects.get(tag="Vehicle")
         
