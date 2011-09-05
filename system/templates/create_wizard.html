@@ -29,6 +29,45 @@
   
 </script>
 
+<style type="text/css">
+	
+	.ptracker {
+		margin-left:auto;
+		margin-right:auto;
+		margin-top: 5px;
+		width:660px;
+		
+		height:43px;
+		border:1px solid #CCC;
+		font-size:12px;
+		
+	}
+	
+	.tstep {
+		float:left;
+		width: 200px;
+		height:20px;
+		padding:10px;
+		background-color:white;
+	}
+	
+	.selected {
+		border-bottom:3px solid #CCCCCC;
+		color:#656565;
+		font-weight: bold;
+	}
+	
+	.unselected {
+		border-bottom: 3px solid #F5F5F5;
+		color:#989898;
+	}
+	
+	span.number {
+		font-size:13px;
+	}
+	
+</style>
+
 {% endblock %}
 
 {% block content %}
@@ -38,19 +77,26 @@
 
 <h1><img src="/media/img/configuration.png" class="icon">Cadastro de Cliente </h1>
 <hr />
-{% if step == 1 %}
-<h2>Primeiro passo:  conta de administrador</h2>
-<em>Cadastre aqui o usuário que terá privilégios administrativos sobre o Cliente a ser criado . </em>
-{% endif %}
-{% if step == 2 %}
-<h2>Segundo passo: informações principais</h2>
-<em>Cadastre aqui as informações necessárias para identificação do Cliente.</em>
-{% endif %}
 
-{% if step == 3 %}
-<h2>Terceiro passo: Tema</h2>
-<em>Configure o esquema de cores e o logo do Cliente.</em>
-{% endif %}
+
+<div class="ptracker">
+	<div class="tstep {% if step == 1 %} selected {% else %} unselected {% endif %}">
+		<p align="center"><span class="number">1.</span>  Conta de administrador</p>
+	</div>
+	<div class="tstep {% if step == 2 %} selected {% else %} unselected {% endif %}">
+		<p align="center"><span class="number">2.</span> Informações principais</p>
+	</div>
+	<div class="tstep {% if step == 3 %} selected {% else %} unselected {% endif %}">
+		<p align="center"><span clas="number">3.</span> Tema</p>
+	</div>
+	
+</div>
+
+<!--
+<h2></h2>
+<em>Cadastre aqui o usuário que terá privilégios administrativos sobre o Cliente a ser criado . </em>
+-->
+
 
 
 <table>

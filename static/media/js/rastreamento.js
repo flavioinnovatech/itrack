@@ -16,10 +16,6 @@ jQuery(document).ready(function(){
   jQuery("img[id=maptools]").tipTip();
   jQuery("img[class=fullscreen]").tipTip();
   
-  setTimeout(function(){
-    doTimer();
-  },1000); 
-  
   //desabilita vehicles toolbar quando tabela é selecionada
   jQuery('a[href=#tabs-1]').click(function(){
     jQuery("img[id=maptools]").hide();
@@ -150,7 +146,7 @@ function loadmaps() {
 /* --------------------------------------------- END  MAPS ------------------------------------------------------ */
 
 /* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
-  closeloading(5000);
+  closeloading();
 });
 
 var globaldata;
@@ -255,12 +251,21 @@ function loadGrid() {
                   lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
                   lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
                   
+                  //Selects the row on the lateral grid
+                  if (jQuery("#list").getGridParam('selarrrow') != 1)
+                  	jQuery("#list").setSelection(rowid,'true');
+                  
                   multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
                   markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon));
-                  multispectral.setCenter(new OpenLayers.LonLat(lng,lat),1); 
+                  multispectral.setCenter(new OpenLayers.LonLat(lng,lat),1);
                 }
               
                 else {
+                	
+                  //Unselects the row on the lateral grid
+                  if (jQuery("#list").getGridParam('selarrrow') != 0)
+                  	jQuery("#list").setSelection(rowid,'false');
+                
                   markers.removeMarker(multimarkers[rowid]);
                 }
               }

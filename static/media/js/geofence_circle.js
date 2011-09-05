@@ -6,7 +6,7 @@ jQuery(document).ready(function(){
   
   vlayer = new OpenLayers.Layer.Vector("Editable",{eventListeners: {sketchstarted: function(evt) {vlayer.destroyFeatures();}},onFeatureInsert: function(	feature	) { circle = (feature.geometry.toString()); area = (feature.geometry.getGeodesicArea()/1000000).toFixed(2); jQuery("#circlearea").html(area + " km²");} });
 
-  multispectral = new OpenLayers.Map('map1');
+  multispectral = new OpenLayers.Map('map3');
 
   var dm_wms = new OpenLayers.Layer.WMS(
       "Canadian Data",
