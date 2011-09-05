@@ -12,6 +12,7 @@ import time
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
+from django.db import IntegrityError
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -20,9 +21,10 @@ from itrack.equipments.models import CustomField,EquipmentType
 from itrack.alerts.models import Alert,Popup
 from itrack.vehicles.models import Vehicle
 from itrack.system.tools import lowestDepth
+from itrack.system.models import System
 
 from geocoding import ReverseGeocode
-from comparison import AlertSender,AlertComparison
+from comparison import AlertSender,AlertComparison, GeofenceComparison
 
 #some globals and constants
 #--------------------------
@@ -34,6 +36,7 @@ geoDict = {}
 systemField = None
 vehicleField = None
 
+
 # >> ====================================== +-------------------------------+-\
 # >> ====================================== | THREAD TO PROCESS THE DATA    |  >
 # >> ====================================== +-------------------------------+-/
@@ -41,6 +44,12 @@ vehicleField = None
 class ClientThread(threading.Thread):
    def run ( self ):
       # Have our thread serve "forever":
+      
+      #System and Vehicle custom fields
+
+      systemField = CustomField.objects.get(tag="System")
+      vehicleField = CustomField.objects.get(tag="Vehicle")
+      root_system = System.objects.get(parent=None)
       while True:
 
          # Get a client out of the queue
@@ -53,7 +62,6 @@ class ClientThread(threading.Thread):
             inbox =  client[0].recv(1024)
             
             datadict = json.loads(inbox)
-            
             if datadict['Type'] == 'Tracking':
             # tries to pick the equipment and the date of the tracking table
                 try:
@@ -70,10 +78,15 @@ class ClientThread(threading.Thread):
                         vehicle = Vehicle.objects.get(equipment=e)
                         sys = lowestDepth(e.system.all())
                         
-                        searchdate = datetime.strptime( 
-                            datadict['Identification']['Date'],
-                            "%Y/%m/%d %H:%M:%S")
-                        
+                        try:
+                            searchdate = datetime.strptime( 
+                                datadict['Identification']['Date'],
+                                "%Y/%m/%d %H:%M:%S")
+                        except ValueError:
+                            searchdate = datetime.strptime( 
+                                datadict['Identification']['Date'],
+                                "%Y-%m-%d %H:%M:%S")
+                                
                         #create the tracking
                         t = Tracking(
                             equipment=e, 
@@ -137,16 +150,13 @@ class ClientThread(threading.Thread):
                                     ).save()
                         
                         # and adding extra vehicle and system custom fields
-                        print vehicleField
                         TrackingData(   tracking=t,
                                         type=vehicleField,
                                         value=vehicle.id).save()
                                         
                         TrackingData(   tracking=t,
                                         type=systemField,value=sys.id).save()
-                                                                
-                        #remove that after debugging
-                        exit(0)
+                                                                                     
                         
                         #queries the vehicle in the database
                         
@@ -160,6 +170,7 @@ class ClientThread(threading.Thread):
                                 
                           # check if there's enough time between the last alert 
                           # sent and a possibly new one
+                          print total_seconds
                           if total_seconds > vehicle.threshold_time*60:
                             vehicle.last_alert_date = searchdate
                             vehicle.save()
@@ -170,39 +181,60 @@ class ClientThread(threading.Thread):
                                 Q(time_start__lte=searchdate) & 
                                 Q(active=True)
                                 )                              
-                            
+                            geoalerts = alerts.filter(
+                                trigger__custom_field__tag='GeoFence'
+                            )
                             # iterates over the inputs and checks if it 
                             # is needed to send the alert
                             for k,v in io_filtered.items():
                                 if k.type in ['Input','LinearInput']:
                                     for alert in alerts:
-                                        print alert,k,v
                                         if AlertComparison(self,alert,k,v):
                                             AlertSender(self,alert,vehicle,
                                                         searchdate,geocodeinfo)
                             
+                            #checking the geofence alerts
+                            print alerts
+                            for alert in geoalerts:
+                                if GeofenceComparison( self,alert,
+                                            io["GPS"]["Lat"], 
+                                            io["GPS"]["Long"]
+                                            ):
+                                    AlertSender(self,alert,vehicle,searchdate)
+                          else: 
+                              # if the vehicle never had thrown alerts, 
+                              # give him a last alert date
+                              vehicle.last_alert_date = searchdate
+                              vehicle.save()
                                   
                     except ObjectDoesNotExist:
-                        print '''Equipment without vehicle.\
-                                 Dropping received data.'''
-                                                            
-                        # TODO: does nothing if gets here
+                        print ('Equipment without vehicle.\n'+
+                               'Dropping received data.')
                         pass
                 except ObjectDoesNotExist:
-                    print '''Equipment not found on the database.\
-                             Creating and insertind under the root system'''
+                    print ('Equipment not found on the database.\n'+
+                           'Creating and inserting under the root system')
                     #TODO: create equipment under the root system
-                    pass
+                    try:
+                        eq = Equipment(
+                            name = datadict['Identification']['Serial'],
+                            serial = datadict['Identification']['Serial'],
+                            type = equipTypeIndex[type_id],
+                            available = True
+                        )
+                    
+                        eq.save()
+                        eq.system.add(root_system)
+                    except IntegrityError:
+                        pass
+
                 except KeyError:
-                    print '''Equipment Type not in the recognized devices.\
-                             Dropping recived data.
-                          '''
+                    print ('Equipment Type "'+str(type_id) +'" not in the '+
+                          'recognized devices.\nDropping recived data.')
+                          
             elif datadict['Type'] == 'Command':
                 pass
             
-            
-            exit(0)
-            time.sleep(1)
             client[0].close()
             print 'Closed connection:', client[1][0]
 
@@ -225,10 +257,7 @@ class Command(BaseCommand):
         for field in geocodefields:
             geoDict[field.tag] = field
         
-        #System and Vehicle custom fields
-            #TODO: precisa ver porque não tá pegando os veículos
-            systemField = CustomField.objects.get(tag="System")
-            vehicleField = CustomField.objects.get(tag="Vehicle")
+        print systemField, vehicleField
         
         # Index for the equipments
         etypes = EquipmentType.objects.all()

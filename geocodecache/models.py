@@ -4,8 +4,8 @@ from django.db import models
 
 class CachedGeocode(models.Model):
     
-    lat = models.FloatField()
-    lng = models.FloatField()
+    lat = models.FloatField(unique=True)
+    lng = models.FloatField(unique=True)
     
     full_address = models.CharField(max_length=100,null=True,blank=True)
     number = models.CharField(max_length=20,null=True,blank=True)

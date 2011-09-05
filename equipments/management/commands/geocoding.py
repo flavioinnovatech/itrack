@@ -5,11 +5,12 @@ import time
 from xml.etree import cElementTree as ElementTree
 
 from django.db.models import Q
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.template.defaultfilters import lower,title
 from django.utils.encoding import smart_str
 from django.utils import simplejson
 from django.http import HttpResponseRedirect, HttpResponse
+
 
 from itrack.pygeocoder import Geocoder
 from itrack.geocodecache.models import CachedGeocode
@@ -173,8 +174,12 @@ def Geocode(street,number,city,state):
     
 
             c.full_address = smart_str(c.street, encoding='utf-8', strings_only=False, errors='strict')+" "+str(c.number)+", "+smart_str(c.city, encoding='utf-8', strings_only=False, errors='strict')+", "+str(c.state)
-        
-            c.save()
+            try:
+                c.save()
+            except:
+                pass
+        except MultipleObjectsReturned:
+            c = CachedGeocode.objects.filter(Q(lng=lng.text) & Q(lat=lat.text))[0]
 
         result = {}
         result['lng'] = lng.text
@@ -190,7 +195,7 @@ def ReverseGeocode(lat,lng):
         c = CachedGeocode.objects.get(Q(lng=lng) & Q(lat=lat))
         
         #return a list with first element being the full address, the second the city and the third the administrative area.
-        return [c.full_address,c.street+" "+c.number+", "+c.administrative_area,c.city,c.state,c.postal_code]
+        return [unicode(c.full_address),unicode(c.street)+" "+unicode(c.number)+", "+unicode(c.administrative_area),unicode(c.city),unicode(c.state),unicode(c.postal_code)]
     except ObjectDoesNotExist:
         #tries to reverse geocode by google
         try:
@@ -290,7 +295,7 @@ def MaplinkRGeocode(lat,lng):
             
             c.save()
         
-            return [c.full_address,c.street+" "+c.number+", "+c.city,c.state,c.postal_code]
+            return [c.full_address,c.street+" "+c.number,c.city,c.state,c.postal_code]
 
 
         else:

@@ -48,7 +48,7 @@ def GeofenceComparison(command,alert,lat,lng):
         return False
     else:
         poly = alert.geofence.polygon
-        command.stdout.write(str(alert.state)+"->"+str(poly.contains(pnt))+"\n")
+        print alert.state,"->",poly.contains(pnt)
         if alert.state:
             if poly.contains(pnt):
                 return True
@@ -114,7 +114,7 @@ def AlertSender(command,alert,vehicle,searchdate,geocodeinfo):
 
         for destinatary in alert.destinataries.values():
             send_mail(message, "infotrack@infotrack.com.br", [destinatary['email']], fail_silently=False, auth_user=None, auth_password=None, connection=None)
-            command.stdout.write('>>>> Email de alerta enviado.\n')
+            print '>>>> Email de alerta enviado.'
                
         #if the alert shall be sent by SMS 
         #TODO: if needed, optimize the get database lookup to one big lookup and iterate over this list
@@ -123,11 +123,11 @@ def AlertSender(command,alert,vehicle,searchdate,geocodeinfo):
           cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone                                               
           command.stdout.write(SendSMS(cellphone,message.encode('latin-1')))
           # self.stdout.write(SendSMS(cellphone,'[INFOTRACK]\n'+'Alerta:'+str(alert.alerttext)))
-          command.stdout.write('>>>> SMS de alerta enviado.\n')
+          print '>>>> SMS de alerta enviado.'
 
     #if the alert shall display a popup on the user screen
     if alert.receive_popup:
       for destinatary in alert.destinataries.all():
           popup = Popup(alert=alert,user=destinatary,vehicle=vehicle,date=searchdate)
           popup.save()
-          command.stdout.write('>>>> Popup Cadastrado. \n')
+          print '>>>> Popup Cadastrado.'
