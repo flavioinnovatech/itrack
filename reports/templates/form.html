@@ -150,8 +150,8 @@ $(document).ready(function(){
     
     $('#exportHTML').click(function(){
         $('input[name="type"]').attr("value","HTML");
+        document.forms["formz"].action = "/reports/html";
         document.forms["formz"].submit();
-        blockUIForDownload();
     });
     
     if({{no_information}}){
@@ -212,7 +212,9 @@ $(document).ready(function(){
 {{ previous_fields|safe }}
 <input type="hidden" name="type" />
 <input type="hidden" id="download_token_value_id" name="token" />
-<input type="submit" value="Exportar como CSV" class="table-button" style="padding:10px;float:right;" id="exportCSV" />
+<!-- <input type="submit" value="Exportar como CSV" class="table-button" style="padding:10px;float:right;" id="exportCSV" /> //-->
+<input type="submit" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" />
+
 <!-- <input type="submit" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" />
 <input type="submit" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" /> -->
 <p class="clear">
