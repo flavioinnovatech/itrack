@@ -16,10 +16,6 @@ jQuery(document).ready(function(){
   jQuery("img[id=maptools]").tipTip();
   jQuery("img[class=fullscreen]").tipTip();
   
-  setTimeout(function(){
-    doTimer();
-  },1000); 
-  
   //desabilita vehicles toolbar quando tabela é selecionada
   jQuery('a[href=#tabs-1]').click(function(){
     jQuery("img[id=maptools]").hide();
@@ -150,7 +146,7 @@ function loadmaps() {
 /* --------------------------------------------- END  MAPS ------------------------------------------------------ */
 
 /* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
-  closeloading(5000);
+  closeloading();
 });
 
 var globaldata;

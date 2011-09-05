@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.template.defaultfilters import lower,title
 from django.utils.encoding import smart_str
 from django.utils import simplejson
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 
 from itrack.pygeocoder import Geocoder
 from itrack.geocodecache.models import CachedGeocode
@@ -103,6 +103,7 @@ def Routecalc(request):
     conteudo = response.read()
     conn.close()
     
+    print response.status, response.reason, response.read()
     print conteudo
     
     return 'ae'
@@ -138,7 +139,7 @@ def Geocode(street,number,city,state):
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
     response = conn.getresponse()
-    #print response.status, response.reason, response.read()
+    print response.status, response.reason, response.read()
     #print response.status
     print "\n"
     conteudo = response.read()
@@ -251,20 +252,21 @@ def MaplinkRGeocode(lat,lng):
     
     xml = '''<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'''+str(lng)+'''</x><y>'''+str(lat)+'''</y></point><token>'''+str(ticket)+'''</token><tolerance>'''+str(10)+'''</tolerance></getAddress></soap:Body></soap:Envelope>'''
 
-    conn = httplib.HTTPConnection(url,timeout=3)
+    conn = httplib.HTTPConnection(url,timeout=5)
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","SOAPAction":"http://webservices.maplink2.com.br/getAddress","Host":"teste.webservices.apontador.com.br"}
     
-    try:
+    #try:
+    if (True):
         conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
         response = conn.getresponse()
-        print response.status
-        print "\n"
         conteudo = response.read()
         conn.close()
        
-        #conteudo = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><getAddressResponse xmlns="http://webservices.maplink2.com.br"><getAddressResult><key /><address><street>Estr dos Cunha</street><houseNumber>768</houseNumber><zip>13860-000</zip><district /><city><name>Aguaí</name><state>SP</state></city></address><zipL>13860-000</zipL><zipR>13860-000</zipR><carAccess>true</carAccess><dataSource /><point><x>-47.000186</x><y>-22.021521</y></point></getAddressResult></getAddressResponse></soap:Body></soap:Envelope>'
+        print response.status, response.reason, response.read()
+        print conteudo
+
         if response.status == 200:
-            print conteudo
+            #print conteudo
             gxml = ElementTree.fromstring(conteudo)
             
             street = gxml.find(".//{http://webservices.maplink2.com.br}street")
@@ -293,11 +295,12 @@ def MaplinkRGeocode(lat,lng):
             return [c.full_address,c.street+" "+c.number+", "+c.city,c.state,c.postal_code]
 
 
-        else:
-            raise NotImplementedError
-    except:
-        raise NotImplementedError
-        
+        #else:
+            #raise NotImplementedError
+    #except:
+        #raise NotImplementedError
+    
+    
     
         #print response.status, response.reason, response.read()
         
