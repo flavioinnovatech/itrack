@@ -238,6 +238,10 @@ function loadlateralgrid () {
               lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
               lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
               
+              //Selects the row on the main grid
+              if (jQuery("#list4").getGridParam('selarrrow') != 1)
+              	jQuery("#list4").setSelection(rowid,'true');
+              
               multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
               markers.addMarker(multimarkers[rowid]);
               multispectral.setCenter(new OpenLayers.LonLat(lng,lat),2);
@@ -245,6 +249,10 @@ function loadlateralgrid () {
             }
             
             else {
+              //Selects the row on the main grid
+              if (jQuery("#list4").getGridParam('selarrrow') != 0)
+                jQuery("#list4").setSelection(rowid,'false');
+              	
               markers.removeMarker(multimarkers[rowid]);
             }
           }
