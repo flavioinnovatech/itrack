@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import simplejson
+from django.views.decorators.csrf import csrf_exempt
 
 from itrack.reports.forms import ReportForm
 from itrack.equipments.models import CustomFieldName, Tracking, TrackingData
@@ -41,6 +42,18 @@ class UnicodeWriter(object):
         # empty queue
         self.queue.truncate(0)
     
+    def writerowxml(self, row) :
+        # Modified from original: now using unicode(s) to deal with e.g. ints
+        self.writer.writerow([unicode(s).encode("utf-8") for s in row])
+        # Fetch UTF-8 output from the queue ...
+        data = self.queue.getvalue()
+        data = data.decode("utf-8")
+        # ... and reencode it into the target encoding
+        data = data.encode(self.encoding)
+        # write to the target stream
+        self.stream.write(data)
+        # empty queue
+        self.queue.truncate(0)
     def writerows(self, rows):
         for row in rows:
             self.writerow(row)
@@ -53,6 +66,10 @@ def firstRowTitles(item):
     pos = [x[0] for x in VEHICLE_CHOICES].index(item)
     return VEHICLE_CHOICES[pos][1]
 
+
+def checkready(request):
+    return HttpResponse("<?xml version=\"1.0\" encoding=\"utf-8\"?><status>"+request.session.get('download','wait')+"</status>", mimetype='text/xml')
+@csrf_exempt
 def report(request,offset):
     
     no_information = 0
@@ -88,6 +105,7 @@ def report(request,offset):
                 vehicle = Vehicle.objects.get(pk=form.cleaned_data["vehicle"])
             except:
                 no_information = 1
+                request.session['download'] = 'wait'
                 return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
             if s.parent == None:
                 equip_system = s.name
@@ -116,8 +134,10 @@ def report(request,offset):
             
             if trackings.count() == 0:
                 no_information = 1
+                request.session['download'] = 'wait'
                 return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
             
+            request.session['download'] = 'started'
             datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings)&Q(type__type='Geocode'))
 
             tdata_dict = {}
@@ -135,58 +155,83 @@ def report(request,offset):
 
             title_row = map(lambda x: firstRowTitles(str(x)), form.cleaned_data['vehicle_fields']) + map(lambda x: unicode(x),display_fields)
             
-            
-            
-            #main loop for each tracking found
-            for date, tdata in tdata_dict.items():
-                item = {}
-                output_list = []
-                
-                #FUNCTIONAL PROGRAMMING RULEZ THE NATION: mount the list of elements of the address,
-                #sorted by the customfields names, or ["CEP","Cidade","Endereço","Estado"]
-                addrs = [x.value for x in sorted(tdata,key=lambda d: d.type.name) if x.type.type == 'Geocode']
-                addrs = str(addrs[2]+" - "+addrs[1]+", "+addrs[3]+" - "+addrs[0])
-                
-                #data for vehicle fields
-               
-                for data in form.cleaned_data['vehicle_fields']:
-                    if data != "address" and data != "date" and data !="system":
-                        output_list.append(vehicle.__dict__[data])
-                    elif data == "date":
-                        output_list.append(str(date))
-                    elif data == "system":
-                        output_list.append(equip_system)
-                    elif data == "address":
-                        output_list.append(addrs)
-
-                #data of the custom fields (inputs and outputs)
-                       
-                for x in display_fields:
-                    topush = "OFF"
-                    for y in tdata:
-                        if y.type == x:
-                            item[x.tag] = y.value
-                            topush = "ON"
-                    output_list.append(topush)
-
-                list_table.append(output_list)
-
-            
-            
             if request.POST['type'] == 'CSV':
+            
+                #main loop for each tracking found
+                for date, tdata in tdata_dict.items():
+                    item = {}
+                    output_list = []
+                    
+                    #FUNCTIONAL PROGRAMMING RULEZ THE NATION: mount the list of elements of the address,
+                    #sorted by the customfields names, or ["CEP","Cidade","Endereço","Estado"]
+                    addrs = [x.value for x in sorted(tdata,key=lambda d: d.type.name) if x.type.type == 'Geocode']
+                    addrs = str(addrs[2]+" - "+addrs[1]+", "+addrs[3]+" - "+addrs[0])
+                    
+                    #data for vehicle fields
+                   
+                    for data in form.cleaned_data['vehicle_fields']:
+                        if data != "address" and data != "date" and data !="system":
+                            output_list.append(vehicle.__dict__[data])
+                        elif data == "date":
+                            output_list.append(str(date))
+                        elif data == "system":
+                            output_list.append(equip_system)
+                        elif data == "address":
+                            output_list.append(addrs)
+
+                    #data of the custom fields (inputs and outputs)
+                           
+                    for x in display_fields:
+                        topush = "OFF"
+                        for y in tdata:
+                            if y.type == x:
+                                item[x.tag] = y.value
+                                topush = "ON"
+                        output_list.append(topush)
+                    list_table.append(output_list)
+                
                 response = HttpResponse(mimetype='text/csv')
                 response['Content-Disposition'] = 'attachment; filename=report.csv'
-                
                 writer = UnicodeWriter(response)
                 writer.writerow(title_row)
                 for line in list_table:
                     writer.writerow(line)
                 response.set_cookie("fileDownloadToken", request.POST['token'])    
+                request.session['download'] = 'done'
                 return response
-                
-            if request.POST['type'] == 'HTML':
-                json = simplejson.dumps(list_table)
-                return HttpResponse(json, mimetype='application/json')
-
-             
+            elif request.POST['type'] == 'HTML':
+                request.session['download'] = 'done'
+                response = HttpResponse(mimetype='text/xml')
+                response.write("<?xml version=\"1.0\" encoding=\"utf-8\"?><?xml-stylesheet type=\"text/xsl\" href=\"/media/xslt/report.xsl\"?><document>")
+                mount2 = "<head>"                
+                for title_col in title_row:
+                    mount2 += "<coltitle>" + str(unicode(title_col).encode("utf-8")) + "</coltitle>"
+                mount2 += "</head>"
+                response.write(mount2)
+                for date, tdata in tdata_dict.items():
+                    item = {}
+                    output_list = []
+                    mount = ""
+                    addrs = [x.value for x in sorted(tdata,key=lambda d: d.type.name) if x.type.type == 'Geocode']
+                    addrs = str(addrs[2]+" - "+addrs[1]+", "+addrs[3]+" - "+addrs[0])
+                    for data in form.cleaned_data['vehicle_fields']:
+                        if data != "address" and data != "date" and data !="system":
+                            mount += "<field>" + str(vehicle.__dict__[data]) + "</field>"
+                        elif data == "date":
+                            mount += "<field>" + str(date) + "</field>"
+                        elif data == "system":
+                            mount += "<field>" + str(equip_system) + "</field>"
+                        elif data == "address":
+                            mount += "<field>" + str(addrs) + "</field>"
+                    for x in display_fields:
+                        topush = "<field>" + "OFF" + "</field>"
+                        for y in tdata:
+                            if y.type == x:
+                                item[x.tag] = y.value
+                                topush = "<field>" + "ON" + "</field>"
+                        mount += str(topush)
+                    response.write("<row>"+mount+"</row>")
+                response.write("</document>")
+                return response
+    request.session['download'] = 'wait'
     return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
