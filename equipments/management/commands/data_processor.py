@@ -257,7 +257,6 @@ class Command(BaseCommand):
         for field in geocodefields:
             geoDict[field.tag] = field
         
-        print systemField, vehicleField
         
         # Index for the equipments
         etypes = EquipmentType.objects.all()

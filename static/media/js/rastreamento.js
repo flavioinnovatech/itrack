@@ -6,6 +6,55 @@ var multimarkers = new Array;
 var collection = new OpenLayers.Geometry.Collection();
 var tab;
 
+/* extending array to allow the pushnew: push only if the value isn't in the array */
+Array.prototype.pushNew=function(obj){
+    if(this.indexOf(obj) == -1){
+        this.push(obj);
+        return true;
+    }else{
+        return false;
+    }
+}
+/*end of extension*/
+
+
+/* function to clone a object*/
+function clone(obj) {
+    // Handle the 3 simple types, and null or undefined
+    if ((null == obj) || ("object" != typeof obj)) return obj;
+
+    // Handle Date
+    if (obj instanceof Date) {
+        var copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        var copy = [];
+        var i =0;
+        var len= obj.length;
+        for (i = 0,len = obj.length; i < len; ++i) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        var copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+}
+/*end of function to clone a object*/
+
+
 jQuery(document).ready(function(){ 
   
   openloading();
@@ -184,47 +233,46 @@ function loadGrid() {
           var colNames = [];
           
           //Campos fixos
-          colNames.push("Latitude");
-          colModel.push({name:"Latitude",hidden:true});
-          colNames.push("Longitude");
-          colModel.push({name:"Longitude",hidden:true});
-          colNames.push("Placa");
-          colModel.push({name:"Placa",align:"center",formatter:currencyFmatter,width:75});
-          colNames.push("Tipo veículo");
-          colModel.push({name:"Tipo veículo",align:"center",width:75});
-          colNames.push("Hora");
-          colModel.push({name:"Hora",align:"center"});
-          colNames.push("Cliente");
-          colModel.push({name:"Cliente",align:"center",width:75});
+          if(colNames.pushNew("Latitude"))  
+            colModel.pushNew({name:"Latitude",hidden:true});
+          if(colNames.pushNew("Longitude"))
+            colModel.pushNew({name:"Longitude",hidden:true});
+          if(colNames.pushNew("Placa"))
+            colModel.pushNew({name:"Placa",align:"center",formatter:currencyFmatter,width:75});
+          if(colNames.pushNew("Tipo veículo"))
+            colModel.pushNew({name:"Tipo veículo",align:"center",width:75});
+          if(colNames.pushNew("Hora"))
+            colModel.pushNew({name:"Hora",align:"center"});
+          if(colNames.pushNew("Cliente"))
+            colModel.pushNew({name:"Cliente",align:"center",width:75});
           
           //para cada veículo
           var nequips = 0;
           jQuery.each(data, function(key, equip) { 
             nequips++;
-            
            //hack para colocar endereço em primeiro
            addr = equip.geocode["Endereço"];
            delete equip.geocode["Endereço"];
 
-            colNames.push("Endereço");
-            colModel.push({name:"Endereço",align:"center",width:200});
+            if(colNames.pushNew("Endereço"))
+                colModel.pushNew({name:"Endereço",align:"center",width:200});
     
             //para cada info de geocode
             jQuery.each(equip.geocode, function(key3,info){
                 if (info != ""){
-                    colNames.push(key3);
-                    colModel.push({name:key3,align:"center",width:100});
+                    if(colNames.pushNew(key3))
+                        colModel.pushNew({name:key3,align:"center",width:100});
                 }
             });
-    
+            
             //fim do hack para botar endereço em primeiro
             equip.geocode["Endereço"] = addr;
     
             //para cada info do rastreador
             jQuery.each(equip.info, function(key2,info){
               if (!(key2 == "Latitude" || key2 == "Longitude")) {
-                colNames.push(key2);
-                colModel.push({name:key2.replace(" ","_"),align:"center",width:75});
+                if(colNames.pushNew(key2))
+                    colModel.pushNew({name:key2.replace(" ","_"),align:"center",width:75});
               }
             });
           });
@@ -286,9 +334,7 @@ function loadGrid() {
           //cria o objeto para cada linha
           myData = [];
           object = new Object;
-          jQuery.each(colNames, function(key, name) {
-              object[name] = "";
-          });
+
           
           
           if (olddata != null) {
@@ -298,6 +344,7 @@ function loadGrid() {
               });
           }
           
+          nequips = 0;
           jQuery.each(data, function(key, equip) {
             if (olddata != null) {
             
@@ -310,6 +357,7 @@ function loadGrid() {
                 });
                 */
             }
+              object = {};
               jQuery.each(colNames, function(keyx, name) {
                 
                 //Campos fixos
@@ -331,18 +379,19 @@ function loadGrid() {
                 }
                 
             });
-              myData.push(object);
+              nequips++;
+              object['id'] = nequips; 
+              myData.push(clone(object));
           });
-
+              
+              jQuery("#list4").jqGrid('addRowData','id',myData);
+              
               var i = 0;
               jQuery.each(myData, function(key, item) {
-              
-                jQuery("#list4").jqGrid('addRowData',i+1,item);
+                alert(item.toSource());
+                
                 i = i+1;
               });
-              
-              // jQuery("#load_list4").hide();
-              // jQuery("#lui_list4").hide();
               
               //HACK
               jQuery("table#list4").css("width","931px");

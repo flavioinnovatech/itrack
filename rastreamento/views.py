@@ -59,14 +59,17 @@ def loadData(request):
   else:
     vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
     
-  available_fields = CustomFieldName.objects.filter(system = request.session["system"]).filter(custom_field__availablefields__system = request.session["system"]).distinct().filter(custom_field__system = request.session["system"]).order_by('name')
-  #print available_fields
-  #data needs vehicle identification here
+  available_fields = CustomFieldName.objects.filter(
+    system = request.session["system"]).filter(
+        custom_field__availablefields__system = request.session["system"]).distinct().filter(
+        custom_field__system = request.session["system"]).order_by('name')
+        
+  #vehicle_fields = 
+  
   data = {}
   
   for i in vehicles:
     info = {}
-    # info["system"]
     info["id"] = i.id
     info["hora"] = {}
     info["veiculo"] = {}
@@ -103,8 +106,9 @@ def loadData(request):
     items = info["info"].keys()
     
     
-    # this mapping adds items that are OFF but should be displayed saved in the configs
-    map(lambda k: k not in items and info["info"].setdefault(k,"OFF"),fields_list)
+    # this mapping adds items that are OFF but should be displayed 
+    # saved in the configs and is present on the equip type
+    #map(lambda k: k not in items and info["info"].setdefault(k,"OFF"),fields_list)
     
     print info["info"]
     
