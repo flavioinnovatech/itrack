@@ -32,8 +32,14 @@
         margin-left: 15px;
     }
     
+    input[type="text"].datepicker {
+    	width:165px;
+    }
+    
 </style>
 <script type="text/javascript">
+//<![CDATA[
+first = true;
 $(document).ready(function(){
     
     var fileDownloadCheckTimer;
@@ -133,27 +139,109 @@ $(document).ready(function(){
     */
     $('#exportCSV').click(function(){
         $('input[name="type"]').attr("value","CSV");
+       blockUIForDownload();
+       fileDownloadCheckTimer2 = window.setInterval(function () {
+            $.ajax({
+                url: "/reports/checkready",
+                context : document.body,
+                success: function(xmlNode) {
+                    var mount = xmlNode.getElementsByTagName("status");
+                    var val = mount[0].firstChild.nodeValue;
+                    if(val=="done") {
+                        $.ajax({ url:"/reports/ready" });    
+                        window.clearInterval(fileDownloadCheckTimer2);
+                        finishDownload();
+                        //download_frame
+                        var frame = document.getElementById('_downloadframe');
+                        alert(frame.document.body.innerHTML);
+                    }
+                }            
+            });
+        }, 3000);
         document.forms["formz"].submit();
+
         //blockUIForDownload();
+
     });
     
     
     $('#exportPDF').click(function(){
         $('input[name="type"]').attr("value","PDF");
+       blockUIForDownload();
+       fileDownloadCheckTimer2 = window.setInterval(function () {
+            $.ajax({
+                url: "/reports/checkready",
+                context : document.body,
+                success: function(xmlNode) {
+                    var mount = xmlNode.getElementsByTagName("status");
+                    var val = mount[0].firstChild.nodeValue;
+                    if(val=="done") {
+                        $.ajax({ url:"/reports/ready" });    
+                        window.clearInterval(fileDownloadCheckTimer2);
+                        finishDownload();
+                        //download_frame
+                        var frame = document.getElementById('_downloadframe');
+                        alert(frame.document.body.innerHTML);
+                    }
+                }            
+            });
+        }, 3000);
         document.forms["formz"].submit();
-        blockUIForDownload();
     });
-    
+ 
+       
     $('#exportHTML').click(function(){
-        $('input[name="type"]').attr("value","HTML");
-        document.forms["formz"].submit();
+       $('input[name="type"]').attr("value","HTML");
+        var win = window.open("", "win", "width=640,height=480");
+        win.moveTo(100, 100);
+        win.document.open("text/html", "replace");
+        win.document.write("<html><head><title>Relatorio</title>");
+        win.document.write("<script type=\"text/javascript\" src=\"/media/js/loading.js\"><"+"/script>");
+        win.document.write("<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js' type'text/javascript'><" + "/script>");
+        win.document.write("<" + "script>");
+        win.document.write("window.onload=function() {");
+        win.document.write("document.forms[\"formz\"].submit();");
+        win.document.write("};");
+        win.document.write("<" + "/script>");
+        win.document.write("</head><body>Carregando relatório");
+        win.document.write("<form action=\".\"  method=\"post\" enctype=\"multipart/form-data\" id=\"formz\" name=\"\">");
+//        win.document.write("<input type='hidden' name='csrfmiddlewaretoken' value='" +$("input[name=csrfmiddlewaretoken]").attr("value")+ "'/"+">");
+        win.document.write("<input type='hidden' name='title' value='" +$("input[name=title]").attr("value")+ "'/"+">");
+        win.document.write("<input type='hidden' name='type' value='HTML'/"+">");
+        
+        
+        win.document.write("<input type='hidden' name='vehicle' value='" +$("select[name=vehicle]").attr("value")+ "'/"+">");
+        
+        win.document.write("<input type='hidden' name='period_start' value='" +$("input[name=period_start]").attr("value")+ "'/"+">");
+        win.document.write("<input type='hidden' name='period_end' value='" +$("input[name=period_end]").attr("value")+ "'/"+">");
+        
+        var arr0 = ["license_plate","date","type","address","system","color","year","model","manufacturer","chassi"];
+        for(var x = 0; x < arr0.length;x++) {
+            if($("option[value="+arr0[x]+"]").attr("selected")) {
+                win.document.write("<input type='hidden' name='vehicle_fields' value='"+arr0[x]+"'/"+">");
+            }
+        }
+        var arr = [30,33,9,10,35,20,17,7,5,34,13,26,12,25,21,29,1,32,3,2,37,18,36,19,28,27,22,24];
+        for(var x = 0; x < arr.length;x++) {
+            if($("option[value="+arr[x]+"]").attr("selected")) {
+                win.document.write("<input type='hidden' name='fields' value='" +arr[x]+"'/"+">");
+            }
+        }
+        win.document.write("<input type=\"hidden\" id=\"download_token_value_id\" name=\"token\" /"+">");
+        win.document.write("</form>");
+        win.document.write("</body>");
+        win.document.write("</html>");
+        win.document.close();
+        //document.forms["formz"].submit();
+        
     });
     
     if({{no_information}}){
-        alert("Não foram encontrados dados para a busca realizada. Por favor, tente novamente");    
+        alert("Não foram encontrados dados para a busca realizada. Por favor, tente novamente"); finishDownload();  
     }  
 });
-</script>
+
+//]]></script>
 
 {% endblock %}
 
@@ -168,7 +256,7 @@ $(document).ready(function(){
 <h2>Filtros</h2>
 <em>Informe qual o período e veículo do relatório, e quais campos devem aparecer na tabela.</em>
 {% endblock %}
-<form action="." method="post" enctype="multipart/form-data" id="formz">{% csrf_token %}
+<form action="." method="post" enctype="multipart/form-data" id="formz" target="download_frame">{% csrf_token %}
       <table>
     {% for field in form %}
 
@@ -209,10 +297,15 @@ $(document).ready(function(){
 <input type="hidden" id="download_token_value_id" name="token" />
 <input type="button" value="Exportar como CSV" class="table-button" style="padding:10px;float:right;" id="exportCSV" />
 <input type="button" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" />
+<input type="button" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" />
+
 <!-- <input type="submit" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" />
 <input type="submit" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" /> -->
 <p class="clear">
 </form>
-
+<div style="position:absolute;left;0px;top:0px;overflow:none;width:1px;height:1px;font-size:1px;visibility:hidden">
+<iframe id="_downloadframe" name="download_frame" onload="if(first) first = false; else load_doc();" width=0 heigh=1></iframe>
 </div>
+</div>
+
 {% endblock %}

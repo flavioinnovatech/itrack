@@ -69,33 +69,36 @@
     }
     
     .searchform {
-    background: -moz-linear-gradient(center top , #FFFFFF, #EDEDED) repeat scroll 0 0 transparent;
-    border: 1px solid #D2D2D2;
-    border-radius: 2em 2em 2em 2em;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-    display: inline-block;
-    padding: 3px 5px;
+	    background: -moz-linear-gradient(center top , #FFFFFF, #EDEDED) repeat scroll 0 0 transparent;
+	    border: 1px solid #D2D2D2;
+	    border-radius: 2em 2em 2em 2em;
+	    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+	    display: inline-block;
+	    padding: 3px 5px;
     }
     input[type=button].searchbutton {
-    background-image: url('/media/img/search16.png');
-    //background: -moz-linear-gradient(center top , #9E9E9E, #454545) repeat scroll 0 0 transparent;
-    border: 1px solid #494949;
-    border-radius: 2em 2em 2em 2em;
-    color: #FFFFFF;
-    font-size: 11px;
-    height: 27px;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
-    width: 27px;
-    }
-    input[type=text].searchfield {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border: 1px solid #BCBBBB;
-    border-radius: 2em 2em 2em 2em;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) inset;
-    outline: medium none;
-    padding: 6px 6px 6px 8px;
-    width: 202px;
-    height:auto;
+	    background-image: url('/media/img/search16.png');
+	    //background: -moz-linear-gradient(center top , #9E9E9E, #454545) repeat scroll 0 0 transparent;
+	    border: 1px solid #494949;
+	    border-radius: 2em 2em 2em 2em;
+	    color: #FFFFFF;
+	    font-size: 11px;
+	    height: 27px;
+	    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+	    width: 27px;
+	    }
+	input[type=text].searchfield {
+		background-image: url('/media/img/search16.png');
+		background-repeat:no-repeat;
+		background-position:190px center;
+	    //background: none repeat scroll 0 0 #FFFFFF;
+	    border: 1px solid #BCBBBB;
+	    border-radius: 2em 2em 2em 2em;
+	    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) inset;
+	    outline: medium none;
+	    padding: 6px 6px 6px 8px;
+	    width: 202px;
+	    height:auto;
     }
     a.icon{
         display:block;
@@ -212,7 +215,7 @@
 	  
 	      <div style="padding-bottom:10px;float:right;">
 	      	<div class="searchform">
-	      	    <a class="icon"></a>
+	      	    <!--<a class="icon"></a>-->
                 <input class="searchfield" type="text" onblur="if (this.value == '') {this.value = 'Filtrar veículo pela placa...';}" onfocus="if (this.value == 'Filtrar veículo pela placa...') {this.value = '';}" value="Filtrar veículo pela placa...">
             </div>
 	      </div>

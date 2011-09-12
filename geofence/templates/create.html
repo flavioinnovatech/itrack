@@ -57,6 +57,7 @@ var g;
 </script>
 <script type="text/javascript" src="/media/js/geofence_circle.js"></script>
 <script type="text/javascript" src="/media/js/geofence_polygon.js"></script>
+<script type="text/javascript" src="/media/js/geofence_route.js"></script>
 <!--<script type="text/javascript" src="http://teste.webservices.apontador.com.br/maplinkapi2/api.ashx?v=4&key=yxd0a03YeKHKN1z4yvdwRxpDaAkFRmLnzJVNa03OPuOFeZONeuO2P0Zuc0HITu9pzYLaT0SxGAkFRDSk"></script> 
 -->
 {% endblock %}
@@ -152,7 +153,7 @@ var g;
           </fieldset>
     		</form>
   		</div>
-  		<div id="map1" style="float:left;width:100%;height:300px;"></div>
+  		<div id="map3" style="float:left;width:100%;height:300px;"></div>
   	</div>
   	<div id="tabs-2" style="overflow:hidden;">
   		<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
@@ -182,7 +183,7 @@ var g;
   		</div>
   		<div id="map2" style="float:left;width:100%;height:300px;"></div>
   	</div>
-  	<div id="tabs-3">
+  	<div id="tabs-3" style="overflow:hidden">
   		<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
     		<form id="step1" class="steps" style="width:60%">
     		  <fieldset>
@@ -195,7 +196,7 @@ var g;
 	                  	<span>1. Endereço: </span><input id="routeinput1" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
 	                  	 n.º <input id="routenumber1" placeholder="" type="number" style="width:40px" />
 	                  	  Cidade: <input id="routecity1" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
-                 		  Estado: <select id="circleselect">
+                 		  Estado: <select id="circleselect1">
                         <option value="0" selected="selected">&nbsp;</option>
                         <option value="AC">Acre</option>
                         <option value="AL">Alagoas</option>
@@ -226,7 +227,44 @@ var g;
                         <option value="TO">Tocantins</option>
                         </select>
                  	</p>
-                  <li><p align="center"><span>2. Endereço: </span><input id="routeinput2" placeholder="Ex.:Rua Anchieta" type="text" /></p>
+                  <li>
+                  	<p align="center">
+                  	
+                  	<span>2. Endereço: </span><input id="routeinput2" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+	                  	 n.º <input id="routenumber2" placeholder="" type="number" style="width:40px" />
+	                  	  Cidade: <input id="routecity2" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
+                 		  Estado: <select id="circleselect2">
+                        <option value="0" selected="selected">&nbsp;</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goias</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                        </select>
+                  	
+                 	</p>
                 </ol>
                </div>
                <p align="center"><span id="addpoint"> + Adicionar ponto</span></p>
@@ -242,7 +280,7 @@ var g;
           </fieldset>
     		</form>
   		</div>
-  		<div id="map2" style="float:left;width:100%;height:300px;"></div>
+  		<div id="map1" style="float:left;width:100%;height:300px;"></div>
   	</div>
 </div>
 {% endblock %}

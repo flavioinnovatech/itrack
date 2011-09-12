@@ -49,6 +49,8 @@ url(r'^rastreamento/portatil/$', 'rastreamento.views.index'),
 url(r'^rastreamento/loadData/$', 'rastreamento.views.loadData'),
 url(r'^rastreamento/xhrtest/$', 'rastreamento.views.xhr_test'),
 
+
+
 url(r'^accounts/create/(\d+)/$', 'accounts.views.create_user'),
 url(r'^accounts/create/finish/$', 'accounts.views.create_finish'),
 
@@ -115,6 +117,7 @@ url(r'multispectral/$','main.views.multispectral'),
 url(r'openlayers/$','main.views.openlayers'),
 
 url(r'reports/(\d+)/$','reports.views.report'),
+url(r'^reports/checkready','reports.views.checkready'),
 
 
 (r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
