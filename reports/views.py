@@ -117,7 +117,7 @@ def report(request,offset):
                 no_information = 1
                 return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
             
-            datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings)&Q(type__type='Geocode'))
+            datas = TrackingData.objects.filter(Q(tracking__in=trackings)&Q(type__type='Geocode'))
 
             tdata_dict = {}
             for tdata in datas:
@@ -182,4 +182,11 @@ def report(request,offset):
                     writer.writerow(line)
                 response.set_cookie("fileDownloadToken", request.POST['token'])    
                 return response
+            if request.POST['type'] == 'HTML':
+                response = HttpResponse(mimetype='text/html')
+                writer = UnicodeWriter(response)
+                writer.writerow(title_row)
+                for line in list_table:
+                    writer.writerow(line)
+                return response;
     return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
