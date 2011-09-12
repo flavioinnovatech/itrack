@@ -73,7 +73,7 @@ $(document).ready(function(){
     });    
         
     $.timepicker.setDefaults({
-		timeOnlyTitle: 'Выберите время',
+		timeOnlyTitle: 'Selecionar um periodo:',
 		timeText: 'Horário',
 		hourText: 'Hora',
 		minuteText: 'Minuto',
@@ -159,6 +159,9 @@ $(document).ready(function(){
             });
         }, 3000);
         document.forms["formz"].submit();
+
+        //blockUIForDownload();
+
     });
     
     
@@ -295,6 +298,7 @@ $(document).ready(function(){
 <input type="button" value="Exportar como CSV" class="table-button" style="padding:10px;float:right;" id="exportCSV" />
 <input type="button" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" />
 <input type="button" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" />
+
 <!-- <input type="submit" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" />
 <input type="submit" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" /> -->
 <p class="clear">

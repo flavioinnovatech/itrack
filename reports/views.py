@@ -137,8 +137,10 @@ def report(request,offset):
                 request.session['download'] = 'wait'
                 return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
             
+
             request.session['download'] = 'started'
             datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings)&Q(type__type='Geocode'))
+
 
             tdata_dict = {}
             for tdata in datas:
@@ -233,5 +235,15 @@ def report(request,offset):
                     response.write("<row>"+mount+"</row>")
                 response.write("</document>")
                 return response
+
+            if request.POST['type'] == 'HTML':
+                response = HttpResponse(mimetype='text/html')
+                writer = UnicodeWriter(response)
+                writer.writerow(title_row)
+                for line in list_table:
+                    writer.writerow(line)
+                return response
+
     request.session['download'] = 'wait'
+
     return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
