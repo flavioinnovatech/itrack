@@ -18,7 +18,7 @@ from django.contrib.gis.geos import Point
 from itrack.pygeocoder import Geocoder
 from itrack.geocodecache.models import CachedGeocode
 
-def Routecalc(x0,y0,x1,y1,type):
+def Routecalc(array,type,tolerance):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     
@@ -110,7 +110,7 @@ def Geocode(street,number,city,state):
     
     xml = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getXY xmlns="http://webservices.maplink2.com.br"><address><street>'+street+'</street><houseNumber>'+str(number)+'</houseNumber><zip></zip><district></district><city><name>'+city+'</name><state>'+state+'</state></city></address><token>'+ticket+'</token></getXY></soap12:Body></soap12:Envelope>'
 
-    conn = httplib.HTTPConnection(url,timeout=5)
+    conn = httplib.HTTPConnection(url,timeout=3)
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
     response = conn.getresponse()
@@ -231,7 +231,7 @@ def MaplinkRGeocode(lat,lng):
     
     xml = '''<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'''+str(lng)+'''</x><y>'''+str(lat)+'''</y></point><token>'''+str(ticket)+'''</token><tolerance>'''+str(10)+'''</tolerance></getAddress></soap:Body></soap:Envelope>'''
 
-    conn = httplib.HTTPConnection(url,timeout=5)
+    conn = httplib.HTTPConnection(url,timeout=3)
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","SOAPAction":"http://webservices.maplink2.com.br/getAddress","Host":"teste.webservices.apontador.com.br"}
     
     try:

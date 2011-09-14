@@ -1,6 +1,34 @@
 $(document).ready(function(){
-	
+
 	loadmap();
+
+	$("#addpointroute").click(function(){
+    var i = $("input[id^=routeinput]").size() + 1;
+    
+    var content =  ($("#routeinputs ol li").html());
+    
+    $("<li>"+content+"</li>").appendTo('#routeinputs ol');
+    i++;
+  });
+  
+  $.post(
+        "/geofence/geocode/",
+        {address:address,number:number,city:city,state:state},
+        function (data) { alert('ae');
+          vlayer.destroyFeatures();
+        
+          lat = "-46.62";
+          lng = "-23.57";
+        
+          var center = new OpenLayers.Geometry.Point(lat,lng);
+          var circle = OpenLayers.Geometry.Polygon.createRegularPolygon(center,radius, 50);
+          vlayer.addFeatures(new OpenLayers.Feature.Vector(circle));
+        
+        
+        },'json'
+     
+  );
+  
   
 });
 
