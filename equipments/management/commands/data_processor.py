@@ -1,10 +1,12 @@
 # -*- coding:utf-8 -*-
-import sys 
+import sys
+import os 
 import socket
 import select
 import json
 import Queue
 import threading
+import curses
 
 from datetime import datetime
 import time
@@ -35,14 +37,95 @@ equipTypeIndex = {}
 geoDict = {}
 systemField = None
 vehicleField = None
+stdscr = None
 
+# >> ====================================== +-------------------------------+-\
+# >> ====================================== | THREAD TO OUTPUT TO THE SCREEN|  >
+# >> ====================================== +-------------------------------+-/
 
+class OutputThread(threading.Thread):
+    def run ( self ):
+        stdscr = curses.initscr()
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+        
+        
+        while True:
+            
+            stdscr.addstr(0, 0, "Infotrack: Data Processor", 
+                                curses.A_REVERSE)
+            
+            curr_y = 5
+            curr_x = 5
+            #stdscr.addstr(1,5, str(threading.enumerate()))
+            stdscr.addstr(2,5,'+------------------+---------------------------------------------------------------+',
+                    curses.color_pair(1) | curses.A_BOLD)
+            stdscr.addstr(3,5,'| Thread name      | Thread status                                                 |',
+                    curses.color_pair(1) | curses.A_BOLD)
+            stdscr.addstr(4,5,'+------------------+---------------------------------------------------------------+',
+                    curses.color_pair(1) | curses.A_BOLD)
+
+            for th in threading.enumerate():
+                if isinstance(th,ClientThread):
+                    stdscr.addstr(curr_y,curr_x,"| ",
+                                curses.color_pair(1) | curses.A_BOLD)
+                    stdscr.addstr(th.getName().ljust(13,' '),curses.color_pair(0))
+                    stdscr.addstr("\t| ", curses.color_pair(1) | curses.A_BOLD)
+                    stdscr.addstr(th.getStatus().ljust(55,' '),curses.color_pair(0))
+                    stdscr.addstr("\t| ", curses.color_pair(1) | curses.A_BOLD)
+                    curr_y+=1
+            stdscr.addstr(curr_y,5,'+------------------+---------------------------------------------------------------+',
+                    curses.color_pair(1) | curses.A_BOLD)
+            stdscr.addstr(curr_y+1,5, "Messages in the pool: "+
+                            str(clientPool.qsize()).rjust(2,' ')+
+                            "\t\t\t\t\tNumber of threads: "+
+                            str(threading.active_count()-2)+"\t\t", curses.A_BOLD)
+            
+            for i in range(10):
+                stdscr.addstr(curr_y+2+i,5,''.rjust(84,' ')) 
+                       
+            stdscr.refresh()
+            if ([sys.stdin],[],[]) == select.select([sys.stdin],[],[],0):
+                stdscr.refresh()
+                jnk = sys.stdin.read(1)
+                if jnk=='x':
+                    
+                    for th in threading.enumerate():
+                        
+                        if isinstance(th,ClientThread):
+                            th.stop()
+                            stdscr.clear()
+                        elif th.getName() == 'MainThread':
+                            #th.stop()
+                            pass
+                            
+                
 # >> ====================================== +-------------------------------+-\
 # >> ====================================== | THREAD TO PROCESS THE DATA    |  >
 # >> ====================================== +-------------------------------+-/
 
 class ClientThread(threading.Thread):
-   def run ( self ):
+   
+   #these functions before run() allows the thread to be stopped.
+   
+    def __init__(self):
+        super(ClientThread, self).__init__()
+        self._stop = threading.Event()
+        self._status = "Waiting to process data."
+    def stop(self):
+        self._stop.set()
+        self._status = "Stopping thread."
+
+    def stopped(self):
+        return self._stop.isSet()
+   
+    def getStatus(self):
+        return self._status
+
+    def setStatus(self,st):
+        self._status = st
+        
+    def run(self):
       # Have our thread serve "forever":
       
       #System and Vehicle custom fields
@@ -51,14 +134,20 @@ class ClientThread(threading.Thread):
       vehicleField = CustomField.objects.get(tag="Vehicle")
       root_system = System.objects.get(parent=None)
       while True:
-
+         
+         if self.stopped() and clientPool.qsize() == 0:
+            self.setStatus("Thread stopped.")
+            break
+            
+         
          # Get a client out of the queue
-         client = clientPool.get()
-
+         try:
+            client = clientPool.get(False)
+         except Queue.Empty:
+            client = None
          # Check if we actually have an actual client in the client variable:
          if client != None:
-
-            print 'Received connection:', client[1][0]
+            self.setStatus('Processing data from '+client[1][0])
             inbox =  client[0].recv(1024)
             
             datadict = json.loads(inbox)
@@ -82,10 +171,14 @@ class ClientThread(threading.Thread):
                             searchdate = datetime.strptime( 
                                 datadict['Identification']['Date'],
                                 "%Y/%m/%d %H:%M:%S")
+                            
                         except ValueError:
                             searchdate = datetime.strptime( 
                                 datadict['Identification']['Date'],
                                 "%Y-%m-%d %H:%M:%S")
+                        
+                        self.setStatus('Tracking at: '+str(searchdate)+
+                        ' from equip: '+ str(e))
                                 
                         #create the tracking
                         t = Tracking(
@@ -117,7 +210,6 @@ class ClientThread(threading.Thread):
                                     io_filtered[cf] = v[cf.tag]                                            
                             
                         #inserting the tracking datas under the tracking head
-                        print io_filtered.items()
                         
                         for k_cf,v in io_filtered.items():                                
                             TrackingData(
@@ -141,9 +233,9 @@ class ClientThread(threading.Thread):
                                         str(datadict['GPS']['Lat']),
                                         str(datadict['GPS']['Long'])
                                       )
-                        print geocodeinfo              
+                                    
                         #saving the acquired geocode information
-                        print geocodeinfo[1],geocodeinfo[2],geocodeinfo[3],geocodeinfo[4]
+                        
                         TrackingData(   tracking=t, 
                                         type=geoDict['Address'],
                                         value=geocodeinfo[1]
@@ -160,7 +252,8 @@ class ClientThread(threading.Thread):
                                         type=geoDict['PostalCode'],
                                         value=geocodeinfo[4]
                                     ).save()
-                        
+                                    
+                        self.setStatus('Reverse geocode finished. ')
                         # and adding extra vehicle and system custom fields
                         TrackingData(   tracking=t,
                                         type=vehicleField,
@@ -182,7 +275,6 @@ class ClientThread(threading.Thread):
                                 
                           # check if there's enough time between the last alert 
                           # sent and a possibly new one
-                          print total_seconds
                           if total_seconds > vehicle.threshold_time*60:
                             vehicle.last_alert_date = searchdate
                             vehicle.save()
@@ -202,31 +294,33 @@ class ClientThread(threading.Thread):
                                 if k.type in ['Input','LinearInput']:
                                     for alert in alerts:
                                         if AlertComparison(self,alert,k,v):
+                                            self.setStatus('Found alert to send.')
                                             AlertSender(self,alert,vehicle,
                                                         searchdate,geocodeinfo)
                             
                             #checking the geofence alerts
-                            print alerts
                             for alert in geoalerts:
                                 if GeofenceComparison( self,alert,
                                             io["GPS"]["Lat"], 
                                             io["GPS"]["Long"]
                                             ):
+                                    self.setStatus('Found geofence alert to send.')
                                     AlertSender(self,alert,vehicle,searchdate)
                           else: 
                               # if the vehicle never had thrown alerts, 
                               # give him a last alert date
                               vehicle.last_alert_date = searchdate
                               vehicle.save()
-                                  
+                              
+                        self.setStatus("Waiting to process data.")
+                                    
                     except ObjectDoesNotExist:
-                        print ('Equipment without vehicle.\n'+
-                               'Dropping received data.')
+                        self.setStatus("Equipment without vehicle. Dropping received data.")
                         pass
                 except ObjectDoesNotExist:
-                    print ('Equipment not found on the database.\n'+
-                           'Creating and inserting under the root system')
-                    #TODO: create equipment under the root system
+                    self.setStatus('Equipment not found on the database.'+
+                        'Creating and inserting under the root system')
+                    
                     try:
                         eq = Equipment(
                             name = datadict['Identification']['Serial'],
@@ -241,21 +335,35 @@ class ClientThread(threading.Thread):
                         pass
 
                 except KeyError:
-                    print ('Equipment Type "'+str(type_id) +'" not in the '+
-                          'recognized devices.\nDropping recived data.')
+                    self.setStatus('Equip Type "'+str(type_id) + '" not '+
+                    'recognized. Dropping recived data.')
                           
             elif datadict['Type'] == 'Command':
                 pass
             
             client[0].close()
-            print 'Closed connection:', client[1][0]
-            print threading.enumerate()
+            
+         else:
+            self.setStatus("Waiting to process data.")
+            
+            
 
 # >> ====================================== +-------------------------------+-\
 # >> ====================================== | MAIN COMMAND PROCEDURE        |  >
 # >> ====================================== +-------------------------------+-/
 
 class Command(BaseCommand):
+    
+    def __init__(self):
+        super(BaseCommand, self).__init__()
+        self._stop = False
+    
+    def stop(self):
+        self._stop = True
+    
+    def stopped(self):
+        return self._stop
+        
     def handle(self, *args, **options):
     
         # Custom fields per equip type dict
@@ -276,16 +384,24 @@ class Command(BaseCommand):
         for equiptype in etypes:
             equipTypeIndex[str(equiptype.product_id)] = equiptype
         
-        # Start two threads:
-        for x in xrange(2):
+        # Start ten threads:
+        for x in xrange(10):
             ClientThread().start()
-
+        
+        
         # Set up the server:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind(('', PROCESSOR_PORT))
         server.listen(5)
         print "Server listening. The recognized equipment types are:"
         print equipTypeDict
+        
+        OutputThread().start()
         # Have the server serve "forever":
         while True:
-            clientPool.put(server.accept())
+            try:
+                if self.stopped():
+                    exit(0)
+                clientPool.put(server.accept(),False)
+            except KeyboardInterrupt:
+                pass

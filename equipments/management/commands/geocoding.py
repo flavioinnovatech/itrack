@@ -75,7 +75,7 @@ def Routecalc(array,type,tolerance):
         
         if type == 'geofence':
             ls = LineString(multiline)
-            print ls
+
         
         else:
             json = simplejson.dumps(route)
@@ -94,11 +94,9 @@ def Maploader(request):
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/MapRender/MapRender.asmx", xml, headers)
     response = conn.getresponse()
-    print response.status, response.reason, response.read()
     conteudo = response.read()
     conn.close()
     
-    print conteudo
     
     return 'ae'
 
@@ -114,9 +112,6 @@ def Geocode(street,number,city,state):
     headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
     response = conn.getresponse()
-    print response.status, response.reason, response.read()
-    #print response.status
-    print "\n"
     conteudo = response.read()
     conn.close()
     
@@ -124,7 +119,6 @@ def Geocode(street,number,city,state):
 
     
     if response.status == 200:
-        print conteudo
         gxml = ElementTree.fromstring(conteudo)
         
         lng = gxml.find(".//{http://webservices.maplink2.com.br}x")
@@ -185,7 +179,7 @@ def ReverseGeocode(lat,lng):
                     return MaplinkRGeocode(lat,lng)
                 except NotImplementedError:
                     #fails silently returning empty strings
-                    return [str(lat)+","+str(lng),"","","",""]
+                    return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
             
 def MultispectralRGeocode(lat,lng):
     ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C"
@@ -240,8 +234,6 @@ def MaplinkRGeocode(lat,lng):
         conteudo = response.read()
         conn.close()
        
-        print response.status, response.reason, response.read()
-        print conteudo
 
         if response.status == 200:
             #print conteudo
@@ -271,10 +263,9 @@ def MaplinkRGeocode(lat,lng):
             c.save()
         
             return [c.full_address,c.street+" "+c.number,c.city,c.state,c.postal_code]
-
-
+        raise NotImplementedError
         #else:
-            #raise NotImplementedError
+            #
     except:
         raise NotImplementedError
     
