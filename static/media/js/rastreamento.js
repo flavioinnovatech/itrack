@@ -290,7 +290,7 @@ function loadGrid() {
               colModel:colModel,
               multiselect: true, 
               loadui:"block",
-              caption: "Selecione os veículos na tabela e clique no botão abaixo para visualizá-los no mapa:",
+              caption: "Selecione os veículos na tabela e clique no botão acima para visualizá-los no mapa:",
               autoheight:true,
               autowidth: true,
               shrinkToFit: false,
