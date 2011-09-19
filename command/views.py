@@ -6,6 +6,9 @@ import sys
 import select
 from xml.etree import cElementTree as ElementTree
 import time
+import datetime
+import maxtrack
+
 from datetime import datetime
 
 from django.shortcuts import render_to_response
@@ -191,42 +194,83 @@ def create(request,offset,vehicle=None):
                     error_title = 'Erro: O atuador selecionado não existe'
                     error = 'O comando a ser enviado selecionou um atuador inexistente para o tipo de equipamento cadastrado.'
                     return render_to_response("command/templates/error.html",locals(),context_instance=RequestContext(request),)
-                
+                except:
+                    pass
+                    
                 #checks if there's no other command in process for this equipment
                 
                 try:
-                    command_check = Command.objects.filter(equipment = c.equipment).exclude(state=u'2')
+                    command_check = Command.objects.filter(equipment = c.equipment).exclude(state=u'2').exclude(state=u'3')
                     print len(command_check)
                     if len(command_check) > 0:
                         return render_to_response("command/templates/error2.html",locals(),context_instance=RequestContext(request),)
                 except:
                     pass
+                    
+                _equiptype = str(c.equipment.equipment.type).strip()
+                if _equiptype == "MTC-400" or _equiptype == "MTC-500" :
+                    #MAX TRACK
+                    host = settings.MXT_IP
+                    port = settings.MXT_PORT
+                    skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   
+                    skt.connect((host,port))
+                    mount0 = ""
+                    mount0 += "<command><equipment>" + str(c.equipment.equipment.name).strip() + "</equipment>"
+                    mount0 += "<serial>" + str(c.equipment.equipment.serial).strip() + "</serial>"
+                    mount0 += "<type>" + str(c.equipment.equipment.type).strip() + "</type>"
+                    mount0 += "<function>" + str(c.type.custom_field.tag).strip() + "</function>"
+                    t = datetime.now()
+                    mount0 += "<id>" + str(time.mktime(t.timetuple())).strip() + "</id>"
+                    mount0 += "<argument>" + str(c.action) + "</argument></command>"
+                    msg = mount0;
+                    totalsent = 0   
+                    while totalsent < len(msg):   
+                        sent = skt.send(msg[totalsent:])   
+                        if sent == 0:
+                            c.system = s
+                            c.state = 3
+                            c.time_sent = datetime.now()
+                            c.save()                        
+                            error_title = 'Erro: falha na transmissao.'
+                            error = 'Ocorreu uma falha na transmissao do comando para a central. Tente novamente.'
+                            return render_to_response("command/templates/error.html",locals(),context_instance=RequestContext(request),)
+                    
+                        totalsent = totalsent + sent
+                    chunk = skt.recv(4096)
+                    # WAIT FOR RESPONSE??
+                    skt.close()
+                    c.system = s
+                    c.state = 2
+                    c.time_sent = datetime.now()
+                    c.save()
+                    return HttpResponseRedirect("/commands/create/finish")
+                else:                
                 
-                #accessing the protocols to send the command
-                sess = CPRSession.objects.all()[0]
-                
-                ack_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"98\" Reason=\"0\" Save=\"FALSE\"/><Data /></Package>"
-                
-                s_out = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s_out.connect((TCP_IP, TCP_PORT))
-                
-                seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+sess.key+"\" /></Package>"
-                
-                s_out.send(seckey_msg)
-                data2 = s_out.recv(BUFFER_SIZE)
-                
-                
-                blocker_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"6\" />\n  <Data Account=\"2\" ProductId=\""+str(c.equipment.equipment.type.product_id)+"\" Serial=\""+c.equipment.equipment.serial+"\" Priority=\"2\" />\n  <Command "+c.type.custom_field.tag+"=\""+c.action+"\"/>\n</Package>"
-                
-                s_out.send(blocker_msg)
-                data2 = s_out.recv(BUFFER_SIZE)
-                s_out.send(ack_msg)
-                
-                c.system = s
-                c.state = 0
-                c.time_sent = datetime.now()
-                c.save()
-                return HttpResponseRedirect("/commands/create/finish")
+                    #accessing the protocols to send the command
+                    sess = CPRSession.objects.all()[0]
+                    
+                    ack_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"98\" Reason=\"0\" Save=\"FALSE\"/><Data /></Package>"
+                    
+                    s_out = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    s_out.connect((TCP_IP, TCP_PORT))
+                    
+                    seckey_msg = "<?xml version=\"1.0\" encoding=\"ASCII\"?><Package><Header Version=\"1.0\" Id=\"2\" /><Data SessionId=\""+sess.key+"\" /></Package>"
+                    
+                    s_out.send(seckey_msg)
+                    data2 = s_out.recv(BUFFER_SIZE)
+                    
+                    
+                    blocker_msg =  "<?xml version=\"1.0\" encoding=\"ASCII\"?>\n<Package>\n  <Header Version=\"1.0\" Id=\"6\" />\n  <Data Account=\"2\" ProductId=\""+str(c.equipment.equipment.type.product_id)+"\" Serial=\""+c.equipment.equipment.serial+"\" Priority=\"2\" />\n  <Command "+c.type.custom_field.tag+"=\""+c.action+"\"/>\n</Package>"
+                    
+                    s_out.send(blocker_msg)
+                    data2 = s_out.recv(BUFFER_SIZE)
+                    s_out.send(ack_msg)
+                    
+                    c.system = s
+                    c.state = 0
+                    c.time_sent = datetime.now()
+                    c.save()
+                    return HttpResponseRedirect("/commands/create/finish")
         else:
         
             e_set = Equipment.objects.filter(system = int(offset))
@@ -294,4 +338,46 @@ def delete(request,offset):
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def delete_finish(request):
     return render_to_response("command/templates/delete_finish.html",locals())
+    
+    
+def check_state_onserver(request):
+
+    cmds = Command.objects.filter(system = system)
+    for cmd in cmds:
+        if cmd.state < 2: # need to be verified (not ready or fail)
+            pass
+        
+    # verifica no maxtrack se os commandos enviados estao prontos
+    host = settings.MXT_IP
+    port = settings.MXT_PORT
+    skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   
+    skt.connect((host,port))
+    mount0 = ""
+    mount0 += "<command><equipment>InfotrackWS</equipment>"
+    mount0 += "<serial>" + str(c.equipment.equipment.serial).strip() + "</serial>"
+    mount0 += "<type>" + str(c.equipment.equipment.type).strip() + "</type>"
+    mount0 += "<function>" + str(c.type.custom_field.tag).strip() + "</function>"
+    mount0 += "<argument>" + str(c.action) + "</argument></command>"
+    msg = mount0;
+    totalsent = 0   
+    while totalsent < len(msg):   
+        sent = skt.send(msg[totalsent:])   
+        if sent == 0:
+            c.system = s
+            c.state = 3
+            c.time_sent = datetime.now()
+            c.save()                        
+            error_title = 'Erro: falha na transmissao.'
+            error = 'Ocorreu uma falha na transmissao do comando para a central. Tente novamente.'
+            return render_to_response("command/templates/error.html",locals(),context_instance=RequestContext(request),)
+    
+        totalsent = totalsent + sent
+    chunk = skt.recv(4096)
+                    
+    
+    response = HttpResponse(mimetype='text/xml')
+    writer = UnicodeWriter(response)
+    writer.writerow("<html><head></head><body>ok</body></html>")
+    return response
+    
     
