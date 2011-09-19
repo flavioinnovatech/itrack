@@ -37,10 +37,12 @@ DATABASES = {
 #CPR_IP = '187.115.25.240'
 CPR_IP = '192.168.1.119'
 MXT_IP = '192.168.1.114'
+MXT_PORT = 5001
 PROCESSOR_IP = '127.0.0.1'
 PROCESSOR_PORT = 9000
 
 EXTRACTOR_IP = '192.168.1.119'
+
 
 #EXTRACTOR_IP = '187.115.25.240'
 
@@ -138,9 +140,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'itrack.urls'
 
 TEMPLATE_DIRS = (
-		PROJECT_ROOT_PATH,
+    PROJECT_ROOT_PATH,
     "/home/leandro/infotrack-git/itrack/",
-    
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

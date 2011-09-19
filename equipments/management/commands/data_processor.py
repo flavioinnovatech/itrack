@@ -118,12 +118,23 @@ class ClientThread(threading.Thread):
                             
                         #inserting the tracking datas under the tracking head
                         print io_filtered.items()
+                        
                         for k_cf,v in io_filtered.items():                                
                             TrackingData(
                                     tracking=t,
                                     type=k_cf,
                                     value=v
                             ).save()
+                        
+                        cflist = [x[0] for x in io_filtered.items()]
+                        
+                        for cf in equipTypeDict[int(type_id)]:
+                            if cf not in cflist:
+                                TrackingData(
+                                    tracking=t,
+                                    type=cf,
+                                    value="OFF"
+                                )
                             
                         #reverse geocoding in the background
                         geocodeinfo = ReverseGeocode(
@@ -132,6 +143,7 @@ class ClientThread(threading.Thread):
                                       )
                         print geocodeinfo              
                         #saving the acquired geocode information
+                        print geocodeinfo[1],geocodeinfo[2],geocodeinfo[3],geocodeinfo[4]
                         TrackingData(   tracking=t, 
                                         type=geoDict['Address'],
                                         value=geocodeinfo[1]

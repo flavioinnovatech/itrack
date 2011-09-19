@@ -388,7 +388,7 @@ function loadGrid() {
               
               var i = 0;
               jQuery.each(myData, function(key, item) {
-                alert(item.toSource());
+                
                 
                 i = i+1;
               });
