@@ -212,8 +212,8 @@ def MultispectralRGeocode(lat,lng):
 
     
 def GoogleGeocode(lat,lng):
-    #result = Geocoder.reverse_geocode(lat,lng)
-    raise NotImplementedError
+    result = Geocoder.reverse_geocode(lat,lng)
+    #raise NotImplementedError
     #print
     #addr = unicode(result[0])
 

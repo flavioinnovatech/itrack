@@ -138,6 +138,7 @@ class Command(BaseCommand):
         self.stdout.write('>> Starting main loop.\n')
         while True:
             # if there is messages to read in the socket
+
             if ([s],[],[]) == select.select([s],[],[],0):
             
                 # reads and inform the acknowledgement of the message
@@ -145,7 +146,9 @@ class Command(BaseCommand):
                 s.send(ack_msg)
                                 
                 xml =  ElementTree.fromstring(inbox.strip(""))
-                xmldict = XmlDictConfig(xml)
+                print inbox
+                print '>>','--------------------------------------------------------'
+                '''xmldict = XmlDictConfig(xml)
                 
                 #mounting the dict to be processed. The format used here should be the same for any other extractor build.
                 
@@ -177,6 +180,7 @@ class Command(BaseCommand):
                 processor_client.connect((PROCESSOR_IP, PROCESSOR_PORT))
                 processor_client.send(json.dumps(formatted_output))
                 processor_client.close()
-                print "----------------------------------------------------------------"
+                
+                
                 #remove that after debugging
-                #exit(0)
+                #exit(0)'''
