@@ -234,40 +234,43 @@ def MaplinkRGeocode(lat,lng):
         conteudo = response.read()
         conn.close()
        
-
-        if response.status == 200:
-            #print conteudo
-            gxml = ElementTree.fromstring(conteudo)
-            
-            street = gxml.find(".//{http://webservices.maplink2.com.br}street")
-            city = gxml.find(".//{http://webservices.maplink2.com.br}name")
-            state = gxml.find(".//{http://webservices.maplink2.com.br}state")
-            number = gxml.find(".//{http://webservices.maplink2.com.br}houseNumber")
-            postal = gxml.find(".//{http://webservices.maplink2.com.br}zip")
-            
-            c = CachedGeocode(
-                lat = float(lat),
-                lng = float(lng),
-                full_address = "",
-                number = number.text,
-                street = title(lower(street.text)),
-                city = title(city.text),
-                state = state.text,
-                country = "Brasil",
-                postal_code = postal.text,
-                #administrative_area = title(lower(address[0].get("Bairro")))
-            )
-        
-            c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
-            
-            c.save()
-        
-            return [c.full_address,c.street+" "+c.number,c.city,c.state,c.postal_code]
-        raise NotImplementedError
-        #else:
-            #
     except:
-        raise NotImplementedError
+      raise NotImplementedError
+
+    if response.status == 200:
+        print conteudo
+        gxml = ElementTree.fromstring(conteudo)
+        
+        street = gxml.find(".//{http://webservices.maplink2.com.br}street")
+        city = gxml.find(".//{http://webservices.maplink2.com.br}name")
+        state = gxml.find(".//{http://webservices.maplink2.com.br}state")
+        number = gxml.find(".//{http://webservices.maplink2.com.br}houseNumber")
+        postal = gxml.find(".//{http://webservices.maplink2.com.br}zip")
+        
+        c = CachedGeocode(
+            lat = float(lat),
+            lng = float(lng),
+            full_address = "",
+            number = number.text,
+            street = title(lower(street.text)),
+            city = title(city.text),
+            state = state.text,
+            country = "Brasil",
+            postal_code = postal.text,
+            #administrative_area = title(lower(address[0].get("Bairro")))
+        )
+    
+        c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
+        
+        c.save()
+    
+        return [c.full_address,c.street+" "+c.number,c.city,c.state,c.postal_code]
+        #raise NotImplementedError
+    else:
+      print conteudo
+            #
+    #except:
+    #    raise NotImplementedError
     
     
     
