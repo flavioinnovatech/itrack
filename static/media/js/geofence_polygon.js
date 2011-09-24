@@ -26,7 +26,36 @@ jQuery(document).ready(function(){
   }
   
   $("#step1polygon").submit(function(){
-    // Get each address then geocode them here
+    $("#polygoninputs ol li").each(function(){
+    	
+    	address =  $(".polygoninput", this).val();
+    	number =  $(".polygonnumber", this).val();
+    	city =  $(".polygoncity", this).val();
+    	state =  $(".polygonstate", this).val();
+    	
+    	if(address != '' && number != '' && city != '' && state != '') {
+    		$.post(
+	        "/geofence/geocode/",
+	        {address:address,number:number,city:city,state:state},
+	        function (data) { alert('ae');
+	          
+	          lat = "-46.62";
+	          lng = "-23.57";
+	          
+	          //TODO: Append the returned coordinates here
+	        
+	        },'json'
+	     
+	  		);
+    	}
+    	
+    	else {
+	  		jQuery("#generaldialog").html("");
+        	jQuery("#generaldialog").attr("title","Endereço(s) incorreto(s)");
+        	$("#generaldialog").append("Por favor preencha todos os campos para cada endereço.");
+        	jQuery("#generaldialog").dialog({show: "blind",modal:true});
+	  	}
+    });
     
     var p1 = new OpenLayers.Geometry.Point(-46.62,-23.57);
     var p2 = new OpenLayers.Geometry.Point(-47,-22);

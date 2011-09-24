@@ -18,7 +18,7 @@ from django.contrib.gis.geos import Point
 from itrack.pygeocoder import Geocoder
 from itrack.geocodecache.models import CachedGeocode
 
-def Routecalc(array,type,tolerance):
+def Routecalc(array,tolerance):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     

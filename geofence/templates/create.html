@@ -172,10 +172,10 @@ var g;
               <div id="polygoninputs" style="overflow: auto; height: 101px;">
                 <ol class="decimal">
                   <li>
-	                  	<span>Endereço: </span><input id="routeinput1" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-	                  	 n.º <input id="routenumber1" placeholder="" type="number" style="width:40px" />
-	                  	  Cidade: <input id="routecity1" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
-                 		  Estado: <select id="circleselect1">
+	                  	<span>Endereço: </span><input class="polygoninput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+	                  	 n.º <input class="polygonnumber" placeholder="" type="number" style="width:40px" />
+	                  	  Cidade: <input class="polygoncity" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
+                 		  Estado: <select class="polygonselect">
                         <option value="0" selected="selected">&nbsp;</option>
                         <option value="AC">Acre</option>
                         <option value="AL">Alagoas</option>
@@ -207,10 +207,10 @@ var g;
                         </select>
                  	</li>
                   <li>
-	                  	<span>Endereço: </span><input id="routeinput1" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-	                  	 n.º <input id="routenumber1" placeholder="" type="number" style="width:40px" />
-	                  	  Cidade: <input id="routecity1" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
-                 		  Estado: <select id="circleselect1">
+	                  	<span>Endereço: </span><input class="polygoninput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+	                  	 n.º <input class="polygonnumber" placeholder="" type="number" style="width:40px" />
+	                  	  Cidade: <input class="polygoncity" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
+                 		  Estado: <select class="polygonselect">
                         <option value="0" selected="selected">&nbsp;</option>
                         <option value="AC">Acre</option>
                         <option value="AL">Alagoas</option>
@@ -242,10 +242,10 @@ var g;
                         </select>
                  	</li>
                  	<li>
-	                  	<span>Endereço: </span><input id="routeinput1" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-	                  	 n.º <input id="routenumber1" placeholder="" type="number" style="width:40px" />
-	                  	  Cidade: <input id="routecity1" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
-                 		  Estado: <select id="circleselect1">
+	                  	<span>Endereço: </span><input class="polygoninput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+	                  	 n.º <input class="polygonnumber" placeholder="" type="number" style="width:40px" />
+	                  	  Cidade: <input class="polygoncity" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
+                 		  Estado: <select class="polygonselect">
                         <option value="0" selected="selected">&nbsp;</option>
                         <option value="AC">Acre</option>
                         <option value="AL">Alagoas</option>
@@ -296,18 +296,18 @@ var g;
   	</div>
   	<div id="tabs-3" style="overflow:hidden">
   		<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
-    		<form id="step1" class="steps" style="width:70%">
+    		<form id="step1route" action="" class="steps" style="width:70%">
     		  <fieldset>
             <legend>1º Passo - Escolha os pontos para os vértices da rota e um espaço de tolerância</legend>
-              <p>Digite um espaço de tolerância (distância máxima que o veículo pode se afastar da rota): <input type="number" style="width:50px"/> metros</p>
+              <p>Digite um espaço de tolerância (distância máxima que o veículo pode se afastar da rota): <input id="routetolerance" type="number" style="width:50px"/> metros</p>
               <p>Digite o endereço para os vértices da rota (mínimo 2):</p>
               <div id="routeinputs" style="overflow: auto; height: 81px;">
                 <ol class="decimal">
                   <li>
-	                  	<span>Endereço: </span><input id="routeinput1" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-	                  	 n.º <input id="routenumber1" placeholder="" type="number" style="width:40px" />
-	                  	  Cidade: <input id="routecity1" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
-                 		  Estado: <select id="circleselect1">
+	                  	<span>Endereço: </span><input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+	                  	 n.º <input class="routenumber" placeholder="" type="number" style="width:40px" />
+	                  	  Cidade: <input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
+                 		  Estado: <select class="circleselect">
                         <option value="0" selected="selected">&nbsp;</option>
                         <option value="AC">Acre</option>
                         <option value="AL">Alagoas</option>
@@ -339,10 +339,10 @@ var g;
                         </select>
                  	</li>
                   <li>
-	                  	<span>Endereço: </span><input id="routeinput1" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-	                  	 n.º <input id="routenumber1" placeholder="" type="number" style="width:40px" />
-	                  	  Cidade: <input id="routecity1" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
-                 		  Estado: <select id="circleselect1">
+	                  	<span>Endereço: </span><input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+	                  	 n.º <input class="routenumber" placeholder="" type="number" style="width:40px" />
+	                  	  Cidade: <input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" /> 
+                 		  Estado: <select class="routeselect">
                         <option value="0" selected="selected">&nbsp;</option>
                         <option value="AC">Acre</option>
                         <option value="AL">Alagoas</option>
@@ -381,7 +381,7 @@ var g;
                <p align="center"><input type="submit" value="Montar polígono com os endereços acima"/></p>
           </fieldset>
     		</form>
-    		<form id="step2" class="steps" style="width:28%;">
+    		<form id="step2route" action="" class="steps" style="width:28%;">
     		  <fieldset>
             <legend>2º Passo - Salvar cerca eletrônica</legend>
              <p>Após confirmar a visualização da cerca no mapa e sua distância, digite um nome para a cerca e clique em salvar:</p><br/>
