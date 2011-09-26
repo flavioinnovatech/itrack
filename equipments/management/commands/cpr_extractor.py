@@ -148,7 +148,7 @@ class Command(BaseCommand):
                 xml =  ElementTree.fromstring(inbox.strip(""))
                 print inbox
                 print '>>','--------------------------------------------------------'
-                '''xmldict = XmlDictConfig(xml)
+                xmldict = XmlDictConfig(xml)
                 
                 #mounting the dict to be processed. The format used here should be the same for any other extractor build.
                 
@@ -183,4 +183,4 @@ class Command(BaseCommand):
                 
                 
                 #remove that after debugging
-                #exit(0)'''
+                #exit(0)
