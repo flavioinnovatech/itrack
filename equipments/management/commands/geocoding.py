@@ -22,7 +22,7 @@ def Routecalc(array,tolerance):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     
-    url = "teste.webservices.apontador.com.br"
+    url = "webservices.apontador.com.br"
     
     x0 = "-49.2411452173913"
     y0 = "-25.4008260869565"
@@ -87,7 +87,7 @@ def Maploader(request):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     
-    url = "teste.webservices.apontador.com.br"
+    url = "webservices.apontador.com.br"
     
     xml = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getMap xmlns="http://webservices.maplink2.com.br"><routeId>string</routeId><extent><XMin>-49.2962338995702</XMin><YMin>-25.4429948584803</YMin><XMax>-43.2075</XMax><YMax>-22.902778</YMax></extent><mo><scaleBar>true</scaleBar><mapSize><width>600</width><height>600</height></mapSize><showPoint>false</showPoint><icon><Icon><iconType>int</iconType><iconID>int</iconID><point xsi:nil="true" /></Icon><Icon><iconType>int</iconType><iconID>int</iconID><point xsi:nil="true" /></Icon></icon></mo><token>'+ticket+'</token></getMap></soap:Body></soap:Envelope>'
     conn = httplib.HTTPConnection(url,timeout=5)
@@ -104,7 +104,7 @@ def Geocode(street,number,city,state):
 
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     
-    url = "teste.webservices.apontador.com.br"
+    url = "webservices.apontador.com.br"
     
     xml = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getXY xmlns="http://webservices.maplink2.com.br"><address><street>'+street+'</street><houseNumber>'+str(number)+'</houseNumber><zip></zip><district></district><city><name>'+city+'</name><state>'+state+'</state></city></address><token>'+ticket+'</token></getXY></soap12:Body></soap12:Envelope>'
 
@@ -212,7 +212,7 @@ def MaplinkRGeocode(lat,lng):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
     
-    url = "teste.webservices.apontador.com.br"
+    url = "webservices.apontador.com.br"
     
     xml = '''<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'''+str(lng)+'''</x><y>'''+str(lat)+'''</y></point><token>'''+str(ticket)+'''</token><tolerance>'''+str(10)+'''</tolerance></getAddress></soap:Body></soap:Envelope>'''
 

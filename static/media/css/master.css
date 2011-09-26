@@ -385,6 +385,7 @@ html[xmlns] #nav {
     padding: 20px;
     min-height:400px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    overflow:auto;
     
     background: -moz-linear-gradient(center top , #FFFFFF, #CFCFCF) repeat scroll 0 0 transparent;
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CFCFCF'); /* for IE */
@@ -599,14 +600,14 @@ img#maptools{
 
 .steps{
   margin-left:5px;
-  float:left;
+  //float:left;
   width:300px;
 
 }
 
 .steps fieldset{
   border:1px solid #ccc;
-  height:180px;
+  height:auto;
   padding:10px;
 }
 
