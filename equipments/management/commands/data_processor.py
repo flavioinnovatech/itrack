@@ -9,6 +9,7 @@ import threading
 import curses
 import codecs
 
+
 from datetime import datetime
 import time
 
@@ -41,31 +42,112 @@ geoDict = {}
 systemField = None
 vehicleField = None
 stdscr = None
+main_stop = False
+trackings_received = 0
 count = 0
 
 # >> ====================================== +-------------------------------+-\
 # >> ====================================== | THREAD TO OUTPUT TO THE SCREEN|  >
 # >> ====================================== +-------------------------------+-/
 
+
+
 class OutputThread(threading.Thread):
+    
+    trackings_per_second = 0
+    global trackings_received
+    global main_stop
+    
+    def calculate(self):
+        self.trackings_per_second = trackings_received
+        trackings_received = 0
+        t = threading.Timer(1.0,self.calculate) 
+
+    def __init__(self):
+        super(OutputThread, self).__init__()
+        self._stop = threading.Event()
+    
+    def stop(self):
+        self._stop.set()
+
+    def stopped(self):
+        return self._stop.isSet()
+        
     def run ( self ):
+        stdscr = curses.initscr()
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+        t = threading.Timer(1.0,self.calculate)
+        main_stop = False
         while True:
+            if self.stopped():
+                curses.nocbreak()
+                stdscr.keypad(0)
+                curses.echo()
+                curses.endwin()
+                break
+            stdscr.addstr(0, 0, "Infotrack: Data Processor", 
+                                curses.A_REVERSE)
+            stdscr.addstr(0,40,str(self.trackings_per_second))
+            curr_y = 5
+            curr_x = 5
+            #stdscr.addstr(1,5, str(threading.enumerate()))
+            stdscr.addstr(2,5,'+------------------+---------------------------------------------------------------+',
+                    curses.color_pair(1) | curses.A_BOLD)
+            stdscr.addstr(3,5,'| Thread name      | Thread status                                                 |',
+                    curses.color_pair(1) | curses.A_BOLD)
+            stdscr.addstr(4,5,'+------------------+---------------------------------------------------------------+',
+                    curses.color_pair(1) | curses.A_BOLD)
+
             for th in threading.enumerate():
                 if isinstance(th,ClientThread):
-                    if th.needPrint():
-                        print th.getName()
-                        print th.getStatus()
-                        th.setLastPrint()
-#Messages in the pool   str(clientPool.qsize())
-#Number of threads      str(threading.active_count()-2)
-
+                    stdscr.addstr(curr_y,curr_x,"| ",
+                                curses.color_pair(1) | curses.A_BOLD)
+                    stdscr.addstr(th.getName().ljust(13,' '),curses.color_pair(0))
+                    stdscr.addstr("\t| ", curses.color_pair(1) | curses.A_BOLD)
+                    stdscr.addstr(th.getStatus().ljust(55,' '),curses.color_pair(0))
+                    stdscr.addstr("\t| ", curses.color_pair(1) | curses.A_BOLD)
+                    curr_y+=1
+            stdscr.addstr(curr_y,5,'+------------------+---------------------------------------------------------------+',
+                    curses.color_pair(1) | curses.A_BOLD)
+            stdscr.addstr(curr_y+1,5, "Messages in the pool: "+
+                            str(clientPool.qsize()).rjust(2,' ')+
+                            "\t\t\t\t\tNumber of threads: "+
+                            str(threading.active_count()-2)+"\t\t", curses.A_BOLD)
+            
+            for i in range(10):
+                stdscr.addstr(curr_y+2+i,5,''.rjust(84,' ')) 
+                       
+            stdscr.refresh()
+            if ([sys.stdin],[],[]) == select.select([sys.stdin],[],[],0):
+                stdscr.refresh()
+                jnk = sys.stdin.read(1)
+                stdscr.addstr(0,0,jnk)
+                if jnk=='x':
+                    main_stop = True
+                    
+                    for th in threading.enumerate():
+                        
+                        if isinstance(th,ClientThread):
+                            th.stop()
+                            stdscr.clear()
+                elif jnk == 'n':
+                    ClientThread().start()
+                elif jnk == 'k':
+                     for th in threading.enumerate():
+                        if isinstance(th,ClientThread):
+                            th.stop()
+                            break
+                
+            
 # >> ====================================== +-------------------------------+-\
 # >> ====================================== | THREAD TO PROCESS THE DATA    |  >
 # >> ====================================== +-------------------------------+-/
 
 class ClientThread(threading.Thread):
-   
-   #these functions before run() allows the thread to be stopped.
+    
+    global trackings_received
+    #these functions before run() allows the thread to be stopped.
    
     def __init__(self):
         super(ClientThread, self).__init__()
@@ -100,7 +182,8 @@ class ClientThread(threading.Thread):
       root_system = System.objects.get(parent=None)
       while True:
          
-         if self.stopped() and clientPool.qsize() == 0:
+         if ((self.stopped() and clientPool.qsize() == 0) or
+            (self.stopped() and threading.active_count() > 2)):
             self.setStatus("Thread stopped.")
             break
             
@@ -288,6 +371,8 @@ class ClientThread(threading.Thread):
                                             ):
                                     self.setStatus('Found geofence alert to send.')
                                     AlertSender(self,alert,vehicle,searchdate)
+                            
+                            trackings_received += 1
                           else: 
                               # if the vehicle never had thrown alerts, 
                               # give him a last alert date
@@ -335,19 +420,9 @@ class ClientThread(threading.Thread):
 # >> ====================================== +-------------------------------+-/
 
 class Command(BaseCommand):
-    
-    def __init__(self):
-        super(BaseCommand, self).__init__()
-        self._stop = False
-    
-    def stop(self):
-        self._stop = True
-    
-    def stopped(self):
-        return self._stop
         
     def handle(self, *args, **options):
-    
+        global main_stop
         # Custom fields per equip type dict
         cfs = CustomField.objects.select_related(depth=2).all()
         for cf in cfs:
@@ -377,13 +452,16 @@ class Command(BaseCommand):
         server.listen(5)
         print "Server listening. The recognized equipment types are:"
         print equipTypeDict
-        
+        print main_stop
         OutputThread().start()
         # Have the server serve "forever":
         while True:
-            try:
-                if self.stopped():
-                    exit(0)
-                clientPool.put(server.accept(),True,3)
+            try:    
+                clientPool.put(server.accept(),False)
             except KeyboardInterrupt:
-                pass
+                if threading.active_count() <= 2:
+                    for th in threading.enumerate():
+                        if isinstance(th,OutputThread) or isinstance(th,ClientThread):
+                            th.stop()
+                    time.sleep(1)
+                    exit(0)

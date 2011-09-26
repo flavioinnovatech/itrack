@@ -109,6 +109,19 @@ def mountCommandTree(list_of_childs,parent):
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
+
+def test278(request):
+    response = HttpResponse(mimetype='text/html')
+    output2 = "Quanta Test"
+    
+    
+    
+    output1 = "<html><head><style>"
+    output1 += ".vr{background-color:#0FF;}.ty{background-color:#FF0;}"
+    output1 += ".eq{background-color:#F00;} .tr{background-color:#0F0;}"
+    output1 += ".td{background-color:#00F;}</style></head><body>" + output2 + "</body></html>"
+    response.write(output1)
+    return response
 def test277(request):
 
     output1 = "<table border=1>"
@@ -167,26 +180,39 @@ def index(request):
     
     hasmtcinlist = False
     for c in equipments:
-        if c.state!= u'2' and c.state!= u'3':
-            eqX = c.equipment.equipment
-            sent = False 
-            cfX = CustomField.objects.get(tag="SendCmdState")
-            t0 = TrackingData.objects.filter(type=cfX).filter(tracking__equipment=eqX).latest('tracking__eventdate')
-            if t0.value=='1' or t0.value==1:
-                c.state = u'1'
-                t0.value = 100 # value 1, which is 'sending', was used.
-                t0.save()
-                
-            cfX = CustomField.objects.filter(tag=u'Output1')
-            tX = TrackingData.objects.filter(type=cfX).filter(tracking__equipment=eqX).latest('tracking__eventdate')
-            if str(tX.value)=="1" and c.action=='ON':
-                c.state = u'2'
-                c.time_executed = tX.tracking.eventdate
+        _equiptype = str(c.equipment.equipment.type).strip()
+        if _equiptype == "MTC-400":
+            if c.state!= u'2' and c.state!= u'3':
+                eqX = c.equipment.equipment
+                sent = False 
+                cfX = CustomField.objects.get(tag="SendCmdState")
+                t0 = TrackingData.objects.filter(type=cfX).filter(tracking__equipment=eqX).latest('tracking__eventdate')
+                if t0.value=='1' or t0.value==1:
+                    c.state = u'1'
+                    t0.value = 201 # value 1, which is 'sending', is also being used now.
+                    t0.save()
+                cfX = CustomField.objects.get(tag="Output1")
+                tX = TrackingData.objects.filter(type=cfX).filter(tracking__equipment=eqX).latest('tracking__eventdate')
+                if str(tX.value)=="1" and c.action=='ON':
+                    c.state = u'2'
+                    c.time_executed = tX.tracking.eventdate
+                elif str(tX.value)=="0" and c.action=='OFF':
+                    c.state= u'2'
+                    c.time_executed = tX.tracking.eventdate
                 c.save()
-            elif str(tX.value)=="0" and c.action=='OFF':
-                c.state= u'2'
-                c.time_executed = tX.tracking.eventdate
-            c.save()
+        else: #old code (leandro|fabio)
+            #checks the status of the command and update if matches the equipment tracking table
+            tracking = Tracking.objects.filter(equipment=c.equipment.equipment).order_by('eventdate').reverse()[0]
+            trackingdata = TrackingData.objects.filter(tracking=tracking).filter(type=c.type.custom_field)
+            if c.action == 'ON' and len(trackingdata) > 0:
+                c.state = u"2"
+                c.time_executed = tracking.eventdate
+                c.save()
+            elif c.action == 'OFF' and len(trackingdata) == 0 :
+                c.state = u"2"
+                c.time_executed = tracking.eventdate
+                c.save()
+            
         sender = User.objects.get(pk=c.sender_id)
         
         display_list.append({

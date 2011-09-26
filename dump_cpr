@@ -1,0 +1,45 @@
+>> Starting main loop.
+<?xml version="1.0" encoding="ASCII"?>
+<Package>
+ <Header Reason="0" Id="198" Version="1.0"/>
+ <Control Provider="" CPRDateTime="2011/09/23 14:14:08" Account="2" MsgId="58595" Port="3000"/>
+ <TCA ProductId="42" SerialNumber="00003A7B" VersionId="1.8"/>
+ <Datagram MsgType="TRACKING" MsgDateTime="2011/09/23 14:14:06"/>
+ <GPS PosIsValid="FALSE"/>
+ <Comm RSSI="5" GPSType="INTERNAL"/>
+ <LinearInput Speed="0" Odometer="0" RPM="0"/>
+ <Input Ignition="ON"/>
+ <Output/>
+ <Event EventDateTime="2011/09/23 14:14:06"/>
+</Package>
+
+
+SENDING:<?xml version="1.0" encoding="ASCII"?>
+<Package>
+<Header Version="1.00" Id="41" />
+<Data Account="2" ProductId="42" Serial="00003A7B" Priority="3" NetId="01" Address="00" Format="HEX" Value="0300000003"/>
+</Package>
+2:0
+>> Sent.
+<?xml version="1.0" encoding="ASCII"?>
+<Package>
+ <Header Reason="0" Id="198" Version="1.0"/>
+ <Control Provider="" CPRDateTime="2011/09/23 14:15:09" Account="2" MsgId="58596" Port="3000"/>
+ <TCA ProductId="42" SerialNumber="00003A7B" VersionId="1.8"/>
+ <Datagram MsgType="TRACKING" MsgDateTime="2011/09/23 14:15:07"/>
+ <GPS PosIsValid="FALSE"/>
+ <Comm RSSI="5" GPSType="INTERNAL"/>
+ <LinearInput Speed="0" Odometer="0" RPM="0"/>
+ <Input Ignition="ON"/>
+ <Output/>
+ <Event EventDateTime="2011/09/23 14:15:06"/>
+</Package>
+
+
+SENDING:<?xml version="1.0" encoding="ASCII"?>
+<Package>
+<Header Version="1.00" Id="41" />
+<Data Account="2" ProductId="42" Serial="00003A7B" Priority="3" NetId="02" Address="00" Format="HEX" Value="0300000003"/>
+</Package>
+3:0
+>> Sent.
