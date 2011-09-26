@@ -21,24 +21,30 @@ jQuery(document).ready(function(){
   	state = $("#circleselect option:selected").text();
   	radius = $('#radius').attr("value") / 100;
 	
-  	//MODULARIZAR ESSA FUNÇÃO
-    $.post(
-          "/geofence/geocode/",
-          {address:address,number:number,city:city,state:state},
-          function (data) { alert('ae');
-            vlayer.destroyFeatures();
-          
-            lat = "-46.62";
-            lng = "-23.57";
-          
-            var center = new OpenLayers.Geometry.Point(lat,lng);
-            var circle = OpenLayers.Geometry.Polygon.createRegularPolygon(center,radius, 50);
-            vlayer.addFeatures(new OpenLayers.Feature.Vector(circle));
-          
-          
-          },'json'
-       
-    );
+	if(address != '' && number != '' && city != '' && state != '') {
+		$.post(
+	          "/geofence/geocode/",
+	          {address:address,number:number,city:city,state:state},
+	          function (data) { alert('ae');
+	            vlayer.destroyFeatures();
+	          
+	            lat = "-46.62";
+	            lng = "-23.57";
+	          
+	            var center = new OpenLayers.Geometry.Point(lat,lng);
+	            var circle = OpenLayers.Geometry.Polygon.createRegularPolygon(center,radius, 50);
+	            vlayer.addFeatures(new OpenLayers.Feature.Vector(circle));
+	          
+	          
+	          },'json'
+	    );
+	}
+	else {
+		jQuery("#generaldialog").html("");
+        jQuery("#generaldialog").attr("title","Endereço(s) incorreto(s)");
+        $("#generaldialog").append("Por favor preencha todos os campos para o endereço.");
+        jQuery("#generaldialog").dialog({show: "blind",modal:true});
+	}
 	
 	return false;
 	

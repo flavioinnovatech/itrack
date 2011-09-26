@@ -62,10 +62,6 @@ def check(request):
   
   print c.action
   
-  if (c.action == "ON"):
-    send['action'] = "OFF"
-  elif (c.action == "OFF"):
-    send['action'] = "ON" 
 
   json = simplejson.dumps(send)
   

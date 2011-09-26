@@ -21,7 +21,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils import simplejson
 from django.conf import settings
 
-
+from django.forms import model_to_dict
 from itrack.command.models import Command, CPRSession
 from itrack.vehicles.models import Vehicle
 from itrack.command.forms import CommandForm
@@ -30,7 +30,7 @@ from itrack.system.models import System
 from itrack.system.tools import findChild,findParents
 from itrack.vehicles.models import Vehicle
 from django.contrib.auth.models import User
-
+from django.core import serializers
 from querystring_parser import parser
 
 
@@ -55,6 +55,8 @@ def systemCommandDetails(sysid):
                     'sysid':system.id
                 })
     for command in commands:
+    
+
         sender = User.objects.get(pk=command.sender_id)
         lines.append({  'id':command.id,
                         'childof':system.id,
@@ -63,9 +65,10 @@ def systemCommandDetails(sysid):
                         'plate': command.equipment,
                         'state':command.state,
                         'time_sent':command.time_sent,
-                        'time_received':command.time_received,
+                        'time_received':str(command.time_received),
                         'time_executed':command.time_executed,
                         'sender': str(sender.username),
+                        'test':command.equipment.equipment.type
                         
                     })
     
@@ -106,6 +109,46 @@ def mountCommandTree(list_of_childs,parent):
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
+def test277(request):
+
+    output1 = "<table border=1>"
+    equipTypeIndex = {}
+    list0 = []
+    data = {}
+    eqX = Equipment.objects.filter(serial="98285")
+    cfX = CustomField.objects.get(tag="SendCmdState")
+    t0 = TrackingData.objects.filter(type=cfX).filter(tracking__equipment=eqX).latest('tracking__eventdate')
+
+    try :
+        output1 += "<tr><td>" +str(t0.type) + "</td><td>" + str(t0.value) + "</td><td>" + str(t0.tracking.eventdate) + "</td></tr>"
+    except:
+        pass
+
+    equipTypeIndex = {}
+    list0 = []
+    data = {}
+    tX = TrackingData.objects.filter(tracking__equipment=eqX).order_by('tracking__eventdate').reverse()[:200]
+    
+    for t0 in tX:
+        if t0.type.pk in list0:
+            continue
+        list0.append(t0.type.pk)
+        try :
+            data[t0.type.pk] = {}
+            data[t0.type.pk]['type'] = str(t0.type)
+            data[t0.type.pk]['value'] = str(t0.value)
+            data[t0.type.pk]['evtdt'] = str(t0.tracking.eventdate)
+            output1 += "<tr><td>" +str(t0.type) + "</td><td>" + str(t0.value) + "</td><td>" + str(t0.tracking.eventdate) + "</td></tr>"
+        except:
+            pass
+    output1 += "</table>"
+    response = HttpResponse(mimetype='text/html')
+    output1 = "<html><head><style>.vr{background-color:#0FF;}.ty{background-color:#FF0;} .eq{background-color:#F00;} .tr{background-color:#0F0;} .td{background-color:#00F;}</style></head><body>" + output1 + "</body></html>"
+    response.write(output1)
+    return response
+    
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def index(request):
     system = request.session['system']
     
@@ -113,20 +156,37 @@ def index(request):
     rendered_list = ""
     
     display_list = []
+    
+    
+    #conect to mt gateway to get status updates
+    
+    #host = settings.MXT_IP
+    #port = settings.MXT_PORT
+    #skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   
+    #skt.connect((host,port))
+    
+    hasmtcinlist = False
     for c in equipments:
-        
-        #checks the status of the command and update if matches the equipment tracking table
-        tracking = Tracking.objects.filter(equipment=c.equipment.equipment).order_by('eventdate').reverse()[0]
-        trackingdata = TrackingData.objects.filter(tracking=tracking).filter(type=c.type.custom_field)
-        if c.action == 'ON' and len(trackingdata) > 0:
-            c.state = u"2"
-            c.time_executed = tracking.eventdate
+        if c.state!= u'2' and c.state!= u'3':
+            eqX = c.equipment.equipment
+            sent = False 
+            cfX = CustomField.objects.get(tag="SendCmdState")
+            t0 = TrackingData.objects.filter(type=cfX).filter(tracking__equipment=eqX).latest('tracking__eventdate')
+            if t0.value=='1' or t0.value==1:
+                c.state = u'1'
+                t0.value = 100 # value 1, which is 'sending', was used.
+                t0.save()
+                
+            cfX = CustomField.objects.filter(tag=u'Output1')
+            tX = TrackingData.objects.filter(type=cfX).filter(tracking__equipment=eqX).latest('tracking__eventdate')
+            if str(tX.value)=="1" and c.action=='ON':
+                c.state = u'2'
+                c.time_executed = tX.tracking.eventdate
+                c.save()
+            elif str(tX.value)=="0" and c.action=='OFF':
+                c.state= u'2'
+                c.time_executed = tX.tracking.eventdate
             c.save()
-        elif c.action == 'OFF' and len(trackingdata) == 0 :
-            c.state = u"2"
-            c.time_executed = tracking.eventdate
-            c.save()
-        
         sender = User.objects.get(pk=c.sender_id)
         
         display_list.append({
@@ -134,13 +194,14 @@ def index(request):
             'type': c.type,
             'state': str(c.state),
             'time_sent': (c.time_sent),
-            'time_received': (c.time_received),
+            'time_received': str(c.time_received),
             'time_executed': (c.time_executed),
             'id': c.id,
             'action' : c.action,
-            'sender': str(sender.username),
+            'sender': str(sender.username)
+#            'test':str(c.type)
         })
-                
+
     childs = findChild(system)
     command_tree = mountCommandTree([system,childs],system)    
     
@@ -222,13 +283,13 @@ def create(request,offset,vehicle=None):
                     t = datetime.now()
                     mount0 += "<id>" + str(time.mktime(t.timetuple())).strip() + "</id>"
                     mount0 += "<argument>" + str(c.action) + "</argument></command>"
-                    msg = mount0;
+                    msg = mount0
                     totalsent = 0   
                     while totalsent < len(msg):   
                         sent = skt.send(msg[totalsent:])   
                         if sent == 0:
                             c.system = s
-                            c.state = 3
+                            c.state = u'3'
                             c.time_sent = datetime.now()
                             c.save()                        
                             error_title = 'Erro: falha na transmissao.'
@@ -240,7 +301,7 @@ def create(request,offset,vehicle=None):
                     # WAIT FOR RESPONSE??
                     skt.close()
                     c.system = s
-                    c.state = 2
+                    c.state = u'0'
                     c.time_sent = datetime.now()
                     c.save()
                     return HttpResponseRedirect("/commands/create/finish")
@@ -267,7 +328,7 @@ def create(request,offset,vehicle=None):
                     s_out.send(ack_msg)
                     
                     c.system = s
-                    c.state = 0
+                    c.state = u'0'
                     c.time_sent = datetime.now()
                     c.save()
                     return HttpResponseRedirect("/commands/create/finish")
@@ -364,7 +425,7 @@ def check_state_onserver(request):
         sent = skt.send(msg[totalsent:])   
         if sent == 0:
             c.system = s
-            c.state = 3
+            c.state = u'3'
             c.time_sent = datetime.now()
             c.save()                        
             error_title = 'Erro: falha na transmissao.'

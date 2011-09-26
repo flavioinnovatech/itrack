@@ -47,6 +47,18 @@ class Equipment(models.Model):
    available = models.BooleanField()
    def __unicode__(self):
       return self.serial
+      
+class EquipmentMTC400(models.Model):
+   equipment = models.ForeignKey(Equipment)
+   serial = models.CharField(max_length=50, unique= True)
+   serial.default = '000017E8'
+   serial.null = True
+   ignition = models.CharField(max_length=1) # T F
+   output1 = models.CharField(max_length=1) # T F
+   panic = models.CharField(max_length=1) # T F
+   lastupdate = models.DateTimeField()
+   def __unicode__(elf):
+      return self.serial
 
 class Tracking(models.Model):
     msgtype = models.CharField(max_length=20)

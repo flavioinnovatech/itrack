@@ -72,6 +72,7 @@ url(r'^vehicles/swap/finish/$','vehicles.views.swap_finish'),
 
 
 url(r'^commands/$', 'command.views.index'),
+url(r'^commands/test/$', 'command.views.test277'),
 url(r'^commands/create/(\d+)/$','command.views.create'),
 url(r'^commands/load/$','command.ajax.load'),
 url(r'^commands/check/$','command.ajax.check'),

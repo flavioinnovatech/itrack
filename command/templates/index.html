@@ -125,12 +125,18 @@ jQuery(document).ready(function(){
                                   {% endif %}
                               {% endif %}
                           {% endif %}  
+                          
                           </td>
                           <td style="width:150px">{% if item.time_sent %}{{item.time_sent|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
                           <td style="width:150px">{% if item.time_received %}{{item.time_received|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
                           <td style="width:150px">{% if item.time_executed %}{{item.time_executed|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
                       
-                          <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar</a></td>
+                          <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar</a><script>
+                          
+                          
+                          
+                          
+                          </script></td>
                       </tr>
                       {% endif %}
                   {% endfor %}
@@ -185,11 +191,13 @@ jQuery(document).ready(function(){
                        {% endif %}
                    {% endif %}
                {% endif %}  
+
                </td>
                <td>{% if item.time_sent %}{{item.time_sent|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
                <td>{% if item.time_received %}{{item.time_received|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
                <td>{% if item.time_executed %}{{item.time_executed|date:"SHORT_DATETIME_FORMAT"}}{% endif %}</td>
-               <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar</a></td>
+               <td><a class='table-button' href="/commands/delete/{{item.id}}">Apagar:</a>
+               </td>
             </tr>
           {% endif %}
         {% endfor %}

@@ -1,5 +1,6 @@
 //Global variables
 var polygon;
+var markers,size,offset;
 
 jQuery(document).ready(function(){
   
@@ -26,11 +27,52 @@ jQuery(document).ready(function(){
   }
   
   $("#step1polygon").submit(function(){
-    // Get each address then geocode them here
+    $("#polygoninputs ol li").each(function(){
+    	
+    	address =  $(".polygoninput", this).val();
+    	number =  $(".polygonnumber", this).val();
+    	city =  $(".polygoncity", this).val();
+    	state =  $(".polygonstate", this).val();
+    	
+    	if(address != '' && number != '' && city != '' && state != '') {
+    		$.post(
+	        "/geofence/geocode/",
+	        {address:address,number:number,city:city,state:state},
+	        function (data) { alert('ae');
+	          
+	          lat = "-46.62";
+	          lng = "-23.57";
+	          
+	          //TODO: Append the returned coordinates here
+	        
+	        },'json'
+	     
+	  		);
+    	}
+    	
+    	else {
+	  		jQuery("#generaldialog").html("");
+        	jQuery("#generaldialog").attr("title","Endereço(s) incorreto(s)");
+        	$("#generaldialog").append("Por favor preencha todos os campos para cada endereço.");
+        	jQuery("#generaldialog").dialog({show: "blind",modal:true});
+	  	}
+    });
     
     var p1 = new OpenLayers.Geometry.Point(-46.62,-23.57);
     var p2 = new OpenLayers.Geometry.Point(-47,-22);
     var p3 = new OpenLayers.Geometry.Point(-48,-21);
+    
+    ll1 = new OpenLayers.LonLat(-46.62,-23.57);
+    ll2 = new OpenLayers.LonLat(-47,-22);
+    ll3 = new OpenLayers.LonLat(-48,-21);
+    
+    var points = [ll1,ll2,ll3];
+    
+    for (var i in points){
+    	j = parseInt(i) + parseInt(1);
+    	icon = new OpenLayers.Icon('/media/img/marker-blue-'+j+'.png', size, offset);
+    	markers.addMarker(new OpenLayers.Marker(points[i],icon));
+	}
     
     var linear_ring = new OpenLayers.Geometry.LinearRing([p1,p2,p3]);
     
@@ -101,6 +143,11 @@ function create_map_polygon() {
    multispectral2.addLayer(dm_wms2);
    multispectral2.addLayer(vlayer2);
    multispectral2.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
+   
+   markers = new OpenLayers.Layer.Markers( "Markers" );
+   multispectral2.addLayer(markers);
+   size = new OpenLayers.Size(21,25);
+   offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
 
    //Control Panel
    panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});
