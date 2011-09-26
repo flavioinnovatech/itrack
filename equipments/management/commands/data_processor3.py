@@ -7,6 +7,7 @@ import json
 import Queue
 import threading
 import curses
+import codecs
 
 from datetime import datetime
 import time
@@ -40,6 +41,7 @@ geoDict = {}
 systemField = None
 vehicleField = None
 stdscr = None
+count = 0
 
 # >> ====================================== +-------------------------------+-\
 # >> ====================================== | THREAD TO OUTPUT TO THE SCREEN|  >
@@ -47,61 +49,16 @@ stdscr = None
 
 class OutputThread(threading.Thread):
     def run ( self ):
-        stdscr = curses.initscr()
-        curses.start_color()
-        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
-        
-        
         while True:
-            
-            stdscr.addstr(0, 0, "Infotrack: Data Processor", 
-                                curses.A_REVERSE)
-            
-            curr_y = 5
-            curr_x = 5
-            #stdscr.addstr(1,5, str(threading.enumerate()))
-            stdscr.addstr(2,5,'+------------------+---------------------------------------------------------------+',
-                    curses.color_pair(1) | curses.A_BOLD)
-            stdscr.addstr(3,5,'| Thread name      | Thread status                                                 |',
-                    curses.color_pair(1) | curses.A_BOLD)
-            stdscr.addstr(4,5,'+------------------+---------------------------------------------------------------+',
-                    curses.color_pair(1) | curses.A_BOLD)
-
             for th in threading.enumerate():
                 if isinstance(th,ClientThread):
-                    stdscr.addstr(curr_y,curr_x,"| ",
-                                curses.color_pair(1) | curses.A_BOLD)
-                    stdscr.addstr(th.getName().ljust(13,' '),curses.color_pair(0))
-                    stdscr.addstr("\t| ", curses.color_pair(1) | curses.A_BOLD)
-                    stdscr.addstr(th.getStatus().ljust(55,' '),curses.color_pair(0))
-                    stdscr.addstr("\t| ", curses.color_pair(1) | curses.A_BOLD)
-                    curr_y+=1
-            stdscr.addstr(curr_y,5,'+------------------+---------------------------------------------------------------+',
-                    curses.color_pair(1) | curses.A_BOLD)
-            stdscr.addstr(curr_y+1,5, "Messages in the pool: "+
-                            str(clientPool.qsize()).rjust(2,' ')+
-                            "\t\t\t\t\tNumber of threads: "+
-                            str(threading.active_count()-2)+"\t\t", curses.A_BOLD)
-            
-            for i in range(10):
-                stdscr.addstr(curr_y+2+i,5,''.rjust(84,' ')) 
-                       
-            stdscr.refresh()
-            if ([sys.stdin],[],[]) == select.select([sys.stdin],[],[],0):
-                stdscr.refresh()
-                jnk = sys.stdin.read(1)
-                if jnk=='x':
-                    
-                    for th in threading.enumerate():
-                        
-                        if isinstance(th,ClientThread):
-                            th.stop()
-                            stdscr.clear()
-                        elif th.getName() == 'MainThread':
-                            #th.stop()
-                            pass
-                            
-                
+                    if th.needPrint():
+                        print th.getName()
+                        print th.getStatus()
+                        th.setLastPrint()
+#Messages in the pool   str(clientPool.qsize())
+#Number of threads      str(threading.active_count()-2)
+
 # >> ====================================== +-------------------------------+-\
 # >> ====================================== | THREAD TO PROCESS THE DATA    |  >
 # >> ====================================== +-------------------------------+-/
@@ -114,6 +71,7 @@ class ClientThread(threading.Thread):
         super(ClientThread, self).__init__()
         self._stop = threading.Event()
         self._status = "Waiting to process data."
+        self._laststatus = ""
     def stop(self):
         self._stop.set()
         self._status = "Stopping thread."
@@ -123,6 +81,11 @@ class ClientThread(threading.Thread):
    
     def getStatus(self):
         return self._status
+       
+    def setLastPrint(self):
+        self._laststatus = self._status
+    def needPrint(self):
+        return self._laststatus == self._status
 
     def setStatus(self,st):
         self._status = st
@@ -149,11 +112,22 @@ class ClientThread(threading.Thread):
             client = None
          # Check if we actually have an actual client in the client variable:
          if client != None:
+
             self.setStatus('Processing data from '+client[1][0])
             inbox =  client[0].recv(8192)
-            
+    #            file = codecs.open("./")
             datadict = json.loads(inbox)
-            if datadict['Type'] == 'Tracking':
+            if datadict['Type'] == 'MTC State Tracking':
+                serial_data = datadict['serial']
+                sendstate_data = datadict['sendstate']
+                date_data = datadict['date']
+                e = Equipment.objects.get(Q(serial=serial_data))
+                searchdate = datetime.strptime( date_data, "%Y-%m-%d %H:%M:%S")
+                t = Tracking(equipment=e, eventdate=searchdate,  msgtype="TRACKING")
+                t.save()
+                TrackingData(tracking=t,type=CustomField.objects.get(id=67), value=sendstate_data).save()
+                
+            elif datadict['Type'] == 'Tracking':
             # tries to pick the equipment and the date of the tracking table
                 try:
                     #first, check if the equipment exists
@@ -191,21 +165,12 @@ class ClientThread(threading.Thread):
                         io['Input'] = datadict['Input'].copy()
                         io['LinearInput'] = datadict['LinearInput'].copy()
                         io['Output'] = datadict['Output'].copy()
+                        print datadict['Output']
                         io['GPS'] = datadict['GPS'].copy()
                         
                         for x0 in xrange(1,8):
                             ttype = 53 + x0
-                            TrackingData(tracking=t,type=ttype, value=io['Output']['Output' + str(x0)]).save()
-                            
-                        TrackingData(tracking=t,type=51, value=io['Input']['Input1']).save()
-                        TrackingData(tracking=t,type=52, value=io['Input']['Input2']).save()
-                        TrackingData(tracking=t,type=53, value=io['Input']['Input3']).save()
-                        TrackingData(tracking=t,type=62, value=io['Input']['Input4']).save()
-                        TrackingData(tracking=t,type=63, value=io['Input']['Input5']).save()
-                        TrackingData(tracking=t,type=64, value=io['Input']['Input6']).save()
-                        TrackingData(tracking=t,type=65, value=io['Input']['Input7']).save()
-                        TrackingData(tracking=t,type=66, value=io['Input']['Input8']).save()
-                        
+                            TrackingData(tracking=t,type=CustomField.objects.get(id=ttype), value=io['Output']['Output' + str(x0)]).save()
 
                         #filtering that list, leaving only the registered
                         #custom fields for the equipment type
@@ -230,6 +195,7 @@ class ClientThread(threading.Thread):
                                     type=k_cf,
                                     value=v
                             ).save()
+
                         
                         cflist = [x[0] for x in io_filtered.items()]
                         
@@ -239,46 +205,49 @@ class ClientThread(threading.Thread):
                                     tracking=t,
                                     type=cf,
                                     value="OFF"
-                                )
+                                ).save()
                             
-                        #reverse geocoding in the background
-                        geocodeinfo = ReverseGeocode(
-                                        str(datadict['GPS']['Lat']),
-                                        str(datadict['GPS']['Long'])
+                            
+                        try:
+                            #reverse geocoding in the background
+                            geocodeinfo = ReverseGeocode(
+                                        float(datadict['GPS']['Lat']),
+                                        float(datadict['GPS']['Long'])
                                       )
-                                    
-                        #saving the acquired geocode information
+                            #saving the acquired geocode information
                         
-                        TrackingData(   tracking=t, 
+                            TrackingData(   tracking=t, 
                                         type=geoDict['Address'],
                                         value=geocodeinfo[1]
                                     ).save()
-                        TrackingData(   tracking=t, 
+                            TrackingData(   tracking=t, 
                                         type=geoDict['City'],
                                         value=geocodeinfo[2]
                                     ).save()
-                        TrackingData(   tracking=t, 
+                            TrackingData(   tracking=t, 
                                         type=geoDict['State'],
                                         value=geocodeinfo[3]
                                     ).save()
-                        TrackingData(   tracking=t, 
+                            TrackingData(   tracking=t, 
                                         type=geoDict['PostalCode'],
                                         value=geocodeinfo[4]
                                     ).save()
                                     
-                        self.setStatus('Reverse geocode finished. ')
-                        # and adding extra vehicle and system custom fields
-                        TrackingData(   tracking=t,
+                            self.setStatus('Reverse geocode finished. ')
+                            # and adding extra vehicle and system custom fields
+                            TrackingData(   tracking=t,
                                         type=vehicleField,
                                         value=vehicle.id).save()
                                         
-                        TrackingData(   tracking=t,
+                            TrackingData(   tracking=t,
                                         type=systemField,value=sys.id).save()
                                                                                      
                         
-                        #queries the vehicle in the database
+                            #queries the vehicle in the database
                         
-                        #if the last alert sent for the vehicle is not null
+                            #if the last alert sent for the vehicle is not null
+                        except:
+                            pass
                         if vehicle.last_alert_date is not None:
                           total_seconds = (
                                 (searchdate - vehicle.last_alert_date).days *
