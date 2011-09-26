@@ -83,13 +83,14 @@ jQuery(document).ready(function(){
   });
   
   jQuery("#polygonsave").click(function(){
+  	
     var id="";
   	
   	if(g) {
   		id = g['id'];
   	}  
     
-   geofencename = $("#polygoname").val();
+   geofencename = $("#circlename").val();
     if(!geofencename) { 
       alert("Por favor digite um nome para a cerca eletrônica.");
     }
@@ -133,11 +134,25 @@ function create_map_polygon() {
            format: "image/gif"
        },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 300});
 
-   vlayer2 = new OpenLayers.Layer.Vector( "Editable",{eventListeners: {sketchstarted: function(evt) {vlayer2.destroyFeatures();}},onFeatureInsert: function(	feature	) {polygon = (feature);area = (feature.geometry.getGeodesicArea()/1000000).toFixed(2); jQuery("#polygonarea").html(area + " km²");}});
+
+	vlayer2 = new OpenLayers.Layer.Vector("Editable", {
+		eventListeners : {
+			sketchstarted : function(evt) {
+			}
+		},
+		onFeatureInsert : function(feature) {
+			if (polygon)
+				vlayer2.destroyFeatures(polygon);
+			polygon = (feature);
+			area = (feature.geometry.getGeodesicArea() / 1000000).toFixed(2);
+			jQuery("#circlearea").html(area + " km²");
+		}
+	});
+
    vlayer2.events.on({"afterfeaturemodified": function(feature){
          polygon = (feature.feature);
          area = (feature.feature.geometry.getGeodesicArea()/1000000).toFixed(2);
-         jQuery("#polygonarea").html(area + " km²");
+         jQuery("#circlearea").html(area + " km²");
   }});
 
    multispectral2.addLayer(dm_wms2);

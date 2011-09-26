@@ -454,7 +454,7 @@ Estado: <select class="routeselect">
 		<div class="ptracker">
 			<div class="tstep {% if step == 1 %} selected {% else %} unselected {% endif %}">
 				<p align="center">
-					<span class="number">1.</span> Forma da cerca
+					<span class="number">1.</span> Forma e tipo da cerca
 				</p>
 			</div>
 			<div class="tstep {% if step == 2 %} selected {% else %} unselected {% endif %}">
@@ -466,9 +466,6 @@ Estado: <select class="routeselect">
 		
 		{% if step == 1 %}
 		<form enctype="multipart/form-data" method="post" action="" class="geofence-form">
-			<div style="display:none">
-				<input type="hidden" value="7f60d0a1a4cc82a21bed6024df2d946a" name="csrfmiddlewaretoken">
-			</div>
 			<table>
 				<tbody>
 					<tr>
@@ -548,11 +545,194 @@ Estado: <select class="routeselect">
 		{% endif %}
 	
 		{% if step == 2 %}
-			{# OpenLayers Drawing feature #}
-			{% if offset2 == "1" %} 
+			{% if offset2 == "1" %} {# OpenLayers Drawing feature #}
+				{% if offset == "1" %} 
 				<div id="map3" style="float:left;width:100%;height:300px;"></div>
+				{% endif %}
+				
+				{% if offset == "2" %} 
+				<div id="map2" style="float:left;width:100%;height:300px;"></div>
+				{% endif %}
+				
+				{% if offset == "3" %} 
+				<div id="map1" style="float:left;width:100%;height:300px;"></div>
+				{% endif %}
+				
+				<div style="width:920px;float:left;">
+					<form action="" style="margin:0 auto;">
+								<table>
+									<tbody>
+										<tr>
+											<td>
+											<div class="form-item">
+												<div class="item-left">
+													<p>
+														<label for="id_name">Área da Cerca Eletrônica:</label>
+													</p>
+													<p id="help"></p>
+												</div>
+											</div></td>
+											<td>
+											<div class="item-right">
+												<p class="errorlist"></p>
+												<p class="field" id="circlearea">
+													<i>Nenhuma cerca eletrônica selecionada.</i>
+												</p>
+												
+											</div></td>
+										</tr>
+										<tr>
+											<td>
+											<div class="form-item">
+												<div class="item-left">
+													<p>
+														<label for="id_name">Nome da Cerca Eletrônica:</label>
+													</p>
+													<p id="help"></p>
+												</div>
+											</div></td>
+											<td>
+											<div class="item-right">
+												<p class="errorlist"></p>
+												<p class="field">
+													<input type="text" value="" required="" placeholder="Digite um nome" id="circlename">
+												</p>
+												
+											</div></td>
+										</tr>
+										<tr>
+											<td colspan="2">
+												<div id="actions" style="margin-top:10px;">
+													<p align="center">
+													</p>
+													<p align="center">
+														<input type="button" style="padding:4px 12px;" value="Salvar" 
+														{% if offset == "1" %} 
+															id="circlesave">
+														{% endif %}
+														{% if offset == "2" %} 
+															id="polygonsave">
+														{% endif %}
+													</p>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+					</div>
 			{% endif %}
-		
+			
+			{% if offset2 == "2" %} {# Input the addresses #}
+				{% if offset == "3" %} 
+				<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
+							<form id="step1route" action="" class="steps" style="width:70%">
+								<fieldset>
+									<legend>
+										Escolha os pontos para os vértices da rota e um espaço de tolerância
+									</legend>
+									<p>
+										Digite um espaço de tolerância (distância máxima que o veículo pode se afastar da rota):
+										<input id="routetolerance" type="number" style="width:50px"/>
+										metros
+									</p>
+									<p>
+										Digite o endereço para os vértices da rota (mínimo 2):
+									</p>
+									<div id="routeinputs" style="height: auto;">
+										<ol class="decimal">
+											<li>
+												<span>Endereço: </span>
+												<input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+												n.º
+												<input class="routenumber" placeholder="" type="number" style="width:40px" />
+												Cidade:
+												<input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
+												Estado:
+												<select class="routestate">
+													<option value="0" selected="selected">&nbsp;</option>
+													<option value="AC">Acre</option>
+													<option value="AL">Alagoas</option>
+													<option value="AP">Amapá</option>
+													<option value="AM">Amazonas</option>
+													<option value="BA">Bahia</option>
+													<option value="CE">Ceará</option>
+													<option value="DF">Distrito Federal</option>
+													<option value="ES">Espírito Santo</option>
+													<option value="GO">Goias</option>
+													<option value="MA">Maranhão</option>
+													<option value="MT">Mato Grosso</option>
+													<option value="MS">Mato Grosso do Sul</option>
+													<option value="MG">Minas Gerais</option>
+													<option value="PA">Pará</option>
+													<option value="PB">Paraíba</option>
+													<option value="PR">Paraná</option>
+													<option value="PE">Pernambuco</option>
+													<option value="PI">Piauí</option>
+													<option value="RJ">Rio de Janeiro</option>
+													<option value="RN">Rio Grande do Norte</option>
+													<option value="RS">Rio Grande do Sul</option>
+													<option value="RO">Rondônia</option>
+													<option value="RR">Roraima</option>
+													<option value="SC">Santa Catarina</option>
+													<option value="SP">São Paulo</option>
+													<option value="SE">Sergipe</option>
+													<option value="TO">Tocantins</option>
+												</select>
+											</li>
+											<li>
+												<span>Endereço: </span>
+												<input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+												n.º
+												<input class="routenumber" placeholder="" type="number" style="width:40px" />
+												Cidade:
+												<input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
+												Estado:
+												<select class="routestate">
+													<option value="0" selected="selected">&nbsp;</option>
+													<option value="AC">Acre</option>
+													<option value="AL">Alagoas</option>
+													<option value="AP">Amapá</option>
+													<option value="AM">Amazonas</option>
+													<option value="BA">Bahia</option>
+													<option value="CE">Ceará</option>
+													<option value="DF">Distrito Federal</option>
+													<option value="ES">Espírito Santo</option>
+													<option value="GO">Goias</option>
+													<option value="MA">Maranhão</option>
+													<option value="MT">Mato Grosso</option>
+													<option value="MS">Mato Grosso do Sul</option>
+													<option value="MG">Minas Gerais</option>
+													<option value="PA">Pará</option>
+													<option value="PB">Paraíba</option>
+													<option value="PR">Paraná</option>
+													<option value="PE">Pernambuco</option>
+													<option value="PI">Piauí</option>
+													<option value="RJ">Rio de Janeiro</option>
+													<option value="RN">Rio Grande do Norte</option>
+													<option value="RS">Rio Grande do Sul</option>
+													<option value="RO">Rondônia</option>
+													<option value="RR">Roraima</option>
+													<option value="SC">Santa Catarina</option>
+													<option value="SP">São Paulo</option>
+													<option value="SE">Sergipe</option>
+													<option value="TO">Tocantins</option>
+												</select>
+											</li>
+										</ol>
+									</div>
+									<p align="center">
+										<span id="addpointroute" style="cursor:pointer;"> + Adicionar ponto</span>
+									</p>
+									<p align="center">
+										<input type="submit" value="Montar rota com os endereços acima"/>
+									</p>
+								</fieldset>
+							</form>
+					</div>
+
+				{% endif %}
+			{% endif %}
 		{% endif %}
 	
 	</div>

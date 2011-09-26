@@ -13,7 +13,8 @@ $(document).ready(function(){
   
   $("#step1route").submit(function(){
   	vlayer3.destroyFeatures();
-  	routepoints = {};
+  	routepoints = [];
+  	var wait = 1;
   	
   	tolerance = $("#routetolerance").val();
 
@@ -24,8 +25,7 @@ $(document).ready(function(){
     	number =  $(".routenumber", this).val();
     	city =  $(".routecity", this).val();
     	state =  $(".routestate", this).val();
-    	
-    	
+    	    	
     	if (tolerance == '') {
     		jQuery("#generaldialog").html("");
         	jQuery("#generaldialog").attr("title","Faltando campo Tolerância");
@@ -34,16 +34,17 @@ $(document).ready(function(){
     	}
     	
     	else if(address != '' && number != '' && city != '' && state != '') {
+ 			//TODO: make the validation of fields first; 
+ 			//TODO: refactor the geocode function; make it receive an array of addresses to control the loading,
+ 			// a unique $.post function so the code will continue in its return 
+ 			
+ 			 			 			 			    		
     		$.post(
 	        "/geofence/geocode/",
 	        {address:address,number:number,city:city,state:state},
-	        function (data) { alert('ae');
+	        function (data) {
+	          routepoints.push(data);
 	          
-	          lat = "-46.62";
-	          lng = "-23.57";
-	          
-	          //TODO: Append the returned coordinates here
-	        
 	        },'json'
 	     
 	  		);
@@ -59,7 +60,7 @@ $(document).ready(function(){
   	});
   	
   	//With the array of coordinates mounted above, calculate the route and draw on the map
-  	
+  	alert(routepoints.toSource());
   	
   	return false;
   });
