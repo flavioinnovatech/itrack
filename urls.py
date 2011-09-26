@@ -102,6 +102,8 @@ url(r'^alerts/load/$','alerts.ajax.load'),
 
 url(r'^geofence/$','geofence.views.index'),
 url(r'^geofence/create/$','geofence.views.create'),
+url(r'^geofence/create2/(\d+)/(\d+)/$','geofence.views.create2'),
+#url(r'^geofence/create/$','geofence.views.create'),
 url(r'^geofence/create/finish/$','geofence.views.create_finish'),
 url(r'^geofence/geocode/$','geofence.ajax.geocoder'),
 url(r'^geofence/save/$','geofence.views.saveGeofencev2'),
