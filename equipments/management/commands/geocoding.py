@@ -166,20 +166,11 @@ def ReverseGeocode(lat,lng):
         #return a list with first element being the full address, the second the city and the third the administrative area.
         return [unicode(c.full_address),unicode(c.street)+" "+unicode(c.number)+", "+unicode(c.administrative_area),unicode(c.city),unicode(c.state),unicode(c.postal_code)]
     except ObjectDoesNotExist:
-        #tries to reverse geocode by google
         try:
-            return GoogleGeocode(lat,lng)
-        except NotImplementedError:
-            #tries to reverse geocode by multispectral
-            try:
-                return MultispectralRGeocode(lat,lng)
-            except NotImplementedError:
-                #tries to reverse geocode by maplink
-                try:
-                    return MaplinkRGeocode(lat,lng)
-                except NotImplementedError:
-                    #fails silently returning empty strings
-                    return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
+            return MaplinkRGeocode(lat,lng)
+        except:
+            #fails silently returning empty strings
+            return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
             
 def MultispectralRGeocode(lat,lng):
     ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C"

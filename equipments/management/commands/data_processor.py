@@ -448,7 +448,7 @@ class Command(BaseCommand):
         
         # Set up the server:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind((PROCESSOR_IP, PROCESSOR_PORT))
+        server.bind(('', PROCESSOR_PORT))
         server.listen(5)
         print "Server listening. The recognized equipment types are:"
         print equipTypeDict
