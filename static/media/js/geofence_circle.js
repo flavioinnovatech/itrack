@@ -14,22 +14,29 @@ jQuery(document).ready(function(){
   }
 	
   //calculates the center of the circle
-  $('#step2circle').submit(function() {
-  	address =  $('#circleaddress').attr("value");
-  	number = $('#circlenumber').attr("value");
-  	city = $('#circlecity').attr("value");
-  	state = $("#circleselect option:selected").text();
-  	radius = $('#radius').attr("value") / 100;
+  $('#step1circle').submit(function() {
+  	address =  $('.routeinput').attr("value");
+  	number = $('.routenumber').attr("value");
+  	city = $('.routecity').attr("value");
+  	state = $(".routestate option:selected").text();
+  	radius = $('#routetolerance').attr("value") / 100;
 	
 	if(address != '' && number != '' && city != '' && state != '') {
+		
+		data = {};
+		data['address'] = address;
+		data['number'] = number;
+		data['city'] = city;
+		data['state'] = state;
+		routeaddresses.push(data);
+		
 		$.post(
 	          "/geofence/geocode/",
-	          {address:address,number:number,city:city,state:state},
+	          {addresses:routeaddresses},
 	          function (data) { alert('ae');
 	            vlayer.destroyFeatures();
 	          
-	            lat = "-46.62";
-	            lng = "-23.57";
+	            alert(data.toSource());
 	          
 	            var center = new OpenLayers.Geometry.Point(lat,lng);
 	            var circle = OpenLayers.Geometry.Polygon.createRegularPolygon(center,radius, 50);
