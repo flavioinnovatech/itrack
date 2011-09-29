@@ -30,8 +30,7 @@ class EquipmentType(models.Model):
 
 class AvailableFields(models.Model):
     custom_fields = models.ManyToManyField(CustomField,verbose_name="Campos")
-    custom_fields.null = True
-    custom_fields.blank = True
+
     equip_type = models.ForeignKey(EquipmentType, verbose_name = "Modelo")
     system = models.ForeignKey(System, verbose_name="Sistema")
     def __unicode__(self):
@@ -40,25 +39,15 @@ class AvailableFields(models.Model):
 class Equipment(models.Model):
    name = models.CharField(max_length=200)
    system = models.ManyToManyField(System, verbose_name="Sistema")
-   serial = models.CharField(max_length=50, unique= True)
-   serial.default = '000017E8'
-   serial.null = True
+   serial = models.CharField(max_length=50, default='000017E8',null=True,unique= True)
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
+   lasttrack_data = models.IntegerField(default=-1,null=False,editable=False)
+   lasttrack_update = models.IntegerField(default=-1,null=False,editable=False)
+   
    def __unicode__(self):
       return self.serial
       
-class EquipmentMTC400(models.Model):
-   equipment = models.ForeignKey(Equipment)
-   serial = models.CharField(max_length=50, unique= True)
-   serial.default = '000017E8'
-   serial.null = True
-   ignition = models.CharField(max_length=1) # T F
-   output1 = models.CharField(max_length=1) # T F
-   panic = models.CharField(max_length=1) # T F
-   lastupdate = models.DateTimeField()
-   def __unicode__(elf):
-      return self.serial
 
 class Tracking(models.Model):
     msgtype = models.CharField(max_length=20)

@@ -2,6 +2,7 @@
 # Create your views here.
 import csv,codecs, StringIO
 from datetime import datetime
+from reportlab.pdfgen import canvas
 
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
@@ -235,7 +236,15 @@ def report(request,offset):
                     response.write("<row>"+mount+"</row>")
                 response.write("</document>")
                 return response
-
+            elif request.POST['type'] == 'PDF':
+                request.session['download'] = 'done'
+                response = HttpResponse(mimetype='application/pdf')
+                response['Content-Disposition'] = 'attachment; filename=relatorio.pdf'
+                p = canvas.Canvas(response);
+                p.drawString(100, 100, "Hello world.")
+                p.showPage()
+                p.save()
+                return response
             if request.POST['type'] == 'HTML':
                 response = HttpResponse(mimetype='text/html')
                 writer = UnicodeWriter(response)

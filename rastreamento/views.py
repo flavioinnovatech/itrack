@@ -13,7 +13,7 @@ from itrack.vehicles.models import Vehicle
 from itrack.system.tools import lowestDepth
 import pprint
 from querystring_parser import parser
-
+from time import time as Timer
 
 @login_required
 def index(request):
@@ -67,26 +67,37 @@ def loadData(request):
   #vehicle_fields = 
   
   data = {}
-  
+
   for i in vehicles:
-    info = {}
-    info["id"] = i.id
-    info["hora"] = {}
-    info["veiculo"] = {}
-    info["info"] = {}
-    info["geocode"] = {}
-    tracking = Tracking.objects.filter(equipment=i.equipment.id).order_by('eventdate').reverse()[0]
-    trackingData = TrackingData.objects.filter(tracking=tracking.id)
-    info["hora"]["eventdate"] = smart_str(tracking.eventdate, encoding='utf-8', strings_only=False, errors='strict')
-    info["veiculo"]["Chassi"] = i.chassi
-    info["veiculo"]["license_plate"] = i.license_plate
-    info["veiculo"]["Cor"] = i.color
-    info["veiculo"]["Ano de fabricação"] = i.year
-    info["veiculo"]["Modelo"] = i.model
-    info["veiculo"]["Fabricante"] = i.manufacturer
-    info["veiculo"]["type"] = i.type
-    info["veiculo"]["sistema"] = lowestDepth(i.equipment.system.all()).name
-    
+    try:
+        try:
+            if i.equipment.lasttrack_data != -1:
+                tracking = Tracking.objects.filter(pk=i.equipment.lasttrack_data)
+                print("ok1")
+            else:
+                tracking = Tracking.objects.filter(equipment=i.equipment.id).order_by('eventdate').reverse()[0]
+                print("ok2")
+        except Exception as err:
+            tracking = Tracking.objects.filter(equipment=i.equipment.id).order_by('eventdate').reverse()[0]
+            print("fail")
+        trackingData = TrackingData.objects.filter(tracking=tracking.id)
+        info = {}
+        info["id"] = i.id
+        info["hora"] = {}
+        info["veiculo"] = {}
+        info["info"] = {}
+        info["geocode"] = {}
+        info["hora"]["eventdate"] = smart_str(tracking.eventdate, encoding='utf-8', strings_only=False, errors='strict')
+        info["veiculo"]["Chassi"] = i.chassi
+        info["veiculo"]["license_plate"] = i.license_plate
+        info["veiculo"]["Cor"] = i.color
+        info["veiculo"]["Ano de fabricação"] = i.year
+        info["veiculo"]["Modelo"] = i.model
+        info["veiculo"]["Fabricante"] = i.manufacturer
+        info["veiculo"]["type"] = i.type
+        info["veiculo"]["sistema"] = lowestDepth(i.equipment.system.all()).name
+    except:
+        continue      
         
     for j in trackingData:
       try:
@@ -110,7 +121,7 @@ def loadData(request):
     # saved in the configs and is present on the equip type
     #map(lambda k: k not in items and info["info"].setdefault(k,"OFF"),fields_list)
     
-    print info["info"]
+#    print info["info"]
     
     #for field in fields_list:
     #    if field not in items:

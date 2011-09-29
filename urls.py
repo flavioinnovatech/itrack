@@ -81,6 +81,7 @@ url(r'^commands/create/(\d+)/(\d+)/$','command.views.create'),
 url(r'^commands/create/finish/$','command.views.create_finish'),
 url(r'^commands/delete/(\d+)/$','command.views.delete'),
 url(r'^commands/delete/finish/$','command.views.delete_finish'),
+url(r'^commands/loadavailable/$','command.views.loadavailable'),
 
 url(r'^drivers/$', 'drivers.views.index'),
 url(r'^drivers/create/$','drivers.views.create'),

@@ -2,6 +2,83 @@
 
 {% block head %}
 <script type="text/javascript" src="/media/js/command.js"></script>
+
+
+<script>
+
+function xml_to_string(xml_node)
+{
+    if (xml_node.xml)
+        return xml_node.xml;
+    else if (XMLSerializer)
+    {
+        var xml_serializer = new XMLSerializer();
+        return xml_serializer.serializeToString(xml_node);
+    }
+    else
+    {
+        alert("ERROR: Extremely old browser");
+        return "";
+    }
+}
+jQuery(document).ready(function(){ 
+
+    var obj = document.getElementById("id_equipment");
+    obj.onchange = function() {
+        //alert(obj.value);
+        $.ajax({
+            url: "/commands/loadavailable?id=" + obj.value,
+            context : document.body,
+            dataType : "xml",
+            success: function(xmlNode) {
+//                alert(xmlNode)
+  //              alert(xml_to_string(xmlNode))
+//                alert("START");
+                root = xmlNode.childNodes[0];    
+                x=root.childNodes;
+                msg = ""
+                var values = [];
+                var test = true;
+                var c = 0;
+                var msg = "";
+                for (i=0;i<x.length;i++)
+                {
+                    //selected="selected" 
+                    if(x[i].nodeName=="field") {
+                        if(x[i].childNodes.length==2) {
+                            var k1 = "";
+                            var v1 = "";
+                            if(x[i].childNodes[0].nodeName=="key") {
+                                k1 = x[i].childNodes[0].childNodes[0].nodeValue;
+                            } 
+                            if(x[i].childNodes[1].nodeName=="val") {
+                                v1 = x[i].childNodes[1].childNodes[0].nodeValue;
+                            } 
+                            msg += k1 + " :: " + v1 + "\n"
+                            values.push([k1,v1]);
+                        }
+                    }
+                    if(x[i].nodeName=="msg") {
+                        msg = x[i].childNodes[0].nodeValue;
+                    }
+    //                $('#mySelect').empty().append('<option selected="selected" value="whatever">text</option>');
+//                    alert("Nodename: " + x[i].nodeValue);
+  //                  alert(" nodetype: " + x[i].nodeType    );
+                }
+//                if(msg!= undefined && msg!="") alert(msg);
+                jQuery('#id_type').empty();
+                for(i=0;i<values.length;i++) {
+                    jQuery('#id_type').append('<option value="'+values[i][0]+'">'+values[i][1]+'</option>');
+                }
+//                alert("DONE");
+            }
+        });
+    }
+    
+ });
+
+</script>
+
 {% endblock %}
 
 

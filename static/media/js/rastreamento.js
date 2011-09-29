@@ -248,7 +248,9 @@ function loadGrid() {
           
           //para cada veículo
           var nequips = 0;
-          jQuery.each(data, function(key, equip) { 
+          
+          jQuery.each(data, function(key, equip) {
+
             nequips++;
            //hack para colocar endereço em primeiro
            addr = equip.geocode["Endereço"];
@@ -358,6 +360,7 @@ function loadGrid() {
                 */
             }
               object = {};
+
               jQuery.each(colNames, function(keyx, name) {
                 
                 //Campos fixos
@@ -366,7 +369,12 @@ function loadGrid() {
                 else if (name == "Placa")           object[name] = equip.veiculo.license_plate;
                 else if(name == "Cliente")          object[name] = equip.veiculo.sistema;
                 //Geocode fields
-                else if(name == "Endereço")         object[name] = equip.geocode["Endereço"];
+                else if(name == "Endereço"){
+                    if (equip.geocode["Endereço"] instanceof String)
+                        object[name] = equip.geocode["Endereço"];
+                    else
+                        object[name] = Math.floor(equip.lat*100000)/100000 +","+ Math.floor(equip.lng*100000)/100000;   
+                }
                 else if(name =="Cidade")            object[name] = equip.geocode["Cidade"];
                 else if(name =="CEP")               object[name] = equip.geocode["CEP"];
                 else if(name =="Estado")            object[name] = equip.geocode["Estado"];
@@ -377,6 +385,8 @@ function loadGrid() {
                 else {
                   object[name.replace(" ","_")] = equip.info[name];
                 }
+                
+                
                 
             });
               nequips++;

@@ -50,7 +50,8 @@ count = 0
 # >> ====================================== | THREAD TO OUTPUT TO THE SCREEN|  >
 # >> ====================================== +-------------------------------+-/
 
-
+class PrintTread(threading.Thread):
+    pass
 
 class OutputThread(threading.Thread):
     
@@ -80,6 +81,7 @@ class OutputThread(threading.Thread):
         t = threading.Timer(1.0,self.calculate)
         main_stop = False
         while True:
+            time.sleep(0.1)
             if self.stopped():
                 curses.nocbreak()
                 stdscr.keypad(0)
@@ -170,6 +172,8 @@ class ClientThread(threading.Thread):
         return self._laststatus == self._status
 
     def setStatus(self,st):
+        if not st == "Waiting to process data.":
+            print(self.getName()+':'+st)
         self._status = st
         
     def run(self):
@@ -198,6 +202,7 @@ class ClientThread(threading.Thread):
 
             self.setStatus('Processing data from '+client[1][0])
             inbox =  client[0].recv(8192)
+            client[0].close()
     #            file = codecs.open("./")
             datadict = json.loads(inbox)
             if datadict['Type'] == 'MTC State Tracking':
@@ -208,6 +213,8 @@ class ClientThread(threading.Thread):
                 searchdate = datetime.strptime( date_data, "%Y-%m-%d %H:%M:%S")
                 t = Tracking(equipment=e, eventdate=searchdate,  msgtype="TRACKING")
                 t.save()
+                e.lasttrack_update = t.pk
+                e.save()
                 TrackingData(tracking=t,type=CustomField.objects.get(id=67), value=sendstate_data).save()
                 
             elif datadict['Type'] == 'Tracking':
@@ -218,7 +225,9 @@ class ClientThread(threading.Thread):
                     e = Equipment.objects.get(
                         Q(serial=datadict['Identification']['Serial'])
                     )
+
                     try:
+                        print(e.name)
                         #second, if the vehicle exists, for that equipment, 
                         # insert the tracking head on the tracking table
                         vehicle = Vehicle.objects.get(equipment=e)
@@ -242,18 +251,36 @@ class ClientThread(threading.Thread):
                             eventdate=searchdate, 
                             msgtype="TRACKING")
                         t.save()
+                        e.lasttrack_data = t.pk
+                        e.save()
                         
                         # mounting the list of data received
                         io = {}
-                        io['Input'] = datadict['Input'].copy()
-                        io['LinearInput'] = datadict['LinearInput'].copy()
-                        io['Output'] = datadict['Output'].copy()
-                        print datadict['Output']
-                        io['GPS'] = datadict['GPS'].copy()
+                        try:
+                            io['Input'] = datadict['Input'].copy()
+                        except:
+                            pass
+                        try:
+                            io['LinearInput'] = datadict['LinearInput'].copy()
+                        except:
+                            pass
+                        try:
+                            io['Output'] = datadict['Output'].copy()
+                        except:
+                            pass
+                        try:
+                            io['GPS'] = datadict['GPS'].copy()
+                            #print io['GPS']
+                        except:
+                            pass
+                            
                         
-                        for x0 in xrange(1,8):
-                            ttype = 53 + x0
-                            TrackingData(tracking=t,type=CustomField.objects.get(id=ttype), value=io['Output']['Output' + str(x0)]).save()
+                        try:
+                            for x0 in xrange(1,8):
+                                ttype = 53 + x0
+                                TrackingData(tracking=t,type=CustomField.objects.get(id=ttype), value=io['Output']['Output' + str(x0)]).save()
+                        except:
+                            pass
 
                         #filtering that list, leaving only the registered
                         #custom fields for the equipment type
@@ -352,7 +379,7 @@ class ClientThread(threading.Thread):
                                 )                              
                             geoalerts = alerts.filter(
                                 trigger__custom_field__tag='GeoFence'
-                            )
+                           "Waiting to process data." )
                             # iterates over the inputs and checks if it 
                             # is needed to send the alert
                             for k,v in io_filtered.items():
@@ -448,17 +475,17 @@ class Command(BaseCommand):
         
         # Set up the server:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind((PROCESSOR_IP, PROCESSOR_PORT))
+        server.bind(('', PROCESSOR_PORT))
         server.listen(5)
-        print "Server listening. The recognized equipment types are:"
-        print equipTypeDict
-        print main_stop
-        OutputThread().start()
+        #print "Server listening. The recognized equipment types are:"
+        #print equipTypeDict
+        #print main_stop
+        #OutputThread().start()
         # Have the server serve "forever":
         while True:
             try:    
                 clientPool.put(server.accept(),False)
-            except KeyboardInterrupt:
+            except:
                 if threading.active_count() <= 2:
                     for th in threading.enumerate():
                         if isinstance(th,OutputThread) or isinstance(th,ClientThread):

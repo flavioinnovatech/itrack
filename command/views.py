@@ -25,7 +25,7 @@ from django.forms import model_to_dict
 from itrack.command.models import Command, CPRSession
 from itrack.vehicles.models import Vehicle
 from itrack.command.forms import CommandForm
-from itrack.equipments.models import Equipment,CustomFieldName,CustomField, Tracking,TrackingData
+from itrack.equipments.models import Equipment,CustomFieldName,CustomField, Tracking,TrackingData,AvailableFields,EquipmentType
 from itrack.system.models import System
 from itrack.system.tools import findChild,findParents
 from itrack.vehicles.models import Vehicle
@@ -232,7 +232,46 @@ def index(request):
     command_tree = mountCommandTree([system,childs],system)    
     
     return render_to_response("command/templates/index.html",locals(),context_instance=RequestContext(request))
+def loadavailable(request):
+    response = HttpResponse(mimetype='text/xml')
+    output1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    output1 += "<document>"
+    id = request.GET.get('id', '')
+    system = request.session['system']
+    msg = ""
+    try:
+        if id == '':
+            equipments = Vehicle.objects.get(system = system)
+            #msg = "no id"
+        else:
+            equipments = Vehicle.objects.get(pk = int(id))
+            #msg = "id" + str(id) +"\n"
+    except:
+        msg = "erro1"
+    count = 0;
+    try:
+        ets = equipments.equipment.type
+#        msg += str(ets.custom_field)
+        for c in ets.custom_field.filter(type="Output"):
+            output1 += "<field>"
+            output1 += "<key>"+str(c.pk)+"</key>"
+            output1 += "<val>"+str(c.name.encode("UTF-8"))+"</val>"
+            output1 += "</field>"
+            msg += str(c.type.encode("UTF-8")) + "$"
+            count += 1
 
+    except Exception as err:
+        msg += str(type(err)) + " % " + str(err.args) + " % " + str(err)
+
+    msg += str(count)
+#    cfs = CustomFields.objects.filter(pk=af.custom_fields)
+ #   for a in cfs:
+  #      msg += a.name
+        
+    output1 += "<msg>" + msg + "</msg>"
+    output1 += "</document>"
+    response.write(output1)
+    return response
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def create(request,offset,vehicle=None):
