@@ -68,12 +68,14 @@ $(document).ready(function(){
 			
 			var points = data;
 			
+			alert(points.toSource());
+			
 			$.post("/geofence/route/", {
 				points : points,
 				tolerance:tolerance
 			}, function(data) {
 				
-				alert(data.toSource());
+				// alert(data.toSource());
 				
 				multiline = []
 				
@@ -89,13 +91,18 @@ $(document).ready(function(){
 				
 				multiline2 = new OpenLayers.Geometry.LineString(multiline);
 
-				style = {
-					strokeColor : '#0000ff',
-					strokeOpacity : 1,
-					strokeWidth : 10
-				};
+				var style_green =
+		        {
+		            strokeColor: "#00FF00",
+		            strokeOpacity: 0.7,
+		            strokeWidth: 6,
+		            pointRadius: 6,
+		            pointerEvents: "visiblePainted"
+		        };
 
-				polygonFeature = new OpenLayers.Feature.Vector(multiline2, null, style);
+
+
+				polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
 				
 				center = new OpenLayers.LonLat(pnt2.x, pnt2.y);
                                   	

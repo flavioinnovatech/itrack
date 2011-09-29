@@ -55,23 +55,23 @@ def Routecalc(array,tolerance):
         
         lngs = gxml.findall(".//{http://webservices.maplink2.com.br}x")
         lats = gxml.findall(".//{http://webservices.maplink2.com.br}y")
+
         
         i = 0
         j = 0
         route = []
         multiline =[]
         point = {}
-        while(i != len(lngs) and j != len(lats)):
+        while(i != len(lngs)):
+            point = {}
             point['lng'] = lngs[i].text
-            point['lat'] = lats[j].text
+            point['lat'] = lats[i].text
             route.append(point)
             
-            pnt = Point(float(lngs[i].text),float(lats[j].text))
+#            pnt = Point(float(lngs[i].text),float(lats[j].text))
                         
-            multiline.append(pnt)
-            
+#            multiline.append(pnt)
             i=i+1
-            j=i+1
         
 #        if type == 'geofence':
 #            ls = LineString(multiline)
