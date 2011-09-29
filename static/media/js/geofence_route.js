@@ -12,94 +12,124 @@ $(document).ready(function(){
   });
   
   $("#step1route").submit(function(){
+  	
+  	//TODO: put loading in this submit
+  	
   	vlayer3.destroyFeatures();
-  	routepoints = {};
+  	routeaddresses = [];
+  	routepoints = [];
+  	var wait = 1;
   	
   	tolerance = $("#routetolerance").val();
+  	
+	if(tolerance == '') {
+		jQuery("#generaldialog").html("");
+		jQuery("#generaldialog").attr("title", "Faltando campo Tolerância");
+		$("#generaldialog").append("Por favor preencha o campo tolerância");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
+	}
 
-  	//For each address do the Geocode, get the coordinates and mount an array
-  	$("#routeinputs ol li").each(function(){
-    	
-    	address =  $(".routeinput", this).val();
-    	number =  $(".routenumber", this).val();
-    	city =  $(".routecity", this).val();
-    	state =  $(".routestate", this).val();
-    	
-    	
-    	if (tolerance == '') {
-    		jQuery("#generaldialog").html("");
-        	jQuery("#generaldialog").attr("title","Faltando campo Tolerância");
-        	$("#generaldialog").append("Por favor preencha o campo tolerância");
-        	jQuery("#generaldialog").dialog({show: "blind",modal:true});
-    	}
-    	
-    	else if(address != '' && number != '' && city != '' && state != '') {
-    		$.post(
-	        "/geofence/geocode/",
-	        {address:address,number:number,city:city,state:state},
-	        function (data) { alert('ae');
-	          
-	          lat = "-46.62";
-	          lng = "-23.57";
-	          
-	          //TODO: Append the returned coordinates here
-	        
-	        },'json'
-	     
-	  		);
-	  	}
+	else {
+	  	//For each address do the Geocode, get the coordinates and mount an array
+	  	$("#routeinputs ol li").each(function(){
+	    	
+	    	address =  $(".routeinput", this).val();
+	    	number =  $(".routenumber", this).val();
+	    	city =  $(".routecity", this).val();
+	    	state =  $(".routestate", this).val();
+	    		    	    	
+	    	if(address != '' && number != '' && city != '' && state != '') {
+	 			//TODO: make the validation of fields first; 
+	 			//TODO: refactor the geocode function; make it receive an array of addresses to control the loading,
+	 			// a unique $.post function so the code will continue in its return 
+	 			data = {};
+	 			data['address'] = address;
+	 			data['number'] = number;
+	 			data['city'] = city;
+	 			data['state'] = state;
+	 			
+	 			routeaddresses.push(data);	
+	 		} else {
+		  		jQuery("#generaldialog").html("");
+	        	jQuery("#generaldialog").attr("title","Endereço(s) incorreto(s)");
+	        	$("#generaldialog").append("Por favor preencha todos os campos para cada endereço.");
+	        	jQuery("#generaldialog").dialog({show: "blind",modal:true});
+		  	}
+	    	
+	  	});
 	  	
-	  	else {
-	  		jQuery("#generaldialog").html("");
-        	jQuery("#generaldialog").attr("title","Endereço(s) incorreto(s)");
-        	$("#generaldialog").append("Por favor preencha todos os campos para cada endereço.");
-        	jQuery("#generaldialog").dialog({show: "blind",modal:true});
-	  	}
-    	
-  	});
-  	
-  	//With the array of coordinates mounted above, calculate the route and draw on the map
-  	
+	  	//Post only one time an array of addresses
+		$.post("/geofence/geocode/", {
+			addresses : routeaddresses
+		}, function(data) {
+			
+			var points = data;
+			
+			alert(points.toSource());
+			
+			$.post("/geofence/route/", {
+				points : points,
+				tolerance:tolerance
+			}, function(data) {
+				
+				// alert(data.toSource());
+				
+				multiline = []
+				
+				for (var i in data){
+					pnt = new OpenLayers.Geometry.Point(data[i]['lng'],data[i]['lat']);
+					pnt2 = pnt.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
+					// alert(pnt.x);
+					// pnt2 = ""
+					// pnt2 = pnt.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
+					// alert(pnt.y);
+					multiline.push(pnt2);
+				}
+				
+				multiline2 = new OpenLayers.Geometry.LineString(multiline);
+
+				var style_green =
+		        {
+		            strokeColor: "#00FF00",
+		            strokeOpacity: 0.7,
+		            strokeWidth: 6,
+		            pointRadius: 6,
+		            pointerEvents: "visiblePainted"
+		        };
+
+
+
+				polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
+				
+				center = new OpenLayers.LonLat(pnt2.x, pnt2.y);
+                                  	
+                vlayer3.addFeatures([polygonFeature]);
+                multispectral1.setCenter(center,15);
+
+			},'json');
+		}, 'json');
+
+	}
   	
   	return false;
   });
-  
-  /*
-  $.post(
-        "/geofence/geocode/",
-        {address:address,number:number,city:city,state:state},
-        function (data) { alert('ae');
-          vlayer.destroyFeatures();
-        
-          lat = "-46.62";
-          lng = "-23.57";
-        
-          var center = new OpenLayers.Geometry.Point(lat,lng);
-          var circle = OpenLayers.Geometry.Polygon.createRegularPolygon(center,radius, 50);
-          vlayer.addFeatures(new OpenLayers.Feature.Vector(circle));
-        
-        
-        },'json'
-     
-  );
-  */
-  
+    
 });
-
+var vlayer3;
 function loadmap(){
 	
   multispectral1 = new OpenLayers.Map('map1');
   
-  var dm_wms1 = new OpenLayers.Layer.WMS(
-      "Canadian Data",
-      "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
-      {
-          layers: "multispectral",
-          format: "image/gif"
-      },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
+  var dm_wms1 = load_wms();
 
   //FIXME: add support to editables routes
-  vlayer3 = new OpenLayers.Layer.Vector( "Editable",{eventListeners: {sketchstarted: function(evt) {vlayer3.destroyFeatures();}},onFeatureInsert: function(	feature	) {polygon = (feature);area = (feature.geometry.getGeodesicArea()/1000000).toFixed(2); jQuery("#polygonarea").html(area + " km²");}});
+
+	vlayer3 = new OpenLayers.Layer.Vector("Line Layer"); 
+
+
   /*
   vlayer3.events.on({"afterfeaturemodified": function(feature){
         polygon = (feature.feature);
@@ -111,10 +141,14 @@ function loadmap(){
   multispectral1.addLayer(dm_wms1);
   
   //FIXME: same as above
-  //multispectral2.addLayer(vlayer2);
+  multispectral1.addLayer(vlayer3);
   
+  multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        multispectral1.getProjectionObject()
+    ), 5);
   
-  multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
+  // multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
   
   //Control Panel
   panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});

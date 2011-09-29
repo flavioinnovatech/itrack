@@ -50,9 +50,6 @@ count = 0
 # >> ====================================== | THREAD TO OUTPUT TO THE SCREEN|  >
 # >> ====================================== +-------------------------------+-/
 
-class PrintTread(threading.Thread):
-    pass
-
 class OutputThread(threading.Thread):
     
     trackings_per_second = 0
@@ -185,7 +182,7 @@ class ClientThread(threading.Thread):
       vehicleField = CustomField.objects.get(tag="Vehicle")
       root_system = System.objects.get(parent=None)
       while True:
-         
+       try:
          if ((self.stopped() and clientPool.qsize() == 0) or
             (self.stopped() and threading.active_count() > 2)):
             self.setStatus("Thread stopped.")
@@ -439,7 +436,10 @@ class ClientThread(threading.Thread):
             
          else:
             self.setStatus("Waiting to process data.")
-            
+       except:
+         curses.nocbreak()
+         curses.echo()
+         curses.endwin()    
             
 
 # >> ====================================== +-------------------------------+-\

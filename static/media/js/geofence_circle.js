@@ -92,24 +92,34 @@ jQuery(document).ready(function(){
 
 var vlayer;
 function create_map() {
-  vlayer = new OpenLayers.Layer.Vector("Editable",{eventListeners: {sketchstarted: function(evt) {vlayer.destroyFeatures();}},onFeatureInsert: function(	feature	) { circle = (feature.geometry.toString()); area = (feature.geometry.getGeodesicArea()/1000000).toFixed(2); jQuery("#circlearea").html(area + " km²");} });
+
+	vlayer = new OpenLayers.Layer.Vector("Editable", {
+		eventListeners : {
+			sketchstarted : function(evt) {
+				vlayer.destroyFeatures();
+			}
+		},
+		onFeatureInsert : function(feature) {
+			circle = (feature.geometry.toString());
+			area = (feature.geometry.getGeodesicArea() / 1000000).toFixed(2);
+			jQuery("#circlearea").html(area + " km²");
+		}
+	});
+
 
   var options = {
-      units: 'm'
+      //units: 'm'
   };
   multispectral = new OpenLayers.Map('map3',options);
 
-  var dm_wms = new OpenLayers.Layer.WMS(
-      "Canadian Data",
-      "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
-      {
-          layers: "multispectral",
-          format: "image/gif"
-      },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 300});
-
+  var dm_wms = load_wms();
+                      
   multispectral.addLayer(dm_wms);
   multispectral.addLayer(vlayer);
-  multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
+  //multispectral.setCenter(new OpenLayers.LonLat(-47,-22),4);
+  multispectral.setCenter(new OpenLayers.LonLat(10.2, 48.9), 5);
+  //multispectral.setCenter(new OpenLayers.LonLat(-16.40,-49.47),4);
+  //multispectral.setCenter(new OpenLayers.LonLat(-54, -18), 5);
 
   //Control Panel
   panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});

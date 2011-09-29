@@ -91,6 +91,17 @@ def index(request):
 
 def create(request):
     system = System.objects.filter(administrator__username=request.user.username)
+    
+    g = False
+    step = 1
+
+    return render_to_response("geofence/templates/create.html",locals())
+
+def create2(request,offset,offset2):
+    system = System.objects.filter(administrator__username=request.user.username)
+    
+    g = False
+    step = 2
 
     return render_to_response("geofence/templates/create.html",locals())
 
