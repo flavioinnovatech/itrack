@@ -80,22 +80,24 @@ def report(request,offset):
     else:
 
         try:
+            
             if request.POST.has_key("vehicle_other"):
+                print("# TESTE 001 ");
                 v = Vehicle.objects.get(license_plate=request.POST["vehicle"])
                 request.POST["vehicle"] = str(v.id)
         except ObjectDoesNotExist:
-            pass        
+            print("# TESTE 004 ");
+            pass
         form = ReportForm(int(offset),request.POST)    
-        
+        print("# TESTE 005 ");
         if form.is_valid():
+            print("# TESTE 006 ");
             system = request.session["system"]
             s = System.objects.get(pk=system)
             parents = findParents(s,[s])
-            
             parents = serializeChild(findChild(system),[])
             print parents
             d1 = datetime.now()
-            
             #TODO: A business logic pra cá ficou assim:
             #TODO: criar campo indicando se o veículo foi deletado no model do veículo, e sumir com os veículos apagados
             #TODO: apenas por esse campo. Aqui vamos ter a busca sem checar esse campo, assim o sistema pode consultar infos
@@ -103,12 +105,17 @@ def report(request,offset):
             #TODO: informações vistas pelo sistema root. Não esquecer de checar qual sistema está vendo a informação, e pegar
             #TODO: trackings apenas para o sistema logado.            
             try:
-                vehicle = Vehicle.objects.get(pk=form.cleaned_data["vehicle"])
+#                form.cleaned_data["vehicle"]
+                vehicle = Vehicle.objects.get(pk=request.POST.getlist(u"vehicle"))
+                print("# TESTE 012 ");
             except:
+                print("# TESTE 013 ");
                 no_information = 1
-                request.session['download'] = 'wait'
+                request.session['download'] = 'done'
                 return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
+            print("# TESTE 014 ");            
             if s.parent == None:
+                print("# TESTE 015 ");
                 equip_system = s.name
                 trackings = Tracking.objects.filter(
                     Q(eventdate__gte=form.cleaned_data['period_start'])  
@@ -118,7 +125,9 @@ def report(request,offset):
                         &Q(trackingdata__value = vehicle.id)
                     )
                 )
+                print("# TESTE 016 ");
             else:
+                print("# TESTE 017 ");
                 equip_system = lowestDepth(vehicle.equipment.system.all()).name
                 print vehicle.id
                 trackings = Tracking.objects.filter(
@@ -134,6 +143,7 @@ def report(request,offset):
                 )
             
             if trackings.count() == 0:
+                print("# TESTE 018 ");
                 no_information = 1
                 request.session['download'] = 'wait'
                 return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)

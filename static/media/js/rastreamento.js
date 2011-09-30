@@ -201,6 +201,8 @@ function loadmaps() {
 var globaldata;
 function loadData(plate) {
 
+
+
 	jQuery.post(
     	"/rastreamento/loadData/",
         {plate:plate},
@@ -210,6 +212,7 @@ function loadData(plate) {
           globaldata = data;
           loadGrid();
           loadlateralgrid();
+            closeloading();
         },'json'
 	);
 	
