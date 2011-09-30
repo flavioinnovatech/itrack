@@ -490,7 +490,7 @@ Estado: <select class="routeselect">
 								</li>
 								<li>
 									<label for="id_state_1">
-										<input type="radio" disabled name="geofence-format"" value="2" id="id_state_1">
+										<input type="radio" 	name="geofence-format"" value="2" id="id_state_1">
 										Polígono</label>
 										</li>
 										<li>
@@ -615,6 +615,7 @@ Estado: <select class="routeselect">
 			<form  action="" class="steps" style="width:70%"
 				{% if offset == "3" %} id="step1route" {% endif %}
 				{% if offset == "1" %} id="step1circle" {% endif %}
+				{% if offset == "2" %} id="step1polygon" {% endif %}
 			>
 				<fieldset>
 					<legend>
@@ -721,6 +722,47 @@ Estado: <select class="routeselect">
 								</select>
 							</li>
 							{% endif %}
+							{% if offset == "2" %}
+							<li>
+								<span>Endereço: </span>
+								<input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+								n.º
+								<input class="routenumber" placeholder="" type="number" style="width:40px" />
+								Cidade:
+								<input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
+								Estado:
+								<select class="routestate">
+									<option value="0" selected="selected">&nbsp;</option>
+									<option value="AC">Acre</option>
+									<option value="AL">Alagoas</option>
+									<option value="AP">Amapá</option>
+									<option value="AM">Amazonas</option>
+									<option value="BA">Bahia</option>
+									<option value="CE">Ceará</option>
+									<option value="DF">Distrito Federal</option>
+									<option value="ES">Espírito Santo</option>
+									<option value="GO">Goias</option>
+									<option value="MA">Maranhão</option>
+									<option value="MT">Mato Grosso</option>
+									<option value="MS">Mato Grosso do Sul</option>
+									<option value="MG">Minas Gerais</option>
+									<option value="PA">Pará</option>
+									<option value="PB">Paraíba</option>
+									<option value="PR">Paraná</option>
+									<option value="PE">Pernambuco</option>
+									<option value="PI">Piauí</option>
+									<option value="RJ">Rio de Janeiro</option>
+									<option value="RN">Rio Grande do Norte</option>
+									<option value="RS">Rio Grande do Sul</option>
+									<option value="RO">Rondônia</option>
+									<option value="RR">Roraima</option>
+									<option value="SC">Santa Catarina</option>
+									<option value="SP">São Paulo</option>
+									<option value="SE">Sergipe</option>
+									<option value="TO">Tocantins</option>
+								</select>
+							</li>
+							{% endif %}
 						</ol>
 					</div>
 					{% if offset != "1" %} 
@@ -731,6 +773,7 @@ Estado: <select class="routeselect">
 					<p align="center">
 						<input type="submit" 
 							{% if offset == "3" %}  value="Montar rota com os endereços acima" {% endif %}
+							{% if offset == "2" %}  value="Montar polígono com os endereços acima" {% endif %}
 							{% if offset == "1" %}  value="Montar círculo no endereço com o raio digitado acima" {% endif %} 
 						/>
 						ou <a href="{% url geofence.views.create %}">Voltar</a>

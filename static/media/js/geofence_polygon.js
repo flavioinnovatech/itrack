@@ -4,7 +4,7 @@ var markers,size,offset;
 
 jQuery(document).ready(function(){
   
-  create_map_polygon();
+  //create_map_polygon();
   
   //Polygon
   $("#addpoint").click(function(){
@@ -26,59 +26,85 @@ jQuery(document).ready(function(){
   	multispectral2.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
   }
   
+
   $("#step1polygon").submit(function(){
-    $("#polygoninputs ol li").each(function(){
+  	routeaddresses = [];
+	var prox = 1;
+
+    $("#routeinputs ol li").each(function(){
     	
-    	address =  $(".polygoninput", this).val();
-    	number =  $(".polygonnumber", this).val();
-    	city =  $(".polygoncity", this).val();
-    	state =  $(".polygonstate", this).val();
-    	
+    	address =  $(".routeinput", this).val();
+	    number =  $(".routenumber", this).val();
+	    city =  $(".routecity", this).val();
+	    state =  $(".routestate", this).val();	  
+	   	
     	if(address != '' && number != '' && city != '' && state != '') {
-    		$.post(
-	        "/geofence/geocode/",
-	        {address:address,number:number,city:city,state:state},
-	        function (data) { alert('ae');
-	          
-	          lat = "-46.62";
-	          lng = "-23.57";
-	          
-	          //TODO: Append the returned coordinates here
-	        
-	        },'json'
-	     
-	  		);
-    	}
+
+	 			data = {};
+	 			data['address'] = address;
+	 			data['number'] = number;
+	 			data['city'] = city;
+	 			data['state'] = state;
+	 			
+	 			routeaddresses.push(data);
+	 	}
     	
     	else {
 	  		jQuery("#generaldialog").html("");
         	jQuery("#generaldialog").attr("title","Endereço(s) incorreto(s)");
         	$("#generaldialog").append("Por favor preencha todos os campos para cada endereço.");
         	jQuery("#generaldialog").dialog({show: "blind",modal:true});
+        	prox = 0;
 	  	}
     });
+        
+    if (prox) {
+    	$.post("/geofence/geocode/", {
+				addresses : routeaddresses
+			}, function(data) {
+				
+				var points = data;
+				
+				ppol = []
+				
+				for (var i in points){
+					p = new OpenLayers.Geometry.Point(points[i]['lng'],points[i]['lat']);
+					p2 = p.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
+					ppol.push(p2);
+				}
+				
+				var linear_ring = new OpenLayers.Geometry.LinearRing(ppol);
+				
+				polygonFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Polygon([linear_ring]));
+    			vlayer3.addFeatures([polygonFeature]);
+    			
+    			center = new OpenLayers.LonLat(p2.x, p2.y);
+    			multispectral1.setCenter(center,15);
+				
+			}, 'json');
+    }
     
-    var p1 = new OpenLayers.Geometry.Point(-46.62,-23.57);
-    var p2 = new OpenLayers.Geometry.Point(-47,-22);
-    var p3 = new OpenLayers.Geometry.Point(-48,-21);
-    
-    ll1 = new OpenLayers.LonLat(-46.62,-23.57);
-    ll2 = new OpenLayers.LonLat(-47,-22);
-    ll3 = new OpenLayers.LonLat(-48,-21);
-    
-    var points = [ll1,ll2,ll3];
-    
-    for (var i in points){
-    	j = parseInt(i) + parseInt(1);
-    	icon = new OpenLayers.Icon('/media/img/marker-blue-'+j+'.png', size, offset);
-    	markers.addMarker(new OpenLayers.Marker(points[i],icon));
-	}
-    
-    var linear_ring = new OpenLayers.Geometry.LinearRing([p1,p2,p3]);
-    
-    polygonFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Polygon([linear_ring]));
-    vlayer2.addFeatures([polygonFeature]);
-    
+    // var p1 = new OpenLayers.Geometry.Point(-46.62,-23.57);
+    // var p2 = new OpenLayers.Geometry.Point(-47,-22);
+    // var p3 = new OpenLayers.Geometry.Point(-48,-21);
+//     
+    // ll1 = new OpenLayers.LonLat(-46.62,-23.57);
+    // ll2 = new OpenLayers.LonLat(-47,-22);
+    // ll3 = new OpenLayers.LonLat(-48,-21);
+//     
+    // var points = [ll1,ll2,ll3];
+//     
+    // for (var i in points){
+    	// j = parseInt(i) + parseInt(1);
+    	// icon = new OpenLayers.Icon('/media/img/marker-blue-'+j+'.png', size, offset);
+    	// markers.addMarker(new OpenLayers.Marker(points[i],icon));
+	// }
+//     
+    // var linear_ring = new OpenLayers.Geometry.LinearRing([p1,p2,p3]);
+//     
+    // polygonFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Polygon([linear_ring]));
+    // vlayer2.addFeatures([polygonFeature]);
+//     
     return false;
   });
   

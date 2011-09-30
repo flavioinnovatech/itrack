@@ -42,9 +42,7 @@ $(document).ready(function(){
 	    	state =  $(".routestate", this).val();
 	    		    	    	
 	    	if(address != '' && number != '' && city != '' && state != '') {
-	 			//TODO: make the validation of fields first; 
-	 			//TODO: refactor the geocode function; make it receive an array of addresses to control the loading,
-	 			// a unique $.post function so the code will continue in its return 
+
 	 			data = {};
 	 			data['address'] = address;
 	 			data['number'] = number;
@@ -61,56 +59,61 @@ $(document).ready(function(){
 	    	
 	  	});
 	  	
-	  	//Post only one time an array of addresses
-		$.post("/geofence/geocode/", {
-			addresses : routeaddresses
-		}, function(data) {
-			
-			var points = data;
-			
-			// alert(points.toSource());
-			
-			$.post("/geofence/route/", {
-				points : points,
-				tolerance:tolerance
+	  	if (routeaddresses[0]) {
+	  		//Post only one time an array of addresses
+			$.post("/geofence/geocode/", {
+				addresses : routeaddresses
 			}, function(data) {
 				
-				// alert(data.toSource());
+				var points = data;
 				
-				multiline = []
+				// alert(points.toSource());
 				
-				for (var i in data){
-					pnt = new OpenLayers.Geometry.Point(data[i]['lng'],data[i]['lat']);
-					pnt2 = pnt.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
-					// alert(pnt.x);
-					// pnt2 = ""
-					// pnt2 = pnt.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
-					// alert(pnt.y);
-					multiline.push(pnt2);
-				}
-				
-				multiline2 = new OpenLayers.Geometry.LineString(multiline);
+				$.post("/geofence/route/", {
+					points : points,
+					tolerance:tolerance
+				}, function(data) {
+					
+					multiline = [];
+					test = [];
+					
+					for (var i in data){
+						var pnt = new OpenLayers.Geometry.Point(data[i]['lng'],data[i]['lat']);
+						test.push(pnt);
+						pnt2 = pnt.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
+						multiline.push(pnt2);
 
-				var style_green =
-		        {
-		            strokeColor: "#00FF00",
-		            strokeOpacity: 0.7,
-		            strokeWidth: 6,
-		            pointRadius: 6,
-		            pointerEvents: "visiblePainted"
-		        };
-
-
-
-				polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
-				
-				center = new OpenLayers.LonLat(pnt2.x, pnt2.y);
-                                  	
-                vlayer3.addFeatures([polygonFeature]);
-                multispectral1.setCenter(center,15);
-
-			},'json');
-		}, 'json');
+					}
+					
+					testline = new OpenLayers.Geometry.LineString(test);
+					test = new OpenLayers.Feature.Vector(testline,null);
+					
+					wkt = new OpenLayers.Format.WKT();
+					
+					// alert(wkt.write(test));
+										
+					multiline2 = new OpenLayers.Geometry.LineString(multiline);
+	
+					var style_green =
+			        {
+			            strokeColor: "#00FF00",
+			            strokeOpacity: 0.7,
+			            strokeWidth: 6,
+			            pointRadius: 6,
+			            pointerEvents: "visiblePainted"
+			        };
+	
+					polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
+					
+					center = new OpenLayers.LonLat(pnt2.x, pnt2.y);
+	                                  	
+	                vlayer3.addFeatures([polygonFeature]);
+	                multispectral1.setCenter(center,15);
+	
+				},'json');
+			}, 'json');
+		
+		}
 
 	}
   	
@@ -129,7 +132,7 @@ function loadmap(){
 
 	vlayer3 = new OpenLayers.Layer.Vector("Editable", {
 		onFeatureInsert : function(feature) {
-			alert('ae');
+			// alert('ae');
 		}
 	});
 
