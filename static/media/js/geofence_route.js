@@ -68,7 +68,7 @@ $(document).ready(function(){
 			
 			var points = data;
 			
-			alert(points.toSource());
+			// alert(points.toSource());
 			
 			$.post("/geofence/route/", {
 				points : points,
@@ -127,8 +127,11 @@ function loadmap(){
 
   //FIXME: add support to editables routes
 
-	vlayer3 = new OpenLayers.Layer.Vector("Line Layer"); 
-
+	vlayer3 = new OpenLayers.Layer.Vector("Editable", {
+		onFeatureInsert : function(feature) {
+			alert('ae');
+		}
+	});
 
   /*
   vlayer3.events.on({"afterfeaturemodified": function(feature){
