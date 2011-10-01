@@ -441,7 +441,7 @@ class Command(BaseCommand):
                 print  json.dumps(formatted_output, indent=4)
                         
                 processor_client.close()
-                
+                exit(0)
                 
                 #remove that after debugging
                 #exit(0)

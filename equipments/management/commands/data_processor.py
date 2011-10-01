@@ -321,6 +321,7 @@ class ClientThread(threading.Thread):
                                         float(datadict['GPS']['Lat']),
                                         float(datadict['GPS']['Long'])
                                       )
+                            print(geocodeinfo)
                             #saving the acquired geocode information
                         
                             TrackingData(   tracking=t, 
@@ -437,9 +438,10 @@ class ClientThread(threading.Thread):
          else:
             self.setStatus("Waiting to process data.")
        except:
-         curses.nocbreak()
-         curses.echo()
-         curses.endwin()    
+         pass
+         #curses.nocbreak()
+         #curses.echo()
+         #curses.endwin()    
             
 
 # >> ====================================== +-------------------------------+-\
