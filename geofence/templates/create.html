@@ -81,6 +81,8 @@ Infotrack - Cercas Eletrônicas
 		}
 		
 		offset = '{{offset}}';
+		
+		offset2 = '{{offset2}}';
 
 		/*
 		 if('{{g.type}}' == 'R') {
@@ -111,8 +113,12 @@ Infotrack - Cercas Eletrônicas
 					show : "blind",
 					modal : true
 				});
-			} else {
+			} 
+			else if (!g) {
 				document.location.href = "/geofence/create2/" + format + "/" + type + "/";
+			}
+			else {
+				document.location.href = "/geofence/edit2/" + format + "/" + type + "/" + g['id'] + "/";
 			}
 
 			return false;
@@ -453,7 +459,10 @@ Estado: <select class="routeselect">
 -->
 <div id="content">
 	<div class="main-form">
-		<h1><img class="icon" src="/media/img/vehicle.png">Criação de Cerca Eletrônica</h1>
+		<h1><img class="icon" src="/media/img/vehicle.png">
+			{% if g == 'False' %}Criação de Cerca Eletrônica {% endif %}
+			{% if g %}Edição de Cerca Eletrônica {% endif %}
+			</h1>
 		<hr/>
 		<div class="ptracker">
 			<div class="tstep {% if step == 1 %} selected {% else %} unselected {% endif %}">

@@ -314,9 +314,10 @@ def delete_finish(request):
     return render_to_response("geofence/templates/delete_finish.html",locals())
 
 def edit(request,offset):
-    try:
-            
+    try:         
             g = Geofence.objects.get(pk=int(offset))
+            
+            step = 1
             
             type = g.type
                 
@@ -340,5 +341,15 @@ def edit(request,offset):
             # ret urn HttpResponseForbidden(u"O seu sistema não pode editar motoristas para este veículo.")
     except ObjectDoesNotExist:
         return HttpResponseNotFound("A cerca eletrônica solicitado não existe.") 
+
+def edit2(request,offset,offset2,g):
+         
+    step = 2
+    
+    a = g
+    g={}
+    g['id'] = a 
+            
+    return render_to_response("geofence/templates/create.html",locals(),context_instance=RequestContext(request))
 
     
