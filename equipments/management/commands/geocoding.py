@@ -177,7 +177,7 @@ def ReverseGeocode(lat,lng):
     except ObjectDoesNotExist:
         try:
             return MaplinkRGeocode(lat,lng)
-        except:
+        except NotImplementedError:
             #fails silently returning empty strings
             return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
             
@@ -213,6 +213,9 @@ def MultispectralRGeocode(lat,lng):
     
 def GoogleGeocode(lat,lng):
     result = Geocoder.reverse_geocode(float(lat),float(lng))
+    print result
+    print "googlin"
+    return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
     #raise NotImplementedError
     #print
     #addr = unicode(result[0])
@@ -220,7 +223,7 @@ def GoogleGeocode(lat,lng):
 def MaplinkRGeocode(lat,lng):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
-    
+    print "====> Maplinking <===="
     url = "webservices.apontador.com.br"
     
     xml = '''<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'''+str(lng)+'''</x><y>'''+str(lat)+'''</y></point><token>'''+str(ticket)+'''</token><tolerance>'''+str(10)+'''</tolerance></getAddress></soap:Body></soap:Envelope>'''
@@ -234,46 +237,45 @@ def MaplinkRGeocode(lat,lng):
         conteudo = response.read()
         conn.close()
        
-    except:
+    except Exception as err:
+      print(err)
       raise NotImplementedError
 
+    print response.status
     if response.status == 200:
-        print conteudo
-        gxml = ElementTree.fromstring(conteudo)
+        try:
+            #print conteudo
+            gxml = ElementTree.fromstring(conteudo)
+            
+            street = gxml.find(".//{http://webservices.maplink2.com.br}street")
+            city = gxml.find(".//{http://webservices.maplink2.com.br}name")
+            state = gxml.find(".//{http://webservices.maplink2.com.br}state")
+            number = gxml.find(".//{http://webservices.maplink2.com.br}houseNumber")
+            postal = gxml.find(".//{http://webservices.maplink2.com.br}zip")
+            
+            c = CachedGeocode(
+                lat = float(lat),
+                lng = float(lng),
+                full_address = "",
+                number = number.text,
+                street = title(lower(street.text)),
+                city = title(city.text),
+                state = state.text,
+                country = "Brasil",
+                postal_code = postal.text,
+                #administrative_area = title(lower(address[0].get("Bairro")))
+            )
         
-        street = gxml.find(".//{http://webservices.maplink2.com.br}street")
-        city = gxml.find(".//{http://webservices.maplink2.com.br}name")
-        state = gxml.find(".//{http://webservices.maplink2.com.br}state")
-        number = gxml.find(".//{http://webservices.maplink2.com.br}houseNumber")
-        postal = gxml.find(".//{http://webservices.maplink2.com.br}zip")
+            c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
+            try:
+                c.save()
+            except:
+                pass
+        except:
+            pass
         
-        c = CachedGeocode(
-            lat = float(lat),
-            lng = float(lng),
-            full_address = "",
-            number = number.text,
-            street = title(lower(street.text)),
-            city = title(city.text),
-            state = state.text,
-            country = "Brasil",
-            postal_code = postal.text,
-            #administrative_area = title(lower(address[0].get("Bairro")))
-        )
-    
-        c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
-        
-        c.save()
-    
         return [c.full_address,c.street+" "+c.number,c.city,c.state,c.postal_code]
-        #raise NotImplementedError
-    else:
-      print conteudo
-            #
-    #except:
-    #    raise NotImplementedError
+        
     
-    
-    
-        #print response.status, response.reason, response.read()
         
     
