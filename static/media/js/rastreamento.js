@@ -373,7 +373,7 @@ function loadGrid() {
                 else if(name == "Cliente")          object[name] = equip.veiculo.sistema;
                 //Geocode fields
                 else if(name == "Endereço"){
-                    if (equip.geocode["Endereço"] instanceof String)
+                    if (equip.geocode["Endereço"].constructor == String)
                         object[name] = equip.geocode["Endereço"];
                     else
                         object[name] = Math.floor(equip.lat*100000)/100000 +","+ Math.floor(equip.lng*100000)/100000;   
