@@ -245,6 +245,29 @@ def saveGeofencev2(request):
           return HttpResponse("create_finish")
 
       return HttpResponse('fail')
+    
+    if parsed_dict['type'] == 'route':
+
+      system = System.objects.get(pk=request.session['system'])
+      wkt = (parsed_dict['coords'])
+
+      if (parsed_dict['id'] != ""):
+          g = Geofence.objects.get(pk=parsed_dict['id'])
+          g.name = parsed_dict['name']
+          g.type = 'R'
+          g.polygon = wkt
+          g.save()
+          
+          return HttpResponse('edit_finish')
+          
+      else:
+          p = wkt
+          print p
+          g = Geofence(name=parsed_dict['name'],system=system,type='R',linestring=p)
+          g.save()
+          
+          return HttpResponse("create_finish")
+    
       
     else:
       pass

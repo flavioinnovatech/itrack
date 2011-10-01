@@ -70,6 +70,7 @@ Infotrack - Cercas Eletrônicas
 <script type="text/javascript" src="/media/js/ajaxsend.js"></script>
 <script type="text/javascript">
 	var g;
+	var offset;
 
 	jQuery(document).ready(function() {
 
@@ -78,6 +79,8 @@ Infotrack - Cercas Eletrônicas
 			g['id'] = '{{g.id}}'
 			g['name'] = '{{g.name}}'
 		}
+		
+		offset = '{{offset}}';
 
 		/*
 		 if('{{g.type}}' == 'R') {
@@ -549,65 +552,7 @@ Estado: <select class="routeselect">
 
 		{% if offset == "3" %} <div id="map1" style="float:left;width:100%;height:300px;"></div>
 		{% endif %}
-		<div style="width:920px;float:left;">
-			<form action="" style="margin:0 auto;">
-				<table>
-					<tbody>
-						<tr>
-							<td>
-							<div class="form-item">
-								<div class="item-left">
-									<p>
-										<label for="id_name">Área da Cerca Eletrônica:</label>
-									</p>
-									<p id="help"></p>
-								</div>
-							</div></td>
-							<td>
-							<div class="item-right">
-								<p class="errorlist"></p>
-								<p class="field" id="circlearea">
-									<i>Nenhuma cerca eletrônica selecionada.</i>
-								</p>
-							</div></td>
-						</tr>
-						<tr>
-							<td>
-							<div class="form-item">
-								<div class="item-left">
-									<p>
-										<label for="id_name">Nome da Cerca Eletrônica:</label>
-									</p>
-									<p id="help"></p>
-								</div>
-							</div></td>
-							<td>
-							<div class="item-right">
-								<p class="errorlist"></p>
-								<p class="field">
-									<input type="text" value="" required="" placeholder="Digite um nome" id="circlename">
-								</p>
-							</div></td>
-						</tr>
-						<tr>
-							<td colspan="2">
-							<div id="actions" style="margin-top:10px;">
-								<p align="center"></p>
-								<p align="center">
-									<input type="button" style="padding:4px 12px;" value="Salvar"
-									{% if offset == "1" %}
-									id="circlesave">
-									{% endif %}
-									{% if offset == "2" %}
-									id="polygonsave">
-									{% endif %}
-								</p>
-							</div></td>
-						</tr>
-					</tbody>
-				</table>
-			</form>
-		</div>
+		
 		{% endif %}
 
 		{% if offset2 == "2" %} {# Input the addresses #}
@@ -783,6 +728,74 @@ Estado: <select class="routeselect">
 		</div>
 		<div id="map1" style="float:left;width:100%;height:300px;"></div>
 		{% endif %}
+		{% endif %}
+		{% if offset2 == "2" %}
+		<div style="width:920px;float:left;">
+			<form action="" style="margin:0 auto;">
+				<table>
+					<tbody>
+						<tr>
+							<td>
+							<div class="form-item">
+								<div class="item-left">
+									<p>
+										<label for="id_name">
+											{% if offset != "3" %}Área da Cerca Eletrônica:{% endif %}
+											{% if offset == "3" %}Distância da Cerca Eletrônica{% endif %}
+										</label>
+									</p>
+									<p id="help"></p>
+								</div>
+							</div></td>
+							<td>
+							<div class="item-right">
+								<p class="errorlist"></p>
+								<p class="field" id="circlearea">
+									<i>Nenhuma cerca eletrônica selecionada.</i>
+								</p>
+							</div></td>
+						</tr>
+						<tr>
+							<td>
+							<div class="form-item">
+								<div class="item-left">
+									<p>
+										<label for="id_name">Nome da Cerca Eletrônica:</label>
+									</p>
+									<p id="help"></p>
+								</div>
+							</div></td>
+							<td>
+							<div class="item-right">
+								<p class="errorlist"></p>
+								<p class="field">
+									<input type="text" value="" required="" placeholder="Digite um nome" id="circlename">
+								</p>
+							</div></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+							<div id="actions" style="margin-top:10px;">
+								<p align="center"></p>
+								<p align="center">
+									<input type="button" style="padding:4px 12px;" value="Salvar"
+									{% if offset == "1" %}
+									id="circlesave"
+									{% endif %}
+									{% if offset == "2" %}
+									id="polygonsave"
+									{% endif %}
+									{% if offset == "3" %}
+									id="routesave"
+									{% endif %}
+									>
+								</p>
+							</div></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
 		{% endif %}
 	</div>
 </div>
