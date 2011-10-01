@@ -84,6 +84,8 @@ $(document).ready(function(){
 	});
      
     //limiting the maximum and minimum dates
+    
+    /*
     dates = $( "#id_period_end, #id_period_start " ).datetimepicker({
 			showSecond: true,
             timeFormat: 'hh:mm:ss',
@@ -105,7 +107,7 @@ $(document).ready(function(){
 				dates.not( this ).datetimepicker( "option", option2, date2);
 			}
 		});
-    
+    */
     if ($('.switcher option:selected').text() == 'Outro:'){
         this.id = 'id_vehicle_other';
         $(this).attr('name','vehicle_other');
@@ -140,6 +142,7 @@ $(document).ready(function(){
     $('#exportCSV').click(function(){
         $('input[name="type"]').attr("value","CSV");
        blockUIForDownload();
+
        fileDownloadCheckTimer2 = window.setInterval(function () {
             $.ajax({
                 url: "/reports/checkready",
@@ -158,12 +161,33 @@ $(document).ready(function(){
                 }            
             });
         }, 3000);
+        
+
+        
+        var box1 = document.getElementById('id_vehicle_fields_to');
+        if(box1) {
+            box1.id = 'id_vehicle_fields';
+            for (var i = 0; i < box1.options.length; i++)
+                box1.options[i].selected = true;
+        }
+            
+        var box2 = document.getElementById('id_fields_to');
+        if(box2) {
+            box2.id = 'id_fields';
+            for (var i = 0; i < box2.options.length; i++)
+                box2.options[i].selected = true;
+        }
         document.forms["formz"].submit();
+        box1.id = 'id_vehicle_fields_to';
+        box2.id = 'id_fields_to';
+        
+        
+        
 
         //blockUIForDownload();
 
     });
-    
+    /*
     
     $('#exportPDF').click(function(){
         $('input[name="type"]').attr("value","PDF");
@@ -186,12 +210,29 @@ $(document).ready(function(){
                 }            
             });
         }, 3000);
+
         document.forms["formz"].submit();
     });
- 
+     */
        
     $('#exportHTML').click(function(){
        $('input[name="type"]').attr("value","HTML");
+       
+        var box1 = document.getElementById('id_vehicle_fields_to');
+        if(box1) {
+            box1.id = 'id_vehicle_fields';
+            for (var i = 0; i < box1.options.length; i++)
+                box1.options[i].selected = true;
+        }
+            
+        var box2 = document.getElementById('id_fields_to');
+        if(box2) {
+            box2.id = 'id_fields';
+            for (var i = 0; i < box2.options.length; i++)
+                box2.options[i].selected = true;
+        }
+            
+            
         var win = window.open("", "win", "width=640,height=480");
         win.moveTo(100, 100);
         win.document.open("text/html", "replace");
@@ -204,7 +245,7 @@ $(document).ready(function(){
         win.document.write("};");
         win.document.write("<" + "/script>");
         win.document.write("</head><body>Carregando relatório");
-        win.document.write("<form action=\".\"  method=\"post\" enctype=\"multipart/form-data\" id=\"formz\" name=\"\">");
+        win.document.write("<form action=\" .\"  method=\"post\" enctype=\"multipart/form-data\" id=\"formz\" name=\"\">");
 //        win.document.write("<input type='hidden' name='csrfmiddlewaretoken' value='" +$("input[name=csrfmiddlewaretoken]").attr("value")+ "'/"+">");
         win.document.write("<input type='hidden' name='title' value='" +$("input[name=title]").attr("value")+ "'/"+">");
         win.document.write("<input type='hidden' name='type' value='HTML'/"+">");
@@ -217,13 +258,14 @@ $(document).ready(function(){
         
         var arr0 = ["license_plate","date","type","address","system","color","year","model","manufacturer","chassi"];
         for(var x = 0; x < arr0.length;x++) {
-            if($("option[value="+arr0[x]+"]").attr("selected")) {
+            if($("option[value="+arr0[x]+"]") && $("option[value="+arr0[x]+"]").attr("selected")) {
                 win.document.write("<input type='hidden' name='vehicle_fields' value='"+arr0[x]+"'/"+">");
             }
         }
+        
         var arr = [30,33,9,10,35,20,17,7,5,34,13,26,12,25,21,29,1,32,3,2,37,18,36,19,28,27,22,24];
         for(var x = 0; x < arr.length;x++) {
-            if($("option[value="+arr[x]+"]").attr("selected")) {
+            if($("option[value="+arr[x]+"]").length > 0 && $("option[value="+arr[x]+"]").attr("selected")) {
                 win.document.write("<input type='hidden' name='fields' value='" +arr[x]+"'/"+">");
             }
         }
@@ -232,6 +274,14 @@ $(document).ready(function(){
         win.document.write("</body>");
         win.document.write("</html>");
         win.document.close();
+        
+        
+        
+
+        box1.id = 'id_vehicle_fields_to';
+        box2.id = 'id_fields_to';
+        
+        
         //document.forms["formz"].submit();
         
     });
@@ -297,7 +347,6 @@ $(document).ready(function(){
 <input type="hidden" id="download_token_value_id" name="token" />
 <input type="button" value="Exportar como CSV" class="table-button" style="padding:10px;float:right;" id="exportCSV" />
 <input type="button" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" />
-<input type="button" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" />
 
 <!-- <input type="submit" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" />
 <input type="submit" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" /> -->

@@ -125,9 +125,10 @@ jQuery(document).ready(function(){
       }
     else {
       //Save geofence
+      
       $.post(
         "/geofence/save/",
-        {name:geofencename,type:'polygon', coords: polygon.geometry.toString(),id:id},
+        {name:geofencename,type:'polygon', coords: polygon,id:id},
         function (data) {
           if (data == 'create_finish') {
             location.href = "/geofence/create/finish";

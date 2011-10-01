@@ -71,6 +71,8 @@ jQuery(document).ready(function(){
   	}
   	
 	geofencename = $("#circlename").val();
+	
+	//TODO: change these alerts to modals
     if(!geofencename) { 
       alert("Por favor digite um nome para a cerca eletrônica.");
     }
@@ -81,6 +83,7 @@ jQuery(document).ready(function(){
   
     else {
       //Save geofence
+      
       $.post(
         "/geofence/save/",
         {name:geofencename,type:'circle', coords: circle.toString(),id:id},
