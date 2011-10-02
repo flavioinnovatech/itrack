@@ -43,7 +43,6 @@ jQuery(document).ready(function(){
             vehicle_other:jQuery("#id_vehicle_other").val()
         },
         function(data){
-          alert(data.toSource());
           collection = new OpenLayers.Geometry.Collection();
           
           jQuery.each(data[0], function(key,pnt){
@@ -58,9 +57,8 @@ jQuery(document).ready(function(){
             var wkt_f = new OpenLayers.Format.WKT();
             var ploaded = wkt_f.read(data[1]['coords']);
             
-            var geometry = plodaded.clone();
-			geometry.transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
-			plodaded = geometry;
+            // var geometry = ploaded.geometry.clone();
+			ploaded.geometry.transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
             
             if (ploaded.geometry.CLASS_NAME == 'OpenLayers.Geometry.LineString') {
                             
@@ -83,7 +81,7 @@ jQuery(document).ready(function(){
           thevector = new OpenLayers.Feature.Vector(collection);
           vlayer.addFeatures(thevector);
           
-          map.setCenter(center,2);
+          map.setCenter(center,14);
           
           closeloading();
           
