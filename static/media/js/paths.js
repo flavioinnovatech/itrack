@@ -58,10 +58,13 @@ jQuery(document).ready(function(){
             var wkt_f = new OpenLayers.Format.WKT();
             var ploaded = wkt_f.read(data[1]['coords']);
             
+            var geometry = plodaded.clone();
+			geometry.transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+			plodaded = geometry;
+            
             if (ploaded.geometry.CLASS_NAME == 'OpenLayers.Geometry.LineString') {
                             
               ploaded.style = {
-
 						strokeColor: "blue",
 						strokeWidth: 10,
 						cursor: "pointer"
