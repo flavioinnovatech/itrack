@@ -8,18 +8,23 @@ jQuery(document).ready(function(){
     
     var styleMap = new OpenLayers.StyleMap({'strokeWidth': 5, 'strokeColor': '#ff0000'});
     rlayer = new OpenLayers.Layer.Vector("routes", {styleMap: styleMap});
-    var dm_wms = new OpenLayers.Layer.WMS(
-        "Canadian Data",
-        "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
-        {
-            layers: "multispectral",
-            format: "image/gif"
-        },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
+    // var dm_wms = new OpenLayers.Layer.WMS(
+        // "Canadian Data",
+        // "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
+        // {
+            // layers: "multispectral",
+            // format: "image/gif"
+        // },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
+        
+    var dm_wms = load_wms();
         
     map.addLayer(dm_wms);
     map.addLayer(vlayer);
     map.addLayer(rlayer);
-    map.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0);
+    map.setCenter(new OpenLayers.LonLat(-49.47,-16.40).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        map.getProjectionObject()
+    ),4);
     map.addControl(new OpenLayers.Control.MousePosition());
     
     jQuery("#send").click(function(){
@@ -38,12 +43,12 @@ jQuery(document).ready(function(){
             vehicle_other:jQuery("#id_vehicle_other").val()
         },
         function(data){
-          
           collection = new OpenLayers.Geometry.Collection();
           
           jQuery.each(data[0], function(key,pnt){
             point = new OpenLayers.Geometry.Point(parseFloat(pnt[1]),parseFloat(pnt[0]));
-            collection.addComponents(point);
+            point2 = point.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
+            collection.addComponents(point2);
           });
           
           center = new OpenLayers.LonLat(collection.getCentroid().x,collection.getCentroid().y);
@@ -52,12 +57,16 @@ jQuery(document).ready(function(){
             var wkt_f = new OpenLayers.Format.WKT();
             var ploaded = wkt_f.read(data[1]['coords']);
             
+            // var geometry = ploaded.geometry.clone();
+			ploaded.geometry.transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
+            
             if (ploaded.geometry.CLASS_NAME == 'OpenLayers.Geometry.LineString') {
                             
               ploaded.style = {
-                              strokeColor: "blue",
-                              strokeWidth: 10,
-                              cursor: "pointer"
+						strokeColor: "blue",
+						strokeWidth: 10,
+						cursor: "pointer"
+
               };
 
             }
@@ -72,7 +81,7 @@ jQuery(document).ready(function(){
           thevector = new OpenLayers.Feature.Vector(collection);
           vlayer.addFeatures(thevector);
           
-          map.setCenter(center,2);
+          map.setCenter(center,14);
           
           closeloading();
           

@@ -4,10 +4,6 @@ $(document).ready(function(){
 
 	loadmap();
 
-	if(g){
-		alert(g.toSource());
-	}
-
 	$("#addpointroute").click(function(){
     var i = $("input[id^=routeinput]").size() + 1;
     
@@ -92,6 +88,7 @@ $(document).ready(function(){
 					}
 					
 					testline = new OpenLayers.Geometry.LineString(test);
+					
 					test = new OpenLayers.Feature.Vector(testline,null);
 					
 					wkt = new OpenLayers.Format.WKT();
@@ -99,6 +96,7 @@ $(document).ready(function(){
 					// alert(wkt.write(test));
 										
 					multiline2 = new OpenLayers.Geometry.LineString(multiline);
+					// alert(multiline2.getVertices());
 	
 					var style_green =
 			        {
@@ -111,6 +109,8 @@ $(document).ready(function(){
 	
 					polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
 					
+					
+					//TODO: center must be in a collection
 					center = new OpenLayers.LonLat(pnt2.x, pnt2.y);
 	                                  	
 	                vlayer3.addFeatures([polygonFeature]);
@@ -129,6 +129,7 @@ $(document).ready(function(){
 	
   jQuery("#routesave").click(function(){
   	var id="";
+  	tolerance = $("#routetolerance").val();
   	
   	if(g) {
   		id = g['id'];
@@ -140,13 +141,16 @@ $(document).ready(function(){
     }
     else if(!route) { 
       alert("Por favor digite um escolha uma cerca eletrônica.");
-      }
+    }
+    else if (!tolerance){
+    	alert("Por favor digite um espaço de tolerância.");	
+    }
     else {
       // Save geofence
       
       $.post(
         "/geofence/save/",
-        {name:geofencename,type:'route', coords: route,id:id},
+        {name:geofencename,type:'route', coords: route,id:id,tolerance:tolerance},
         function (data) {
           if (data == 'create_finish') {
             location.href = "/geofence/create/finish";
@@ -218,13 +222,17 @@ function loadmap(){
 
 	});
 
-  /*
-  vlayer3.events.on({"afterfeaturemodified": function(feature){
-        polygon = (feature.feature);
-        area = (feature.feature.geometry.getGeodesicArea()/1000000).toFixed(2);
-        jQuery("#polygonarea").html(area + " km²");
- }});
- */
+  
+  if(offset ==  2) {
+  	  vlayer3.events.on({"afterfeaturemodified": function(feature){
+	        temp = feature;
+			var geometry = feature.geometry.clone();
+			geometry.transform(multispectral1.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+			polygon = (geometry.toString());
+			area = (feature.geometry.getArea() / 1000).toFixed(3);
+			jQuery("#circlearea").html(area + " km²");
+	  }});
+  }
 
   multispectral1.addLayer(dm_wms1);
   
@@ -234,7 +242,7 @@ function loadmap(){
   multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40).transform(
         new OpenLayers.Projection("EPSG:4326"),
         multispectral1.getProjectionObject()
-    ), 5);
+    ), 4);
   
   // multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
   

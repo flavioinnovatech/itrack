@@ -78,7 +78,8 @@ def Routecalc(array,tolerance):
 #            return HttpResponse(ls.wkt)
 #        
 #        else:
-        print route
+        route.pop()
+        route.pop()
         json = simplejson.dumps(route)
         return HttpResponse(json, mimetype='application/json')
         
