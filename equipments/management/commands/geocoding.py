@@ -169,17 +169,21 @@ def Geocode(array):
 
 def ReverseGeocode(lat,lng):
     #first,tries to search in the database the lat lng pair
-    try:
-        c = CachedGeocode.objects.get(Q(lng=lng) & Q(lat=lat))
-        
+    
+    # SHALL BE IMPLEMENTED WHEN THE GODS OF IMPLEMENTATION 
+    # BLOW THE BREATH OF CREATION OVER MY SOUL
+    
+    #try:
+    #    c = CachedGeocode.objects.get(Q(lng=lng) & Q(lat=lat))
+    #    
         #return a list with first element being the full address, the second the city and the third the administrative area.
-        return [unicode(c.full_address),unicode(c.street)+" "+unicode(c.number)+", "+unicode(c.administrative_area),unicode(c.city),unicode(c.state),unicode(c.postal_code)]
-    except ObjectDoesNotExist:
-        try:
-            return MaplinkRGeocode(lat,lng)
-        except NotImplementedError:
-            #fails silently returning empty strings
-            return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
+   #     return [unicode(c.full_address),unicode(c.street)+" "+unicode(c.number)+", "+unicode(c.administrative_area),unicode(c.city),unicode(c.state),unicode(c.postal_code)]
+    #except ObjectDoesNotExist:
+    try:
+        return MaplinkRGeocode(lat,lng)
+    except NotImplementedError,TypeError:
+        #fails silently returning empty strings
+        return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
             
 def MultispectralRGeocode(lat,lng):
     ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C"
@@ -214,7 +218,7 @@ def MultispectralRGeocode(lat,lng):
 def GoogleGeocode(lat,lng):
     result = Geocoder.reverse_geocode(float(lat),float(lng))
     print result
-    print "googlin"
+
     return [str(lat)+","+str(lng),str(lat)+","+str(lng),"","",""]
     #raise NotImplementedError
     #print
@@ -223,7 +227,7 @@ def GoogleGeocode(lat,lng):
 def MaplinkRGeocode(lat,lng):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
-    print "====> Maplinking <===="
+
     url = "webservices.apontador.com.br"
     
     xml = '''<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'''+str(lng)+'''</x><y>'''+str(lat)+'''</y></point><token>'''+str(ticket)+'''</token><tolerance>'''+str(10)+'''</tolerance></getAddress></soap:Body></soap:Envelope>'''
@@ -241,17 +245,21 @@ def MaplinkRGeocode(lat,lng):
       print(err)
       raise NotImplementedError
 
-    print response.status
     if response.status == 200:
         try:
             #print conteudo
             gxml = ElementTree.fromstring(conteudo)
             
             street = gxml.find(".//{http://webservices.maplink2.com.br}street")
+            if street.text is None: street.text = ""
             city = gxml.find(".//{http://webservices.maplink2.com.br}name")
+            if city.text is None: city.text = ""
             state = gxml.find(".//{http://webservices.maplink2.com.br}state")
+            if state.text is None: state.text = ""
             number = gxml.find(".//{http://webservices.maplink2.com.br}houseNumber")
+            if number.text is None: number.text = ""
             postal = gxml.find(".//{http://webservices.maplink2.com.br}zip")
+            if postal.text is None: postal.text = ""
             
             c = CachedGeocode(
                 lat = float(lat),
@@ -266,16 +274,22 @@ def MaplinkRGeocode(lat,lng):
                 #administrative_area = title(lower(address[0].get("Bairro")))
             )
         
-            c.full_address = c.street+" "+c.number+", "+c.city+", "+c.state
-            try:
-                c.save()
-            except:
-                pass
-        except:
+            c.full_address = c.street+" "+ c.number+", "+c.city+", "+c.state
+            #try:
+            #    c.save()
+            #except:
+            #    pass
+        except Exception as err:
+            print(err)
             pass
-        
-        return [c.full_address,c.street+" "+c.number,c.city,c.state,c.postal_code]
-        
+        try:
+            return [c.full_address,c.street+" "+c.number,c.city,c.state,c.postal_code]
+        except TypeError as err:
+            print (err)
+            print c.full_address, "str>", c.street,"num>", c.number,"cty>",c.city,"sta>" , c.state,"pos>",c.postal_code,c.lat,c.lng
+        return [c.full_address,]
+    else:
+        pass
     
         
     
