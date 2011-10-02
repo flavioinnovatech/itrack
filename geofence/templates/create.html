@@ -460,8 +460,10 @@ Estado: <select class="routeselect">
 <div id="content">
 	<div class="main-form">
 		<h1><img class="icon" src="/media/img/vehicle.png">
-			{% if g == 'False' %}Criação de Cerca Eletrônica {% endif %}
-			{% if g %}Edição de Cerca Eletrônica {% endif %}
+			{% if g %}Edição de Cerca Eletrônica 
+			{% else %}
+			Criação de Cerca Eletrônica
+			{% endif %}
 			</h1>
 		<hr/>
 		<div class="ptracker">

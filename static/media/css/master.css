@@ -594,8 +594,29 @@ img#maptools{
 	background:#FFF;
 }
 
-#tabs{
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+#tabs {
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+	margin:0 auto;
+}
+
+#tabs.normal{
+  width:960px;
+  z-index:0;
+  height:100%; 
+}
+
+#tabs.fullscreen{
+	overflow:auto; 
+}
+
+#tabs.fullscreen,#content.fullscreen,.centerContainer{
+	width:100%;
+	margin:0 auto;
+	height:100%;
+}
+
+#list4 {
+	margin:0;
 }
 
 .steps{
