@@ -8,7 +8,7 @@ import Queue
 import threading
 import curses
 import codecs
-
+import traceback
 
 from datetime import datetime
 import time
@@ -43,8 +43,10 @@ systemField = None
 vehicleField = None
 stdscr = None
 main_stop = False
-trackings_received = 0
+status_display = list()
+tb = sys.exc_info()
 count = 0
+
 
 # >> ====================================== +-------------------------------+-\
 # >> ====================================== | THREAD TO OUTPUT TO THE SCREEN|  >
@@ -53,13 +55,9 @@ count = 0
 class OutputThread(threading.Thread):
     
     trackings_per_second = 0
-    global trackings_received
+
     global main_stop
     
-    def calculate(self):
-        self.trackings_per_second = trackings_received
-        trackings_received = 0
-        t = threading.Timer(1.0,self.calculate) 
 
     def __init__(self):
         super(OutputThread, self).__init__()
@@ -75,10 +73,9 @@ class OutputThread(threading.Thread):
         stdscr = curses.initscr()
         curses.start_color()
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
-        t = threading.Timer(1.0,self.calculate)
         main_stop = False
         while True:
-            time.sleep(0.1)
+            #time.sleep(0.2)
             if self.stopped():
                 curses.nocbreak()
                 stdscr.keypad(0)
@@ -87,7 +84,8 @@ class OutputThread(threading.Thread):
                 break
             stdscr.addstr(0, 0, "Infotrack: Data Processor", 
                                 curses.A_REVERSE)
-            stdscr.addstr(0,40,str(self.trackings_per_second))
+            stdscr.addstr(0,40,str(status_display[0]))
+            stdscr.addstr(0,60,str(status_display[1]))
             curr_y = 5
             curr_x = 5
             #stdscr.addstr(1,5, str(threading.enumerate()))
@@ -145,7 +143,6 @@ class OutputThread(threading.Thread):
 
 class ClientThread(threading.Thread):
     
-    global trackings_received
     #these functions before run() allows the thread to be stopped.
    
     def __init__(self):
@@ -170,14 +167,15 @@ class ClientThread(threading.Thread):
 
     def setStatus(self,st):
         if not st == "Waiting to process data.":
-            print(self.getName()+':'+st)
+            #print(self.getName()+':'+st)
+            pass
         self._status = st
         
     def run(self):
       # Have our thread serve "forever":
       
       #System and Vehicle custom fields
-
+      
       systemField = CustomField.objects.get(tag="System")
       vehicleField = CustomField.objects.get(tag="Vehicle")
       root_system = System.objects.get(parent=None)
@@ -196,9 +194,12 @@ class ClientThread(threading.Thread):
             client = None
          # Check if we actually have an actual client in the client variable:
          if client != None:
-
-            self.setStatus('Processing data from '+client[1][0])
+         
+            status_display[0]+=1
+            
+            
             inbox =  client[0].recv(8192)
+            self.setStatus('Processing data from '+client[1][0])
             client[0].close()
     #            file = codecs.open("./")
             datadict = json.loads(inbox)
@@ -224,7 +225,7 @@ class ClientThread(threading.Thread):
                     )
 
                     try:
-                        print(e.name)
+                        #print(e.name)
                         #second, if the vehicle exists, for that equipment, 
                         # insert the tracking head on the tracking table
                         vehicle = Vehicle.objects.get(equipment=e)
@@ -255,20 +256,24 @@ class ClientThread(threading.Thread):
                         io = {}
                         try:
                             io['Input'] = datadict['Input'].copy()
-                        except:
+                        except Exception as err:
+                        
+                            print("#2",err)
                             pass
                         try:
                             io['LinearInput'] = datadict['LinearInput'].copy()
-                        except:
+                        except Exception as err:
+                            print("#3",err)
                             pass
                         try:
                             io['Output'] = datadict['Output'].copy()
-                        except:
+                        except Exception as err:
+                            print("#4",err)
                             pass
                         try:
                             io['GPS'] = datadict['GPS'].copy()
-                            #print io['GPS']
-                        except:
+                        except Exception as err:
+                            print("#5",err)
                             pass
                             
                         
@@ -276,7 +281,8 @@ class ClientThread(threading.Thread):
                             for x0 in xrange(1,8):
                                 ttype = 53 + x0
                                 TrackingData(tracking=t,type=CustomField.objects.get(id=ttype), value=io['Output']['Output' + str(x0)]).save()
-                        except:
+                        except Exception as err:
+                            print("#6",err)
                             pass
 
                         #filtering that list, leaving only the registered
@@ -321,7 +327,8 @@ class ClientThread(threading.Thread):
                                         float(datadict['GPS']['Lat']),
                                         float(datadict['GPS']['Long'])
                                       )
-                            print(geocodeinfo)
+                            status_display[1]+=1
+
                             #saving the acquired geocode information
                         
                             TrackingData(   tracking=t, 
@@ -354,7 +361,11 @@ class ClientThread(threading.Thread):
                             #queries the vehicle in the database
                         
                             #if the last alert sent for the vehicle is not null
-                        except:
+                        except Exception as err:
+                         #   for th in threading.enumerate():
+                         #       if isinstance(th,OutputThread):
+                         #           th.stop()
+                            print("#7",err)
                             pass
                         if vehicle.last_alert_date is not None:
                           total_seconds = (
@@ -397,7 +408,6 @@ class ClientThread(threading.Thread):
                                     self.setStatus('Found geofence alert to send.')
                                     AlertSender(self,alert,vehicle,searchdate)
                             
-                            trackings_received += 1
                           else: 
                               # if the vehicle never had thrown alerts, 
                               # give him a last alert date
@@ -425,7 +435,9 @@ class ClientThread(threading.Thread):
                         eq.system.add(root_system)
                     except IntegrityError:
                         pass
-
+                    except KeyError:
+                        self.setStatus('Equip Type "'+str(type_id) + '" not '+
+                    'recognized. Dropping recived data.')
                 except KeyError:
                     self.setStatus('Equip Type "'+str(type_id) + '" not '+
                     'recognized. Dropping recived data.')
@@ -437,7 +449,8 @@ class ClientThread(threading.Thread):
             
          else:
             self.setStatus("Waiting to process data.")
-       except:
+       except Exception as err:
+         print("#1",err)
          pass
          #curses.nocbreak()
          #curses.echo()
@@ -448,10 +461,18 @@ class ClientThread(threading.Thread):
 # >> ====================================== | MAIN COMMAND PROCEDURE        |  >
 # >> ====================================== +-------------------------------+-/
 
+
+
 class Command(BaseCommand):
-        
+    
     def handle(self, *args, **options):
+
         global main_stop
+        
+        
+        status_display.append(0)
+        status_display.append(0)
+        
         # Custom fields per equip type dict
         cfs = CustomField.objects.select_related(depth=2).all()
         for cf in cfs:
@@ -479,14 +500,15 @@ class Command(BaseCommand):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind(('', PROCESSOR_PORT))
         server.listen(5)
-        #print "Server listening. The recognized equipment types are:"
-        #print equipTypeDict
-        #print main_stop
-        #OutputThread().start()
+        print "Data processor is starting. Please wait..."
+
+        OutputThread().start()
         # Have the server serve "forever":
         while True:
-            try:    
+            try:
+                
                 clientPool.put(server.accept(),False)
+
             except:
                 if threading.active_count() <= 2:
                     for th in threading.enumerate():
