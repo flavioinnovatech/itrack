@@ -9,6 +9,7 @@ from django.template.context import RequestContext
 from django.utils import simplejson
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
+from django.db.models import Q,Max
 from itrack.vehicles.models import Vehicle
 from itrack.system.tools import lowestDepth
 import pprint
@@ -39,16 +40,36 @@ def index(request):
 def loadData(request):
   _loaddata_count0 = 0
   if request.method == 'POST':  
+    
     parsed_dict = parser.parse(request.POST.urlencode())
-  if request.session.has_key("equipments_cache_update"):
-    rc1 = request.session["rastreamento_cache_update"]
-    rc2 = datetime.now()
-    r1 = rc1.year * rc1.month * rc2.day * rc1.hour * (rc1.minute + 3)
-    r2 = rc2.year * rc2.month * rc2.day * rc2.hour * rc2.minute
-    if r2 < r1:
-      json = simplejson.dumps(request.session["rastreamento_cache"])
-      return HttpResponse(json, mimetype='application/json')      
-  system = request.session["system"]
+    system = request.session["system"]
+    
+    if parsed_dict.has_key('plate'):
+        equipments = Equipment.objects.filter(
+            Q(vehicle__license_plate__icontains=parsed_dict['plate'])&
+            Q(system=system)
+        ).annotate(last_tracking=Max('tracking__eventdate'))
+    else:
+        equipments = Equipment.objects.filter(
+            Q(system=system)
+        ).annotate(last_tracking=Max('tracking__eventdate'))
+        
+    for equip in equipments:
+        print equip.last_tracking
+        
+        #that works! we are the champions, my friend.
+    
+    
+    
+    if request.session.has_key("equipments_cache_update"):
+        rc1 = request.session["rastreamento_cache_update"]
+        rc2 = datetime.now()
+        r1 = rc1.year * rc1.month * rc2.day * rc1.hour * (rc1.minute + 3)
+        r2 = rc2.year * rc2.month * rc2.day * rc2.hour * rc2.minute
+        if r2 < r1:
+          json = simplejson.dumps(request.session["rastreamento_cache"])
+          return HttpResponse(json, mimetype='application/json')      
+
     
   #
   # EQUIPMENTS CACHE
@@ -214,6 +235,7 @@ def loadData(request):
         #    if field not in items:
                
         data[i.license_plate] =  info
+        print info
         print _loaddata_count0 # time.clock()
         _loaddata_count0 += 1
     except:

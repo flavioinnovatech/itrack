@@ -14,6 +14,7 @@
 <script type="text/javascript" src="/media/js/rastreamento.js"></script>
 <script type="text/javascript" src="/media/js/gridconfig.js"></script>
 <script type="text/javascript" src="/media/js/vehicle_toolbar.js"></script>
+<script type="text/javascript" src="/media/js/fullscreen.js"></script>
 <script type="text/javascript" src="/media/js/jquery.tipTip.minified.js"></script>	
 <link rel="stylesheet" href="/media/css/tipTip.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
@@ -41,9 +42,7 @@
     });
 </script>
   
-	<style>
-	  #tabs { bottom:0; width:960px;z-index:0;height:100%;}
-	</style>
+
 	<style type="text/css"> 
     #id_polygon_map { width: 600px; height: 400px; }
     #id_polygon_map .aligned label { float:inherit; }
@@ -188,14 +187,14 @@
 {% block content %}
 <input type="hidden" id="end"></input>
 
-<div id="tabs" class="tabs-bottom">
+<div id="tabs" class="normal">
 	<ul>
 		<li id="grid"><a href="#tabs-1">Tabela de veículos</a></li>
 		{%if map_google %}<li><a id="googlemap" href="#tabs-3">Ver mapa</a></li>{% endif %}
 
 		<li><a href="#tabs-6" id="configs">Configurações</li></a>
 		
-		<li class="fullscreen" style="float:right;"><img title="Modo tela cheia" class="fullscreen" src="/media/img/fullscreen.png"></li>
+		<li class="fullscreen" style="float:right;"><img title="Modo tela cheia" class="fullscreen unselected" src="/media/img/fullscreen.png"></li>
 		<li style="float:right;"><img title="Listar veículos" id="maptools" class="vehicle" src="/media/img/vehicle.png"></li>
 		<li style="float:right;"><img title="Listar geofences" id="maptools" class="geofence" src="/media/img/geofence.png"></li>
 		
@@ -240,12 +239,10 @@
 	<div id="tabs-6">
 		<div  class="main-form">
 
-<h1><img class="icon" src="/media/img/equip.png">Configurações do Grid </h1>
+<h1><img class="icon" src="/media/img/equip.png">Configurações da Tabela de Veículos </h1>
 <hr />
 <h2>Visualização de objetos</h2>
-<em>Selecione quais campos e veículos devem aparecer no grid. </em>
-
-
+<em>Selecione quais campos e veículos devem aparecer na Tabela de Veículos. </em>
 
 <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
         {% for field in form.visible_fields %}

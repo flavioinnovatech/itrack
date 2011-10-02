@@ -2,7 +2,7 @@ var route;
 
 $(document).ready(function(){
 
-	loadmapinputable();
+	loadmap();
 
 	if(g){
 		alert(g.toSource());
@@ -111,6 +111,8 @@ $(document).ready(function(){
 	
 					polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
 					
+					
+					//TODO: center must be in a collection
 					center = new OpenLayers.LonLat(pnt2.x, pnt2.y);
 	                                  	
 	                vlayer3.addFeatures([polygonFeature]);
@@ -129,6 +131,7 @@ $(document).ready(function(){
 	
   jQuery("#routesave").click(function(){
   	var id="";
+  	tolerance = $("#routetolerance").val();
   	
   	if(g) {
   		id = g['id'];
@@ -140,13 +143,16 @@ $(document).ready(function(){
     }
     else if(!route) { 
       alert("Por favor digite um escolha uma cerca eletrônica.");
-      }
+    }
+    else if (!tolerance){
+    	alert("Por favor digite um espaço de tolerância.");	
+    }
     else {
       // Save geofence
       
       $.post(
         "/geofence/save/",
-        {name:geofencename,type:'route', coords: route,id:id},
+        {name:geofencename,type:'route', coords: route,id:id,tolerance:tolerance},
         function (data) {
           if (data == 'create_finish') {
             location.href = "/geofence/create/finish";
@@ -167,7 +173,8 @@ $(document).ready(function(){
 });
 
 var vlayer3;
-function loadmapinputable(){
+var temp;
+function loadmap(){
 	
   var options = {
   	units: 'm'
@@ -182,8 +189,9 @@ function loadmapinputable(){
 	vlayer3 = new OpenLayers.Layer.Vector("Editable", {
 		onFeatureInsert : function(feature) {
 			if (offset == 1) {
-				if (circle)
-					vlayer3.destroyFeatures(circle);
+				if (temp)
+					vlayer3.destroyFeatures(temp);
+				temp = feature;
 				var geometry = feature.geometry.clone();
 				geometry.transform(multispectral1.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
 				circle = (geometry.toString());
@@ -192,8 +200,9 @@ function loadmapinputable(){
 			}
 			
 			if (offset == 2) {
-				if (polygon)
-					vlayer3.destroyFeatures(polygon);
+				if (temp)
+					vlayer3.destroyFeatures(temp);
+				temp = feature;
 				var geometry = feature.geometry.clone();
 				geometry.transform(multispectral1.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
 				polygon = (geometry.toString());
@@ -202,9 +211,9 @@ function loadmapinputable(){
 			}
 			
 			if (offset == 3) {
-				if (route)
-					vlayer3.destroyFeatures(route);
-					
+				if (temp)
+					vlayer3.destroyFeatures(temp);
+				temp = feature;	
 				var geometry = feature.geometry.clone();
 				geometry.transform(multispectral1.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
 				route = (geometry.toString());
@@ -212,6 +221,7 @@ function loadmapinputable(){
 				jQuery("#circlearea").html(area + " km");
 			}
 		}
+
 	});
 
   /*
@@ -230,23 +240,45 @@ function loadmapinputable(){
   multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40).transform(
         new OpenLayers.Projection("EPSG:4326"),
         multispectral1.getProjectionObject()
-    ), 5);
+    ), 4);
   
   // multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
   
   //Control Panel
-  panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});
-  var nav = new OpenLayers.Control.Navigation();
+  if (offset2 == 1 && offset == 1) {
+	  //Control Panel
+	  panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});
+	  var nav = new OpenLayers.Control.Navigation();
+	  polyOptions = {sides: 40};
+	  draw_ctl = new OpenLayers.Control.DrawFeature(vlayer3, OpenLayers.Handler.RegularPolygon, {'displayClass': 'olControlDrawFeaturePolygon',handlerOptions: polyOptions});
+	  controls = [nav, draw_ctl];
+	  panel.addControls(controls);
+	  multispectral1.addControl(panel);
+  }
+  else if (offset == 2 && offset == 2) {
+   panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});
+   var nav = new OpenLayers.Control.Navigation();
+   draw_ctl = new OpenLayers.Control.DrawFeature(vlayer3, OpenLayers.Handler.Polygon, {'displayClass': 'olControlDrawFeaturePolygon'});
+   var mod = new OpenLayers.Control.ModifyFeature(vlayer3, {'displayClass': 'olControlModifyFeature'});
+   controls = [nav, draw_ctl,mod];
+   panel.addControls(controls);
+   multispectral1.addControl(panel);
+   multispectral1.addControl(new OpenLayers.Control.MousePosition());
+  }
+  else {
+  	panel = new OpenLayers.Control.Panel({'displayClass': 'olControlEditingToolbar'});
+  	var nav = new OpenLayers.Control.Navigation();
+  	controls = [nav]
+  	panel.addControls(controls);
+	multispectral1.addControl(panel);
+	multispectral1.addControl(new OpenLayers.Control.MousePosition());
+  }
   
   //FIXME: same as above
   //draw_ctl = new OpenLayers.Control.DrawFeature(vlayer2, OpenLayers.Handler.Polygon, {'displayClass': 'olControlDrawFeaturePolygon'});
   //var mod = new OpenLayers.Control.ModifyFeature(vlayer2, {'displayClass': 'olControlModifyFeature'});
   //controls = [nav, draw_ctl,mod];
   
-  controls = [nav]
-  
-  panel.addControls(controls);
-  multispectral1.addControl(panel);
-  multispectral1.addControl(new OpenLayers.Control.MousePosition());
+ 
 	
 }

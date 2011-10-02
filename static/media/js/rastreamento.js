@@ -81,63 +81,6 @@ jQuery(document).ready(function(){
   
   tabw = (jQuery("#tabs-1").width());
   tabh = (jQuery("#tabs-1").height());
-    
-  normal = 1;
-  jQuery('img.fullscreen').click(function() {
-    switch (normal) {
-      
-      case 1:
-      //fullscren
-        width = jQuery('#tabs').css("width");
-        height= jQuery('#tabs').css("height");
-        top =  parseInt(jQuery('#tabs').position().top);
-        left =  jQuery('#tabs').css("left");
-        top = parseInt(top);
-      
-        jQuery('#menuContainer').css("z-index","0");
-        jQuery('#tabs').css("width",w);
-        jQuery('#tabs').css("height",h);
-        jQuery('#tabs').css("position","absolute");
-        jQuery('#tabs').css("top","0");
-        jQuery('#tabs').css("left","0");
-        
-        //insert google permission here
-        // jQuery("#tabs-3").css("height","97%");
-        // jQuery("#tabs-3").css("width","97%");
-        
-        //insert multispextral permission here
-        jQuery("#tabs-4").css("height","97%");
-        jQuery("#tabs-4").css("width","97%");
-        normal = 0;
-        
-        //resize do jqgrid
-        jQuery("#list4").setGridWidth(w - 50);
-        jQuery("#list4").setGridHeight(h - 150);
-        
-        break;
-        
-     case 0:
-     jQuery('#tabs').css("position","inherit");
-      jQuery('#menuContainer').css("z-index","2");
-      jQuery('#tabs').css("width","960px");
-      jQuery('#tabs').css("height",height);
-      // jQuery('#tabs').css("top","130px" );
-      jQuery('#tabs').css("left",( left ) );
-
-      jQuery("#tabs-3").css("width", "924px");
-      jQuery("#tabs-4").css("width", "776px");
-      normal = 1;
-      
-      //resize jqgrid
-      jQuery("#list4").setGridWidth(tabw);
-      jQuery("#list4").setGridHeight(tabh - 80);
-
-      break;
-    }
-    
-    
-    
-  }); //end .fullscreen click function
   
   jQuery('.searchfield').keyup(function() {
   	loadData(jQuery('.searchfield').attr("value"));

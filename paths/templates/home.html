@@ -20,9 +20,12 @@
 <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
 
 <script type="text/javascript" src="/media/js/paths.js"></script>
+<script type="text/javascript" src="/media/js/wms.js"></script>
 <script type="text/javascript" src="/media/js/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript" src="/media/js/ajaxsend.js"></script>
 <script type="text/javascript" src="/media/js/alertcheck.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
 <script type="text/javascript">
 //limiting the maximum and minimum dates
     $(document).ready(function(){
@@ -100,7 +103,7 @@
 {% endblock %}
 
 {% block content %}
-<div  class="main-form" id="geofencetool">
+<div  class="main-form" id="geofencetool" style="overflow:hidden;">
     <h1><img class="icon" src="/media/img/command.png">Trajetos </h1><hr/>
 <h2>Consultar Trajeto</h2>
 <em></em>

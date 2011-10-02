@@ -17,21 +17,8 @@ class Geofence(models.Model):
     type = models.CharField(max_length=1, choices=types)
     polygon = models.PolygonField(null = True,blank=True)
     linestring = models.LineStringField(null = True,blank=True)
+    tolerance = models.PositiveIntegerField(null=True,blank=True)
     objects = models.GeoManager()
 
     def __unicode__(self):
         return str(self.name)
-
-
-
-'''    
-class GeoEntity(models.Model):
-    geofence = models.ForeignKey(Geofence, verbose_name = "Cerca Eletrônica", null = True)
-    lat = models.FloatField()
-    lng = models.FloatField()
-    radius = models.FloatField()
-    seq = models.IntegerField(null = True)
-    def __unicode__(self):
-        return str(self.lat)+','+str(self.lng)
-
-'''
