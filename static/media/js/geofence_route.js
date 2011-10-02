@@ -4,10 +4,6 @@ $(document).ready(function(){
 
 	loadmap();
 
-	if(g){
-		alert(g.toSource());
-	}
-
 	$("#addpointroute").click(function(){
     var i = $("input[id^=routeinput]").size() + 1;
     
@@ -92,6 +88,7 @@ $(document).ready(function(){
 					}
 					
 					testline = new OpenLayers.Geometry.LineString(test);
+					
 					test = new OpenLayers.Feature.Vector(testline,null);
 					
 					wkt = new OpenLayers.Format.WKT();
@@ -99,6 +96,7 @@ $(document).ready(function(){
 					// alert(wkt.write(test));
 										
 					multiline2 = new OpenLayers.Geometry.LineString(multiline);
+					// alert(multiline2.getVertices());
 	
 					var style_green =
 			        {
