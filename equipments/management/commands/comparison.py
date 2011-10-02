@@ -45,7 +45,17 @@ def GeofenceComparison(command,alert,lat,lng):
     geotype = alert.geofence.type
     
     if geotype == 'R':
-        return False
+        route = alert.geofence.linestring
+        
+        distance = route.distance(pnt)
+        
+        if alert.state:
+            if (distance <= alert.geofence.tolerance):
+                return True
+        else:
+            if (distance > alert.geofence.tolerance):
+                return True
+        
     else:
         poly = alert.geofence.polygon
         print alert.state,"->",poly.contains(pnt)

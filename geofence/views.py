@@ -105,92 +105,6 @@ def create2(request,offset,offset2):
 
     return render_to_response("geofence/templates/create.html",locals())
 
-def saveGeofence(request):
-  if request.method == "POST":
-    parsed_dict = parser.parse(request.POST.urlencode())
-    if parsed_dict['type'] == 'circle':
-
-        system = System.objects.get(pk=request.session['system'])
-        
-        center = geos.Point(float(parsed_dict['coords']['lng']),float(parsed_dict['coords']['lat']))
-        
-        
-        radius = float(parsed_dict['coords']['radius'])
-        
-        circle = center.buffer(radius/1000/40000*360)
-
-        circle = str(circle)[8:len(str(circle))]
-        
-        circle = "MULTIPOLYGON(" + circle + ")"
-                        
-        g = Geofence(name=parsed_dict['name'],system=system,type='C',polygon=circle)
-        
-        g.save()
-
-        return HttpResponse(g.id)
-        
-    elif parsed_dict['type'] == 'polygon':
-      
-        system = System.objects.get(pk=request.session['system'])
-        g = Geofence(name=parsed_dict['name'],system=system,type='P')
-        
-        str_coords =  parsed_dict['coords']['points'].replace("(","").split(")")
-        coords = []
-
-        wkt = "MULTIPOLYGON((("
-        i = 0
-        firstpoint = ""
-        for coord in str_coords:
-            if not coord == "":
-                i = i+1
-                arraytemp = coord.split(",")
-                wkt += arraytemp[1]
-                wkt += " "
-                wkt += arraytemp[0]
-                
-                if i == 1:
-                  firstpoint += arraytemp[1] + " " + arraytemp[0] 
-                
-                wkt += ","
-        
-        wkt += firstpoint
-        wkt += ")))"
-                
-        print wkt
-        
-        g = Geofence(name=parsed_dict['name'],system=system,type='P',polygon=wkt)
-        g.save()
-        
-        return HttpResponse(g.id)
-    elif parsed_dict['type'] == 'route':
-        system = System.objects.get(pk=request.session['system'])
-        
-        coords = parsed_dict['coords']
-        line = coords[''][0] +','+ coords[''][1]
-
-        wkt="LINESTRING("
-
-        i = 0
-        for point in coords['']:
-          arraytemp = point.replace("(","").replace(")","").split(",")
-          wkt += arraytemp[1]
-          wkt += " "
-          wkt += arraytemp[0]
-          
-          i=i+1
-          if i != len(coords['']):
-            wkt += ","
-
-        wkt+=")"
-        print wkt
-        
-        g = Geofence(name=parsed_dict['name'],system=system,type='R',linestring=wkt)
-        g.save()
-        
-        return HttpResponse('qqrcoisa')
-    else:
-        pass
-
 def saveGeofencev2(request):
   
   if request.method == "POST":
@@ -262,8 +176,8 @@ def saveGeofencev2(request):
           
       else:
           p = wkt
-          print p
-          g = Geofence(name=parsed_dict['name'],system=system,type='R',linestring=p)
+          t =  parsed_dict['tolerance']
+          g = Geofence(name=parsed_dict['name'],system=system,type='R',linestring=p,tolerance=t)
           g.save()
           
           return HttpResponse("create_finish")

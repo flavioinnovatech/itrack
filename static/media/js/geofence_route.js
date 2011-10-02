@@ -111,6 +111,8 @@ $(document).ready(function(){
 	
 					polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
 					
+					
+					//TODO: center must be in a collection
 					center = new OpenLayers.LonLat(pnt2.x, pnt2.y);
 	                                  	
 	                vlayer3.addFeatures([polygonFeature]);
@@ -129,6 +131,7 @@ $(document).ready(function(){
 	
   jQuery("#routesave").click(function(){
   	var id="";
+  	tolerance = $("#routetolerance").val();
   	
   	if(g) {
   		id = g['id'];
@@ -140,13 +143,16 @@ $(document).ready(function(){
     }
     else if(!route) { 
       alert("Por favor digite um escolha uma cerca eletrônica.");
-      }
+    }
+    else if (!tolerance){
+    	alert("Por favor digite um espaço de tolerância.");	
+    }
     else {
       // Save geofence
       
       $.post(
         "/geofence/save/",
-        {name:geofencename,type:'route', coords: route,id:id},
+        {name:geofencename,type:'route', coords: route,id:id,tolerance:tolerance},
         function (data) {
           if (data == 'create_finish') {
             location.href = "/geofence/create/finish";
