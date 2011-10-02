@@ -234,7 +234,7 @@ function loadmap(){
   multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40).transform(
         new OpenLayers.Projection("EPSG:4326"),
         multispectral1.getProjectionObject()
-    ), 5);
+    ), 4);
   
   // multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
   
