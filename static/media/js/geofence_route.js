@@ -224,13 +224,17 @@ function loadmap(){
 
 	});
 
-  /*
-  vlayer3.events.on({"afterfeaturemodified": function(feature){
-        polygon = (feature.feature);
-        area = (feature.feature.geometry.getGeodesicArea()/1000000).toFixed(2);
-        jQuery("#polygonarea").html(area + " km²");
- }});
- */
+  
+  if(offset ==  2) {
+  	  vlayer3.events.on({"afterfeaturemodified": function(feature){
+	        temp = feature;
+			var geometry = feature.geometry.clone();
+			geometry.transform(multispectral1.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+			polygon = (geometry.toString());
+			area = (feature.geometry.getArea() / 1000).toFixed(3);
+			jQuery("#circlearea").html(area + " km²");
+	  }});
+  }
 
   multispectral1.addLayer(dm_wms1);
   
