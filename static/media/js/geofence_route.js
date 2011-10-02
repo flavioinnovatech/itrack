@@ -4,10 +4,6 @@ $(document).ready(function(){
 
 	loadmap();
 
-	if(g){
-		alert(g.toSource());
-	}
-
 	$("#addpointroute").click(function(){
     var i = $("input[id^=routeinput]").size() + 1;
     
@@ -92,6 +88,7 @@ $(document).ready(function(){
 					}
 					
 					testline = new OpenLayers.Geometry.LineString(test);
+					
 					test = new OpenLayers.Feature.Vector(testline,null);
 					
 					wkt = new OpenLayers.Format.WKT();
@@ -99,6 +96,7 @@ $(document).ready(function(){
 					// alert(wkt.write(test));
 										
 					multiline2 = new OpenLayers.Geometry.LineString(multiline);
+					// alert(multiline2.getVertices());
 	
 					var style_green =
 			        {
@@ -224,13 +222,17 @@ function loadmap(){
 
 	});
 
-  /*
-  vlayer3.events.on({"afterfeaturemodified": function(feature){
-        polygon = (feature.feature);
-        area = (feature.feature.geometry.getGeodesicArea()/1000000).toFixed(2);
-        jQuery("#polygonarea").html(area + " km²");
- }});
- */
+  
+  if(offset ==  2) {
+  	  vlayer3.events.on({"afterfeaturemodified": function(feature){
+	        temp = feature;
+			var geometry = feature.geometry.clone();
+			geometry.transform(multispectral1.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+			polygon = (geometry.toString());
+			area = (feature.geometry.getArea() / 1000).toFixed(3);
+			jQuery("#circlearea").html(area + " km²");
+	  }});
+  }
 
   multispectral1.addLayer(dm_wms1);
   
