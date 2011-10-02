@@ -123,6 +123,20 @@ Infotrack - Cercas Eletrônicas
 
 			return false;
 		});
+		
+		$("input[name=geofence-format]").click(function(){
+			
+			if($(this).val() == 3) {
+				$('#check').attr('checked', false);
+				$('#check').attr("disabled", true);
+				
+			}
+			
+			else {
+				$('#check').removeAttr("disabled");
+			}
+			
+		});
 	});
 
 </script>
@@ -532,12 +546,12 @@ Estado: <select class="routeselect">
 							<ul>
 								<li>
 									<label>
-										<input disabled type="radio" name="type" value="1">
+										<input id="check" type="radio" name="type" value="1">
 										Desenhar diretamente no mapa</label>
 								</li>
 								<li>
 									<label>
-										<input type="radio" name="type" value="2">
+										<input  type="radio" name="type" value="2">
 										Digitar endereço(s) chave(s)</label>
 								</li>
 							</ul>
@@ -555,14 +569,10 @@ Estado: <select class="routeselect">
 
 		{% if step == 2 %}
 		{% if offset2 == "1" %} {# OpenLayers Drawing feature #}
-		{% if offset == "1" %} <div id="map3" style="float:left;width:100%;height:300px;"></div>
-		{% endif %}
 
-		{% if offset == "2" %} <div id="map2" style="float:left;width:100%;height:300px;"></div>
-		{% endif %}
 
-		{% if offset == "3" %} <div id="map1" style="float:left;width:100%;height:300px;"></div>
-		{% endif %}
+		<div id="map1" style="float:left;width:100%;height:300px;"></div>
+		
 		
 		{% endif %}
 
@@ -740,7 +750,7 @@ Estado: <select class="routeselect">
 		<div id="map1" style="float:left;width:100%;height:300px;"></div>
 		{% endif %}
 		{% endif %}
-		{% if offset2 == "2" %}
+		{% if offset2 == "2" or offset2 == "1" %}
 		<div style="width:920px;float:left;">
 			<form action="" style="margin:0 auto;">
 				<table>
