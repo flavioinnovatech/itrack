@@ -2,7 +2,11 @@ var route;
 
 $(document).ready(function(){
 
-	loadmap();
+	loadmapinputable();
+
+	if(g){
+		alert(g.toSource());
+	}
 
 	$("#addpointroute").click(function(){
     var i = $("input[id^=routeinput]").size() + 1;
@@ -163,7 +167,7 @@ $(document).ready(function(){
 });
 
 var vlayer3;
-function loadmap(){
+function loadmapinputable(){
 	
   var options = {
   	units: 'm'

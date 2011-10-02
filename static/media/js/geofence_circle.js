@@ -6,12 +6,12 @@ jQuery(document).ready(function(){
   // loadmap();
   
   //If the user wants to edit a previous created geofence
-  if (g) {
-  	var wkt_f = new OpenLayers.Format.WKT();
-  	var ploaded = wkt_f.read(g['polygon']);
-  	vlayer.addFeatures([ploaded]);
-  	multispectral.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
-  }
+  // if (g) {
+  	// var wkt_f = new OpenLayers.Format.WKT();
+  	// var ploaded = wkt_f.read(g['polygon']);
+  	// vlayer.addFeatures([ploaded]);
+  	// multispectral.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
+  // }
 	
   //calculates the center of the circle
   $('#step1circle').submit(function() {

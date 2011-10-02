@@ -19,12 +19,12 @@ jQuery(document).ready(function(){
   jQuery("#polygonarea").html("<i>Nenhuma cerca eletrônica selecionada.</i>")
   
     
-  if (g) {
-  	var wkt_f = new OpenLayers.Format.WKT();
-  	var ploaded = wkt_f.read(g['polygon']);
-  	vlayer2.addFeatures([ploaded]);
-  	multispectral2.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
-  }
+  // if (g) {
+  	// var wkt_f = new OpenLayers.Format.WKT();
+  	// var ploaded = wkt_f.read(g['polygon']);
+  	// vlayer2.addFeatures([ploaded]);
+  	// multispectral2.setCenter( new OpenLayers.LonLat(ploaded.geometry.getCentroid().x,ploaded.geometry.getCentroid().y),1)
+  // }
   
 
   $("#step1polygon").submit(function(){
