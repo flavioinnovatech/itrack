@@ -251,15 +251,25 @@ def loadavailable(request):
     count = 0;
     try:
         ets = equipments.equipment.type
-#        msg += str(ets.custom_field)
-        for c in ets.custom_field.filter(type="Output"):
+        #        msg += str(ets.custom_field)
+#cfn = CustomFieldName.objects.filter(
+#Q(system=int(offset))&
+#Q(custom_field__availablefields__system=int(offset))&
+#Q(custom_field__availablefields__equip_type__custom_field__in=e.type.custom_field.all())&
+#Q(custom_field__type="Output")).distinct()
+        cfs = [x for x in Vehicle.objects.get(pk=int(id)).equipment.type.custom_field.filter(type="Output")]
+        print("$$$")
+        print(cfs)
+        cfns = CustomFieldName.objects.filter(custom_field__in=cfs,system=request.session['system'],custom_field__availablefields__system=request.session['system'])
+        print("$$$")
+        print(cfns)
+        for cfn in cfns:
             output1 += "<field>"
-            output1 += "<key>"+str(c.pk)+"</key>"
-            output1 += "<val>"+str(c.name.encode("UTF-8"))+"</val>"
+            output1 += "<key>"+str(cfn.pk)+"</key>"
+            output1 += "<val>"+str(cfn.name.encode("UTF-8"))+"</val>"
             output1 += "</field>"
-            msg += str(c.type.encode("UTF-8")) + "$"
             count += 1
-
+            # 
     except Exception as err:
         msg += str(type(err)) + " % " + str(err.args) + " % " + str(err)
 
@@ -272,6 +282,7 @@ def loadavailable(request):
     output1 += "</document>"
     response.write(output1)
     return response
+    
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0 or u.groups.filter(name='comando').count() != 0)
 def create(request,offset,vehicle=None):
@@ -315,7 +326,10 @@ def create(request,offset,vehicle=None):
                 c.sender = sender
                 #checks if the field exists for the selected equipment
                 try:
-                    field_check = Vehicle.objects.get(equipment__type__custom_field=c.type.custom_field)
+                    cfs = [x for x in Vehicle.objects.get(pk=int(request.POST['equipment'])).equipment.type.custom_field.filter(type="Output")]
+                    cfns = CustomFieldName.objects.filter(custom_field=c.type,system=s,custom_field__availablefields__system=s)
+                    print cfns
+        
                 except ObjectDoesNotExist:
                     error_title = 'Erro: O atuador selecionado não existe'
                     error = 'O comando a ser enviado selecionou um atuador inexistente para o tipo de equipamento cadastrado.'
@@ -336,6 +350,7 @@ def create(request,offset,vehicle=None):
                 _equiptype = str(c.equipment.equipment.type).strip()
                 if _equiptype == "MTC-400" or _equiptype == "MTC-500" :
                     #MAX TRACK
+                    print "INMAX"
                     host = settings.MXT_IP
                     port = settings.MXT_PORT
                     skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)   
@@ -348,6 +363,7 @@ def create(request,offset,vehicle=None):
                     t = datetime.now()
                     mount0 += "<id>" + str(time.mktime(t.timetuple())).strip() + "</id>"
                     mount0 += "<argument>" + str(c.action) + "</argument></command>"
+                    print(mount0)
                     msg = mount0
                     totalsent = 0   
                     while totalsent < len(msg):   
@@ -431,7 +447,9 @@ def create(request,offset,vehicle=None):
         form.fields["equipment"].label = "Veículo"
         form.fields["equipment"].empty_label = "(Selecione a placa)"
         form.fields["equipment"].initial = vehicle
-        form.fields["type"].queryset = CustomFieldName.objects.filter(Q(custom_field__type = 'Output') & Q(system = int(offset)) & Q(custom_field__availablefields__system = int(offset))).distinct()
+        form.fields["type"].queryset = CustomFieldName.objects.filter(
+        Q(custom_field__type = 'Output') & Q(system = int(offset)) & 
+        Q(custom_field__availablefields__system = int(offset))).distinct()
         form.fields["type"].empty_label = "(selecione o Comando)"
         
         if form.fields["equipment"].queryset:

@@ -38,9 +38,10 @@ jQuery(document).ready(function(){
 
     jQuery("#generaldialog").dialog({show: "blind",modal:true});
   });
-  
-  jQuery("#id_action_0").attr('checked',false);
-  jQuery("#id_action_1").attr('checked',false);
+
+  jQuery("#id_action_1").attr('disabled',false);
+  jQuery("#id_action_0").attr('disabled',false);
+          	  
   check();
   jQuery("#id_type").change(function(){check();});
   jQuery("#id_equipment").change(function(){check();});
@@ -53,7 +54,6 @@ function check() {
   		vehicle = jQuery("#id_equipment option:selected").html();
   		command = jQuery("#id_type option:selected").html();
   		
-  		
   		jQuery.post(
         "/commands/check/",
         {vehicle:vehicle,command:command},
@@ -63,7 +63,6 @@ function check() {
           if (data['action'] == "OFF") {
           	jQuery("#id_action_1").attr('disabled',false);
           	jQuery("#id_action_1").attr('checked',true);
-          	
           	jQuery("#id_action_0").attr('disabled',true);
           	jQuery("#id_action_0").attr('checked',false);
           } 
