@@ -17,9 +17,9 @@ from django.utils.encoding import smart_str
 from itrack.geofence.models import Geofence
 
 
-@login_required
 def status(request):
-    if request.method == 'POST':
+    print request.user
+    if request.method == 'POST' and request.user != None:
         # gets the system
         user = parser.parse(request.POST.urlencode())['user']
         
@@ -53,9 +53,7 @@ def status(request):
                geodict = {}
                for field in geocs:
                    geodict[field.type.tag] = field.value
-                                 
-               print geodict
-               
+                                          
                
                data[popup.id] = {
                 'name': popup.alert.name, 
@@ -78,7 +76,7 @@ def status(request):
             numalerts = len(data)
          
             Popup.objects.filter(Q(user = user)).delete()
-                
+              
         return render_to_response("alerts/templates/status.html",locals(),context_instance=RequestContext(request))
 
     else:
@@ -152,6 +150,7 @@ def load(request):
  send['receive_popup'] = str(son(a.receive_popup))
  send['receive_email'] = str(son(a.receive_email))
  send['receive_sms'] = str(son(a.receive_sms))
+
  
  # if (send['event'] != None):
    # pass

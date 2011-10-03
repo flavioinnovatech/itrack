@@ -54,6 +54,11 @@ jQuery(document).ready(function(){
           var size = new OpenLayers.Size(16,16);
           var offset = new OpenLayers.Pixel(-(size.w/2), -size.h+8);
           var icon = new OpenLayers.Icon('/media/img/marker.png',size,offset);
+          len = 0
+          jQuery.each(data[0], function(key,pnt){
+            len++;  
+          });
+          if(len != 0){
           
           jQuery.each(data[0], function(key,pnt){
             point = new OpenLayers.Geometry.Point(parseFloat(pnt[1]),parseFloat(pnt[0]));
@@ -80,6 +85,10 @@ jQuery(document).ready(function(){
             markers.addMarker(marker);
             //collection.addComponents(point2);
           });
+          }else{
+            closeloading();
+            alert("Não foi encontrado nenhum dado correspondente a seleção feita.");
+          }
 
           center = new OpenLayers.LonLat(collection.getCentroid().x,collection.getCentroid().y);
           

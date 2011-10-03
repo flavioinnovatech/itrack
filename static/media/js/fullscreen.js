@@ -1,6 +1,7 @@
 jQuery(document).ready(function() {
 	
-	$('#content').css("width","100%");
+	$('#content').css("width","98%");
+
 	
 	h = jQuery(window).height();
 	tw =jQuery("table#list4").width();

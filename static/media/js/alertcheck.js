@@ -49,7 +49,7 @@ jQuery(document).ajaxSend(function(event, xhr, settings) {
                {system: jQuery('#systemid').html(),
                 user: jQuery('#userid').html()},
                function(data){
-                    if (data != "\n") {
+                    if (data != "fail") {
                         jQuery('body').append(data);
                         jQuery('.popup-content').dialog({
                             width:600,
@@ -58,6 +58,11 @@ jQuery(document).ajaxSend(function(event, xhr, settings) {
                                 },
                             modal:true
                         });
+                    }
+                    else{
+                        //redirects the maluco
+                        window.location='/accounts/login/';
+                        //alert("faiô!");
                     }
                });
                
