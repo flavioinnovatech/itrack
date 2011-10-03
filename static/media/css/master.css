@@ -72,7 +72,7 @@ a {
 }
 
 #content table {
-  margin: 0 auto;
+/*  margin: 0 auto;*/
 }
 
 #content {
@@ -566,7 +566,7 @@ img#maptools{
 }
 
 #tabs-1{
-  overflow:auto;
+/*  overflow:auto;*/
 }
 
 #tabs-3left{
@@ -606,7 +606,7 @@ img#maptools{
 }
 
 #tabs.fullscreen{
-	overflow:auto; 
+/*	overflow:auto; */
 }
 
 #tabs.fullscreen,#content.fullscreen,.centerContainer{

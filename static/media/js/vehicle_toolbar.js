@@ -118,6 +118,8 @@ jQuery(document).ready(function(){
                     var wkt_f = new OpenLayers.Format.WKT();
                   	var ploaded = wkt_f.read(data['polygon']);
                   	
+                  	ploaded.geometry.transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
+                  	
                   	vlayer.addFeatures([ploaded]);
                   	multispectral.zoomToExtent(vlayer.getDataExtent());
                     
@@ -127,7 +129,10 @@ jQuery(document).ready(function(){
                   
                   if (data.type == "R") {
                     var wkt_f = new OpenLayers.Format.WKT();
-                  	var ploaded = wkt_f.read(data['polygon']);
+                    
+                  	var ploaded = wkt_f.read(data['route']);
+                  	
+                 	ploaded.geometry.transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
                   	
                   	vlayer.addFeatures([ploaded]);
 					multispectral.zoomToExtent(vlayer.getDataExtent());

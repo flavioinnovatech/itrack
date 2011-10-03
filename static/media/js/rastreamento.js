@@ -77,6 +77,7 @@ jQuery(document).ready(function(){
   $('.css3button').click(function(){
     tab.tabs('select', 1);
     jQuery("#tabs-3").css("height",h-200);
+    multispectral.updateSize();
   });
   
   tabw = (jQuery("#tabs-1").width());
@@ -97,17 +98,7 @@ jQuery("#googlemap").click(function() {
   jQuery("img[class=vehicle]").show();
   jQuery("img[class=geofence]").show();
   jQuery("#tabs-3").css("height",h-200);
-});
-
-jQuery("#multispectralmap").click(function() {
-  // multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
-  w = jQuery(window).width();
-  h = jQuery(window).height();
-
-  //habilita botao vehicle
-  jQuery("img[class=vehicle]").show();
-  jQuery("img[class=geofence]").show();
-  jQuery("#tabs-4").css("height",h-200);
+  multispectral.updateSize();
 });
 
 function loadmaps() {
@@ -115,18 +106,28 @@ function loadmaps() {
   //Insert Multispectral permission here
   multispectral = new OpenLayers.Map('tabs-3right');
 
-  var dm_wms = new OpenLayers.Layer.WMS(
-      "Canadian Data",
-      "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
-      {
-          layers: "multispectral",
-          format: "image/gif"
-      },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
-  
+  // var dm_wms = new OpenLayers.Layer.WMS(
+      // "Canadian Data",
+      // "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
+      // {
+          // layers: "multispectral",
+          // format: "image/gif"
+      // },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
+//   
+
+  var dm_wms = load_wms();
+
   vlayer = new OpenLayers.Layer.Vector();
   multispectral.addLayer(dm_wms);
   multispectral.addLayer(vlayer);
-  multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40),0); 
+  
+  center = new OpenLayers.LonLat(-49.47,-16.40);
+  
+  
+  multispectral.setCenter(new OpenLayers.LonLat(-49.47,-16.40).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        multispectral.getProjectionObject()
+    ), 4);
   
   markers = new OpenLayers.Layer.Markers( "Markers" );
   multispectral.addLayer(markers);
@@ -144,8 +145,6 @@ function loadmaps() {
 var globaldata;
 function loadData(plate) {
 
-
-
 	jQuery.post(
     	"/rastreamento/loadData/",
         {plate:plate},
@@ -159,15 +158,6 @@ function loadData(plate) {
         },'json'
 	);
 	
-	/*
-    jQuery.getJSON("/rastreamento/loadData",
-        function(data){
-            globaldata = data;
-            loadGrid();
-            loadlateralgrid();
-        
-    });
-    */
 }
 
 //var globaldata;
@@ -232,7 +222,7 @@ function loadGrid() {
               //pager: "#gridpager",
               sortable:true,
               datatype: "local",
-              //height:h-250,
+              height:h-250,
               //width: 960,
               colNames: colNames, 
               colModel:colModel,
@@ -251,9 +241,14 @@ function loadGrid() {
                   if (jQuery("#list").getGridParam('selarrrow') != 1)
                   	jQuery("#list").setSelection(rowid,'true');
                   
-                  multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
-                  markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon));
-                  multispectral.setCenter(new OpenLayers.LonLat(lng,lat),1);
+                  pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
+                  marker = new OpenLayers.Marker(pnt,icon.clone());
+                  
+                  multimarkers[rowid] = marker;
+                                    
+                  markers.addMarker(marker);
+                  // multispectral.setCenter(pnt,14);
+                  multispectral.zoomToExtent(markers.getDataExtent(),1);
                 }
               
                 else {
@@ -269,8 +264,8 @@ function loadGrid() {
             
             // jQuery("#list4").jqGrid('navGrid','#gridpager',{edit:false,add:false,del:false});
             //jQuery("#list4").filterToolbar();
-            jQuery("input[id^=gs]").css("height","85%");
-            jQuery("input[id^=gs]").css("width","100%");
+            // jQuery("input[id^=gs]").css("height","85%");
+            // jQuery("input[id^=gs]").css("width","100%");
           
           }
           
@@ -350,8 +345,8 @@ function loadGrid() {
               });
               
               //HACK
-              jQuery("table#list4").css("width","931px");
-              jQuery("table[aria-labelledby=gbox_list4]").css("width","931px");
+              // jQuery("table#list4").css("width","931px");
+              // jQuery("table[aria-labelledby=gbox_list4]").css("width","931px");
             
               olddata = data;
               
