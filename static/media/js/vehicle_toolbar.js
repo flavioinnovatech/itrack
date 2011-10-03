@@ -274,7 +274,7 @@ function loadlateralgrid () {
         }); 
 
           var i = 0;
-          jQuery.each(myData, function(key, item) { 
+          jQuery.each(myData, function(key, item) {
             
             if (olddata2 != null) {
             
