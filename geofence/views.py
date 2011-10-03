@@ -205,7 +205,7 @@ def loadGeofences(request):
     if g.type != 'R':
       data.append({"name":g.name,"id":g.id,"type":g.type,"polygon":str(g.polygon)})
     elif g.type == 'R':
-      data.append({"name":g.name,"id":g.id,"type":g.type,"route":g.linestring.coords})
+      data.append({"name":g.name,"id":g.id,"type":g.type,"route":str(g.linestring)})
     
   print data
   json = simplejson.dumps(data)

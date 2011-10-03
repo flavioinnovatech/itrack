@@ -242,10 +242,13 @@ function loadGrid() {
                   	jQuery("#list").setSelection(rowid,'true');
                   
                   pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
+                  marker = new OpenLayers.Marker(pnt,icon.clone());
                   
-                  multimarkers[rowid] = new OpenLayers.Marker(pnt,icon);
-                  markers.addMarker(new OpenLayers.Marker(pnt,icon));
-                  multispectral.setCenter(pnt,14);
+                  multimarkers[rowid] = marker;
+                                    
+                  markers.addMarker(marker);
+                  // multispectral.setCenter(pnt,14);
+                  multispectral.zoomToExtent(markers.getDataExtent(),1);
                 }
               
                 else {
@@ -261,8 +264,8 @@ function loadGrid() {
             
             // jQuery("#list4").jqGrid('navGrid','#gridpager',{edit:false,add:false,del:false});
             //jQuery("#list4").filterToolbar();
-            jQuery("input[id^=gs]").css("height","85%");
-            jQuery("input[id^=gs]").css("width","100%");
+            // jQuery("input[id^=gs]").css("height","85%");
+            // jQuery("input[id^=gs]").css("width","100%");
           
           }
           
