@@ -121,7 +121,7 @@ jQuery(document).ready(function(){
                   	ploaded.geometry.transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
                   	
                   	vlayer.addFeatures([ploaded]);
-                  	multispectral.zoomToExtent(vlayer.getDataExtent());
+                  	multispectral.zoomToExtent(vlayer.getDataExtent(),1);
                     
                     geofence[id] = ploaded;
                   }
@@ -135,7 +135,7 @@ jQuery(document).ready(function(){
                  	ploaded.geometry.transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
                   	
                   	vlayer.addFeatures([ploaded]);
-					multispectral.zoomToExtent(vlayer.getDataExtent());
+					multispectral.zoomToExtent(vlayer.getDataExtent(),1);
                     
                     geofence[id] = ploaded;
                       
@@ -180,7 +180,7 @@ jQuery(document).ready(function(){
     
 });
 
-
+var olddata2 = null;
 function loadlateralgrid () { 
 
 	if (globaldata == null)
@@ -205,10 +205,11 @@ function loadlateralgrid () {
         jQuery.each(colNames, function(key, name) {
             object[name] = "";
         });
-        jQuery.each(data, function(key, equip) {              
-          
+        
+        jQuery.each(data, function(key, equip) {
+          var object = new Object;
           object["id"] = equip.id;
-          
+                    
             jQuery.each(colNames, function(key, name) {
           
               //Campos fixos
@@ -216,76 +217,84 @@ function loadlateralgrid () {
                 object[name] = equip.veiculo.license_plate;
               }
               
-              
-              //Custom fields
-              else {
-                
-                object[name] = equip.info[name];
-                
+              else if (name == "Latitude"){
+                object[name] = equip.lat;
+              }
+              else if (name == "Longitude"){
+              	object[name] = equip.lng;
               }
               
           });
           
           myData.push(object);
         });
-                
-                        
+        
+        h = jQuery(window).height();             
         jQuery("#list").jqGrid({   
          	datatype: "local",
-         	height:h-250,
-         	width: 180,
+         	height:h-260,
+         	//width: 180,
          	colNames: colNames, 
          	colModel:colModel,
-         	multiselect: true, 
-         	caption: "Rastreamento veicular",
+         	multiselect: true,
+         	autoheight:true,
+            autowidth: true, 
+         	caption: "Rastreamento veicular:",
          	onSelectRow: function(rowid,status){ 
             if (status == true) {
               lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
               lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
               
-              //Selects the row on the main grid
-              if (jQuery("#list4").getGridParam('selarrrow') != 1)
-              	jQuery("#list4").setSelection(rowid,'true');
               
-              multimarkers[rowid] = new OpenLayers.Marker(new OpenLayers.LonLat(lng,lat),icon);
+              //Selects the row on the main grid
+              alert(jQuery("#list4").getGridParam('selarrrow').toSource());
+              
+              // if (jQuery("#list4").getGridParam('selarrrow') != 1)
+              	// jQuery("#list4").setSelection(rowid,'true');
+              
+              pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
+              marker = new OpenLayers.Marker(pnt,icon.clone());
+                  
+              multimarkers[rowid] = marker;
               markers.addMarker(multimarkers[rowid]);
-              multispectral.setCenter(new OpenLayers.LonLat(lng,lat),2);
+              multispectral.zoomToExtent(markers.getDataExtent(),1);
             
             }
             
             else {
               //Selects the row on the main grid
-              if (jQuery("#list4").getGridParam('selarrrow') != 0)
-                jQuery("#list4").setSelection(rowid,'false');
+              // if (jQuery("#list4").getGridParam('selarrrow') != 0)
+                // jQuery("#list4").setSelection(rowid,'false');
               	
               markers.removeMarker(multimarkers[rowid]);
+              multispectral.zoomToExtent(markers.getDataExtent(),1);
             }
           }
         
         }); 
 
           var i = 0;
-          jQuery.each(myData, function(key, item) { 
+          jQuery.each(myData, function(key, item) {
             
-            if (olddata != null) {
+            if (olddata2 != null) {
             
-              jQuery.each(olddata, function(key2,olditem) {
+              jQuery.each(olddata2, function(key2,olditem) {
                 if (olditem.id == item.id) {
                   jQuery("#list").jqGrid('delRowData', item.id);
                 }
               });
             }
-            
+            // alert(item.toSource());
             jQuery("#list").jqGrid('addRowData',item.id,item);
             i = i+1;
           });
           
           //jQuery("#list_cb").css("width","180px");
-          jQuery("table#list").css("width","180px");
-          jQuery("table[aria-labelledby=gbox_list]").css("width","180px");
+          //jQuery("table#list").css("width","180px");
+          //jQuery("table[aria-labelledby=gbox_list]").css("width","180px");
           
       
-      olddata = data;
+      olddata2 = data;
   //}
   
 }

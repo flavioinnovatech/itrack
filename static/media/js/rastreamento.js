@@ -154,7 +154,7 @@ function loadData(plate) {
           globaldata = data;
           loadGrid();
           loadlateralgrid();
-            closeloading();
+          closeloading();
         },'json'
 	);
 	
@@ -238,8 +238,8 @@ function loadGrid() {
                   lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
                   
                   //Selects the row on the lateral grid
-                  if (jQuery("#list").getGridParam('selarrrow') != 1)
-                  	jQuery("#list").setSelection(rowid,'true');
+                  // if (jQuery("#list").getGridParam('selarrrow') != 1)
+                  	// jQuery("#list").setSelection(rowid,'true');
                   
                   pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
                   marker = new OpenLayers.Marker(pnt,icon.clone());
@@ -254,10 +254,11 @@ function loadGrid() {
                 else {
                 	
                   //Unselects the row on the lateral grid
-                  if (jQuery("#list").getGridParam('selarrrow') != 0)
-                  	jQuery("#list").setSelection(rowid,'false');
+                  // if (jQuery("#list").getGridParam('selarrrow') != 0)
+                  	// jQuery("#list").setSelection(rowid,'false');
                 
                   markers.removeMarker(multimarkers[rowid]);
+                  multispectral.zoomToExtent(markers.getDataExtent(),1);
                 }
               }
             });
