@@ -81,7 +81,7 @@ a {
 	margin-top:5px;
 /*  position: absolute;*/
 	z-index:-1;
-	width:960px;
+	min-width:960px;
 	height:100%;
 }
 
@@ -614,6 +614,8 @@ img#maptools{
 	margin:0 auto;
 	height:100%;
 }
+
+
 
 #list4 {
 	margin:0;
