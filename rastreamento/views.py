@@ -49,11 +49,13 @@ def loadData(request):
     if parsed_dict.has_key('plate'):
         equipments = Equipment.objects.filter(
             Q(vehicle__license_plate__icontains=parsed_dict['plate'])&
-            Q(system=system)
+            Q(system=system)&
+            Q(vehicle__system=system)
         ).annotate(last_tracking=Max('tracking__id'))
     else:
         equipments = Equipment.objects.filter(
-            Q(system=system)
+            Q(system=system)&
+            Q(vehicle__system=system)
         ).annotate(last_tracking=Max('tracking__id'))
     
     #mounting the dict of trackings and it's tracking datas.     
@@ -135,14 +137,16 @@ def loadData(request):
             info["veiculo"]["sistema"] = smart_str(system_list[2], encoding='utf-8', strings_only=False, errors='strict')
         
         for j in data_list:
+            if j.type.type == "Geocode":
+                info["geocode"][smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
+        for j in data_list:
             if j.type.tag == 'Lat':
               info["lat"] = j.value
             elif j.type.tag == 'Long':
               info["lng"] = j.value  
             elif field_list.has_key(j.type.id):
                 info["info"][smart_str(field_list[j.type.id], encoding='utf-8', strings_only=False, errors='strict')] = j.value          
-            elif j.type.type == "GPS" or j.type.type == "Geocode":
-                info["geocode"][smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
+
             
         json_output[vehicle.license_plate]=info
     
@@ -150,197 +154,7 @@ def loadData(request):
     
     return HttpResponse(json_output, mimetype='application/json')
     
-    if request.session.has_key("equipments_cache_update"):
-        rc1 = request.session["rastreamento_cache_update"]
-        rc2 = datetime.now()
-        r1 = rc1.year * rc1.month * rc2.day * rc1.hour * (rc1.minute + 3)
-        r2 = rc2.year * rc2.month * rc2.day * rc2.hour * rc2.minute
-        if r2 < r1:
-          json = simplejson.dumps(request.session["rastreamento_cache"])
-          return HttpResponse(json, mimetype='application/json')      
-
     
-  #
-  # EQUIPMENTS CACHE
-  #
-  #
-  #
-  #
-  #
-  
-  if not request.session.has_key("equipments_cache_update"):
-    equips = Equipment.objects.filter(system=system)
-    request.session["equipments_cache"] = equips
-    request.session["equipments_cache_update"] = False
-  else:
-    if request.session["equipments_cache_update"]:
-      equips = Equipment.objects.filter(system=system)
-      request.session["equipments_cache"] = equips
-    else:
-      equips = request.session["equipments_cache"]
-      
-  v_set = []
-
-
-  #
-  #   VEHICLES CACHE
-  #
-  #
-  #
-  #
-    
-  if not request.session.has_key("vehicles_cache_update"):
-  
-    for e in equips:
-      try:
-        v_set.append(Vehicle.objects.get(equipment=e.id).id)
-      except:
-        print "Veículo não encontrado."
-    if parsed_dict.has_key('plate'):
-        vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system).filter(license_plate__icontains=parsed_dict['plate'])
-        print vehicles
-    else:
-      vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
-    
-    request.session["vehicles_cache"] = vehicles
-    request.session["vehicles_cache_update"] = False
-  else:
-    if request.session["vehicles_cache_update"]:
-      for e in equips:
-        try:
-          v_set.append(Vehicle.objects.get(equipment=e.id).id)
-        except:
-          print "Veículo não encontrado."
-      if parsed_dict.has_key('plate'):
-          vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system).filter(license_plate__icontains=parsed_dict['plate'])
-          print vehicles
-      else:
-        vehicles = Vehicle.objects.filter(id__in=v_set).filter(system=system)
-      
-      request.session["vehicles_cache"] = vehicles
-    else:
-      vehicles = request.session["vehicles_cache"] 
-    
-#  available_fields = CustomFieldName.objects.filter(    system=system).filter(custom_field__availablefields__system =system).distinct().filter(        custom_field__system =system).order_by('name')
-        
-  #vehicle_fields = 
-  
-  data = {}
-  
-  
-  t1max = 0
-  t2max = 0
-  for i in vehicles:
-    if data.has_key(i.license_plate):
-        continue
-    if _loaddata_count0 > 3000:
-        break
-    try:
-        try:
-            if i.equipment.lasttrack_data != -1:
-                tracking = Tracking.objects.filter(pk=i.equipment.lasttrack_data)
-            else:
-                try:
-                    tracking = Tracking.objects.filter(equipment=i.equipment.id).order_by('eventdate').reverse()[0]
-                except:
-                    continue
-        except Exception as err:
-            try:
-                tracking = Tracking.objects.filter(equipment=i.equipment.id).order_by('eventdate').reverse()[0]
-            except:
-                continue
-#        print(str(t1max) + "##" + str(t2max))
-
-        try:
-            trackingData = TrackingData.objects.filter(tracking=tracking)
-        except:
-            continue
-
-        _evtdt = ''
-        try:
-            for x in tracking:
-                _evtdt = str(x.eventdate)
-        except:
-            try:
-                _evtdt = smart_str(tracking.eventdate, encoding='utf-8', strings_only=False, errors='strict')            
-            except:
-                try:
-                    _evtdt = str(tracking.eventdate)
-                except:
-                    _evtdt = 'unknown'
-#        print("OK2")
-        info = {}
-        try:
-            info["id"] = i.pk
-            info["hora"] = {}
-            info["veiculo"] = {}
-            info["info"] = {}
-            info["geocode"] = {}
-            info["hora"]["eventdate"] = _evtdt
-
-            info["veiculo"]["Chassi"] = i.chassi
-            info["veiculo"]["license_plate"] = i.license_plate
-            info["veiculo"]["Cor"] = i.color
-            info["veiculo"]["Ano de fabricação"] = i.year
-            info["veiculo"]["Modelo"] = i.model
-            info["veiculo"]["Fabricante"] = i.manufacturer
-            info["veiculo"]["type"] = i.type
-            info["veiculo"]["sistema"] = lowestDepth(i.equipment.system.all()).name
-
-        except Exception as err:
-#        try:
- #           print(dir(tracking))
-  #      except:
-   #         pass
-    #    print(err.message)
-            continue      
-#        print("OK4")
-
-        for j in trackingData:
-          try:
-            if j.type.tag == 'Lat':
-              info["lat"] = j.value
-            if j.type.tag == 'Long':
-              info["lng"] = j.value  
-            cfn = CustomFieldName.objects.filter(system=system).get(custom_field=j.type)
-            if cfn.custom_field in CustomField.objects.filter(system=system):
-                info["info"][smart_str(cfn.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value          
-          except:
-            if j.type.type == "GPS" or j.type.type == "Geocode":
-                info["geocode"][smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
-            pass
-
-#        print("OK5")
-        
-        # this mapping adds items that are OFF but should be displayed 
-        # saved in the configs and is present on the equip type
-        #fields_list = [x.name for x in available_fields.distinct()]
-        #map(lambda k: k not in items and info["info"].setdefault(k,"OFF"),fields_list)
-        
-    #    print info["info"]
-        
-        #items = info["info"].keys()
-        #for field in fields_list:
-        #    if field not in items:
-               
-        data[i.license_plate] =  info
-        print info
-        print _loaddata_count0 # time.clock()
-        _loaddata_count0 += 1
-    except:
-        pass   
-        
-
-  request.session["rastreamento_cache_update"] = datetime.now()
-  request.session["rastreamento_cache"] = data
-    
-    
-
-      
-  
-
-  return HttpResponse(json, mimetype='application/json')
-
 
 def xhr_test(request):
     
