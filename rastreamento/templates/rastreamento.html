@@ -15,6 +15,7 @@
 <script type="text/javascript" src="/media/js/gridconfig.js"></script>
 <script type="text/javascript" src="/media/js/vehicle_toolbar.js"></script>
 <script type="text/javascript" src="/media/js/fullscreen.js"></script>
+<script type="text/javascript" src="/media/js/wms.js"></script>
 <script type="text/javascript" src="/media/js/jquery.tipTip.minified.js"></script>	
 <link rel="stylesheet" href="/media/css/tipTip.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="/media/css/multiselect.css" type="text/css" media="screen" />
@@ -187,14 +188,14 @@
 {% block content %}
 <input type="hidden" id="end"></input>
 
-<div id="tabs" class="normal">
+<div id="tabs" class="fullscreen">
 	<ul>
 		<li id="grid"><a href="#tabs-1">Tabela de veículos</a></li>
 		{%if map_google %}<li><a id="googlemap" href="#tabs-3">Ver mapa</a></li>{% endif %}
 
 		<li><a href="#tabs-6" id="configs">Configurações</li></a>
 		
-		<li class="fullscreen" style="float:right;"><img title="Modo tela cheia" class="fullscreen unselected" src="/media/img/fullscreen.png"></li>
+<!-- 		<li class="fullscreen" style="float:right;"><img title="Modo tela cheia" class="fullscreen unselected" src="/media/img/fullscreen.png"></li> -->
 		<li style="float:right;"><img title="Listar veículos" id="maptools" class="vehicle" src="/media/img/vehicle.png"></li>
 		<li style="float:right;"><img title="Listar geofences" id="maptools" class="geofence" src="/media/img/geofence.png"></li>
 		
