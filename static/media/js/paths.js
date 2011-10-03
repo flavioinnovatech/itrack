@@ -1,6 +1,10 @@
 var map;
 var markersarray = [];
 var infoarray = [];
+
+var popupsarray = {};
+var showpopup = null;
+
 jQuery(document).ready(function(){
 
     map = new OpenLayers.Map('map');
@@ -45,12 +49,38 @@ jQuery(document).ready(function(){
         function(data){
           collection = new OpenLayers.Geometry.Collection();
           
+          var markers = new OpenLayers.Layer.Markers( "Markers" );
+          map.addLayer(markers);
+          var size = new OpenLayers.Size(16,16);
+          var offset = new OpenLayers.Pixel(-(size.w/2), -size.h+8);
+          var icon = new OpenLayers.Icon('/media/img/marker.png',size,offset);
+          
           jQuery.each(data[0], function(key,pnt){
             point = new OpenLayers.Geometry.Point(parseFloat(pnt[1]),parseFloat(pnt[0]));
             point2 = point.transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject());
-            collection.addComponents(point2);
+            marker = new OpenLayers.Marker(new OpenLayers.LonLat(point2.x,point2.y),icon.clone())
+            feature = new OpenLayers.Feature(vlayer, 
+                                new OpenLayers.LonLat(point2.x,point2.y));
+            popup = feature.createPopup(true);
+            popup.setBackgroundColor("white");
+            popup.setOpacity(0.9);
+            popup.setContentHTML("<b>Data e hora: </b><br/>"+key);
+            popup.hide();
+            //popup.size = new OpenLayers.Size(400,400);
+            popupsarray[point2.x.toString()+" "+point2.y.toString()]=popup;
+            markers.map.addPopup(popup);
+            
+            marker.events.register('mousedown', marker, function(evt) { 
+                        point2=evt.object.lonlat;   
+                        popupsarray[point2.lon.toString()+" "+point2.lat.toString()].toggle();                   
+                        popupsarray[point2.lon.toString()+" "+point2.lat.toString()].updateSize();
+                        OpenLayers.Event.stop(evt);
+            });
+            
+            markers.addMarker(marker);
+            //collection.addComponents(point2);
           });
-          
+
           center = new OpenLayers.LonLat(collection.getCentroid().x,collection.getCentroid().y);
           
           if (!jQuery.isEmptyObject( data[1] )){   
@@ -81,7 +111,7 @@ jQuery(document).ready(function(){
           thevector = new OpenLayers.Feature.Vector(collection);
           vlayer.addFeatures(thevector);
           
-          map.setCenter(center,14);
+          map.zoomToExtent(markers.getDataExtent(),1);
           
           closeloading();
           

@@ -49,12 +49,12 @@ def loadData(request):
     if parsed_dict.has_key('plate'):
         equipments = Equipment.objects.filter(
             Q(vehicle__license_plate__icontains=parsed_dict['plate'])&
-            Q(system=system)
+            Q(system=system)&
             Q(vehicle__system=system)
         ).annotate(last_tracking=Max('tracking__id'))
     else:
         equipments = Equipment.objects.filter(
-            Q(system=system)
+            Q(system=system)&
             Q(vehicle__system=system)
         ).annotate(last_tracking=Max('tracking__id'))
     
@@ -137,14 +137,16 @@ def loadData(request):
             info["veiculo"]["sistema"] = smart_str(system_list[2], encoding='utf-8', strings_only=False, errors='strict')
         
         for j in data_list:
+            if j.type.type == "Geocode":
+                info["geocode"][smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
+        for j in data_list:
             if j.type.tag == 'Lat':
               info["lat"] = j.value
             elif j.type.tag == 'Long':
               info["lng"] = j.value  
             elif field_list.has_key(j.type.id):
                 info["info"][smart_str(field_list[j.type.id], encoding='utf-8', strings_only=False, errors='strict')] = j.value          
-            elif j.type.type == "GPS" or j.type.type == "Geocode":
-                info["geocode"][smart_str(j.type.name, encoding='utf-8', strings_only=False, errors='strict')] = j.value
+
             
         json_output[vehicle.license_plate]=info
     
