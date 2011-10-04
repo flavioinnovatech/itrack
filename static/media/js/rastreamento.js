@@ -95,19 +95,26 @@ jQuery(document).ready(function(){
   
 /* ---------------------------------------------  MAPS ------------------------------------------------------ */
 jQuery('#gridlink').click(function(){
-    
+    txt = "";
+    jQuery.each(markersToDisplay,function(key,value){
+        txt = txt + key + ",";
+    });
+    alert(txt);
 
     jQuery("#list4").resetSelection();
 
     if(selected == 1){
         
-      jQuery("#list4").resetSelection();
+      jQuery.each(jQuery("#list4").getGridParam('selarrrow'),function(id){
+            jQuery("#list4").setSelection(id,false);
+      });
       
-      jQuery.each(jQuery("#list4").jqGrid('getCol','Placa',true),function(rowid,celldata){
-            plate = celldata.value.replace(/(<([^>]+)>)/ig,"");
+      jQuery.each(jQuery("#list4").jqGrid('getRowData'),function(rowid,celldata){
+            plate = celldata["Placa"].replace(/(<([^>]+)>)/ig,"").replace(" ","");
             if (markersToDisplay.hasOwnProperty(plate)){
-                alert('plate:"'+plate+'"')
-                jQuery("#list4").setSelection(rowid,true);
+                //alert('plate:"'+plate+'",'+rowid)
+                //alert(jQuery('#list4').getRowData(rowid));
+                jQuery("#list4").setSelection(rowid,false);
             }
         });
        
@@ -116,22 +123,25 @@ jQuery('#gridlink').click(function(){
 });
 
 jQuery("#googlemap").click(function() {
-  /*txt = "";
+  txt = "";
   jQuery.each(markersToDisplay,function(key,value){
     txt = txt + key + ",";
   });
-  alert(txt);*/
+  alert(txt);
   
   if(selected == 0){
       
       //clear the list to be filled
-      jQuery("#list").resetSelection();
+      jQuery.each(jQuery("#list").getGridParam('selarrrow'),function(id){
+            jQuery("#list").setSelection(id,false);
+      });
       
-      jQuery.each(jQuery("#list").jqGrid('getCol','Placa',true),function(rowid,celldata){
-            plate = celldata.value.replace(/(<([^>]+)>)/ig,"");
+      jQuery.each(jQuery("#list").jqGrid('getRowData'),function(rowid,celldata){
+            plate = celldata["Placa"].replace(/(<([^>]+)>)/ig,"").replace(" ","");
             if (markersToDisplay.hasOwnProperty(plate)){
-                alert('plate:"'+plate+'"')
-                jQuery("#list").setSelection(rowid,true);
+                //alert('plate:"'+plate+'",'+rowid)
+                //alert(jQuery('#list').getRowData(rowid));
+                jQuery("#list").setSelection(rowid,false);
             }
         });
        

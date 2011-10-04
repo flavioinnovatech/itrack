@@ -193,7 +193,7 @@ function loadlateralgrid () {
         var data = globaldata;
         var colModel = [];
         var colNames = [];
-        
+        nequips =0;
         //Campos fixos
         colNames.push("Latitude");
         colModel.push({name:"Latitude",hidden:true});
@@ -228,7 +228,8 @@ function loadlateralgrid () {
               }
               
           });
-          
+          nequips++;
+          object['id'] = nequips; 
           myData.push(object);
         });
         
@@ -269,6 +270,7 @@ function loadlateralgrid () {
         
         }); 
 
+
           var i = 0;
           jQuery.each(myData, function(key, item) {
             
@@ -281,14 +283,14 @@ function loadlateralgrid () {
               });
             }
             // alert(item.toSource());
-            jQuery("#list").jqGrid('addRowData',item.id,item);
+            //jQuery("#list").jqGrid('addRowData',item.id,item);
             i = i+1;
           });
           
           //jQuery("#list_cb").css("width","180px");
           //jQuery("table#list").css("width","180px");
           //jQuery("table[aria-labelledby=gbox_list]").css("width","180px");
-          
+          jQuery("#list").jqGrid('addRowData','id',myData);
       
       olddata2 = data;
   //}
