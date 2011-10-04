@@ -10,9 +10,11 @@ jQuery(document).ready(function(){
     }
 
     if(jQuery("#tabs-3left").css("display") == "none") {
-      jQuery("#tabs-3right").css("width","79%");
-       jQuery("#tabs-4").css("width","79%");
-      jQuery("#tabs-3left").css("width","20%");
+      //alert(markersToDisplay.toSource());
+      size = (jQuery('#tabs-3right').width() - 190).toString();
+      jQuery("#tabs-3right").css("width",size+"px");
+      jQuery("#tabs-4").css("width",size+"px");
+      jQuery("#tabs-3left").css("width","190px");
       jQuery("#tabs-3left").show();
       
     }
@@ -35,6 +37,7 @@ jQuery(document).ready(function(){
 
   jQuery("img.vehicle").click(function(){
     jQuery("#gbox_list").show();
+    
     jQuery("#gbox_list1").hide();
   });
   
@@ -230,6 +233,10 @@ function loadlateralgrid () {
         });
         
         h = jQuery(window).height();             
+        var size = new OpenLayers.Size(16,16);
+        var offset = new OpenLayers.Pixel(-(size.w/2), -size.h+8);
+        var icon = new OpenLayers.Icon('/media/img/marker.png',size,offset);
+        
         jQuery("#list").jqGrid({   
          	datatype: "local",
          	height:h-260,
@@ -240,36 +247,24 @@ function loadlateralgrid () {
          	autoheight:true,
             autowidth: true, 
          	caption: "Rastreamento veicular:",
-         	onSelectRow: function(rowid,status){ 
-            if (status == true) {
-              lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
-              lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
-              
-              
-              //Selects the row on the main grid
-              alert(jQuery("#list4").getGridParam('selarrrow').toSource());
-              
-              // if (jQuery("#list4").getGridParam('selarrrow') != 1)
-              	// jQuery("#list4").setSelection(rowid,'true');
-              
-              pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
-              marker = new OpenLayers.Marker(pnt,icon.clone());
-                  
-              multimarkers[rowid] = marker;
-              markers.addMarker(multimarkers[rowid]);
-              multispectral.zoomToExtent(markers.getDataExtent(),1);
+         	onSelectRow: function(rowid,status){
+         	    plate = jQuery('#list').jqGrid('getCell',rowid,'Placa').replace(/(<([^>]+)>)/ig,"");       
+                if (status == true) {
+                  lat = jQuery('#list').jqGrid('getCell',rowid,'Latitude');
+                  lng = jQuery('#list').jqGrid('getCell',rowid,'Longitude');
+                
+                  pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
+                  marker = new OpenLayers.Marker(pnt,icon.clone());
+                  if(markersToDisplay.hasOwnProperty(plate)){
+                    delete markersToDisplay[plate];
+                  }
+                  markersToDisplay[plate] = marker;
             
+                }
+                else if(markersToDisplay.hasOwnProperty(plate)){
+                    delete markersToDisplay[plate];
+                }
             }
-            
-            else {
-              //Selects the row on the main grid
-              // if (jQuery("#list4").getGridParam('selarrrow') != 0)
-                // jQuery("#list4").setSelection(rowid,'false');
-              	
-              markers.removeMarker(multimarkers[rowid]);
-              multispectral.zoomToExtent(markers.getDataExtent(),1);
-            }
-          }
         
         }); 
 

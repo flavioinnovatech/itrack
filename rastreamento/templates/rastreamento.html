@@ -6,6 +6,10 @@
 {%block title%}Infotrack - Rastreamento Veicular {% endblock %}
 
 {% block head %}
+<script type="text/javascript">
+    //this object is here because javascript is a fucking mess and I need to access in multiple .jses:
+    var markersToDisplay = {};
+</script>
 <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
 <link rel="stylesheet" type="text/css" media="screen" href="/media/css/ui.jqgrid.css" />
 <script src="/media/js/i18n/grid.locale-en.js" type="text/javascript"></script>
@@ -190,7 +194,7 @@
 
 <div id="tabs" class="fullscreen">
 	<ul>
-		<li id="grid"><a href="#tabs-1">Tabela de veículos</a></li>
+		<li id="grid"><a href="#tabs-1" id="gridlink">Tabela de veículos</a></li>
 		{%if map_google %}<li><a id="googlemap" href="#tabs-3">Ver mapa</a></li>{% endif %}
 
 		<li><a href="#tabs-6" id="configs">Configurações</li></a>

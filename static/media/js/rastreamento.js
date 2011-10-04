@@ -6,6 +6,7 @@ var multimarkers = new Array;
 var collection = new OpenLayers.Geometry.Collection();
 var tab;
 
+
 /* extending array to allow the pushnew: push only if the value isn't in the array */
 Array.prototype.pushNew=function(obj){
     if(this.indexOf(obj) == -1){
@@ -62,6 +63,8 @@ jQuery(document).ready(function(){
   loadData();
   loadmaps();
   
+
+  
   jQuery("img[id=maptools]").tipTip();
   jQuery("img[class=fullscreen]").tipTip();
   
@@ -73,6 +76,8 @@ jQuery(document).ready(function(){
   w = jQuery(window).width();
   h = jQuery(window).height();
   tab = jQuery( "#tabs" ).tabs();
+  selected = tab.tabs('option', 'selected');
+
 
   $('.css3button').click(function(){
     tab.tabs('select', 1);
@@ -89,16 +94,70 @@ jQuery(document).ready(function(){
   });
   
 /* ---------------------------------------------  MAPS ------------------------------------------------------ */
+jQuery('#gridlink').click(function(){
+    //txt = "";
+    //jQuery.each(markersToDisplay,function(key,value){
+    //  txt = txt + key + ",";
+    //});
+    //alert(txt);
+    
+    
+    //jQuery("#list").jqGrid('getCol','Placa',true)
+    //alert(markersToDisplay.toSource());
+    //jQuery("#list4").resetSelection();
 
+    /*if(selected == 1){
+        
+        //clear the list to be filled
+        //jQuery("#list4").resetSelection();
+        //jQuery.each(jQuery("#list4").jqGrid('getCol','Placa',true),function(rowid,celldata){
+        //    jQuery("#list4").setSelection(rowid, false);
+        //});
+        jQuery.each(jQuery("#list4").jqGrid('getCol','Placa',true),function(rowid,celldata){
+            
+            plate = celldata.value.replace(/(<([^>]+)>)/ig,"");
+            if (markersToDisplay.hasOwnProperty(plate)){
+                jQuery("#list4").jqGrid('setSelection',rowid,true);
+            }
+        });
+        //jQuery("#list4").resetSelection();
+}
+selected = tab.tabs('option', 'selected');*/
+});
 
 jQuery("#googlemap").click(function() {
-  w = jQuery(window).width();
-  h = jQuery(window).height();
-  //habilita botao vehicle
-  jQuery("img[class=vehicle]").show();
-  jQuery("img[class=geofence]").show();
-  jQuery("#tabs-3").css("height",h-200);
-  multispectral.updateSize();
+  txt = "";
+  jQuery.each(markersToDisplay,function(key,value){
+    txt = txt + key + ",";
+  });
+  alert(txt);
+  
+  if(selected == 0){
+      
+      //clear the list to be filled
+      //jQuery("#list").resetSelection();
+      //jQuery.each(jQuery("#list").jqGrid('getCol','Placa',true),function(rowid,celldata){
+      //      jQuery("#list").setSelection(rowid, false);
+      //});
+      
+      jQuery.each(jQuery("#list").jqGrid('getCol','Placa',true),function(rowid,celldata){
+            plate = celldata.value.replace(/(<([^>]+)>)/ig,"");
+            if (markersToDisplay.hasOwnProperty(plate)){
+                //jQuery("#list").jqGrid('setSelection',rowid,true);
+            }
+        });
+       
+
+        
+      w = jQuery(window).width();
+      h = jQuery(window).height();
+      //habilita botao vehicle
+      jQuery("img[class=vehicle]").show();
+      jQuery("img[class=geofence]").show();
+      jQuery("#tabs-3").css("height",h-200);
+      multispectral.updateSize();
+  }
+  selected = tab.tabs('option', 'selected');
 });
 
 function loadmaps() {
@@ -162,11 +221,17 @@ function loadData(plate) {
 
 //var globaldata;
 var olddata = null;
+
+
+
 function loadGrid() {
 
           var data = globaldata;
           var colModel = [];
           var colNames = [];
+          var size = new OpenLayers.Size(16,16);
+          var offset = new OpenLayers.Pixel(-(size.w/2), -size.h+8);
+          var icon = new OpenLayers.Icon('/media/img/marker.png',size,offset);
           
           //Campos fixos
           if(colNames.pushNew("Latitude"))  
@@ -174,13 +239,13 @@ function loadGrid() {
           if(colNames.pushNew("Longitude"))
             colModel.pushNew({name:"Longitude",hidden:true});
           if(colNames.pushNew("Placa"))
-            colModel.pushNew({name:"Placa",align:"center",formatter:currencyFmatter,width:75});
+            colModel.pushNew({name:"Placa",align:"center",formatter:currencyFmatter,width:75,sortable:true});
           if(colNames.pushNew("Tipo veículo"))
-            colModel.pushNew({name:"Tipo veículo",align:"center",width:75});
+            colModel.pushNew({name:"Tipo veículo",align:"center",width:75,sortable:true});
           if(colNames.pushNew("Hora"))
-            colModel.pushNew({name:"Hora",align:"center"});
+            colModel.pushNew({name:"Hora",align:"center",sortable:true});
           if(colNames.pushNew("Cliente"))
-            colModel.pushNew({name:"Cliente",align:"center",width:75});
+            colModel.pushNew({name:"Cliente",align:"center",width:75,sortable:true});
           
           //para cada veículo
           var nequips = 0;
@@ -220,7 +285,7 @@ function loadGrid() {
             jQuery("#list4").jqGrid({
               //uncomment the line below for the pager
               //pager: "#gridpager",
-              sortable:true,
+              sortable:false,
               datatype: "local",
               height:h-250,
               //width: 960,
@@ -233,35 +298,47 @@ function loadGrid() {
               autowidth: true,
               shrinkToFit: false,
               onSelectRow: function(rowid,status){ 
+                //get the plate (dict key)                  
+                plate = jQuery('#list4').jqGrid('getCell',rowid,'Placa').replace(/(<([^>]+)>)/ig,"");                
                 if (status == true) {
+                 
+                  
                   lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
                   lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
+                  pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
+                  marker = new OpenLayers.Marker(pnt,icon.clone());
+                  
+                  if(markersToDisplay.hasOwnProperty(plate)){
+                    delete markersToDisplay[plate];
+                  }
+                  markersToDisplay[plate] = marker;
                   
                   //Selects the row on the lateral grid
                   // if (jQuery("#list").getGridParam('selarrrow') != 1)
                   	// jQuery("#list").setSelection(rowid,'true');
                   
-                  pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
-                  marker = new OpenLayers.Marker(pnt,icon.clone());
                   
-                  multimarkers[rowid] = marker;
+                  
+                  
+                  //multimarkers[rowid] = marker;
                                     
-                  markers.addMarker(marker);
+                  //markers.addMarker(marker);
                   // multispectral.setCenter(pnt,14);
-                  multispectral.zoomToExtent(markers.getDataExtent(),1);
+                  //multispectral.zoomToExtent(markers.getDataExtent(),1);
                 }
-              
-                else {
+                else if(markersToDisplay.hasOwnProperty(plate)){
                 	
-                  //Unselects the row on the lateral grid
+                    delete markersToDisplay[plate];
+                    //Unselects the row on the lateral grid
                   // if (jQuery("#list").getGridParam('selarrrow') != 0)
                   	// jQuery("#list").setSelection(rowid,'false');
                 
-                  markers.removeMarker(multimarkers[rowid]);
-                  multispectral.zoomToExtent(markers.getDataExtent(),1);
-                }
+                  //markers.removeMarker(multimarkers[rowid]);
+                  //multispectral.zoomToExtent(markers.getDataExtent(),1);
+                
               }
-            });
+              
+            }});
             
             // jQuery("#list4").jqGrid('navGrid','#gridpager',{edit:false,add:false,del:false});
             //jQuery("#list4").filterToolbar();
