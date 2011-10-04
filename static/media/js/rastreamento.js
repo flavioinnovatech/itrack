@@ -301,6 +301,8 @@ function loadGrid() {
                     markersToDisplay[plate] = marker;
                   }
                   
+				  showMarkersInMap();
+                  
                   //Selects the row on the lateral grid
                   // if (jQuery("#list").getGridParam('selarrrow') != 1)
                   	// jQuery("#list").setSelection(rowid,'true');
@@ -317,6 +319,8 @@ function loadGrid() {
                 else if(markersToDisplay.hasOwnProperty(plate)){
                 	
                     delete markersToDisplay[plate];
+                    
+                    showMarkersInMap();
                     //Unselects the row on the lateral grid
                   // if (jQuery("#list").getGridParam('selarrrow') != 0)
                   	// jQuery("#list").setSelection(rowid,'false');
@@ -462,5 +466,16 @@ function showVehicle(vehicle) {
     });
   });
   
+}
+
+function showMarkersInMap(){
+	
+	//Remove all the current markers in the map
+	markers.clearMarkers();
+	
+	$.each(markersToDisplay,function(key,data){
+		markers.addMarker(marker);
+	})
+	
 }
 
