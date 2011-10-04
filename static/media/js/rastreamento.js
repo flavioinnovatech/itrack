@@ -95,55 +95,43 @@ jQuery(document).ready(function(){
   
 /* ---------------------------------------------  MAPS ------------------------------------------------------ */
 jQuery('#gridlink').click(function(){
-    //txt = "";
-    //jQuery.each(markersToDisplay,function(key,value){
-    //  txt = txt + key + ",";
-    //});
-    //alert(txt);
     
-    
-    //jQuery("#list").jqGrid('getCol','Placa',true)
-    //alert(markersToDisplay.toSource());
-    //jQuery("#list4").resetSelection();
 
-    /*if(selected == 1){
+    jQuery("#list4").resetSelection();
+
+    if(selected == 1){
         
-        //clear the list to be filled
-        //jQuery("#list4").resetSelection();
-        //jQuery.each(jQuery("#list4").jqGrid('getCol','Placa',true),function(rowid,celldata){
-        //    jQuery("#list4").setSelection(rowid, false);
-        //});
-        jQuery.each(jQuery("#list4").jqGrid('getCol','Placa',true),function(rowid,celldata){
-            
+      jQuery("#list4").resetSelection();
+      
+      jQuery.each(jQuery("#list4").jqGrid('getCol','Placa',true),function(rowid,celldata){
             plate = celldata.value.replace(/(<([^>]+)>)/ig,"");
             if (markersToDisplay.hasOwnProperty(plate)){
-                jQuery("#list4").jqGrid('setSelection',rowid,true);
+                alert('plate:"'+plate+'"')
+                jQuery("#list4").setSelection(rowid,true);
             }
         });
-        //jQuery("#list4").resetSelection();
-}
-selected = tab.tabs('option', 'selected');*/
+       
+    }
+    selected = tab.tabs('option', 'selected');
 });
 
 jQuery("#googlemap").click(function() {
-  txt = "";
+  /*txt = "";
   jQuery.each(markersToDisplay,function(key,value){
     txt = txt + key + ",";
   });
-  alert(txt);
+  alert(txt);*/
   
   if(selected == 0){
       
       //clear the list to be filled
-      //jQuery("#list").resetSelection();
-      //jQuery.each(jQuery("#list").jqGrid('getCol','Placa',true),function(rowid,celldata){
-      //      jQuery("#list").setSelection(rowid, false);
-      //});
+      jQuery("#list").resetSelection();
       
       jQuery.each(jQuery("#list").jqGrid('getCol','Placa',true),function(rowid,celldata){
             plate = celldata.value.replace(/(<([^>]+)>)/ig,"");
             if (markersToDisplay.hasOwnProperty(plate)){
-                //jQuery("#list").jqGrid('setSelection',rowid,true);
+                alert('plate:"'+plate+'"')
+                jQuery("#list").setSelection(rowid,true);
             }
         });
        
@@ -299,7 +287,7 @@ function loadGrid() {
               shrinkToFit: false,
               onSelectRow: function(rowid,status){ 
                 //get the plate (dict key)                  
-                plate = jQuery('#list4').jqGrid('getCell',rowid,'Placa').replace(/(<([^>]+)>)/ig,"");                
+                plate = jQuery('#list4').jqGrid('getCell',rowid,'Placa').replace(/(<([^>]+)>)/ig,"").replace(" ","");                
                 if (status == true) {
                  
                   
@@ -308,10 +296,10 @@ function loadGrid() {
                   pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
                   marker = new OpenLayers.Marker(pnt,icon.clone());
                   
-                  if(markersToDisplay.hasOwnProperty(plate)){
-                    delete markersToDisplay[plate];
+                  if(!markersToDisplay.hasOwnProperty(plate)){
+                    //alert('added: "'+plate+'"');
+                    markersToDisplay[plate] = marker;
                   }
-                  markersToDisplay[plate] = marker;
                   
                   //Selects the row on the lateral grid
                   // if (jQuery("#list").getGridParam('selarrrow') != 1)

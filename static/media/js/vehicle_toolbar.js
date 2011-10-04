@@ -255,10 +255,11 @@ function loadlateralgrid () {
                 
                   pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
                   marker = new OpenLayers.Marker(pnt,icon.clone());
-                  if(markersToDisplay.hasOwnProperty(plate)){
-                    delete markersToDisplay[plate];
+                  if(!markersToDisplay.hasOwnProperty(plate)){
+                    //alert('added: "'+plate+'"');
+                    markersToDisplay[plate] = marker;
                   }
-                  markersToDisplay[plate] = marker;
+                  
             
                 }
                 else if(markersToDisplay.hasOwnProperty(plate)){
