@@ -34,7 +34,7 @@ def Routecalc(array,tolerance):
         xml += '<RouteStop><description>origem</description><point><x>'+x+'</x><y>'+y+'</y></point></RouteStop>'
     
     xml += '</rs><ro><language>string</language><routeDetails><descriptionType>0</descriptionType><routeType>0</routeType><optimizeRoute>false</optimizeRoute></routeDetails><vehicle></vehicle><routeLine></routeLine></ro><token>'+ticket+'</token></getRoute></soap12:Body></soap12:Envelope>'
-            
+   
     conn = httplib.HTTPConnection(url,timeout=5)
     headers = {"Content-type":"application/soap+xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/Route/Route.asmx", xml, headers)
@@ -42,7 +42,7 @@ def Routecalc(array,tolerance):
     conteudo = response.read()
     conn.close()
     
-    print response.status, response.reason
+#    print conteudo
     
     if response.status == 200:
         

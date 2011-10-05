@@ -15,6 +15,8 @@ $(document).ready(function(){
   
   $("#step1route").submit(function(){
   	
+  	openloading();
+  	
   	//TODO: put loading in this submit
   	
   	vlayer3.destroyFeatures();
@@ -78,13 +80,25 @@ $(document).ready(function(){
 					
 					multiline = [];
 					test = [];
-					
-					for (var i in data){
+					markers.clearMarkers();
+					for (var i in data){						
 						var pnt = new OpenLayers.Geometry.Point(data[i]['lng'],data[i]['lat']);
 						test.push(pnt);
 						pnt2 = pnt.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
 						multiline.push(pnt2);
-
+						
+					}
+					
+					for(var i in points){
+						j = parseInt(i) + parseInt(1);
+						var c = new OpenLayers.LonLat(points[i]["lng"],points[i]["lat"]);
+						var ct = c.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
+						
+						var size = new OpenLayers.Size(21,25);
+						var offset = new OpenLayers.Pixel(-(size.w/2), -size.h); 
+						var icon = new OpenLayers.Icon('/media/img/marker-blue-'+ j +'.png', size, offset);
+						marker = new OpenLayers.Marker(ct,icon.clone())
+						markers.addMarker(marker,icon.clone());
 					}
 					
 					testline = new OpenLayers.Geometry.LineString(test);
@@ -108,13 +122,9 @@ $(document).ready(function(){
 			        };
 	
 					polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
-					
-					
-					//TODO: center must be in a collection
-					center = new OpenLayers.LonLat(pnt2.x, pnt2.y);
 	                                  	
 	                vlayer3.addFeatures([polygonFeature]);
-	                multispectral1.setCenter(center,15);
+					multispectral1.zoomToExtent(markers.getDataExtent(),1);
 	
 				},'json');
 			}, 'json');
@@ -122,6 +132,8 @@ $(document).ready(function(){
 		}
 
 	}
+  	
+  	closeloading();
   	
   	return false;
   });
@@ -234,10 +246,14 @@ function loadmap(){
 	  }});
   }
 
+  markers = new OpenLayers.Layer.Markers( "Markers" );
+
+
   multispectral1.addLayer(dm_wms1);
   
-  //FIXME: same as above
   multispectral1.addLayer(vlayer3);
+  
+  multispectral1.addLayer(markers);
   
   multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40).transform(
         new OpenLayers.Projection("EPSG:4326"),

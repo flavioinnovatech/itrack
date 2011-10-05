@@ -1,6 +1,5 @@
 //Global variables
 var polygon;
-var markers,size,offset;
 
 jQuery(document).ready(function(){
   
@@ -66,45 +65,31 @@ jQuery(document).ready(function(){
 				var points = data;
 				
 				ppol = []
-				
+				markers.clearMarkers();
 				for (var i in points){
+					j = parseInt(i) + parseInt(1);
 					p = new OpenLayers.Geometry.Point(points[i]['lng'],points[i]['lat']);
 					p2 = p.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
 					ppol.push(p2);
+					
+					var size = new OpenLayers.Size(21,25);
+					var offset = new OpenLayers.Pixel(-(size.w/2), -size.h); 
+					var icon = new OpenLayers.Icon('/media/img/marker-blue-'+ j +'.png', size, offset);
+					marker = new OpenLayers.Marker(new OpenLayers.LonLat(p2.x,p2.y),icon.clone())
+					markers.addMarker(marker,icon.clone());
 				}
-				
+								
 				var linear_ring = new OpenLayers.Geometry.LinearRing(ppol);
 				
 				polygonFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Polygon([linear_ring]));
     			vlayer3.addFeatures([polygonFeature]);
     			
-    			center = new OpenLayers.LonLat(p2.x, p2.y);
-    			multispectral1.setCenter(center,15);
+
+    			multispectral1.zoomToExtent(markers.getDataExtent(),1);
 				
 			}, 'json');
     }
     
-    // var p1 = new OpenLayers.Geometry.Point(-46.62,-23.57);
-    // var p2 = new OpenLayers.Geometry.Point(-47,-22);
-    // var p3 = new OpenLayers.Geometry.Point(-48,-21);
-//     
-    // ll1 = new OpenLayers.LonLat(-46.62,-23.57);
-    // ll2 = new OpenLayers.LonLat(-47,-22);
-    // ll3 = new OpenLayers.LonLat(-48,-21);
-//     
-    // var points = [ll1,ll2,ll3];
-//     
-    // for (var i in points){
-    	// j = parseInt(i) + parseInt(1);
-    	// icon = new OpenLayers.Icon('/media/img/marker-blue-'+j+'.png', size, offset);
-    	// markers.addMarker(new OpenLayers.Marker(points[i],icon));
-	// }
-//     
-    // var linear_ring = new OpenLayers.Geometry.LinearRing([p1,p2,p3]);
-//     
-    // polygonFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Polygon([linear_ring]));
-    // vlayer2.addFeatures([polygonFeature]);
-//     
     return false;
   });
   
