@@ -1,5 +1,8 @@
 var route;
-
+//TODO: make the line more thin or fat
+//TODO: make the option for the user remove a address field
+//TODO: make the map visible only when the submit is submited and for paths too
+//TODO: make the name and area fields visible when the above is done
 $(document).ready(function(){
 
 	loadmap();
@@ -16,9 +19,7 @@ $(document).ready(function(){
   $("#step1route").submit(function(){
   	
   	openloading();
-  	
-  	//TODO: put loading in this submit
-  	
+  	  	
   	vlayer3.destroyFeatures();
   	routeaddresses = [];
   	routepoints = [];
@@ -63,6 +64,7 @@ $(document).ready(function(){
 	    	
 	  	});
 	  	
+	  	//TODO: validate the addresses
 	  	if (routeaddresses[0]) {
 	  		//Post only one time an array of addresses
 			$.post("/geofence/geocode/", {
@@ -149,13 +151,31 @@ $(document).ready(function(){
     
    geofencename = $("#circlename").val();
     if(!geofencename) { 
-      alert("Por favor digite um nome para a cerca eletrônica.");
+      	jQuery("#generaldialog").html("");
+	    jQuery("#generaldialog").attr("title", "Faltando campo");
+		$("#generaldialog").append("Por favor digite um nome para a cerca eletrônica.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
     }
     else if(!route) { 
-      alert("Por favor digite um escolha uma cerca eletrônica.");
+      	jQuery("#generaldialog").html("");
+		jQuery("#generaldialog").attr("title", "Faltando cerca eletrônica");
+		$("#generaldialog").append("Por favor selecione uma cerca eletrônica.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
     }
     else if (!tolerance){
-    	alert("Por favor digite um espaço de tolerância.");	
+    	jQuery("#generaldialog").html("");
+		jQuery("#generaldialog").attr("title", "Faltando campo Tolerância");
+		$("#generaldialog").append("Por favor digite uma tolerância.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
     }
     else {
       // Save geofence
@@ -194,7 +214,7 @@ function loadmap(){
   
   var dm_wms1 = load_wms();
 
-  //FIXME: add support to editables routes
+  //TODO: add support to editables routes
 
 	vlayer3 = new OpenLayers.Layer.Vector("Editable", {
 		onFeatureInsert : function(feature) {
@@ -290,13 +310,7 @@ function loadmap(){
   	panel.addControls(controls);
 	multispectral1.addControl(panel);
 	multispectral1.addControl(new OpenLayers.Control.MousePosition());
-  }
-  
-  //FIXME: same as above
-  //draw_ctl = new OpenLayers.Control.DrawFeature(vlayer2, OpenLayers.Handler.Polygon, {'displayClass': 'olControlDrawFeaturePolygon'});
-  //var mod = new OpenLayers.Control.ModifyFeature(vlayer2, {'displayClass': 'olControlModifyFeature'});
-  //controls = [nav, draw_ctl,mod];
-  
+  }  
  
 	
 }

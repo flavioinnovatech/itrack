@@ -27,6 +27,8 @@ jQuery(document).ready(function(){
   
 
   $("#step1polygon").submit(function(){
+  	openloading();
+  	
   	routeaddresses = [];
 	var prox = 1;
 
@@ -84,12 +86,11 @@ jQuery(document).ready(function(){
 				polygonFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Polygon([linear_ring]));
     			vlayer3.addFeatures([polygonFeature]);
     			
-
-    			multispectral1.zoomToExtent(markers.getDataExtent(),1);
+				multispectral1.zoomToExtent(markers.getDataExtent(),1);
 				
 			}, 'json');
     }
-    
+    closeloading();
     return false;
   });
   
@@ -102,12 +103,24 @@ jQuery(document).ready(function(){
   	}  
     
    geofencename = $("#circlename").val();
-    if(!geofencename) { 
-      alert("Por favor digite um nome para a cerca eletrônica.");
+    if(!geofencename) {
+    	jQuery("#generaldialog").html("");
+	    jQuery("#generaldialog").attr("title", "Faltando campo");
+		$("#generaldialog").append("Por favor digite um nome para a cerca eletrônica.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
     }
     else if(!polygon) { 
-      alert("Por favor digite um escolha uma cerca eletrônica.");
-      }
+      	jQuery("#generaldialog").html("");
+		jQuery("#generaldialog").attr("title", "Faltando cerca eletrônica");
+		$("#generaldialog").append("Por favor selecione uma cerca eletrônica.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
+    }
     else {
       //Save geofence
       
