@@ -115,12 +115,7 @@ function loadmaps() {
     ), 4);
   
 
-  markers = new OpenLayers.Layer.Markers( "Markers", {
-  	onFeatureInsert : function(feature) {
-  		alert('ae');
-  		// multispectral.updateSize();
-		// multispectral.zoomToExtent(markers.getDataExtent(),1);
-  }} );
+  markers = new OpenLayers.Layer.Markers( "Markers" );
 
 
   multispectral.addLayer(markers);
@@ -373,7 +368,11 @@ function showMarkersInMap(){
 		markers.addMarker(data);
 	})
 	
-	
+	multispectral.updateSize();
+	multispectral.zoomToExtent(markers.getDataExtent(),1);
+	multispectral.updateSize();
+	multispectral.zoomOut();
+	multispectral.updateSize();
 }
 
 function insertDataJqgrid(){
