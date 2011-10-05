@@ -1,5 +1,23 @@
+function showMarkersInMap(){
+	
+	//Remove all the current markers in the map
+	markers.clearMarkers();
+	
+	$.each(markersToDisplay,function(key,data){
+		markers.addMarker(data);
+	})
+	
+	/*
+	multispectral.updateSize();
+	multispectral.zoomToExtent(markers.getDataExtent(),1);
+	multispectral.updateSize();
+	multispectral.zoomOut();
+	multispectral.updateSize();
+	*/
+}
+
 jQuery(document).ready(function(){ 
-  
+
   jQuery("#tabs-3left").hide();
   
   var toolnow = null;
@@ -40,6 +58,8 @@ jQuery(document).ready(function(){
     
     jQuery("#gbox_list1").hide();
   });
+ 
+  
   
   var globalgeofences = null;
   var oldgeofences = null;
@@ -267,6 +287,7 @@ function loadlateralgrid () {
                 else if(markersToDisplay.hasOwnProperty(plate)){
                     delete markersToDisplay[plate];
                 }
+                showMarkersInMap();
             }
         
         }); 
