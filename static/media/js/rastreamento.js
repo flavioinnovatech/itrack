@@ -368,11 +368,13 @@ function showMarkersInMap(){
 		markers.addMarker(data);
 	})
 	
+	/*
 	multispectral.updateSize();
 	multispectral.zoomToExtent(markers.getDataExtent(),1);
 	multispectral.updateSize();
 	multispectral.zoomOut();
 	multispectral.updateSize();
+	*/
 }
 
 function insertDataJqgrid(){
