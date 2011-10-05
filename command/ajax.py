@@ -44,15 +44,13 @@ def check(request):
   
   system = request.session['system']
   s = System.objects.get(pk=system)
-  
   parsed_dict = parser.parse(request.POST.urlencode())
-  
   v = Vehicle.objects.get(license_plate=parsed_dict['vehicle'])
-  
   cfn = CustomFieldName.objects.filter(Q(name=parsed_dict['command']),Q(system=s))
   
   try:
     c = Command.objects.filter(Q(system=s),Q(equipment=v),Q(type=cfn)).order_by('time_executed').reverse()[0]
+    
   except:
     send = {}
     json = simplejson.dumps(send)
