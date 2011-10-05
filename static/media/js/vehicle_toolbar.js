@@ -200,38 +200,8 @@ function loadlateralgrid () {
         colNames.push("Longitude");
         colModel.push({name:"Longitude",hidden:true});
         colNames.push("Placa");
-        colModel.push({name:"Placa",align:"center"});
-        
-        //cria o objeto para cada linha
-        var myData = [];
-        var object = new Object;
-        jQuery.each(colNames, function(key, name) {
-            object[name] = "";
-        });
-        
-        jQuery.each(data, function(key, equip) {
-          var object = new Object;
-          object["id"] = equip.id;
-                    
-            jQuery.each(colNames, function(key, name) {
-          
-              //Campos fixos
-              if (name == "Placa") {
-                object[name] = equip.veiculo.license_plate;
-              }
-              
-              else if (name == "Latitude"){
-                object[name] = equip.lat;
-              }
-              else if (name == "Longitude"){
-              	object[name] = equip.lng;
-              }
-              
-          });
-          nequips++;
-          object['id'] = nequips; 
-          myData.push(object);
-        });
+        colModel.push({name:"Placa",align:"center",key:true});
+       
         
         h = jQuery(window).height();             
         var size = new OpenLayers.Size(16,16);
@@ -245,9 +215,40 @@ function loadlateralgrid () {
          	colNames: colNames, 
          	colModel:colModel,
          	multiselect: true,
-         	autoheight:true,
+         	//autoheight:true,
             autowidth: true, 
          	caption: "Rastreamento veicular:",
+         	loadComplete: function(data) {
+         		insertDataJqgrid2();
+         
+				jQuery("#googlemap").click(function() {
+	
+					if(selected == 0) {
+	
+						//clear the list to be filled
+						jQuery("#list").resetSelection();
+	
+						jQuery.each(jQuery("#list").jqGrid('getRowData'), function(rowid, celldata) {
+							plate = celldata["Placa"].replace(/(<([^>]+)>)/ig, "").replace(" ", "");
+							if(markersToDisplay.hasOwnProperty(plate)) {
+								//alert('plate:"' + plate + '",' + rowid);
+	
+								//alert(jQuery('#list').getRowData(rowid));
+								jQuery("#list").setSelection(rowid);
+							}
+						});
+						w = jQuery(window).width();
+						h = jQuery(window).height();
+						//habilita botao vehicle
+						jQuery("img[class=vehicle]").show();
+						jQuery("img[class=geofence]").show();
+						jQuery("#tabs-3").css("height", h - 200);
+						multispectral.updateSize();
+					}
+					selected = tab.tabs('option', 'selected');
+				});
+
+         	},
          	onSelectRow: function(rowid,status){
          	    plate = jQuery('#list').jqGrid('getCell',rowid,'Placa').replace(/(<([^>]+)>)/ig,"");       
                 if (status == true) {
@@ -269,35 +270,63 @@ function loadlateralgrid () {
             }
         
         }); 
-
-
-          var i = 0;
-          jQuery.each(myData, function(key, item) {
-            
-            if (olddata2 != null) {
-            
-              jQuery.each(olddata2, function(key2,olditem) {
-                if (olditem.id == item.id) {
-                  jQuery("#list").jqGrid('delRowData', item.id);
-                }
-              });
-            }
-            // alert(item.toSource());
-            //jQuery("#list").jqGrid('addRowData',item.id,item);
-            i = i+1;
-          });
           
           //jQuery("#list_cb").css("width","180px");
           //jQuery("table#list").css("width","180px");
           //jQuery("table[aria-labelledby=gbox_list]").css("width","180px");
-          jQuery("#list").jqGrid('addRowData','id',myData);
       
       olddata2 = data;
   //}
   
 }
 
-  
+function insertDataJqgrid2(){
+
+
+	//cria o objeto para cada linha
+	var myData = [];
+	var object = new Object;
+	jQuery.each(colNames, function(key, name) {
+		object[name] = "";
+	});
+
+	jQuery.each(globaldata, function(key, equip) {
+		var object = new Object;
+		object["id"] = equip.id;
+
+		jQuery.each(colNames, function(key, name) {
+
+			//Campos fixos
+			if(name == "Placa") {
+				object[name] = equip.veiculo.license_plate;
+			} else if(name == "Latitude") {
+				object[name] = equip.lat;
+			} else if(name == "Longitude") {
+				object[name] = equip.lng;
+			}
+
+		});
+		nequips++;
+		myData.push(clone(object));
+	});
+	
+	var i = 0;
+	jQuery.each(myData, function(key, item) {
+
+		if(olddata2 != null) {
+			jQuery.each(olddata2, function(key2, olditem) {
+				if(olditem.id == item.id) {
+					jQuery("#list").jqGrid('delRowData', item.id);
+				}
+			});
+		}
+		
+		// Please don't mess this again
+		jQuery("#list").jqGrid('addRowData',i,myData[i]);
+		i = i + 1;
+	});
+	}
+
 
   
 
