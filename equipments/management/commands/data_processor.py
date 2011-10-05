@@ -514,5 +514,6 @@ class Command(BaseCommand):
                     for th in threading.enumerate():
                         if isinstance(th,OutputThread) or isinstance(th,ClientThread):
                             th.stop()
+                    server.close()
                     time.sleep(1)
                     exit(0)
