@@ -85,7 +85,7 @@ $(document).ready(function(){
      
     //limiting the maximum and minimum dates
     
-    /*
+    
     dates = $( "#id_period_end, #id_period_start " ).datetimepicker({
 			showSecond: true,
             timeFormat: 'hh:mm:ss',
@@ -107,7 +107,7 @@ $(document).ready(function(){
 				dates.not( this ).datetimepicker( "option", option2, date2);
 			}
 		});
-    */
+    
     if ($('.switcher option:selected').text() == 'Outro:'){
         this.id = 'id_vehicle_other';
         $(this).attr('name','vehicle_other');
@@ -139,6 +139,21 @@ $(document).ready(function(){
         </select> 
     </p>
     */
+    function checkselected() {
+        var box1 = document.getElementById('id_vehicle_fields_to');
+        if(box1) {
+            box1.id = 'id_vehicle_fields';
+            for (var i = 0; i < box1.options.length; i++)
+                box1.options[i].selected = true;
+        }
+            
+        var box2 = document.getElementById('id_fields_to');
+        if(box2) {
+            box2.id = 'id_fields';
+            for (var i = 0; i < box2.options.length; i++)
+                box2.options[i].selected = true;
+        }
+    }
     $('#exportCSV').click(function(){
         $('input[name="type"]').attr("value","CSV");
        blockUIForDownload();
@@ -163,7 +178,7 @@ $(document).ready(function(){
         }, 3000);
         
 
-        
+
         var box1 = document.getElementById('id_vehicle_fields_to');
         if(box1) {
             box1.id = 'id_vehicle_fields';
@@ -187,7 +202,7 @@ $(document).ready(function(){
         //blockUIForDownload();
 
     });
-    /*
+    
     
     $('#exportPDF').click(function(){
         $('input[name="type"]').attr("value","PDF");
@@ -210,10 +225,10 @@ $(document).ready(function(){
                 }            
             });
         }, 3000);
-
+        checkselected();
         document.forms["formz"].submit();
     });
-     */
+    
        
     $('#exportHTML').click(function(){
        $('input[name="type"]').attr("value","HTML");
@@ -233,7 +248,7 @@ $(document).ready(function(){
         }
             
             
-        var win = window.open("", "win", "width=640,height=480");
+        var win = window.open("", "win", "menubar=1,location=0,toolbar=0,scrollbars=1,width=640,height=480");
         win.moveTo(100, 100);
         win.document.open("text/html", "replace");
         win.document.write("<html><head><title>Relatorio</title>");
@@ -286,8 +301,10 @@ $(document).ready(function(){
         
     });
     
-    if({{no_information}}){
-        alert("Não foram encontrados dados para a busca realizada. Por favor, tente novamente"); finishDownload();  
+    if({{no_information}}==1){
+        alert("Não foram encontrados dados para a busca realizada. Por favor, tente novamente."); finishDownload();  
+    } else if({{no_information}}==2) {
+        alert("Por favor, preencha os campos de acordo com as instruções."); finishDownload();      
     }  
 });
 
@@ -347,7 +364,7 @@ $(document).ready(function(){
 <input type="hidden" id="download_token_value_id" name="token" />
 <input type="button" value="Exportar como CSV" class="table-button" style="padding:10px;float:right;" id="exportCSV" />
 <input type="button" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" />
-
+<!-- <input type="submit" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" /> -->
 <!-- <input type="submit" value="Exportar como PDF" class="table-button" style="padding:10px;float:right;" id="exportPDF" />
 <input type="submit" value="Exportar como HTML" class="table-button" style="padding:10px;float:right;" id="exportHTML" /> -->
 <p class="clear">

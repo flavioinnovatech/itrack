@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import urllib
-import sys, httplib,urllib
+import sys, httplib2,urllib2,urllib,httplib
 import time
 from xml.etree import cElementTree as ElementTree
 
@@ -34,7 +34,7 @@ def Routecalc(array,tolerance):
         xml += '<RouteStop><description>origem</description><point><x>'+x+'</x><y>'+y+'</y></point></RouteStop>'
     
     xml += '</rs><ro><language>string</language><routeDetails><descriptionType>0</descriptionType><routeType>0</routeType><optimizeRoute>false</optimizeRoute></routeDetails><vehicle></vehicle><routeLine></routeLine></ro><token>'+ticket+'</token></getRoute></soap12:Body></soap12:Envelope>'
-            
+   
     conn = httplib.HTTPConnection(url,timeout=5)
     headers = {"Content-type":"application/soap+xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/Route/Route.asmx", xml, headers)
@@ -42,7 +42,7 @@ def Routecalc(array,tolerance):
     conteudo = response.read()
     conn.close()
     
-    print response.status, response.reason
+#    print conteudo
     
     if response.status == 200:
         
@@ -172,7 +172,8 @@ def ReverseGeocode(lat,lng):
     #first,tries to search in the database the lat lng pair
     
     # SHALL BE IMPLEMENTED WHEN THE GODS OF IMPLEMENTATION 
-    # BLOW THE BREATH OF CREATION OVER MY SOUL
+    # BLOW THE BREATH OF CREATION OVER MY SOULresp, content = h.request("http://bitworking.org/news/223/Meet-Ares", "POST", urlencode(data))
+
     
     #try:
     #    c = CachedGeocode.objects.get(Q(lng=lng) & Q(lat=lat))
@@ -189,7 +190,7 @@ def ReverseGeocode(lat,lng):
 def MultispectralRGeocode(lat,lng):
     ticket = "76333D50-F9F4-4088-A9D7-DE5B09F9C27C"
     url  = "http://www.geoportal.com.br/xgeocoder/cxinfo.aspx?x="+lng+"&y="+lat+"&Ticket="+str(ticket)
-    page = urllib.urlopen(url)
+    page = urllib2.urlopen(url)
     conteudo = page.read()
     page.close()
     geocodexml = ElementTree.fromstring(conteudo)
@@ -229,24 +230,27 @@ def MaplinkRGeocode(lat,lng):
     
     ticket = "awFhbDzHd0vJaWVAzwkLyC9gf0LhbM9CyxSLyCH8aTphbIOidIZHdWOLyCtq"
 
-    url = "webservices.apontador.com.br"
+    url = "http://webservices.apontador.com.br"
     
     xml = '''<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><getAddress xmlns="http://webservices.maplink2.com.br"><point><x>'''+str(lng)+'''</x><y>'''+str(lat)+'''</y></point><token>'''+str(ticket)+'''</token><tolerance>'''+str(10)+'''</tolerance></getAddress></soap:Body></soap:Envelope>'''
-
-    conn = httplib.HTTPConnection(url,timeout=3)
-    headers = {"Content-type":"text/xml; charset=\"UTF-8\"","SOAPAction":"http://webservices.maplink2.com.br/getAddress","Host":"teste.webservices.apontador.com.br"}
     
     try:
-        conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
-        response = conn.getresponse()
-        conteudo = response.read()
-        conn.close()
+        conn = httplib2.Http(timeout=3)
+        headers = {"Content-type":"text/xml; charset=\"UTF-8\"","SOAPAction":"http://webservices.maplink2.com.br/getAddress","Host":"teste.webservices.apontador.com.br"}
+        resp, content = conn.request(url+ "/webservices/v3/AddressFinder/AddressFinder.asmx", "POST", body=xml,headers=headers)
+        response = content
+        conteudo = content
+    #try:
+    #    conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
+    #    response = conn.getresponse()
+     #   conteudo = response.read()
+     #   conn.close()
        
     except Exception as err:
       print(err)
       raise NotImplementedError
 
-    if response.status == 200:
+    if resp.status == 200:
         try:
             #print conteudo
             gxml = ElementTree.fromstring(conteudo)

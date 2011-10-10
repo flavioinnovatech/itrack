@@ -1,5 +1,8 @@
 var route;
-
+//TODO: make the line more thin or fat
+//TODO: make the option for the user remove a address field
+//TODO: make the map visible only when the submit is submited and for paths too
+//TODO: make the name and area fields visible when the above is done
 $(document).ready(function(){
 
 	loadmap();
@@ -15,8 +18,8 @@ $(document).ready(function(){
   
   $("#step1route").submit(function(){
   	
-  	//TODO: put loading in this submit
-  	
+  	openloading();
+  	  	
   	vlayer3.destroyFeatures();
   	routeaddresses = [];
   	routepoints = [];
@@ -61,6 +64,7 @@ $(document).ready(function(){
 	    	
 	  	});
 	  	
+	  	//TODO: validate the addresses
 	  	if (routeaddresses[0]) {
 	  		//Post only one time an array of addresses
 			$.post("/geofence/geocode/", {
@@ -78,13 +82,25 @@ $(document).ready(function(){
 					
 					multiline = [];
 					test = [];
-					
-					for (var i in data){
+					markers.clearMarkers();
+					for (var i in data){						
 						var pnt = new OpenLayers.Geometry.Point(data[i]['lng'],data[i]['lat']);
 						test.push(pnt);
 						pnt2 = pnt.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
 						multiline.push(pnt2);
-
+						
+					}
+					
+					for(var i in points){
+						j = parseInt(i) + parseInt(1);
+						var c = new OpenLayers.LonLat(points[i]["lng"],points[i]["lat"]);
+						var ct = c.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
+						
+						var size = new OpenLayers.Size(21,25);
+						var offset = new OpenLayers.Pixel(-(size.w/2), -size.h); 
+						var icon = new OpenLayers.Icon('/media/img/marker-blue-'+ j +'.png', size, offset);
+						marker = new OpenLayers.Marker(ct,icon.clone())
+						markers.addMarker(marker,icon.clone());
 					}
 					
 					testline = new OpenLayers.Geometry.LineString(test);
@@ -108,13 +124,9 @@ $(document).ready(function(){
 			        };
 	
 					polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
-					
-					
-					//TODO: center must be in a collection
-					center = new OpenLayers.LonLat(pnt2.x, pnt2.y);
 	                                  	
 	                vlayer3.addFeatures([polygonFeature]);
-	                multispectral1.setCenter(center,15);
+					multispectral1.zoomToExtent(markers.getDataExtent(),1);
 	
 				},'json');
 			}, 'json');
@@ -122,6 +134,8 @@ $(document).ready(function(){
 		}
 
 	}
+  	
+  	closeloading();
   	
   	return false;
   });
@@ -137,13 +151,31 @@ $(document).ready(function(){
     
    geofencename = $("#circlename").val();
     if(!geofencename) { 
-      alert("Por favor digite um nome para a cerca eletrônica.");
+      	jQuery("#generaldialog").html("");
+	    jQuery("#generaldialog").attr("title", "Faltando campo");
+		$("#generaldialog").append("Por favor digite um nome para a cerca eletrônica.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
     }
     else if(!route) { 
-      alert("Por favor digite um escolha uma cerca eletrônica.");
+      	jQuery("#generaldialog").html("");
+		jQuery("#generaldialog").attr("title", "Faltando cerca eletrônica");
+		$("#generaldialog").append("Por favor selecione uma cerca eletrônica.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
     }
     else if (!tolerance){
-    	alert("Por favor digite um espaço de tolerância.");	
+    	jQuery("#generaldialog").html("");
+		jQuery("#generaldialog").attr("title", "Faltando campo Tolerância");
+		$("#generaldialog").append("Por favor digite uma tolerância.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
     }
     else {
       // Save geofence
@@ -182,7 +214,7 @@ function loadmap(){
   
   var dm_wms1 = load_wms();
 
-  //FIXME: add support to editables routes
+  //TODO: add support to editables routes
 
 	vlayer3 = new OpenLayers.Layer.Vector("Editable", {
 		onFeatureInsert : function(feature) {
@@ -234,10 +266,14 @@ function loadmap(){
 	  }});
   }
 
+  markers = new OpenLayers.Layer.Markers( "Markers" );
+
+
   multispectral1.addLayer(dm_wms1);
   
-  //FIXME: same as above
   multispectral1.addLayer(vlayer3);
+  
+  multispectral1.addLayer(markers);
   
   multispectral1.setCenter(new OpenLayers.LonLat(-49.47,-16.40).transform(
         new OpenLayers.Projection("EPSG:4326"),
@@ -274,13 +310,7 @@ function loadmap(){
   	panel.addControls(controls);
 	multispectral1.addControl(panel);
 	multispectral1.addControl(new OpenLayers.Control.MousePosition());
-  }
-  
-  //FIXME: same as above
-  //draw_ctl = new OpenLayers.Control.DrawFeature(vlayer2, OpenLayers.Handler.Polygon, {'displayClass': 'olControlDrawFeaturePolygon'});
-  //var mod = new OpenLayers.Control.ModifyFeature(vlayer2, {'displayClass': 'olControlModifyFeature'});
-  //controls = [nav, draw_ctl,mod];
-  
+  }  
  
 	
 }

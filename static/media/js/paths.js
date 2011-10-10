@@ -12,14 +12,7 @@ jQuery(document).ready(function(){
     
     var styleMap = new OpenLayers.StyleMap({'strokeWidth': 5, 'strokeColor': '#ff0000'});
     rlayer = new OpenLayers.Layer.Vector("routes", {styleMap: styleMap});
-    // var dm_wms = new OpenLayers.Layer.WMS(
-        // "Canadian Data",
-        // "http://187.61.51.164/GeoportalWMS/TileServer.aspx",
-        // {
-            // layers: "multispectral",
-            // format: "image/gif"
-        // },{isBaseLayer: true,tileSize: new OpenLayers.Size(256, 256),transitionEffect:'resize',minScale: 30000000});
-        
+   
     var dm_wms = load_wms();
         
     map.addLayer(dm_wms);

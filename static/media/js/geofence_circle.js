@@ -15,6 +15,8 @@ jQuery(document).ready(function(){
 	
   //calculates the center of the circle
   $('#step1circle').submit(function() {
+  	openloading();
+  	
   	address =  $('.routeinput').attr("value");
   	number = $('.routenumber').attr("value");
   	city = $('.routecity').attr("value");
@@ -45,8 +47,7 @@ jQuery(document).ready(function(){
 	            var circle = OpenLayers.Geometry.Polygon.createRegularPolygon(pnt2c,radius, 50);
 	            vlayer3.addFeatures([new OpenLayers.Feature.Vector(circle)]);
 	            
-	            //TODO: make zoom with te get vlayer extent
-	            multispectral1.setCenter(center,15);
+	            multispectral1.zoomToExtent(vlayer3.getDataExtent(),1);
 	            
     	          
 	          },'json'
@@ -58,7 +59,7 @@ jQuery(document).ready(function(){
         $("#generaldialog").append("Por favor preencha todos os campos para o endereço.");
         jQuery("#generaldialog").dialog({show: "blind",modal:true});
 	}
-	
+	closeloading();
 	return false;
 	
   });
@@ -72,13 +73,24 @@ jQuery(document).ready(function(){
   	
 	geofencename = $("#circlename").val();
 	
-	//TODO: change these alerts to modals
     if(!geofencename) { 
-      alert("Por favor digite um nome para a cerca eletrônica.");
-    }
+    	jQuery("#generaldialog").html("");
+		jQuery("#generaldialog").attr("title", "Faltando campo");
+		$("#generaldialog").append("Por favor digite um nome para a cerca eletrônica.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
+	}
     
     else if(!circle){
-      alert("Por favor selecione uma cerca eletrônica antes.");
+    	jQuery("#generaldialog").html("");
+		jQuery("#generaldialog").attr("title", "Faltando cerca eletrônica");
+		$("#generaldialog").append("Por favor selecione uma cerca eletrônica.");
+		jQuery("#generaldialog").dialog({
+			show : "blind",
+			modal : true
+		});
     }
   
     else {
