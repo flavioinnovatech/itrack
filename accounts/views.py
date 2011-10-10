@@ -1,8 +1,10 @@
 # -*- coding:utf-8 -*-
 from django.http import HttpResponse, HttpResponseRedirect
+from django.utils.encoding import smart_str
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response
+from django.core.mail import send_mail
 from itrack.accounts.models import UserProfile
 from django.contrib.auth.models import User
 from django.template.context import Context,RequestContext
@@ -93,6 +95,15 @@ def create_user(request,offset):
           password = user.password
 
           user.set_password(password)
+          
+          message = u"Você foi cadastrado no sistema Infotrack com sucesso. \n\n"
+          message += "Login: "+user.username+"\n"
+          message += u"Senha provisória: "+password+"\n\n"
+          
+          send_mail('Cadastro em Infotrack', smart_str(message, encoding='utf-8', strings_only=False, errors='strict'), 'infotrack@infotrack.com.br',[user.email], fail_silently=False)
+          
+          return HttpResponseRedirect("/accounts/create/finish")
+          
           user.save()
           
           try:
