@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*- 
-
 from django.db import models
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
-
 
 class System(Site):
     class Meta:
@@ -18,6 +16,9 @@ class System(Site):
     parent.blank = True
     
     sessiontime = models.IntegerField(verbose_name="Tempo para expiração da sessão (segundos)",default=0,help_text="Se o valor for 0, a sessão só terminará quando o usuário fechar o navegador")
+    
+    sms_count = models.IntegerField(verbose_name='SMS Enviados',default=0)
+    can_sms = models.BooleanField(verbose_name='Pode enviar SMS')
     
     def __unicode__(self):
         return self.name
@@ -82,17 +83,13 @@ class Settings(models.Model):
     css = models.TextField()
     css.default = "body {background-color:#E0E0E0}"
     
-    map_google = models.BooleanField()
-    map_multspectral = models.BooleanField()
-    map_maplink = models.BooleanField()
+    #map_google = models.BooleanField()
+    #map_multspectral = models.BooleanField()
+    #map_maplink = models.BooleanField()
     
     def __unicode__(self):
         return self.title    
-        
-
-  
-  
-  
+    
 
   
   

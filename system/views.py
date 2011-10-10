@@ -11,7 +11,7 @@ from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.template.context import RequestContext
-from itrack.system.forms import SystemForm, SettingsForm, SystemWizard, change_css, PermsForm
+from itrack.system.forms import SystemForm, SettingsForm, SystemWizard, change_css
 from itrack.accounts.forms import UserCompleteFormAdmin
 from itrack.equipments.forms import AvailableFieldsForm,EquipmentsForm,CustomNameForm
 from django.db.models import Q
@@ -134,12 +134,6 @@ def create(request):
         sysadm = User.objects.get(pk=request.user.id)
         settings_parent = Settings.objects.get(system=system)
         
-        if not settings_parent.map_google:
-            ModifiedSettingsForm.base_fields["map_google"].widget = HiddenInput()
-        if not settings_parent.map_multspectral:
-            ModifiedSettingsForm.base_fields["map_maplink"].widget = HiddenInput()
-        if not settings_parent.map_maplink:
-            ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
         
         
         wiz = SystemWizard([UserCompleteFormAdmin,SystemForm,ModifiedSettingsForm])
@@ -197,22 +191,11 @@ def edit(request,offset):
             if request.session["system"] == int(offset)  and system_parent != None:
                 #if the system being edited is the admin own system, disable the equipment field, unless he is the root admin
                 #del form_sys.fields["equipments"]
-                del form_sett.fields["map_google"]
-                del form_sett.fields["map_maplink"]
-                del form_sett.fields["map_multspectral"]
-            else:
                     
                 if system_parent == None:
                     system_parent = system.id
                     system_admin = system.administrator.id
-                else:
-                    settings_parent_obj = Settings.objects.get(system = system_parent)
-                    if not settings_parent_obj.map_google:
-                        del form_sett.fields["map_google"]
-                    if not settings_parent_obj.map_multspectral:
-                        del form_sett.fields["map_maplink"]
-                    if not settings_parent_obj.map_maplink:
-                        del form_sett.fields["map_multspectral"]
+
                 #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
                 
             sysname = system.name

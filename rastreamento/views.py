@@ -22,14 +22,6 @@ from datetime import datetime
 @login_required
 def index(request):
   
-  settings = Settings.objects.get(system=request.session["system"])
-  if settings.map_google:
-    map_google = 1
-  if settings.map_maplink:
-    map_maplink = 1
-  if settings.map_multspectral:
-    map_multispectral = 1
-  
   form = ConfigForm()
   form.fields["custom_names"].queryset = CustomFieldName.objects.filter(system = request.session["system"]).filter(custom_field__availablefields__system = request.session["system"]).distinct()
   form.fields["vehicles"].queryset = Vehicle.objects.filter(equipment__system = request.session["system"])
