@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
 from django.contrib.sessions.models import Session
 from tracking.models import Visitor
 from datetime import datetime
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 
@@ -38,3 +41,17 @@ class SessionExpiredMiddleware:
             # expired session checks will keep the session from
             # expiring :)
             request.session['last_activity'] = now
+            
+class FirstLoginMiddleware(object):
+ 
+    def process_request(self, request):
+        
+        print 'ae'
+        if request.user.is_authenticated():
+            
+            request.session["dont_check_first_login"] = True
+            profile = request.user.get_profile()
+            if profile.is_first_login:
+                profile.is_first_login = False
+                profile.save()
+                return HttpResponseRedirect(reverse('users:account_edit'))

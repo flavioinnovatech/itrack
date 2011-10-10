@@ -101,9 +101,7 @@ def create_user(request,offset):
           message += u"Senha provisória: "+password+"\n\n"
           
           send_mail('Cadastro em Infotrack', smart_str(message, encoding='utf-8', strings_only=False, errors='strict'), 'infotrack@infotrack.com.br',[user.email], fail_silently=False)
-          
-          return HttpResponseRedirect("/accounts/create/finish")
-          
+                    
           user.save()
           
           try:
