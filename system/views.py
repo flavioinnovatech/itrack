@@ -133,10 +133,10 @@ def create(request):
                 
         sysadm = User.objects.get(pk=request.user.id)
         settings_parent = Settings.objects.get(system=system)
-        
-        
-        
-        wiz = SystemWizard([UserCompleteFormAdmin,SystemForm,ModifiedSettingsForm])
+        initial = {
+            1:{'system':request.session['system']}
+        }
+        wiz = SystemWizard([UserCompleteFormAdmin,SystemForm,ModifiedSettingsForm],initial=initial)
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 
     
@@ -154,12 +154,12 @@ def edit(request,offset):
     if isChild(int(offset),childs) or int(offset) == request.session['system']:
         if request.method == 'POST':
             #process the edit form
-            print request.POST.__dict__
+
             system = System.objects.get(pk=int(offset))
             settings = Settings.objects.get(system__id=int(offset))
             
             form_sett = SettingsForm(request.POST,request.FILES,instance=settings)
-            form_sys = SystemForm(request.POST,instance=system)       
+            form_sys = SystemForm(request.POST,request.session['system'],instance=system)       
             
             if form_sys.is_valid() and form_sett.is_valid():
                 new_sys = form_sys.save()
@@ -184,7 +184,9 @@ def edit(request,offset):
             system_parent = system.parent_id
             system_admin = system.administrator_id
             
-            form_sys = SystemForm(instance = system)
+            
+            form_sys = SystemForm(request.session['system'],instance=system)
+
             form_sett = SettingsForm(instance = settings)
             
             
@@ -199,7 +201,8 @@ def edit(request,offset):
                 #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
                 
             sysname = system.name
-            wiz = SystemWizard([UserCompleteFormAdmin,SystemForm(instance = system),SettingsForm(instance = settings)])
+            
+            #wiz = SystemWizard([UserCompleteFormAdmin,SystemForm(request.session['system'],instance = system),SettingsForm(instance = settings)])
             #return wiz(context=RequestContext(request), request=request, extra_context=locals())
             return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         
@@ -248,3 +251,13 @@ def sys_not_created(request):
     if request.method == 'POST':
         request.session["system_being_created"] = False
     return HttpResponse(u'False')
+    
+    
+    
+def ViewFlowControl(request, step, view_list,arglist):
+    
+    if step >= len(view_list):
+        pass
+    else:
+        result = view_list[step](request,**arglist[step])
+    

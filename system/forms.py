@@ -10,24 +10,19 @@ from itrack.equipments.models import CustomFieldName
 from itrack.equipments.views import associations, permissions,set_names
 
 class SystemForm(ModelForm):
-    
-     can_sms = True
         
      def __init__(self,system, *args, **kwargs):
         super(SystemForm,self).__init__(*args,**kwargs)
         
         system_obj = System.objects.get(pk=int(system))
-        self.can_sms = system_obj.can_sms
+        if not system_obj.can_sms:
+            del self.fields['can_sms']
+        
+     class Meta:
+        model = System
+        exclude = ('parent','users','administrator','available_fields','sms_count')
+ 
      
-     if can_sms:
-         class Meta:
-            model = System
-            exclude = ('parent','users','administrator','available_fields','sms_count')
-     else:
-         class Meta:
-            model = System
-            exclue = ('parent','users','administrator','available_fields','sms_count','can_sms')  
-    
 class SettingsForm(ModelForm):
     class Meta:
             model = Settings
@@ -50,12 +45,24 @@ class SettingsForm(ModelForm):
                 'color_site_font': TextInput(attrs={'class':'color'}),
                 'color_link': TextInput(attrs={'class':'color'}),
             }
+
+def form_setup(system):
+    def makeform(data,prefix=None,initial=None):
+        form = SystemForm(system,data)
         
+        return form
+    return makeform
+
 class SystemWizard(FormWizard):
     def get_template(self,step):
         return 'system/templates/create_wizard.html'
 
-
+    def process_step(self,request,form,step):
+        print 'step:',step
+        if step == 0:
+            if form.is_valid():
+                self.form_list[1] = form_setup(request.session['system'])
+                print self.form_list
     def done(self,request,form_list):
         
         form_data = {}
@@ -66,7 +73,7 @@ class SystemWizard(FormWizard):
         
         form_usr = UserForm(form_data)
         form_profile = UserProfileForm(form_data)
-        form_sys = SystemForm(form_data)
+        form_sys = SystemForm(form_data,request.session['system'])
         form_sett = SettingsForm(form_data,request.FILES)
         
         if form_usr.is_valid() and form_profile.is_valid() and form_sys.is_valid() and form_sett.is_valid():
