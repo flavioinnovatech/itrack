@@ -67,6 +67,8 @@ $(document).ready(function(){
 	  	//TODO: validate the addresses
 	  	if (routeaddresses[0]) {
 	  		//Post only one time an array of addresses
+	  		
+	  		//Commented the part below because Maplink isn't helping me
 			$.post("/geofence/geocode/", {
 				addresses : routeaddresses
 			}, function(data) {
@@ -75,60 +77,115 @@ $(document).ready(function(){
 				
 				// alert(points.toSource());
 				
-				$.post("/geofence/route/", {
-					points : points,
-					tolerance:tolerance
-				}, function(data) {
+				// $.post("/geofence/route/", {
+					// points : points,
+					// tolerance:tolerance
+				// }, function(data) {
 					
-					multiline = [];
-					test = [];
-					markers.clearMarkers();
-					for (var i in data){						
-						var pnt = new OpenLayers.Geometry.Point(data[i]['lng'],data[i]['lat']);
-						test.push(pnt);
-						pnt2 = pnt.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
-						multiline.push(pnt2);
+					//Now we're in a presence of an kludge-oriented programming
+					var mapa = new MMap2(document.getElementById('maplink'));
+					var ro = new MRouteOptions();
+					/*dados da rota */
+					var rd = new MRouteDetails();
+					rd.optimizeRoute = false;
+					rd.routeType = 0;
+					/*by car */
+					/*dados do veiculo */
+					var ve = new MVehicle();
+					ve.tankCapacity = 64;
+					ve.averageConsumption = 10;
+					ve.fuelPrice = 2.15;
+					ve.averageSpeed = 70;
+					ve.tollFeeCat = 2;
+					/* Categoria de pedágio: automóvel. */
+					/* define a base para gerar a rota */
+					var ro = new MRouteOptions();
+					ro.language = "portugues";
+					ro.vehicle = ve;
+					ro.routeDetails = rd;
+					/* define os pontos da rota */
+					
+					var rs = [];
+					//We have to adapt the points of the route to this new kludge
+					$.each(points, function(key, value) {
+						var r = new MRouteStop();
+						var point = new MPoint();
+						point.x = value['lng'];
+						point.y = value['lat'];
+						r.point = point;
+						rs.push(r);
+					});
+
+					//Thank god I think it's over. Now we're gonna finally calculate the route.
+					
+					var data = [];
+					var p = {};
+					rc1 = new MRouteControl(mapa, rs, ro, "#FF5555", function(result) {
 						
-					}
-					
-					for(var i in points){
-						j = parseInt(i) + parseInt(1);
-						var c = new OpenLayers.LonLat(points[i]["lng"],points[i]["lat"]);
-						var ct = c.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
+						var i = 0;
+						$.each(result.segDescription, function(key, value) {
+			
+							p = new Object;
+							p['lng'] = value.point['x'];
+							p['lat'] = value.point['y'];
+							data.push(p);
+			
+						});
 						
-						var size = new OpenLayers.Size(21,25);
-						var offset = new OpenLayers.Pixel(-(size.w/2), -size.h); 
-						var icon = new OpenLayers.Icon('/media/img/marker-blue-'+ j +'.png', size, offset);
-						marker = new OpenLayers.Marker(ct,icon.clone())
-						markers.addMarker(marker,icon.clone());
-					}
+						multiline = [];
+						test = [];
+						markers.clearMarkers();
+						for (var i in data){						
+							var pnt = new OpenLayers.Geometry.Point(data[i]['lng'],data[i]['lat']);
+							test.push(pnt);
+							pnt2 = pnt.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
+							multiline.push(pnt2);
+							
+						}
+						
+						for(var i in points){
+							j = parseInt(i) + parseInt(1);
+							var c = new OpenLayers.LonLat(points[i]["lng"],points[i]["lat"]);
+							var ct = c.transform(new OpenLayers.Projection("EPSG:4326"), multispectral1.getProjectionObject());
+							
+							var size = new OpenLayers.Size(21,25);
+							var offset = new OpenLayers.Pixel(-(size.w/2), -size.h); 
+							var icon = new OpenLayers.Icon('/media/img/marker-blue-'+ j +'.png', size, offset);
+							marker = new OpenLayers.Marker(ct,icon.clone())
+							markers.addMarker(marker,icon.clone());
+						}
+						
+						testline = new OpenLayers.Geometry.LineString(test);
+						
+						test = new OpenLayers.Feature.Vector(testline,null);
+						
+						wkt = new OpenLayers.Format.WKT();
+						
+						// alert(wkt.write(test));
+											
+						multiline2 = new OpenLayers.Geometry.LineString(multiline);
+						// alert(multiline2.getVertices());
+		
+						var style_green =
+				        {
+				            strokeColor: "#00FF00",
+				            strokeOpacity: 0.7,
+				            strokeWidth: 6,
+				            pointRadius: 6,
+				            pointerEvents: "visiblePainted"
+				        };
+		
+						polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
+		                                  	
+		                vlayer3.addFeatures([polygonFeature]);
+						multispectral1.zoomToExtent(markers.getDataExtent(),1);
+						
+					});
 					
-					testline = new OpenLayers.Geometry.LineString(test);
-					
-					test = new OpenLayers.Feature.Vector(testline,null);
-					
-					wkt = new OpenLayers.Format.WKT();
-					
-					// alert(wkt.write(test));
-										
-					multiline2 = new OpenLayers.Geometry.LineString(multiline);
-					// alert(multiline2.getVertices());
 	
-					var style_green =
-			        {
-			            strokeColor: "#00FF00",
-			            strokeOpacity: 0.7,
-			            strokeWidth: 6,
-			            pointRadius: 6,
-			            pointerEvents: "visiblePainted"
-			        };
-	
-					polygonFeature = new OpenLayers.Feature.Vector(multiline2,null,style_green);
-	                                  	
-	                vlayer3.addFeatures([polygonFeature]);
-					multispectral1.zoomToExtent(markers.getDataExtent(),1);
-	
-				},'json');
+				// },'json');
+				
+			//Uncomment below when Maplink wake up	
 			}, 'json');
 		
 		}
