@@ -260,7 +260,7 @@ def loadavailable(request):
         cfs = [x for x in Vehicle.objects.get(pk=int(id)).equipment.type.custom_field.filter(type="Output")]
         print("$$$")
         print(cfs)
-        cfns = CustomFieldName.objects.filter(custom_field__in=cfs,system=request.session['system'],custom_field__availablefields__system=request.session['system'])
+        cfns = CustomFieldName.objects.filter(custom_field__in=cfs,system=request.session['system'],custom_field__availablefields__system=request.session['system']).distinct()
         print("$$$")
         print(cfns)
         for cfn in cfns:

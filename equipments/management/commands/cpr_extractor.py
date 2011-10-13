@@ -155,8 +155,6 @@ class ReaderBuffer(threading.Thread):
                 mbuffer = self.socket.recv(BUFFER_SIZE)
             except:
                 continue
-                
-            
             pos = []
             notexit = True
             start = 0

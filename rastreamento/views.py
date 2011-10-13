@@ -44,7 +44,6 @@ def loadData(request):
     d1=datetime.now()
     parsed_dict = parser.parse(request.POST.urlencode())
     system = request.session["system"]
-    
     #getting the last tracking of the selected equipments
     if parsed_dict.has_key('plate'):
         equipments = Equipment.objects.filter(
@@ -65,7 +64,6 @@ def loadData(request):
     system_list={}
     field_list={}
     
-    
     trackings = [e.last_tracking for e 
                         in equipments 
                         if e.last_tracking is not None]
@@ -73,6 +71,7 @@ def loadData(request):
     equips_id = [e.id for e 
                         in equipments 
                         if e.last_tracking is not None]
+    
     
     data = TrackingData.objects.select_related(depth=2).filter(
             tracking__id__in=trackings).order_by('tracking__id').iterator()
@@ -85,21 +84,30 @@ def loadData(request):
             Q(system=system)&
             Q(custom_field__system=system)).distinct()
     
+    
+    #data TrackingData[]
     for tdata in itertools.chain(data):
         tdata_dict.setdefault(tdata.tracking, []).append(tdata)
+    #tdata_dict TrackingData{Tracking}
     
+    #vehicle Vehicles[]
     for vehicle in itertools.chain(vehicles):
         vehicle_dict.setdefault(vehicle.equipment, vehicle)
+    #vehicle_dict = Vehicle{Equipment}
     
     for tracking,data_list in itertools.chain(tdata_dict.items()):
         data_list.append(vehicle_dict[tracking.equipment])
+    #data_list = Vehicle[]
     
     for system in systems:
         system_list.setdefault(system.id,system)
-    
+    #system_list = System{System.id}
+       
     for name in customnames:
         field_list.setdefault(name.custom_field.id,name.name)
-
+    #field_list = string:CustomFieldName.name{CustomField.id}
+    
+    
     # now we have a dict that looks like this:
     # { ...
     #   ...
