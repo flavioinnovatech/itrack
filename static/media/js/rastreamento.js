@@ -1,6 +1,6 @@
 //Global variables
 var map;
-var multispectral;
+
 var markers,size,icon;
 var multimarkers = new Array;
 var collection = new OpenLayers.Geometry.Collection();
@@ -102,7 +102,7 @@ function loadmaps() {
 
   var dm_wms = load_wms();
 
-  vlayer = new OpenLayers.Layer.Vector();
+  vlayer = new OpenLayers.Layer.Vector("vectors");
   multispectral.addLayer(dm_wms);
   multispectral.addLayer(vlayer);
   
@@ -114,19 +114,17 @@ function loadmaps() {
         multispectral.getProjectionObject()
     ), 4);
   
-
+  vlayer.destroyFeatures();
   markers = new OpenLayers.Layer.Markers( "Markers" );
 
 
   multispectral.addLayer(markers);
-  size = new OpenLayers.Size(21,25);
-  offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-  icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png', size, offset);
+
   
 }  
 /* --------------------------------------------- END  MAPS ------------------------------------------------------ */
 
-/* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------------------------ */
+/* --------------------------------------------- BUSCAR DADOS E MONTAR TABELA ------------------------------------ */
   closeloading();
 });
 
@@ -258,59 +256,49 @@ function loadGrid() {
                  
                   lat = jQuery('#list4').jqGrid('getCell',rowid,'Latitude');
                   lng = jQuery('#list4').jqGrid('getCell',rowid,'Longitude');
-                  pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
+                  pnt = new OpenLayers.LonLat(lng,lat)
+                  
+                  pnt.transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
+                  //alert(pnt);
                   marker = new OpenLayers.Marker(pnt,icon.clone());
                   
                   if(!markersToDisplay.hasOwnProperty(plate)){
-                    //alert('added: "'+plate+'"');
+                    feature = new OpenLayers.Feature(vlayer, pnt);
+                    popup = feature.createPopup(true);
+                    popup.setBackgroundColor("white");
+                    popup.setOpacity(0.9);
+                   
+                    popup.setContentHTML("<h1>"+plate+"</h1><b>Data e hora: </b><br/>"+jQuery('#list4').jqGrid('getCell',rowid,'Hora'));
+                    popup.hide();
+            
+                    popupsarray[pnt.lon.toString()+" "+pnt.lat.toString()]=popup;
+                    
+                    marker.events.register('mousedown', marker, function(evt) { 
+                        pnt2=evt.object.lonlat;
+                        
+                        popupsarray[pnt2.lon.toString()+" "+pnt2.lat.toString()].toggle();                   
+                        popupsarray[pnt2.lon.toString()+" "+pnt2.lat.toString()].updateSize();
+                        OpenLayers.Event.stop(evt);
+                    });
                     markersToDisplay[plate] = marker;
+                    
+                    showMarkersInMap();
                   }
-                  
-				  showMarkersInMap();
-                  
-                  //Selects the row on the lateral grid
-                  // if (jQuery("#list").getGridParam('selarrrow') != 1)
-                  	// jQuery("#list").setSelection(rowid,'true');
-                  
-                  
-                  
-                  
-                  //multimarkers[rowid] = marker;
-                                    
-                  //markers.addMarker(marker);
                   //multispectral.zoomToExtent(markers.getDataExtent(),1);
                 }
                 else if(markersToDisplay.hasOwnProperty(plate)){
-                	
+                	pnt = markersToDisplay[plate].lonlat;
                     delete markersToDisplay[plate];
-                    
+                    delete popupsarray[pnt.lon.toString()+" "+pnt.lat.toString()];
+
                     showMarkersInMap();
-                    //Unselects the row on the lateral grid
-                  // if (jQuery("#list").getGridParam('selarrrow') != 0)
-                  	// jQuery("#list").setSelection(rowid,'false');
-                
-                  //markers.removeMarker(multimarkers[rowid]);
-                  //multispectral.zoomToExtent(markers.getDataExtent(),1);
-                
               }
-              
-            }});
+
+            }
             
-            // jQuery("#list4").jqGrid('navGrid','#gridpager',{edit:false,add:false,del:false});
-            //jQuery("#list4").filterToolbar();
-            // jQuery("input[id^=gs]").css("height","85%");
-            // jQuery("input[id^=gs]").css("width","100%");
-          
+            });
+
           }
-          
-          // jQuery("#load_list4").show();
-          // jQuery("#lui_list4").show();
-          
-          
-          
-          //cria o objeto para cada linha
-          
-              
 
 }
 
@@ -363,10 +351,19 @@ function showMarkersInMap(){
 	
 	//Remove all the current markers in the map
 	markers.clearMarkers();
+
 	
 	$.each(markersToDisplay,function(key,data){
 		markers.addMarker(data);
-	})
+		
+		pnt = data.lonlat;
+		popup = popupsarray[pnt.lon.toString()+" "+pnt.lat.toString()];
+		
+		//alert(markers.toSource());
+		markers.map.addPopup(popup);
+
+	});
+	
 	
 	/*
 	multispectral.updateSize();

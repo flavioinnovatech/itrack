@@ -11,7 +11,7 @@ from django.forms import ModelForm, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.template.context import RequestContext
-from itrack.system.forms import SystemForm, SettingsForm, SystemWizard, change_css, PermsForm
+from itrack.system.forms import SystemForm, SettingsForm, SystemWizard, change_css
 from itrack.accounts.forms import UserCompleteFormAdmin
 from itrack.equipments.forms import AvailableFieldsForm,EquipmentsForm,CustomNameForm
 from django.db.models import Q
@@ -133,16 +133,10 @@ def create(request):
                 
         sysadm = User.objects.get(pk=request.user.id)
         settings_parent = Settings.objects.get(system=system)
-        
-        if not settings_parent.map_google:
-            ModifiedSettingsForm.base_fields["map_google"].widget = HiddenInput()
-        if not settings_parent.map_multspectral:
-            ModifiedSettingsForm.base_fields["map_maplink"].widget = HiddenInput()
-        if not settings_parent.map_maplink:
-            ModifiedSettingsForm.base_fields["map_multspectral"].widget = HiddenInput()
-        
-        
-        wiz = SystemWizard([UserCompleteFormAdmin,SystemForm,ModifiedSettingsForm])
+        initial = {
+            1:{'system':request.session['system']}
+        }
+        wiz = SystemWizard([UserCompleteFormAdmin,SystemForm,ModifiedSettingsForm],initial=initial)
         return wiz(context=RequestContext(request), request=request, extra_context=locals())
 
     
@@ -160,12 +154,12 @@ def edit(request,offset):
     if isChild(int(offset),childs) or int(offset) == request.session['system']:
         if request.method == 'POST':
             #process the edit form
-            print request.POST.__dict__
+
             system = System.objects.get(pk=int(offset))
             settings = Settings.objects.get(system__id=int(offset))
             
             form_sett = SettingsForm(request.POST,request.FILES,instance=settings)
-            form_sys = SystemForm(request.POST,instance=system)       
+            form_sys = SystemForm(request.POST,request.session['system'],instance=system)       
             
             if form_sys.is_valid() and form_sett.is_valid():
                 new_sys = form_sys.save()
@@ -190,33 +184,25 @@ def edit(request,offset):
             system_parent = system.parent_id
             system_admin = system.administrator_id
             
-            form_sys = SystemForm(instance = system)
+            
+            form_sys = SystemForm(request.session['system'],instance=system)
+
             form_sett = SettingsForm(instance = settings)
             
             
             if request.session["system"] == int(offset)  and system_parent != None:
                 #if the system being edited is the admin own system, disable the equipment field, unless he is the root admin
                 #del form_sys.fields["equipments"]
-                del form_sett.fields["map_google"]
-                del form_sett.fields["map_maplink"]
-                del form_sett.fields["map_multspectral"]
-            else:
                     
                 if system_parent == None:
                     system_parent = system.id
                     system_admin = system.administrator.id
-                else:
-                    settings_parent_obj = Settings.objects.get(system = system_parent)
-                    if not settings_parent_obj.map_google:
-                        del form_sett.fields["map_google"]
-                    if not settings_parent_obj.map_multspectral:
-                        del form_sett.fields["map_maplink"]
-                    if not settings_parent_obj.map_maplink:
-                        del form_sett.fields["map_multspectral"]
+
                 #form_sys.fields["equipments"].queryset = Equipment.objects.filter(system = system_parent)
                 
             sysname = system.name
-            wiz = SystemWizard([UserCompleteFormAdmin,SystemForm(instance = system),SettingsForm(instance = settings)])
+            
+            #wiz = SystemWizard([UserCompleteFormAdmin,SystemForm(request.session['system'],instance = system),SettingsForm(instance = settings)])
             #return wiz(context=RequestContext(request), request=request, extra_context=locals())
             return render_to_response("system/templates/edit.html",locals(),context_instance=RequestContext(request),)
         
@@ -265,3 +251,13 @@ def sys_not_created(request):
     if request.method == 'POST':
         request.session["system_being_created"] = False
     return HttpResponse(u'False')
+    
+    
+    
+def ViewFlowControl(request, step, view_list,arglist):
+    
+    if step >= len(view_list):
+        pass
+    else:
+        result = view_list[step](request,**arglist[step])
+    

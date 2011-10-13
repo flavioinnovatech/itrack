@@ -34,7 +34,7 @@ def Routecalc(array,tolerance):
         xml += '<RouteStop><description>origem</description><point><x>'+x+'</x><y>'+y+'</y></point></RouteStop>'
     
     xml += '</rs><ro><language>string</language><routeDetails><descriptionType>0</descriptionType><routeType>0</routeType><optimizeRoute>false</optimizeRoute></routeDetails><vehicle></vehicle><routeLine></routeLine></ro><token>'+ticket+'</token></getRoute></soap12:Body></soap12:Envelope>'
-            
+   
     conn = httplib.HTTPConnection(url,timeout=5)
     headers = {"Content-type":"application/soap+xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
     conn.request("POST", "/webservices/v3/Route/Route.asmx", xml, headers)
@@ -42,7 +42,7 @@ def Routecalc(array,tolerance):
     conteudo = response.read()
     conn.close()
     
-    print response.status, response.reason
+#    print conteudo
     
     if response.status == 200:
         
@@ -118,13 +118,15 @@ def Geocode(array):
         street = array[a]['address']
         
         xml = '<?xml version="1.0" encoding="utf-8"?><soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"><soap12:Body><getXY xmlns="http://webservices.maplink2.com.br"><address><street>'+street+'</street><houseNumber>'+str(number)+'</houseNumber><zip></zip><district></district><city><name>'+city+'</name><state>'+state+'</state></city></address><token>'+ticket+'</token></getXY></soap12:Body></soap12:Envelope>'
-    
+        print xml
         conn = httplib.HTTPConnection(url,timeout=3)
-        headers = {"Content-type":"text/xml; charset=\"UTF-8\"","Host":"teste.webservices.apontador.com.br"}
+        headers = {"Content-type":"text/xml; charset=\"UTF-8\""}
         conn.request("POST", "/webservices/v3/AddressFinder/AddressFinder.asmx", xml, headers)
         response = conn.getresponse()
         conteudo = response.read()
         conn.close()
+        
+        
         
         #<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><getMapResponse xmlns="http://webservices.maplink2.com.br"><getMapResult><url>http://teste.webservices.maplink2.com.br/output/</url><extent><XMin>-49.2962339</XMin><YMin>-26.94037873</YMin><XMax>-43.2075</XMax><YMax>-21.356430578</YMax></extent></getMapResult></getMapResponse></soap:Body></soap:Envelope>
     

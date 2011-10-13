@@ -63,17 +63,6 @@ class TrackingData(models.Model):
     def __unicode__(self):
         return str(self.tracking.eventdate)+" : "+self.type.type +' | ' + self.type.tag
         
-class SystemPerms(models.Model):
-  
-  system = models.ForeignKey(System)
-  system.null = True
-  
-  google_map = models.BooleanField(verbose_name = 'Google - Mapa')
-  google_geofence = models.BooleanField(verbose_name = "Google - Geofence")
-  maplink_map = models.BooleanField(verbose_name = 'Maplink - Mapa')
-  multspectral_map = models.BooleanField(verbose_name = 'Multispectral - Mapa')
-  multspectral_geofence = models.BooleanField(verbose_name = 'Multispectral - Geofence')
-  can_sms =models.BooleanField(verbose_name = 'Pode enviar SMS')
   
   
 

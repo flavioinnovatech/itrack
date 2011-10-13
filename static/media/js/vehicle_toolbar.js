@@ -1,21 +1,3 @@
-function showMarkersInMap(){
-	
-	//Remove all the current markers in the map
-	markers.clearMarkers();
-	
-	$.each(markersToDisplay,function(key,data){
-		markers.addMarker(data);
-	})
-	
-	/*
-	multispectral.updateSize();
-	multispectral.zoomToExtent(markers.getDataExtent(),1);
-	multispectral.updateSize();
-	multispectral.zoomOut();
-	multispectral.updateSize();
-	*/
-}
-
 jQuery(document).ready(function(){ 
 
   jQuery("#tabs-3left").hide();
@@ -82,6 +64,7 @@ jQuery(document).ready(function(){
         colModel.push({name:"Nome",align:"center"});
         colNames.push("id");
         colModel.push({name:"id",hidden:true});
+        
         
         myData = [];
         object = new Object;
@@ -219,6 +202,8 @@ function loadlateralgrid () {
         colModel.push({name:"Latitude",hidden:true});
         colNames.push("Longitude");
         colModel.push({name:"Longitude",hidden:true});
+        colNames.push("Hora");
+        colModel.push({name:"Hora",hidden:true});
         colNames.push("Placa");
         colModel.push({name:"Placa",align:"center",key:true});
        
@@ -269,25 +254,51 @@ function loadlateralgrid () {
 				});
 
          	},
-         	onSelectRow: function(rowid,status){
-         	    plate = jQuery('#list').jqGrid('getCell',rowid,'Placa').replace(/(<([^>]+)>)/ig,"");       
+         	onSelectRow: function(rowid,status){ 
+                //get the plate (dict key)                  
+                plate = jQuery('#list').jqGrid('getCell',rowid,'Placa').replace(/(<([^>]+)>)/ig,"").replace(" ","");                
                 if (status == true) {
+                 
                   lat = jQuery('#list').jqGrid('getCell',rowid,'Latitude');
                   lng = jQuery('#list').jqGrid('getCell',rowid,'Longitude');
-                
-                  pnt = new OpenLayers.LonLat(lng,lat).transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
-                  marker = new OpenLayers.Marker(pnt,icon.clone());
-                  if(!markersToDisplay.hasOwnProperty(plate)){
-                    //alert('added: "'+plate+'"');
-                    markersToDisplay[plate] = marker;
-                  }
+                  pnt = new OpenLayers.LonLat(lng,lat)
                   
+                  pnt.transform(new OpenLayers.Projection("EPSG:4326"),multispectral.getProjectionObject());
+                  //alert(pnt);
+                  marker = new OpenLayers.Marker(pnt,icon.clone());
+                  
+                  if(!markersToDisplay.hasOwnProperty(plate)){
+                    feature = new OpenLayers.Feature(vlayer, pnt);
+                    popup = feature.createPopup(true);
+                    popup.setBackgroundColor("white");
+                    popup.setOpacity(0.9);
+                   
+                    popup.setContentHTML("<h1>"+plate+"</h1><b>Data e hora: </b><br/>"+jQuery('#list').jqGrid('getCell',rowid,'Hora'));
+                    popup.hide();
             
+                    popupsarray[pnt.lon.toString()+" "+pnt.lat.toString()]=popup;
+                    
+                    marker.events.register('mousedown', marker, function(evt) { 
+                        pnt2=evt.object.lonlat;
+                        
+                        popupsarray[pnt2.lon.toString()+" "+pnt2.lat.toString()].toggle();                   
+                        popupsarray[pnt2.lon.toString()+" "+pnt2.lat.toString()].updateSize();
+                        OpenLayers.Event.stop(evt);
+                    });
+                    markersToDisplay[plate] = marker;
+                    
+                    showMarkersInMap();
+                  }
+                  //multispectral.zoomToExtent(markers.getDataExtent(),1);
                 }
                 else if(markersToDisplay.hasOwnProperty(plate)){
+                	pnt = markersToDisplay[plate].lonlat;
                     delete markersToDisplay[plate];
-                }
-                showMarkersInMap();
+                    delete popupsarray[pnt.lon.toString()+" "+pnt.lat.toString()];
+
+                    showMarkersInMap();
+              }
+
             }
         
         }); 
@@ -324,6 +335,8 @@ function insertDataJqgrid2(){
 				object[name] = equip.lat;
 			} else if(name == "Longitude") {
 				object[name] = equip.lng;
+			}else if(name == "Hora") {
+				object[name] = equip.hora.eventdate;
 			}
 
 		});

@@ -1,6 +1,7 @@
-#Sat Oct 01 17:00:03 BRT 2011
+#Mon Oct 10 16:34:08 BRT 2011
 eclipse.preferences.version=1
 encoding//accounts/forms.py=utf-8
+encoding//accounts/middleware.py=utf-8
 encoding//accounts/models.py=utf-8
 encoding//accounts/views.py=utf-8
 encoding//alerts/ajax.py=utf8
@@ -22,6 +23,7 @@ encoding//geofence/ajax.py=utf-8
 encoding//geofence/models.py=utf-8
 encoding//geofence/views.py=utf8
 encoding//rastreamento/views.py=utf8
+encoding//reports/views.py=utf-8
 encoding//system/decorators.py=utf-8
 encoding//system/forms.py=utf-8
 encoding//system/models.py=utf-8
