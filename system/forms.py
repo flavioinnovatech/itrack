@@ -13,10 +13,10 @@ class SystemForm(ModelForm):
         
      def __init__(self,system, *args, **kwargs):
         super(SystemForm,self).__init__(*args,**kwargs)
-        
+        print "sys >>",system
         system_obj = System.objects.get(pk=int(system))
         if not system_obj.can_sms:
-            del self.fields['can_sms']
+            self.fields['can_sms'].widget.attrs['disabled'] = True
         
      class Meta:
         model = System
@@ -73,7 +73,8 @@ class SystemWizard(FormWizard):
         
         form_usr = UserForm(form_data)
         form_profile = UserProfileForm(form_data)
-        form_sys = SystemForm(form_data,request.session['system'])
+        print "here!!1"
+        form_sys = SystemForm(request.session['system'],form_data)
         form_sett = SettingsForm(form_data,request.FILES)
         
         if form_usr.is_valid() and form_profile.is_valid() and form_sys.is_valid() and form_sett.is_valid():

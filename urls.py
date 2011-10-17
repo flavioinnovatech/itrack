@@ -35,6 +35,7 @@ url(r'^system/finish/$','system.views.finish'),
 url(r'^system/edit/finish/$','system.views.editfinish'),
 url(r'^system/delete/finish/$','system.views.deletefinish'),
 url(r'^sys_not_created/$','system.views.sys_not_created'),
+url(r'^system/sms_count/$','system.ajax.get_sms_count'),
 
 
 url(r'^equipment/$','equipments.views.index'),

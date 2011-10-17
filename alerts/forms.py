@@ -90,6 +90,6 @@ class AlertForm(ModelForm):
         self.fields["trigger"].empty_label = "(selecione o evento)"
         self.fields['destinataries'].queryset=User.objects.filter((Q(system=system) | Q(pk=adm_id)) | Q(pk__in=destinataries_id) )
         if not sys.can_sms:
-            del self.fields['receive_sms']
+            self.fields['receive_sms'].widget.attrs['disabled'] = True
     
     

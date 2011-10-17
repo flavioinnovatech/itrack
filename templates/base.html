@@ -34,6 +34,23 @@
         $(this).css("border-style","solid");
       });
 
+      $( "#button-refresh" ).button({
+            icons: {
+                primary: "ui-icon-refresh"
+            },
+      }).click(function(){
+            jQuery.post(
+    	"/system/sms_count/",
+        {},
+        
+		function(data){
+
+          //alert(data.toSource());
+          jQuery('#sms_count').html(data['sms_sent']);
+          jQuery('#sms_total').html(data['sms_total']);
+        },'json'
+	);
+      });
 
     });
     </script>
@@ -51,8 +68,18 @@
 			<div class="centerContainer">
 				<a href="#" title="Titulo Dinamico" class="logo fl"></a>
  				<div id="loginstatus" align="right" style="">
- 				  <p> Usuário: <a href="{% url accounts.views.edit request.session.user_id %}"> {{request.user}}</a></p>
- 				  <p> Cliente: {{request.session.domain}}</p>
+ 				  <div id="status-left" style="float:left;">
+ 				    <p> Usuário: <a href="{% url accounts.views.edit request.session.user_id %}"> {{request.user}}</a></p>
+ 				    <p> Cliente: {{request.session.domain}}</p>
+ 				  </div>
+ 				  <div id="status-right" style="float:left;margin-left:30px;">
+ 				    <p>SMS enviados: <span id="sms_count">{{request.session.sms_sent}}</span></p>
+ 				    <p>SMS no total: <span id="sms_total">{{request.session.sms_total}}</span></p>
+ 				  </div>
+ 				  <div style="float:right;">
+ 				  <p style="display:block;margin-left:10px;"><button id="button-refresh" style="padding:15px 5px 15px 5px;"></button></p>
+ 				          
+ 				  </div>
  				</div>
 				
 			</div> <!-- end centerContainer -->
@@ -107,7 +134,7 @@
 							            <li><a href="{% url equipments.views.index %}">Equipamentos</a></li>
 							            <li><a href="{% url drivers.views.index %}"> Motoristas </a></li>
 							            <li><a href="{% url accounts.views.index %}">Usuários</a></li>
-							            <li><a href="{% url vehicles.views.index %}">Veículos</a></li>
+							            <li><a href="{% url vehicles.views.index %}">Entidades Rastreadas</a></li>
 							            
 							    	</ul>
 					            </li>

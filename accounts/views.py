@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate,login
 from http403project.http import Http403
 from django.core.context_processors import csrf
 from django.contrib.auth.views import password_reset
-from itrack.system.views import findChild,isChild
+from itrack.system.tools import findChild,isChild,flatten,findChildInstance
 from django import forms
 from datetime import datetime
 
@@ -207,6 +207,16 @@ def login(request):
         request.session['system_being_created'] = False
         request.session.set_expiry(system.sessiontime)
         
+        child_list=flatten(findChildInstance(system_id))
+        
+        sms_total = 0
+        for it in child_list:
+            sms_total += it.sms_count
+        
+        
+        request.session['sms_sent'] = system.sms_count
+        request.session['sms_total'] = sms_total + system.sms_count
+        
         #if is user's first login
         profile = UserProfile.objects.get(profile=user)
         request.session["dont_check_first_login"] = False
@@ -217,12 +227,6 @@ def login(request):
               
         else:
             return render_to_response('rastreamento/templates/rastreamento.html',locals(),context_instance=RequestContext(request))
-        #if (request.user.last_login datetime.now() < ):
-        #    print 'ALELUIA IRMAO'
-        #else:
-        #    print 'MERDAAAAAAAA'
-        #if request.user.last_login == request.user.date_joined:
-        
     else:
         # Show an error page
         erro = u"Usuário ou senha incorretos."

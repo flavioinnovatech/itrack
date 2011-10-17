@@ -18,7 +18,6 @@ from itrack.geofence.models import Geofence
 
 
 def status(request):
-    print request.user
     if request.method == 'POST' and request.user != None:
         # gets the system
         user = parser.parse(request.POST.urlencode())['user']
