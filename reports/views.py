@@ -69,6 +69,32 @@ API_KEY = 'ABQIAAAAOV9qRRxejMi2WeW2TanAKhTefegWErZP_EhBh-or-xYREOhaRBSYXJPqI_-2M
 
 VEHICLE_CHOICES = (("license_plate","Placa"),("date",u"Data"),("type",u"Tipo de veículo"),("address",u"Endereço"),("system",u"Sistema"),("color",u"Cor"),("year",u"Ano"),("model",u"Modelo"),("manufacturer",u"Fabricante"),("chassi",u"Chassi"))
 
+def getLabel(lat,lon):
+
+    s1 = True if lat > 0 else False
+    
+    dla1 = math.floor(lat)
+    mla1 = math.floor(((lat)-dla1)*60)
+    sla1 = math.floor( ( ((lat-dla1)*60) - mla1 )*60 )
+    dla1 = dla1 if dla1 > 0 else -dla1
+    mla1 = mla1 if mla1 > 0 else -mla1
+    sla1 = sla1 if sla1 > 0 else -sla1
+    
+    s2 = True if lon > 0 else False
+    dlo1 = math.floor(lon)
+    mlo1 = math.floor(((lon)-dlo1)*60)
+    slo1 = math.floor( ( ((lon-dlo1)*60) - mlo1 )*60 )
+    dlo1 = dlo1 if dlo1 > 0 else -dlo1
+    mlo1 = mlo1 if mlo1 > 0 else -mlo1
+    slo1 = slo1 if slo1 > 0 else -slo1
+    
+    la = str(dla1) + " " + str(mla1) + "' "  + str(sla1) + "''"
+    la += " N" if s1 else " S"
+    
+    lo = str(dlo1) + " " + str(mlo1) + "' " + str(slo1) + "''"
+    lo += " W" if s1 else " E"
+    
+    return la + " # " + lo
 
 def geoDistance(lat1,lon1,lat2,lon2):
 
@@ -76,27 +102,26 @@ def geoDistance(lat1,lon1,lat2,lon2):
     mla1 = math.floor(((lat1)-dla1)*60)
     sla1 = math.floor( ( ((lat1-dla1)*60) - mla1 )*60 )
     
-    print(str(dla1) + ":" + str(mla1) + ":" + str(sla1))
+    #    print("LA1 # " + str(dla1) + ":" + str(mla1) + ":" + str(sla1))
     
     
     dlo1 = math.floor(lon1)
     mlo1 = math.floor(((lon1)-dlo1)*60)
     slo1 = math.floor( ( ((lon1-dlo1)*60) - mlo1 )*60 )
     
-    print(str(dlo1) + ":" + str(mlo1) + ":" + str(slo1))
+    #    print("LO1 # " + str(dlo1) + ":" + str(mlo1) + ":" + str(slo1))
     
     dla2 = math.floor(lat2)
     mla2 = math.floor(((lat2)-dla2)*60)
     sla2 = math.floor( ( ((lat2-dla2)*60) - mla2 )*60 )
     
-    print(str(dla2) + ":" + str(mla2) + ":" + str(sla2))
+    #    print("LA2 # " + str(dla2) + ":" + str(mla2) + ":" + str(sla2))
     
     dlo2 = math.floor(lon2)
     mlo2 = math.floor(((lon2)-dlo2)*60)
     slo2 = math.floor( ( ((lon2-dlo2)*60) - mlo2 )*60 )
     
-    print(str(dlo2) + ":" + str(mlo2) + ":" + str(slo2))
-    
+    #    print("LO2 # " + str(dlo2) + ":" + str(mlo2) + ":" + str(slo2))
     
     
     lat1 = dla1 + mla1/60 + sla1/3600
@@ -114,14 +139,31 @@ def geoDistance(lat1,lon1,lat2,lon2):
     rad_lon2 = (lon2)*math.pi/180
      
      
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = math.sin(dlat/2)*math.sin(dlat/2)+math.cos(lat1)*math.cos(lat2)*math.sin(dlon/2)*math.sin(dlon/2)
+    dlat = rad_lat2 - rad_lat1
+    dlon = rad_lon2 - rad_lon1
     
+    #    print("dLat:" + str(dlat))
+    #    print("dLon:" + str(dlon))
+    
+    a1 = math.sin(dlat/2)*math.sin(dlat/2)
+    a2 = math.cos(lat1)*math.cos(lat2)
+    a3 = math.sin(dlon/2)*math.sin(dlon/2)
+    a = a1 + a2 * a3
+    
+    #    print("A:" + str(a))
+        
     # verify this
     c = 2*math.atan2(math.sqrt(a),math.sqrt(1-a))
     
+    #    print("C:" + str(c))
+    
+    
     d = 6371 *c # (Raio da terra) * c
+        
+    #    print("D:" + str(d))
+    
+    #    print("-----------------------------------")
+
     return d
     
 def firstRowTitles(item):
@@ -683,7 +725,7 @@ def report(request,offset):
 
                             tmp_y = left
                             tmp_x = left
-                            str_dfs += " * estimativa"
+                            str_dfs += " * estimativa (da data inicial da pagina 1 ate a data final desta pagina)."
                             L = simpleSplit(str_dfs,doc._fontname,doc._fontsize,730)
                             if(len(L)>=1):
                                 tmp_y += (len(L)-1)*11
@@ -715,9 +757,12 @@ def report(request,offset):
                                     print("before:" + str(geodist_total))
                                     if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
                                         try:
-                                            geodist_total += geoDistance(float(geodist_last_lat),float(geodist_last_lon),float(geodist_cur_lat),float(geodist_cur_lon))
-                                            geodist_last_lat = geodist_cur_lat
-                                            geodist_last_lon = geodist_cur_lon
+                                            geodist_plus = geoDistance(float(geodist_last_lat),float(geodist_last_lon),float(geodist_cur_lat),float(geodist_cur_lon))
+                                            #print( getLabel(geodist_last_lat,geodist_last_lon) )
+                                            if geodist_plus > 0.1 :
+                                                geodist_total += geodist_plus
+                                                geodist_last_lat = geodist_cur_lat
+                                                geodist_last_lon = geodist_cur_lon
                                         except Exception as err:
                                             raise err
                                     print("after:" + str(geodist_total))
