@@ -89,5 +89,7 @@ class AlertForm(ModelForm):
         self.fields["trigger"].queryset = CustomFieldName.objects.filter((Q(custom_field__type = 'Input')|Q(custom_field__type = 'LinearInput')) & Q(system = system) & Q(custom_field__availablefields__system = system)).distinct()
         self.fields["trigger"].empty_label = "(selecione o evento)"
         self.fields['destinataries'].queryset=User.objects.filter((Q(system=system) | Q(pk=adm_id)) | Q(pk__in=destinataries_id) )
+        if not sys.can_sms:
+            del self.fields['receive_sms']
     
     

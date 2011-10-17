@@ -27,7 +27,8 @@ def systemAlertDetails(sysid):
     lines.append({  'id':system.id,
                     'childof':childof,
                     'sysname':system.name,
-                    'sysid':system.id
+                    'sysid':system.id,
+                    'smssent':system.sms_count
                 })
     for alert in alerts:
         lines.append({  'id':alert.id,
@@ -94,8 +95,6 @@ def index(request):
 
   childs = findChild(system_id)
   alert_tree = mountAlertTree([system_id,childs],system_id)
-  
-  print alert_tree
   
   return render_to_response("alerts/templates/index.html",locals(),context_instance=RequestContext(request))
 

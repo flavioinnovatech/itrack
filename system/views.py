@@ -81,7 +81,8 @@ def render_system_html2(childs,father="",rendered_list=""):
       else:
       #if its a number, mount the url for the system
           # rendered_list+=System.objects.get(pk=x).name
-          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+System.objects.get(pk=x).name+" </td><td style='text-align:center;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
+          sys = System.objects.get(pk=x)
+          rendered_list+="<tr style='width:5%;' id=\"node-"+str(x)+"\" "+ childof +"><td style='width:50%;'>"+sys.name+" </td><td style='width:20%;text-align:center;'>"+str(sys.sms_count)+"</td><td style='text-align:center;padding-left:50px;'><a class='table-button' href=\"/system/edit/"+str(x)+"/\">Editar</a>  <a class='table-button' href=\"/system/delete/"+str(x)+"/\">Apagar</a></td></tr>"
 
   return rendered_list    
 
