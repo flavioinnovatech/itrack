@@ -7,7 +7,14 @@
 <h1><img src="/media/img/users.png" class="icon">Edição de Usuário</h1>
 <hr />
 <h2> Edição finalizada com sucesso </h2>
-<em>O usuário foi editado com sucesso. <a href="{% url accounts.views.index %}"> Clique aqui para voltar a tela de administração de usuários. </a></em>
+<em>O usuário foi editado com sucesso. 
+	
+{% if firstlogin %} 
+<a href="{% url rastreamento.views.index %}"> Clique aqui para voltar a tela inicial. </a></em>
+{% else %}
+<a href="{% url accounts.views.index %}"> Clique aqui para voltar a tela de administração de usuários. </a></em>
+{% endif %}
+
 
 </div>
 {% endblock %}

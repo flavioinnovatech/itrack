@@ -1,8 +1,8 @@
 {% extends "accounts/templates/form.html" %}
 {%block title%}Infotrack - Edição de Usuário {% endblock %}
 {% block form_title %}
-<h1><img src="/media/img/users.png" class="icon">Edição de usuário </h1>
+<h1><img src="/media/img/users.png" class="icon">{% if title1 %}{{ title1 }}{% else %}Edição de usuário{% endif %}</h1>
 <hr />
 <h2>Dados de cadastro</h2>
-<em>Edite abaixo os dados do usuário selecionado.</em>
+<em>{% if title2 %}{{ title2 }}{% else %}Edite abaixo os dados do usuário selecionado.{% endif %}</em>
 {% endblock %}

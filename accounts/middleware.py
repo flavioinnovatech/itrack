@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
+from itrack.accounts.models import UserProfile
+
 
 class UserRestrictMiddleware:
 
@@ -46,12 +48,12 @@ class FirstLoginMiddleware(object):
  
     def process_request(self, request):
         
-        print 'ae'
-        if request.user.is_authenticated():
+        if request.user.is_authenticated() and request.session["dont_check_first_login"] == False:
             
             request.session["dont_check_first_login"] = True
-            profile = request.user.get_profile()
+            profile = UserProfile.objects.get(profile=request.user)
+            
             if profile.is_first_login:
-                profile.is_first_login = False
-                profile.save()
-                return HttpResponseRedirect(reverse('users:account_edit'))
+                
+                return HttpResponseRedirect('/accounts/edit/' + str(request.user.id) + '/')
+            
