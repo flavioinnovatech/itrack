@@ -128,7 +128,7 @@ MIDDLEWARE_CLASSES = (
     'itrack.tracking.middleware.VisitorTrackingMiddleware',
     'itrack.tracking.middleware.VisitorCleanUpMiddleware',
     'itrack.accounts.middleware.UserRestrictMiddleware',
-#    'itrack.accounts.middleware.FirstLoginMiddleware',
+    'itrack.accounts.middleware.FirstLoginMiddleware',
 
 )
 

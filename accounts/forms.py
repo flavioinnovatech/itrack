@@ -26,10 +26,15 @@ class UserTailForm(forms.ModelForm):
     command = forms.BooleanField(label = 'Visualizar comandos',required=False)
 
 class UserCompleteForm(UserForm,UserTailForm):
-    pass
+    def __init__(self,user,*args, **kwargs):
+        super(UserCompleteForm, self).__init__(*args, **kwargs)
+        if user.is_first_login:
+         del self.fields['alert']
+         del self.fields['command']
+
 
 class UserCompleteFormAdmin(UserForm,UserTailForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self,*args, **kwargs):
         super(UserCompleteFormAdmin, self).__init__(*args, **kwargs)
         self.fields['alert'].widget = forms.HiddenInput()
         self.fields['command'].widget = forms.HiddenInput()

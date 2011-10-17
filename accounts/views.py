@@ -17,6 +17,7 @@ from django.core.context_processors import csrf
 from django.contrib.auth.views import password_reset
 from itrack.system.views import findChild,isChild
 from django import forms
+from datetime import datetime
 
 def render_user_html(childs,father="",rendered_list=""):
   if childs == []: 
@@ -151,6 +152,12 @@ def create_user(request,offset):
 def edit_finish(request):
     return render_to_response("accounts/templates/edit_finish.html",locals())
 
+def finish_firstlogin(request):
+    
+    firstlogin = True
+    
+    return render_to_response("accounts/templates/edit_finish.html",locals())
+
 def create_finish(request):
     return render_to_response("accounts/templates/create_finish.html",locals())
     
@@ -172,20 +179,18 @@ def login(request):
             system_name = system.name
         except:
         #if the user is not an admin, search in the users     
-            system = System.objects.filter(users__username__exact=request.user.username)            
+            system = System.objects.get(users__username__exact=request.user.username)            
 
             #if the user doesn't have a system
-            if (len(system) == 0):
+            if (system == None):
               erro = u"Usuário não possui Cliente associado."
               return render_to_response("accounts/templates/login.html",locals(),context_instance=RequestContext(request),)
             
-            for item in system:
-                system_id = item.id
-                domain = item.domain
-                system_name = item.name
-        
-        print request.user
             
+            system_id = system.id
+            domain = system.domain
+            system_name = system.name
+                    
         user_settings = Settings.objects.filter(system__id=system_id)
       	for item in user_settings:
       	    css = item.css
@@ -201,8 +206,23 @@ def login(request):
         request.session['system_name'] = system_name
         request.session['system_being_created'] = False
         request.session.set_expiry(system.sessiontime)
-        # Redirect to a success page.
-        return HttpResponseRedirect("/rastreamento/veicular")
+        
+        #if is user's first login
+        profile = UserProfile.objects.get(profile=user)
+
+        if (profile.is_first_login == True):
+            request.session["dont_check_first_login"] = False
+            return HttpResponseRedirect("/accounts/edit/" + str(user.id) + "/")
+            #return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
+              
+        else:
+            return render_to_response('rastreamento/templates/rastreamento.html',locals(),context_instance=RequestContext(request))
+        #if (request.user.last_login datetime.now() < ):
+        #    print 'ALELUIA IRMAO'
+        #else:
+        #    print 'MERDAAAAAAAA'
+        #if request.user.last_login == request.user.date_joined:
+        
     else:
         # Show an error page
         erro = u"Usuário ou senha incorretos."
@@ -232,11 +252,13 @@ def index(request):
     return render_to_response("accounts/templates/home.html",locals(),context_instance=RequestContext(request))
     
 @login_required
-@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
+#@user_passes_test(lambda u: u.groups.filter(name='administradores').count() != 0)
 def edit(request,offset):
   
   user = User.objects.get(pk=int(offset))
   profile = UserProfile.objects.get(profile=int(offset))
+  first_login = profile.is_first_login
+  request.session["dont_check_first_login"] = False
   if request.method == 'POST':
     form = UserCompleteForm(request.POST,instance=user)
     form_user = UserForm(request.POST, instance = user)
@@ -278,7 +300,12 @@ def edit(request,offset):
           user.groups.add(2)
         
         new_profile = form_profile.save()
-        return HttpResponseRedirect ("/accounts/edit/finish")
+        if (first_login == False):
+            return HttpResponseRedirect ("/accounts/edit/finish")
+        else:
+            user.first_login == False
+            user.save()
+            return HttpResponseRedirect ("/accounts/edit/finish_firstlogin")
 
 
     return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
@@ -287,19 +314,27 @@ def edit(request,offset):
     
     system = request.session['system']
     users = User.objects.filter(system=system)
-
+    profile = UserProfile.objects.get(profile=user)
+    
     try:
         s = System.objects.get(users__id=user.id)
     except:
         s = System.objects.get(administrator__id = user.id)
     if isChild(s.id,[system,findChild(system)]):
-      form = UserCompleteForm(instance = user)
+        form = UserCompleteForm(instance = user,user = profile)
       
-      # ROOOTS BLOODY ROOTS
-      form.fields["Administrador"] = forms.CharField(widget=forms.CheckboxInput(),help_text="Marque a caixa para atribuir privilégios administrativos ao usuário")
-      form.initial = dict( form.initial.items() + profile.__dict__.items())
-      form.initial["password"] = ""
-      return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
+        # ROOOTS BLOODY ROOTS
+        if profile.is_first_login == False:
+            form.fields["Administrador"] = forms.CharField(widget=forms.CheckboxInput(),help_text="Marque a caixa para atribuir privilégios administrativos ao usuário")
+      
+        else:
+            title1 = "Primeiro acesso"
+            
+            title2 = "Para sua segurança solicitamos que mude sua senha antes de acessar o sistema."
+            
+        form.initial = dict( form.initial.items() + profile.__dict__.items())
+        form.initial["password"] = ""
+        return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
       
     else:
       return HttpResponseForbidden(u'Você não tem permissão para editar este usuário.')

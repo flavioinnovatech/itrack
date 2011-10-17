@@ -58,6 +58,8 @@ url(r'^accounts/delete/(\d+)/$','accounts.views.delete'),
 url(r'^accounts/ajax/delete/$','accounts.ajax.delete'),
 url(r'^accounts/edit/(\d+)/$','accounts.views.edit'),
 url(r'^accounts/edit/finish/$','accounts.views.edit_finish'),
+url(r'^accounts/edit/finish_firstlogin/$','accounts.views.finish_firstlogin'),
+
 
 
 url(r'^vehicles/$', 'vehicles.views.index'),
