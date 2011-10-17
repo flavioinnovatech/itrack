@@ -24,6 +24,7 @@ from itrack.vehicles.models import Vehicle
 from itrack.system.tools import lowestDepth,findParents,findChild,serializeChild,findChildInstance
 from itrack.pygeocoder import Geocoder
 
+import math
 
 
 class UnicodeWriter(object):
@@ -68,6 +69,61 @@ API_KEY = 'ABQIAAAAOV9qRRxejMi2WeW2TanAKhTefegWErZP_EhBh-or-xYREOhaRBSYXJPqI_-2M
 
 VEHICLE_CHOICES = (("license_plate","Placa"),("date",u"Data"),("type",u"Tipo de veículo"),("address",u"Endereço"),("system",u"Sistema"),("color",u"Cor"),("year",u"Ano"),("model",u"Modelo"),("manufacturer",u"Fabricante"),("chassi",u"Chassi"))
 
+
+def geoDistance(lat1,lon1,lat2,lon2):
+
+    dla1 = math.floor(lat1)
+    mla1 = math.floor(((lat1)-dla1)*60)
+    sla1 = math.floor( ( ((lat1-dla1)*60) - mla1 )*60 )
+    
+    print(str(dla1) + ":" + str(mla1) + ":" + str(sla1))
+    
+    
+    dlo1 = math.floor(lon1)
+    mlo1 = math.floor(((lon1)-dlo1)*60)
+    slo1 = math.floor( ( ((lon1-dlo1)*60) - mlo1 )*60 )
+    
+    print(str(dlo1) + ":" + str(mlo1) + ":" + str(slo1))
+    
+    dla2 = math.floor(lat2)
+    mla2 = math.floor(((lat2)-dla2)*60)
+    sla2 = math.floor( ( ((lat2-dla2)*60) - mla2 )*60 )
+    
+    print(str(dla2) + ":" + str(mla2) + ":" + str(sla2))
+    
+    dlo2 = math.floor(lon2)
+    mlo2 = math.floor(((lon2)-dlo2)*60)
+    slo2 = math.floor( ( ((lon2-dlo2)*60) - mlo2 )*60 )
+    
+    print(str(dlo2) + ":" + str(mlo2) + ":" + str(slo2))
+    
+    
+    
+    lat1 = dla1 + mla1/60 + sla1/3600
+    lon1 = dlo1 + mlo1/60 + slo1/3600
+    lat2 = dla2 + mla2/60 + sla2/3600
+    lon2 = dlo2 + mlo2/60 + slo2/3600
+    
+    
+    #padronizado
+    
+    rad_lat1 = (lat1)*math.pi/180
+    rad_lon1 = (lon1)*math.pi/180
+    
+    rad_lat2 = (lat2)*math.pi/180
+    rad_lon2 = (lon2)*math.pi/180
+     
+     
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat/2)*math.sin(dlat/2)+math.cos(lat1)*math.cos(lat2)*math.sin(dlon/2)*math.sin(dlon/2)
+    
+    # verify this
+    c = 2*math.atan2(math.sqrt(a),math.sqrt(1-a))
+    
+    d = 6371 *c # (Raio da terra) * c
+    return d
+    
 def firstRowTitles(item):
     pos = [x[0] for x in VEHICLE_CHOICES].index(item)
     return VEHICLE_CHOICES[pos][1]
@@ -304,9 +360,6 @@ def report(request,offset):
                 response.set_cookie("fileDownloadToken", request.POST['token'])    
                 response.write("<?xml version=\"1.0\" encoding=\"utf-8\"?><?xml-stylesheet type=\"text/xsl\" href=\"/media/xslt/report.xsl\"?><document>")
 
-                
-
-                
                 str_placa = ""
                 str_tipo = ""
                 str_cor = ""
@@ -457,7 +510,7 @@ def report(request,offset):
                     customnames = CustomFieldName.objects.select_related(depth=1).filter(Q(system=system)&Q(custom_field__system=system)).distinct()
                     tdata_dk = tdata_dict.keys()
                     tdata_dk.sort()
-                    print(">> LEN " + str(len(tdata_dk)))
+
                     
                     page_count = 0
                     str_placa = ""
@@ -494,7 +547,7 @@ def report(request,offset):
                     
                     placa_first = True
                     size = 29
-                    print("LEN 2 " + str(len(tdata_dk)) )
+
                     totalpages = len(tdata_dk)/(size+1)
                     if totalpages == 0 : totalpages = 1
                     else : totalpages += 1
@@ -503,7 +556,10 @@ def report(request,offset):
                     logow = 175
                     logoh = 42
                     top = 300
-
+                    geodist_started = False
+                    geodist_total = 0
+                    geodist_last_lat = 0
+                    geodist_last_lon = 0
                     if len(display_fields) >= 18:
                         space_A = 20
                     else:
@@ -604,9 +660,9 @@ def report(request,offset):
                             scount = 0
                             
                             for title_col in title_row:
-                                print("PDF :" + unicode(title_col).encode("utf-8"))
+                                #print("PDF :" + unicode(title_col).encode("utf-8"))
                                 if unicode(title_col) == u"Endereço" or title_col == "Data" or title_col == "Placa" or title_col == u"Tipo de veículo" or title_col == "Ano" or title_col == "Cor" or title_col=="Modelo" or title_col == "Fabricante" or title_col == "Chassi" or title_col == "Sistema" : continue
-                                print("OK@@")
+                                #print("OK@@")
                                 K = simpleSplit(unicode(title_col).encode("utf-8"),doc._fontname,doc._fontsize,space_A-5)
                                 if len(K) > 1 :
                                     doc.drawString(left+470+space_A*tcount,top-50-logoh,"[" + str(scount+1) + "]")
@@ -627,6 +683,7 @@ def report(request,offset):
 
                             tmp_y = left
                             tmp_x = left
+                            str_dfs += " * estimativa"
                             L = simpleSplit(str_dfs,doc._fontname,doc._fontsize,730)
                             if(len(L)>=1):
                                 tmp_y += (len(L)-1)*11
@@ -639,8 +696,37 @@ def report(request,offset):
                             page += 1
                             FirstOnPage = True
                             for date in tdata_dk[start:end]:
-                                print("OK")
+                            
+                                #print("OK")
                                 tdata = tdata_dict[date]
+                                geodist_state = 0
+                                geodist_cur_lat = 0
+                                geodist_cur_lon = 0
+                                for y in tdata:
+                                    if y.type.name == "Longitude":
+                                        print(unicode(y.type.name) +  " :: " + unicode(y.value))
+                                        geodist_cur_lon = y.value
+                                        geodist_state += 1
+                                    elif y.type.name == "Latitude":
+                                        print(unicode(y.type.name) +  " :: " + unicode(y.value))
+                                        geodist_cur_lat = y.value
+                                        geodist_state += 1000
+                                if geodist_started:
+                                    print("before:" + str(geodist_total))
+                                    if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
+                                        try:
+                                            geodist_total += geoDistance(float(geodist_last_lat),float(geodist_last_lon),float(geodist_cur_lat),float(geodist_cur_lon))
+                                            geodist_last_lat = geodist_cur_lat
+                                            geodist_last_lon = geodist_cur_lon
+                                        except Exception as err:
+                                            raise err
+                                    print("after:" + str(geodist_total))
+                                else:
+                                    if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
+                                        geodist_started = True
+                                        geodist_last_lat = geodist_cur_lat
+                                        geodist_last_lon = geodist_cur_lon
+
                                 if placa_first:
                                     placa_first = False
                                 try:
@@ -689,31 +775,35 @@ def report(request,offset):
                                 try:
                                     for x in display_fields:
                                         check = False
-                                        for y in tdata_dict[date]:
-                                            # y tracking data
-                                            # tracking data is instance of custom field
-                                            if y.type == x:
-                                                if unicode(y.type.name) == u"Velocidade Tacógrafo" or unicode(y.type.name) == u"Voltagem de Alimentação" or unicode(y.type.name) == u"Odômetro" or unicode(y.type.name) == u"Velocidade GPS" or unicode(y.type.name) == u"RPM":
-                                                    val_data = 0.00
-                                                    if unicode(y.value) == u"OFF":
+                                        try:
+                                            for y in tdata_dict[date]:
+                                                # y tracking data
+                                                # tracking data is instance of custom field
+                                                if y.type == x:
+
+                                                    if unicode(y.type.name) == u"Velocidade Tacógrafo" or unicode(y.type.name) == u"Voltagem de Alimentação" or unicode(y.type.name) == u"Odômetro" or unicode(y.type.name) == u"Velocidade GPS" or unicode(y.type.name) == u"RPM":
                                                         val_data = 0.00
+                                                        if unicode(y.value) == u"OFF":
+                                                            val_data = 0.00
+                                                        else:
+                                                            val_data = float(y.value)
+                                                        doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"{0:.2f}".format(val_data))                                                      
                                                     else:
-                                                        val_data = float(y.value)
-                                                    doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"{0:.2f}".format(val_data))                                                      
-                                                else:
-                                                    print(unicode(y.type.name) +  " :: " + unicode(y.value))
-                                                    if unicode(y.value) == u"OFF":
-                                                        doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"O")
-                                                    elif unicode(y.value) == u"ON":
-                                                        doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"X")
-                                                    elif unicode(y.value) == u"1":
-                                                        doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"X")    
-                                                    elif unicode(y.value) == u"0":
-                                                        doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"O")
-                                                    else:
-                                                        doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,unicode(y.value).encode("utf-8"))
-                                                check = True
-                                                break
+                                                        #print(unicode(y.type.name) +  " :: " + unicode(y.value))
+                                                        if unicode(y.value) == u"OFF":
+                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"O")
+                                                        elif unicode(y.value) == u"ON":
+                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"X")
+                                                        elif unicode(y.value) == u"1":
+                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"X")    
+                                                        elif unicode(y.value) == u"0":
+                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"O")
+                                                        else:
+                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,unicode(y.value).encode("utf-8"))
+                                                    check = True
+                                                    break
+                                        except Exception as err:
+                                            print(err.args)
                                         if not check:
                                             doc.drawString(left+470 + space_A*dfcount,top - 70 - logoh -16*count,"O")    
                                         dfcount += 1
@@ -723,6 +813,10 @@ def report(request,offset):
                                 count += 1
                                 if count >= size:
                                     break
+                            fdist = "%(dist).3f" % {"dist":geodist_total}
+                            fdist = fdist.replace(".",",")
+                            doc.drawString(left+logow+50,top-81,"Dist. Percorrida*: "+unicode(fdist).encode("utf-8")+" km")
+                            
                             doc.showPage()
                             start += size
                             end += size
