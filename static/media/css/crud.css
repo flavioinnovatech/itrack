@@ -1,13 +1,9 @@
 /*
 Pretty Little Table
 ------------------------------------------------------------------ */
-table.table a:link {
+
+table.table a {
  color: #666;
- font-weight: bold;
- text-decoration:none;
-}
-table.table a:visited {
- color: #999999;
  font-weight:bold;
  text-decoration:none;
 }
@@ -35,6 +31,7 @@ table.table {
  -moz-box-shadow: 0 1px 2px #d1d1d1;
  -webkit-box-shadow: 0 1px 2px #d1d1d1;
  box-shadow: 0 1px 2px #d1d1d1;
+ padding-bottom:10px;
 }
 table.table th {
  padding:21px 25px 22px 25px;
@@ -48,7 +45,7 @@ table.table th {
  background: -moz-linear-gradient(top,  #ededed,  #ebebeb);
 }
 table.table th:first-child{
- text-align: left;
+ //text-align: left;
  padding-left:20px;
 }
 table.table tr:first-child th:first-child{
@@ -75,7 +72,7 @@ table.table tr td {
 /* border-top: 1px solid #ffffff;
  border-bottom:1px solid #e0e0e0;
  border-left: 1px solid #e0e0e0;*/
- 
+ padding:3px;
  background: #fafafa;
  background: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#fafafa));
  background: -moz-linear-gradient(top,  #fbfbfb,  #fafafa);

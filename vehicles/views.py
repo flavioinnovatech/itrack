@@ -3,28 +3,61 @@
 from itrack.vehicles.models import Vehicle
 from itrack.vehicles.forms import VehicleForm,SwapForm
 from itrack.equipments.models import Equipment
+from itrack.system.models import System
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 
+def systemVehicleDetails(entity_list,sysid):
+    lines = []
+    
+    system = System.objects.get(pk=int(sysid))
+    
+    equipment_edit = False
+    if system.parent == None:
+        equipment_edit = True
+
+    for item in entity_list:
+
+        if type(item).__name__ == 'Equipment':
+            lines.append({  
+                            'equip_id':item.id,
+                            'create_button':True,
+                            'edit_equip': equipment_edit,
+                            'serial' : item.serial
+                        })
+        else:
+            lines.append({  
+                            'vehicle_id':item.id,
+                            'equip_id':item.equipment.id,
+                            'create_button':False,
+                            'edit_equip': equipment_edit,
+                            'plate': str(item),  
+                            'serial': item.equipment.serial
+                        })
+    
+    if entity_list: 
+        return lines    
+    else: 
+        return []
+           
 def index(request):
     system = request.session['system']
     
+    #
+    #print vehicle_table
     
     equipments = Equipment.objects.filter(Q(system = system))
+    vehicles = list(Vehicle.objects.filter(Q(equipment__system=system)&Q(erased=False)))
+    equips_with_vehicle = [x.equipment for x in vehicles]
+    for equipment in equipments:
+        if equipment not in equips_with_vehicle:
+            vehicles.append(equipment)
     
-    rendered_list = ""
+    vehicle_table = systemVehicleDetails(vehicles,system)
     
-    for item in equipments:
-        
-        try:
-            v = Vehicle.objects.get(Q(equipment__id=item.id) & Q(erased=False))
-            rendered_list+=u"<tr style='width:5%;'><td style='width:340px'>"+item.name+" </td><td style='width:338px'>"+str(v)+"</td><td style=\"width:300px\"><a class='table-button' href=\"/vehicles/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/vehicles/delete/"+str(v.id)+"/\">Apagar</a><a class='table-button'  href=\"/vehicles/swap/"+str(v.id)+"/\">Remanejar</a></td></tr>"
-        except:
-            v_str = "<a class='table-button' href=\"/vehicles/create/"+str(item.id)+"/\">Criar veiculo</a>"
-            rendered_list+=u"<tr style='width:5%;'><td style='width:40%;'>"+item.name+" </td><td style='width:40%;'></td><td>"+v_str+"</td><td></td></tr>"
     
     return render_to_response("vehicles/templates/index.html",locals(),context_instance=RequestContext(request))
 
@@ -36,7 +69,6 @@ def create(request,offset):
         try:
             v = Vehicle.objects.get(Q(license_plate__iexact = request.POST["license_plate"])&Q(erased=True))
             form = VehicleForm(request.POST,instance=v)
-            print form
         except ObjectDoesNotExist:
             form = VehicleForm(request.POST)
             

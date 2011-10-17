@@ -44,6 +44,7 @@ class Equipment(models.Model):
    available = models.BooleanField()
    lasttrack_data = models.IntegerField(default=-1,null=False,editable=False)
    lasttrack_update = models.IntegerField(default=-1,null=False,editable=False)
+   simcard = models.CharField(max_length=20,verbose_name="SIMcard",null=True,blank=True)
    
    def __unicode__(self):
       return self.serial
