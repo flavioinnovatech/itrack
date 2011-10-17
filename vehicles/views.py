@@ -21,7 +21,7 @@ def index(request):
         
         try:
             v = Vehicle.objects.get(Q(equipment__id=item.id) & Q(erased=False))
-            rendered_list+=u"<tr style='width:5%;'><td style='width:340px'>"+item.name+" </td><td style='width:338px'>"+str(v.license_plate)+"</td><td style=\"width:300px\"><a class='table-button' href=\"/vehicles/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/vehicles/delete/"+str(v.id)+"/\">Apagar</a><a class='table-button'  href=\"/vehicles/swap/"+str(v.id)+"/\">Remanejar</a></td></tr>"
+            rendered_list+=u"<tr style='width:5%;'><td style='width:340px'>"+item.name+" </td><td style='width:338px'>"+str(v)+"</td><td style=\"width:300px\"><a class='table-button' href=\"/vehicles/edit/"+str(v.id)+"/\">Editar</a>  <a class='table-button'  href=\"/vehicles/delete/"+str(v.id)+"/\">Apagar</a><a class='table-button'  href=\"/vehicles/swap/"+str(v.id)+"/\">Remanejar</a></td></tr>"
         except:
             v_str = "<a class='table-button' href=\"/vehicles/create/"+str(item.id)+"/\">Criar veiculo</a>"
             rendered_list+=u"<tr style='width:5%;'><td style='width:40%;'>"+item.name+" </td><td style='width:40%;'></td><td>"+v_str+"</td><td></td></tr>"
