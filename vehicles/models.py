@@ -10,7 +10,7 @@ class Vehicle(models.Model):
     equipment = models.ForeignKey(Equipment, verbose_name= "Equipamento",blank=True,null=True,unique=True)
     chassi = models.CharField(max_length=30,null=True)
     license_plate = models.CharField(max_length=10, verbose_name="Placa",unique=True)
-    order = models.CharField(max_length=6, verbose_name='Ordem',default='')
+    order = models.CharField(max_length=6, verbose_name='Prefixo',default='')
     color = models.CharField(max_length=20, verbose_name = "Cor",null=True)
     year = models.CharField(max_length=30,verbose_name= "Ano",null=True)
     model = models.CharField(max_length=30,verbose_name= "Modelo",null=True)

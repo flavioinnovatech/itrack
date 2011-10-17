@@ -131,8 +131,9 @@ def AlertSender(command,alert,vehicle,searchdate,geocodeinfo):
     if alert.receive_sms:
       for destinatary in alert.destinataries.values():
           cellphone = UserProfile.objects.get(profile__id = destinatary['id']).cellphone                                               
-          command.stdout.write(SendSMS(cellphone,message.encode('latin-1')))
+          SendSMS(cellphone,message.encode('latin-1'))
           # self.stdout.write(SendSMS(cellphone,'[INFOTRACK]\n'+'Alerta:'+str(alert.alerttext)))
+          
           print '>>>> SMS de alerta enviado.'
 
     #if the alert shall display a popup on the user screen

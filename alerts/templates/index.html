@@ -43,6 +43,7 @@
   	        {% if line.sysname %}
   	        <tr id='node-{{line.id}}' {% if line.childof and line.sysid != request.session.system %}class='child-of-node-{{line.childof}}'{% endif %}>
   	            <td style='font-weight:bold;text-align:left;' >{{line.sysname}}</td>
+  	            
   	        </tr>
   	        {% else %}
   	        <tr {% if line.childof %}class='child-of-node-{{line.childof}}'{% endif %}>
