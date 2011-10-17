@@ -145,7 +145,7 @@ def create_user(request,offset):
     else:
         #form_user = UserForm()
         #form_profile = UserProfileForm()
-        form = UserCompleteForm()
+        form = UserCompleteForm(user = None)
         form.fields["Administrador"] = forms.CharField(widget=forms.CheckboxInput(),help_text="Marque a caixa para atribuir privilégios administrativos ao usuário")
         return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
         
@@ -209,9 +209,9 @@ def login(request):
         
         #if is user's first login
         profile = UserProfile.objects.get(profile=user)
+        request.session["dont_check_first_login"] = False
 
         if (profile.is_first_login == True):
-            request.session["dont_check_first_login"] = False
             return HttpResponseRedirect("/accounts/edit/" + str(user.id) + "/")
             #return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
               

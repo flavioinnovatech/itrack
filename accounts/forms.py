@@ -28,7 +28,7 @@ class UserTailForm(forms.ModelForm):
 class UserCompleteForm(UserForm,UserTailForm):
     def __init__(self,user,*args, **kwargs):
         super(UserCompleteForm, self).__init__(*args, **kwargs)
-        if user.is_first_login:
+        if user != None and user.is_first_login:
          del self.fields['alert']
          del self.fields['command']
 
