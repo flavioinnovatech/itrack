@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate,login
 from http403project.http import Http403
 from django.core.context_processors import csrf
 from django.contrib.auth.views import password_reset
-from itrack.system.views import findChild,isChild
+from itrack.system.tools import findChild,isChild,flatten,findChildInstance
 from django import forms
 
 def render_user_html(childs,father="",rendered_list=""):
@@ -201,6 +201,16 @@ def login(request):
         request.session['system_name'] = system_name
         request.session['system_being_created'] = False
         request.session.set_expiry(system.sessiontime)
+        
+        child_list=flatten(findChildInstance(system_id))
+        
+        sms_total = 0
+        for it in child_list:
+            sms_total += it.sms_count
+        
+        
+        request.session['sms_sent'] = system.sms_count
+        request.session['sms_total'] = sms_total + system.sms_count
         # Redirect to a success page.
         return HttpResponseRedirect("/rastreamento/veicular")
     else:

@@ -160,7 +160,7 @@ def edit(request,offset):
             settings = Settings.objects.get(system__id=int(offset))
             
             form_sett = SettingsForm(request.POST,request.FILES,instance=settings)
-            form_sys = SystemForm(request.POST,request.session['system'],instance=system)       
+            form_sys = SystemForm(request.session['system'],request.POST,instance=system)       
             
             if form_sys.is_valid() and form_sett.is_valid():
                 new_sys = form_sys.save()
