@@ -5,10 +5,14 @@ from django.forms import *
 
 
 TYPE_CHOICE = (
-            (u'Carro','Carro'),
+            (u'Passeio',u'Passeio'),
+            (u'Utilitário',u'Utilitário'),
             (u'Caminhão', u'Caminhão'),
             (u'Portátil',u'Portátil'),
             (u'Moto',u'Moto'),
+            (u'Ônibus',u'Ônibus'),
+            (u'Máquina',u'Máquina'),
+            (u'Outro',u'Outro'),
             )
             
 class VehicleForm(ModelForm):

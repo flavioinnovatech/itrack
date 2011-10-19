@@ -52,7 +52,11 @@ jQuery(document).ready(function(){
     
     jQuery("#equip-dialog").hide();
     
-    jQuery('.equip-button').click(function(x){
+    jQuery('.equip-button').button({
+            icons: {
+                primary: "ui-icon-wrench",
+            },
+    }).click(function(x){
         jQuery.get(
             '/vehicles/edit_equip/'+jQuery(this).attr('id')+"/",
             {},
@@ -72,7 +76,7 @@ jQuery(document).ready(function(){
     
     $(".equip-delete").button({
             icons: {
-                primary: "ui-icon-trash"
+                primary: "ui-icon-trash",
             },
     }).click(function(){
         $( "#dialog-confirm" ).dialog({
@@ -100,7 +104,12 @@ jQuery(document).ready(function(){
 
         
     });
-
+    
+    $('.new-icon').button({ icons:{ primary:"ui-icon-circle-plus" }});
+    $('.edit-icon').button({ icons:{ primary:"ui-icon-pencil" }});
+    $('.delete-icon').button({ icons:{ primary:"ui-icon-trash" }});
+    $('.swap-icon').button({ icons:{ primary:"ui-icon-transferthick-e-w" }});
+    
     $(".equip-edit").button({
             icons: {
                 primary: "ui-icon-pencil"
@@ -162,19 +171,19 @@ jQuery(document).ready(function(){
                 <tr style="" id='node-{{item.equip_id}}'>
             <td>{{item.serial}}</td>
             {% if show_simcard %}
-                <td><span>{{item.simcard}}</span>
-                <a href="#" class="table-button equip-button" style="float:right;padding:0 3px 0 3px;" id="{{item.equip_id}}">Propriedades...</a></td>{% endif %}
+                <td><span class="simcard-text">{{item.simcard}}</span>
+                <a href="#" class="table-button equip-button" style="float:right;padding:0 3px 0 3px;" id="{{item.equip_id}}">...</a></td>{% endif %}
             {% if not item.plate %}
                 <td></td>
                 <td>
-                    <a href="{% url vehicles.views.create item.equip_id %}" class='table-button'>Criar veículo</a>
+                    <a href="{% url vehicles.views.create item.equip_id %}" class="table-button new-icon" style="padding-left:5px;">Criar veículo</a>
                     
                 </td>
             {% else %}
                 <td>{{item.plate}}</td>
-                <td><a href="{% url vehicles.views.edit item.vehicle_id %}" class='table-button'>Editar</a>
-                    <a href="{% url vehicles.views.delete item.vehicle_id %}" class='table-button'>Apagar</a>
-                    <a href="{% url vehicles.views.swap item.vehicle_id %}" class='table-button'>Remanejar</a>   
+                <td><a href="{% url vehicles.views.edit item.vehicle_id %}" class="table-button edit-icon" style="padding-left:5px;"> Editar</a>
+                    <a href="{% url vehicles.views.delete item.vehicle_id %}" class="table-button delete-icon" style="padding-left:5px;"> Apagar</a>
+                    <a href="{% url vehicles.views.swap item.vehicle_id %}" class="table-button swap-icon" style="padding-left:5px;"> Remanejar</a>   
                 </td>
             {% endif %}
             </tr>
