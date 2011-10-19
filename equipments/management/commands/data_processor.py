@@ -444,6 +444,21 @@ class ClientThread(threading.Thread):
                           
             elif datadict['Type'] == 'Command':
                 pass
+            elif datadict['Type'] == 'CarMeter':
+            
+                #datadict['Identification']['EquipType']
+                #datadict['Identification']['EquipType']
+                #datadict['Identification']['Serial']
+                e = Equipment.objects.get(
+                    Q(serial=datadict['Identification']['Serial'])
+                )
+                #datadict['Identification']['Date']
+                #datadict['Identification']['NetId']
+                #datadict['Identification']['Address']
+                #datadict['Identification']['CardId']
+                    
+                
+                pass
             
             client[0].close()
             

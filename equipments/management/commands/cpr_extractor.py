@@ -124,6 +124,24 @@ def productName(identification):
         return "9"
 
 
+
+def hexbyte(data):
+    if not len(data) : return -1
+    list1 = [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F" ]
+    ret = 0
+    for x in range(len(data)):
+        ret *= 16
+        for y in range(16):
+            if data[x] == list1[y]:
+                ret += y
+                break
+    return ret
+def hexstringbytelist(data):
+    ret = []
+    for x in range(len(data)/2):
+        ret.append( hexbyte( data[2*x] + data[2*x+1] ) )
+    return ret
+
 class ReaderBuffer(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
@@ -189,6 +207,7 @@ class ReaderBuffer(threading.Thread):
                     continue
                 if xml == None:
                     continue
+                    
                 xmldict = XmlDictConfig(xml)
                 self.msgs.append(xmldict)
                 formatted_output = {}
@@ -221,6 +240,13 @@ class ReaderBuffer(threading.Thread):
                     formatted_output['Identification']['Date'] = xmldict['Datagram']['MsgDateTime']
                     formatted_output['Identification']['NetId'] = xmldict['Frame']['NetId']
                     formatted_output['Identification']['Address'] = xmldict['Frame']['Address']
+                    
+                    msg = xmldict['Frame']['Message']
+                    #print("")
+                    #print("#MSG::[" + msg + "]")
+                    #print("")
+                    formatted_output['Identification']['CardId'] = hexstringbytelist(msg)[1:5] 
+                    
                     formatted_output['Data'] = {}
                     formatted_output['Data']['Value'] = xmldict['Frame']['Message']
                 elif xmldict['Header']['Id'] == '199':
@@ -317,6 +343,7 @@ class Quanta(object):
             self.wb.send(msg)
         elif cmd == "3":
             msg = "<Header Version=\"1.00\" Id=\"41\" /><Data Account=\"2\" ProductId=\"41\" Serial=\"000017E8\" Priority=\"3\" NetId=\"E7\" Address=\"00\" Format=\"HEX\" Value=\"0300000003\"/>"
+            print("PRE SEND: " + msg)
             self.wb.send(msg)
         elif cmd == "4":
             msg = "<Header Version=\"1.00\" Id=\"41\" /><Data Account=\"2\" ProductId=\"41\" Serial=\"000017E8\" Priority=\"3\" NetId=\"E7\" Address=\"00\" Format=\"HEX\" Value=\"0400000004\"/>"

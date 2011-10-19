@@ -17,7 +17,7 @@ class Driver(models.Model):
     photo = models.ImageField(upload_to='img/',verbose_name="Foto")
     photo.default="img/nophoto.jpg"
     system.default=2
-    
+    cardid = models.CharField(max_length=16,default="FFFFFFFFFFFFFFFF")
     
     def __unicode__(self):
         return self.name
