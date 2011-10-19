@@ -200,7 +200,7 @@ def report(request,offset):
             s = System.objects.get(pk=system)
             parents = findParents(s,[s])
             parents = serializeChild(findChild(system),[])
-            print parents
+            #print parents
             d1 = datetime.now()
             #TODO: A business logic pra cá ficou assim:
             #TODO: criar campo indicando se o veículo foi deletado no model do veículo, e sumir com os veículos apagados
@@ -410,6 +410,12 @@ def report(request,offset):
                 str_marca = ""
                 str_chassi = ""
                 count = 0
+                
+                geodist_started = False
+                geodist_total = 0
+                geodist_last_lat = 0
+                geodist_last_lon = 0
+                
                 for data in form.cleaned_data['vehicle_fields']:
                     if data != "address" and data != "date" and data !="system":
                         if count == 0 : #placa
@@ -428,9 +434,8 @@ def report(request,offset):
                             str_chassi = unicode(vehicle.__dict__[data]).encode("UTF-8")
                         mount = ""
                         count += 1
-                        
+                
                 mount2 = ""              
-                mount2 += "<info>"
                 if request.POST.has_key("title"):
                     title_raw = request.POST["title"]
                     title = translate_table_xstl(title_raw)
@@ -447,8 +452,12 @@ def report(request,offset):
                 mount2 += "<model>" + str_modelo + "</model>" 
                 mount2 += "<brand>" + str_marca + "</brand>" 
                 mount2 += "<bodyframe>" + str_chassi + "</bodyframe>"
-                mount2 += "</info>"
-                mount2 += "<head>"          
+                
+                
+                
+                
+                list_info = [ mount2 ]
+                
                 
                 #field_list = {}
                 #customnames = CustomFieldName.objects.select_related(depth=1).filter(Q(system=system)&Q(custom_field__system=system)).distinct()
@@ -463,18 +472,55 @@ def report(request,offset):
                         key = smart_str(field_list[j.type.id], encoding='utf-8', strings_only=False, errors='strict')
                         val = j.value
                 '''
+                mount3 = ""
                 
                 for title_col in title_row:
                     print("HTML :" + unicode(title_col).encode("utf-8"))
                     if title_col == "Placa" or title_col == u"Tipo de veículo" or title_col == "Ano" or title_col == "Cor" or title_col=="Modelo" or title_col == "Fabricante" or title_col == "Chassi" or title_col == "Sistema" : continue
                     title_col2 = translate_table_xstl(title_col)
-                    mount2 += "<coltitle>" + unicode(title_col2).encode("utf-8") + "</coltitle>"
-                mount2 += "</head>"
-                response.write(mount2)
+                    mount3 += "<coltitle>" + unicode(title_col2).encode("utf-8") + "</coltitle>"
+                
+                list_head = [ mount3 ]
+                
                 tdata_dk = tdata_dict.keys()
                 tdata_dk.sort()
+                
+                
+                list_out = []
                 for date in tdata_dk:
                     tdata = tdata_dict[date]
+                    geodist_state = 0
+                    geodist_cur_lat = 0
+                    geodist_cur_lon = 0
+                    
+                    for y in tdata:
+                        if y.type.name == "Longitude":
+                            print(unicode(y.type.name) +  " :: " + unicode(y.value))
+                            geodist_cur_lon = y.value
+                            geodist_state += 1
+                        elif y.type.name == "Latitude":
+                            print(unicode(y.type.name) +  " :: " + unicode(y.value))
+                            geodist_cur_lat = y.value
+                            geodist_state += 1000
+                    if geodist_started:
+                        print("before:" + str(geodist_total))
+                        if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
+                            try:
+                                geodist_plus = geoDistance(float(geodist_last_lat),float(geodist_last_lon),float(geodist_cur_lat),float(geodist_cur_lon))
+                                #print( getLabel(geodist_last_lat,geodist_last_lon) )
+                                if geodist_plus > 0.1 :
+                                    geodist_total += geodist_plus
+                                    geodist_last_lat = geodist_cur_lat
+                                    geodist_last_lon = geodist_cur_lon
+                            except Exception as err:
+                                raise err
+                        print("after:" + str(geodist_total))
+                    else:
+                        if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
+                            geodist_started = True
+                            geodist_last_lat = geodist_cur_lat
+                            geodist_last_lon = geodist_cur_lon
+                            
                     item = {}
                     output_list = []
                     mount = ""
@@ -498,6 +544,8 @@ def report(request,offset):
                             addrs += " - "
                         addrs += tmp4
                         addrs = unicode(addrs).encode("utf-8")
+                        if addrs == "":
+                            addrs = str(geodist_cur_lat) + " , " + str(geodist_cur_lat)
                         #print("1#" +str(addrs))                                        
                     except:
                         try:
@@ -538,8 +586,25 @@ def report(request,offset):
                                         topush = "<field>" + y.value + "</field>"
                                 
                         mount += str(topush)
-                    response.write("<row>"+mount+"</row>")
+                    list_out.append("<row>"+mount+"</row>")
+                    
+                response.write("<info>")
+                
+                fdist = "%(dist).3f" % {"dist":geodist_total}
+                fdist = fdist.replace(".",",")
+                            
+                list_info.append("<totaldistance>" + fdist + "</totaldistance>")
+                
+                response.write(''.join(list_info))
+                response.write("</info>")
+                
+                response.write("<head>")
+                response.write(''.join(list_head))
+                response.write("</head>")
+                
+                response.write(''.join(list_out))
                 response.write("</document>")
+                
                 return response
             elif request.POST['type'] == 'PDF':
                 request.session['download'] = 'done'
@@ -588,16 +653,27 @@ def report(request,offset):
                             count += 1
                     
                     placa_first = True
-                    size = 29
-
-                    totalpages = len(tdata_dk)/(size+1)
-                    if totalpages == 0 : totalpages = 1
-                    else : totalpages += 1
+                    size = 28
+                    print("len tdata dk : " + str(len(tdata_dk)) )
+                    print("size : " + str(size) )
+                    
+                    totalpages = math.ceil(float(len(tdata_dk))/float((size)))
+                    
+                    str_tp = "%(dist).0f" % {"dist":totalpages}
+                    print("result len/size : " + str_tp)
+                    print("result len%size : " + str(int(len(tdata_dk)) % int(size)))
+                    
+                    if int(len(tdata_dk)) % int(size) == 0:
+                        totalpages -= 1
+                        
+                    #if totalpages == 0 : totalpages = 1
                     #for date, tdata in tdata_dict.items():
                     left = 20
                     logow = 175
                     logoh = 42
                     top = 300
+                    offset_geral = 0
+                    
                     geodist_started = False
                     geodist_total = 0
                     geodist_last_lat = 0
@@ -614,7 +690,7 @@ def report(request,offset):
                         page = 1
                         start = 0
                         top = 596
-                        end = size - 1
+                        end = size
 
                         
                             # y tracking data
@@ -622,16 +698,18 @@ def report(request,offset):
                             #print(str(cfns1) + " % " + str(type(cfns1)))
                         
                         while True:
-                            if start >= len(tdata_dk) : break
-                            if end >= len(tdata_dk) :
-                                end = len(tdata_dk)-1
-                            if start == end: break
+                            if start > len(tdata_dk) : break
+                            if start == end or start == len(tdata_dk) : break
                             
+                            if end >= len(tdata_dk) :
+                                end = len(tdata_dk)
+                                
                             doc.drawInlineImage("/root/itrack/static/media/static/img/logo_wbg.png",left,top - logoh - left,logow,logoh)
                             count = 0
                             doc.setFont("Helvetica",14)
                             #dados do veiculos
-
+                            offset_pagina = 0
+                            
                             if request.POST.has_key("title"):
                                 doc.drawString(left+logow+40,top-30,request.POST["title"])
                             doc.setFont("Helvetica",10)
@@ -655,14 +733,14 @@ def report(request,offset):
                             doc.drawString(logow + 395,top-45,"Cor:")
                             doc.drawString(logow + 495,top-45,"Ano:")
                             doc.drawString(logow + 295,top-57,"Tipo:")
-                            doc.drawString(logow + 365,top-57,"Modelo:")
+                            doc.drawString(logow + 375,top-57,"Modelo:")
                             doc.drawString(logow + 515,top-57,"Fabricante:")
                             doc.drawString(logow + 295,top-69,"Chassi:")
                             doc.drawString(logow + 325,top-45,str_placa)
                             doc.drawString(logow + 420,top-45,str_cor)
                             doc.drawString(logow + 520,top-45,str_ano)
                             doc.drawString(logow + 320,top-57,str_tipo)
-                            doc.drawString(logow + 403,top-57,str_modelo)
+                            doc.drawString(logow + 413,top-57,str_modelo)
                             doc.drawString(logow + 568,top-57,str_marca)
                             doc.drawString(logow + 333,top-69,str_chassi)
 
@@ -734,9 +812,14 @@ def report(request,offset):
                                 doc.drawString(tmp_x,tmp_y,t)
                                 tmp_y -= doc._leading
                             
-                            doc.drawString(760,left,"Pagina " + str(page) + " de " + str(totalpages))
+                            str_totalpage = "%(dist).0f" % {"dist":totalpages}
+                            doc.drawString(760,left,"Pagina " + str(page) + " de " + str(str_totalpage))
+                            
                             page += 1
                             FirstOnPage = True
+                            print("start:" + str(start))
+                            print("end:" + str(end))
+                            
                             for date in tdata_dk[start:end]:
                             
                                 #print("OK")
@@ -746,15 +829,15 @@ def report(request,offset):
                                 geodist_cur_lon = 0
                                 for y in tdata:
                                     if y.type.name == "Longitude":
-                                        print(unicode(y.type.name) +  " :: " + unicode(y.value))
+                                        #print(unicode(y.type.name) +  " :: " + unicode(y.value))
                                         geodist_cur_lon = y.value
                                         geodist_state += 1
                                     elif y.type.name == "Latitude":
-                                        print(unicode(y.type.name) +  " :: " + unicode(y.value))
+                                        #print(unicode(y.type.name) +  " :: " + unicode(y.value))
                                         geodist_cur_lat = y.value
                                         geodist_state += 1000
                                 if geodist_started:
-                                    print("before:" + str(geodist_total))
+                                    #print("before:" + str(geodist_total))
                                     if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
                                         try:
                                             geodist_plus = geoDistance(float(geodist_last_lat),float(geodist_last_lon),float(geodist_cur_lat),float(geodist_cur_lon))
@@ -765,7 +848,7 @@ def report(request,offset):
                                                 geodist_last_lon = geodist_cur_lon
                                         except Exception as err:
                                             raise err
-                                    print("after:" + str(geodist_total))
+                                    #print("after:" + str(geodist_total))
                                 else:
                                     if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
                                         geodist_started = True
@@ -803,6 +886,8 @@ def report(request,offset):
                                         #print(err.args)
                                         addrs = ""
                                 str_date = ""
+                                if addrs == "":
+                                    addrs = str(geodist_cur_lat) + " , " + str(geodist_cur_lat)
                                 for data in form.cleaned_data['vehicle_fields']:
                                     if data == "license_plate" or data == "type" or data == "year" or data == "color" or data == "model" or data == "manufacturer" or data == "chassi" or data == "system": continue
                                     elif data == "date":
@@ -812,8 +897,19 @@ def report(request,offset):
                                         #mount += "<field>" + unicode(vehicle.__dict__[data]).encode("UTF-8") + "</field>"
                                         pass
                                 doc.setFont("Helvetica",10)
-                                doc.drawString(left+100,top - 70 - logoh -16*count,addrs)
+                                #doc.drawString(left+100,top - 70 - logoh -16*count,addrs)
                                 doc.drawString(left,top - 70 - logoh -16*count,str_date)
+                                
+                                L = simpleSplit(addrs,doc._fontname,doc._fontsize,370)
+                                tmp_y = top - 70 - logoh - 16 * count
+                                
+                                addr_line = 0
+                                for t in L:
+                                    doc.drawString(left+100,tmp_y,t)
+                                    tmp_y -= 16
+                                    addr_line += 1
+                                    if addr_line > 1:
+                                        offset_pagina += 1
                                 #doc.line(21,680-16*count,575,680-16*count)
                                 tcount = 0
                                 dfcount = 0
@@ -855,16 +951,20 @@ def report(request,offset):
                                         if dfcount>15 : break
                                 except Exception as err:
                                     print(err.args)
-                                count += 1
+                                count += (1 + offset_pagina)
+                                offset_geral += offset_pagina
+                                offset_pagina = 0
                                 if count >= size:
                                     break
                             fdist = "%(dist).3f" % {"dist":geodist_total}
                             fdist = fdist.replace(".",",")
-                            doc.drawString(left+logow+50,top-81,"Dist. Percorrida*: "+unicode(fdist).encode("utf-8")+" km")
+                            doc.drawString(left+logow+50,top-81,"Distancia Percorrida*: "+unicode(fdist).encode("utf-8")+" km")
                             
                             doc.showPage()
-                            start += size
-                            end += size
+                            
+                            start += (size - offset_geral)
+                            end += (size - offset_geral)
+                            offset_geral = 0
                     except Exception as err:
                         print(err.args)
                     
@@ -915,10 +1015,10 @@ def translate_table_xstl(str_data):
             if ord(str_data[x]) < 128:
                 str_out += str_data[x]
             else:
-                print(ord(str_data[x]))
+                #print(ord(str_data[x]))
                 #print("CHAR OUT OF RANGE [" + str(str_data[x]) + "]:[" + ord(str_data[x]) )
                 pass
-    print(str_buf)
+    #print(str_buf)
     return str_out
     
 def print_pdfpage(x):
