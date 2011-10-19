@@ -12,7 +12,8 @@ def edit_equipment(request,equip_id):
         equip = Equipment.objects.get(pk=equip_id)
         
         json_output = simplejson.dumps(
-            {'simcard':equip.simcard}
+            {'simcard':equip.simcard,
+              'equip':str(equip)}
             )    
         print json_output  
     return HttpResponse(json_output, mimetype='application/json')

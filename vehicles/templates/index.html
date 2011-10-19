@@ -52,7 +52,13 @@ jQuery(document).ready(function(){
             '/vehicles/edit_equip/'+jQuery(this).attr('id'),
             {},
             function(data){
-                alert(data.toSource());
+                dl = jQuery("#equip-dialog").dialog({
+                    title: 'Editar equipamento '+data['equip'],
+                    modal: true,
+                });
+                jQuery("#simcard").val(data['simcard']);
+                
+                //alert(data.toSource());
             },'json');
     });
     
@@ -120,9 +126,9 @@ jQuery(document).ready(function(){
         <p align="center">Nenhum veículo cadastrado para esse sistema.</p>
       {% endif %}
       </div>
-      <div id="equip-dialog">
-        <p>SIMcard: <input type="text" name="simcard" id="simcard" /><button class="table-button equip-edit">Enviar</button></p>
-        <p><button class="table-button equip-delete">Apagar</button></p>
+      <div id="equip-dialog" title="Editar equipamento">
+        <p>SIMcard: <input type="text" name="simcard" id="simcard" /><button class="table-button equip-edit">Editar</button></p>
+        <p style="padding: 30px 0; display:block; text-align:center;"><button class="table-button equip-delete">Apagar Equipamento</button></p>
         
       </div>
 </div>
