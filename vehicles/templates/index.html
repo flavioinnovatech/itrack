@@ -43,31 +43,86 @@ $(document).ajaxSend(function(event, xhr, settings) {
     }
 });
 
-jQuery(document).ready(function(){
+equip_id = 0;
+dl = null;
 
+jQuery(document).ready(function(){
+    
+    
+    
     jQuery("#equip-dialog").hide();
     
     jQuery('.equip-button').click(function(x){
         jQuery.get(
-            '/vehicles/edit_equip/'+jQuery(this).attr('id'),
+            '/vehicles/edit_equip/'+jQuery(this).attr('id')+"/",
             {},
             function(data){
+                
                 dl = jQuery("#equip-dialog").dialog({
                     title: 'Editar equipamento '+data['equip'],
                     modal: true,
                 });
                 jQuery("#simcard").val(data['simcard']);
-                
-                //alert(data.toSource());
+                return false;
             },'json');
+        
+        equip_id = parseInt(jQuery(this).attr('id'));
+        return false;
     });
     
     $(".equip-delete").button({
             icons: {
                 primary: "ui-icon-trash"
             },
-      });
+    }).click(function(){
+        $( "#dialog-confirm" ).dialog({
+		        resizable: false,
+		        height:140,
+		        modal: true,
+		        buttons: {
+			        "Apagar o equipamento selecionado": function() {
+				        
+				        jQuery.post(
+		                    '/vehicles/delete_equip/',
+		                    {'equip':equip_id.toString()},
+		                     function(data){}
+		                );
+				        jQuery('#node-'+equip_id.toString()+' td').css('background','#fdd');
+                        jQuery('#node-'+equip_id.toString()).fadeOut(1000);
+				        $( this ).dialog( "close" );
+				        dl.dialog( "close");
+			        },
+			        "Cancelar": function() {
+				        $( this ).dialog( "close" );
+			        }
+		        }
+	        });
 
+        
+    });
+
+    $(".equip-edit").button({
+            icons: {
+                primary: "ui-icon-pencil"
+            },
+    }).click(function(){
+        new_simcard = jQuery("#simcard").val();
+        old_simcard = jQuery('#node-'+equip_id.toString()+' td:nth-child(2) span').text();
+        if (new_simcard != old_simcard){
+            jQuery('#node-'+equip_id.toString()+' td:nth-child(2) span').text(new_simcard);
+            jQuery.post(
+			    '/vehicles/edit_equip/'+equip_id.toString()+"/",
+			    {'equip':equip_id.toString(),
+			     'simcard':new_simcard},
+			     function(data){}
+			);
+            dl.dialog( "close" );
+            
+            jQuery('#node-'+equip_id.toString()+' td').effect('highlight',{},3000);
+            
+        }
+        
+    });
 });
 
 </script>
@@ -95,15 +150,20 @@ jQuery(document).ready(function(){
       <thead>
         <tr>
           <th>Equipamento</th>
+          {% if show_simcard %}<th>Simcard</th>{%endif%}
           <th>Entidade Rastreada</th>
           <th>Ação</th>
+          
           
         </tr>
       </thead>
       <tbody>
         {% for item in vehicle_table %}
-                <tr style="" id='node-0'>
-            <td>{{item.serial}}{% if item.edit_equip %}<a href="#" class="table-button equip-button" style="float:right;padding:0 3px 0 3px;" id="{{item.equip_id}}">Propriedades...</a>{% endif %}</td>
+                <tr style="" id='node-{{item.equip_id}}'>
+            <td>{{item.serial}}</td>
+            {% if show_simcard %}
+                <td><span>{{item.simcard}}</span>
+                <a href="#" class="table-button equip-button" style="float:right;padding:0 3px 0 3px;" id="{{item.equip_id}}">Propriedades...</a></td>{% endif %}
             {% if not item.plate %}
                 <td></td>
                 <td>
@@ -131,6 +191,7 @@ jQuery(document).ready(function(){
         <p style="padding: 30px 0; display:block; text-align:center;"><button class="table-button equip-delete">Apagar Equipamento</button></p>
         
       </div>
+      <div id="dialog-confirm" title="Confirmar exclusão">Deseja apagar o equipamento selecionado?</div>
 </div>
 
 {% block dialog %}

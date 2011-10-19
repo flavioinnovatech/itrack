@@ -9,6 +9,7 @@ from django.template.context import RequestContext
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 def systemVehicleDetails(entity_list,sysid):
     lines = []
@@ -26,7 +27,8 @@ def systemVehicleDetails(entity_list,sysid):
                             'equip_id':item.id,
                             'create_button':True,
                             'edit_equip': equipment_edit,
-                            'serial' : item.serial
+                            'serial' : item.serial,
+                            'simcard' : item.simcard if item.simcard != None else ""
                         })
         else:
             lines.append({  
@@ -35,14 +37,16 @@ def systemVehicleDetails(entity_list,sysid):
                             'create_button':False,
                             'edit_equip': equipment_edit,
                             'plate': str(item),  
-                            'serial': item.equipment.serial
+                            'serial': item.equipment.serial,
+                            'simcard': item.equipment.simcard if item.equipment.simcard != None else ""
                         })
     
     if entity_list: 
         return lines    
     else: 
         return []
-           
+        
+@login_required      
 def index(request):
     system = request.session['system']
     
@@ -57,7 +61,8 @@ def index(request):
             vehicles.append(equipment)
     
     vehicle_table = systemVehicleDetails(vehicles,system)
-    
+    s = System.objects.get(pk=int(system))
+    show_simcard = (s.parent == None)
     
     return render_to_response("vehicles/templates/index.html",locals(),context_instance=RequestContext(request))
 

@@ -73,7 +73,7 @@ url(r'^vehicles/delete/finish/$','vehicles.views.delete_finish'),
 url(r'^vehicles/swap/(\d+)/$','vehicles.views.swap'),
 url(r'^vehicles/swap/finish/$','vehicles.views.swap_finish'),
 url(r'vehicles/edit_equip/(\d+)/$','vehicles.ajax.edit_equipment'),
-
+url(r'vehicles/delete_equip/$','vehicles.ajax.delete_equipment'),
 
 url(r'^commands/$', 'command.views.index'),
 # url(r'^commands/test/$', 'command.views.test277'), # used to test MaxTrack MTC 400 State

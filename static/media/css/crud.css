@@ -76,6 +76,7 @@ table.table tr td {
  background: #fafafa;
  background: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#fafafa));
  background: -moz-linear-gradient(top,  #fbfbfb,  #fafafa);
+  border-bottom: #eee 1px solid;
 }
 
 table.table tr{
