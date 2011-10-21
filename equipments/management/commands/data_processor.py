@@ -255,33 +255,41 @@ class ClientThread(threading.Thread):
                         # mounting the list of data received
                         io = {}
                         try:
-                            io['Input'] = datadict['Input'].copy()
+                            if datadict.has_key("Input") and datadict['Input'] != None:
+                                io['Input'] = datadict['Input'].copy()
                         except Exception as err:
-                        
+                            print(inbox)
                             print("#2",err)
                             pass
                         try:
                             io['LinearInput'] = datadict['LinearInput'].copy()
                         except Exception as err:
+                            print(inbox)
                             print("#3",err)
                             pass
+                        has_output = False
                         try:
-                            io['Output'] = datadict['Output'].copy()
+                            if datadict.has_key("Output") and datadict['Output'] != None:
+                                io['Output'] = datadict['Output'].copy()
+                                has_output = True
                         except Exception as err:
+                            print(inbox)
                             print("#4",err)
                             pass
                         try:
                             io['GPS'] = datadict['GPS'].copy()
                         except Exception as err:
+                            print(inbox)
                             print("#5",err)
                             pass
-                            
                         
                         try:
-                            for x0 in xrange(1,8):
-                                ttype = 53 + x0
-                                TrackingData(tracking=t,type=CustomField.objects.get(id=ttype), value=io['Output']['Output' + str(x0)]).save()
+                            if has_output :
+                                for x0 in xrange(1,8):
+                                    ttype = 53 + x0
+                                    TrackingData(tracking=t,type=CustomField.objects.get(id=ttype), value=io['Output']['Output' + str(x0)]).save()
                         except Exception as err:
+                            print(inbox)
                             print("#6",err)
                             pass
 
@@ -314,57 +322,29 @@ class ClientThread(threading.Thread):
                         
                         for cf in equipTypeDict[int(type_id)]:
                             if cf not in cflist:
-                                TrackingData(
-                                    tracking=t,
-                                    type=cf,
-                                    value="OFF"
-                                ).save()
-                            
-                            
+                                TrackingData( tracking=t, type=cf, value="OFF" ).save()
                         try:
                             #reverse geocoding in the background
-                            geocodeinfo = ReverseGeocode(
-                                        float(datadict['GPS']['Lat']),
-                                        float(datadict['GPS']['Long'])
-                                      )
-                            status_display[1]+=1
-
+                            _lat = float(datadict['GPS']['Lat'])
+                            _lon = float(datadict['GPS']['Long'])
+                            geocodeinfo = ReverseGeocode(_lat,_lon)
+                            status_display[1] += 1
                             #saving the acquired geocode information
-                        
-                            TrackingData(   tracking=t, 
-                                        type=geoDict['Address'],
-                                        value=geocodeinfo[1]
-                                    ).save()
-                            TrackingData(   tracking=t, 
-                                        type=geoDict['City'],
-                                        value=geocodeinfo[2]
-                                    ).save()
-                            TrackingData(   tracking=t, 
-                                        type=geoDict['State'],
-                                        value=geocodeinfo[3]
-                                    ).save()
-                            TrackingData(   tracking=t, 
-                                        type=geoDict['PostalCode'],
-                                        value=geocodeinfo[4]
-                                    ).save()
-                                    
+                            TrackingData( tracking=t, type=geoDict['Address'], value=geocodeinfo[1]).save()
+                            TrackingData( tracking=t, type=geoDict['City'], value=geocodeinfo[2] ).save()
+                            TrackingData( tracking=t, type=geoDict['State'], value=geocodeinfo[3] ).save()
+                            TrackingData( tracking=t, type=geoDict['PostalCode'], value=geocodeinfo[4] ).save()
                             self.setStatus('Reverse geocode finished. ')
                             # and adding extra vehicle and system custom fields
-                            TrackingData(   tracking=t,
-                                        type=vehicleField,
-                                        value=vehicle.id).save()
-                                        
-                            TrackingData(   tracking=t,
-                                        type=systemField,value=sys.id).save()
-                                                                                     
-                        
+                            TrackingData( tracking=t, type=vehicleField, value=vehicle.id).save()
+                            TrackingData( tracking=t, type=systemField,value=sys.id).save()
                             #queries the vehicle in the database
-                        
                             #if the last alert sent for the vehicle is not null
                         except Exception as err:
                          #   for th in threading.enumerate():
                          #       if isinstance(th,OutputThread):
                          #           th.stop()
+                            print(inbox)
                             print("#7",err)
                             pass
                         if vehicle.last_alert_date is not None:
@@ -445,21 +425,23 @@ class ClientThread(threading.Thread):
             elif datadict['Type'] == 'Command':
                 pass
             elif datadict['Type'] == 'CarMeter':
-            
-                #datadict['Identification']['EquipType']
-                #datadict['Identification']['EquipType']
-                #datadict['Identification']['Serial']
-                e = Equipment.objects.get(
-                    Q(serial=datadict['Identification']['Serial'])
-                )
-                #datadict['Identification']['Date']
-                #datadict['Identification']['NetId']
-                #datadict['Identification']['Address']
-                #datadict['Identification']['CardId']
-                    
-                
-                pass
-            
+                try:
+                    serial_data = datadict['Identification']['Serial']
+
+                    e = Equipment.objects.get(Q(serial=serial_data))
+                    try:
+                        searchdate = datetime.strptime( datadict['Identification']['Date'],"%Y/%m/%d %H:%M:%S")
+                    except ValueError:
+                        searchdate = datetime.strptime( datadict['Identification']['Date'],"%Y-%m-%d %H:%M:%S")
+                    t = Tracking(equipment=e, eventdate=searchdate,  msgtype="CARMETER")
+                    t.save()
+                    e.lastdriver = t.pk
+                    e.save()
+                    #datadict['Identification']['CardId']
+                    TrackingData(tracking=t,type=CustomField.objects.get(id=68), value=datadict['Identification']['CardId']).save()
+                except Exception as err:
+                    print(err.args)
+               
             client[0].close()
             
          else:
@@ -517,7 +499,7 @@ class Command(BaseCommand):
         server.listen(5)
         print "Data processor is starting. Please wait..."
 
-        OutputThread().start()
+#        OutputThread().start()
         # Have the server serve "forever":
         while True:
             try:

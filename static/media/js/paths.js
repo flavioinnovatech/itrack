@@ -118,8 +118,8 @@ jQuery(document).ready(function(){
           
           
           var dfp = document.getElementById("distance_float_panel");
-          dfp.setAttribute("style","font-weight:bold;position:absolute;left:255px;top:210px;width:300px;height:25px;");
-          dfp.innerHTML = "Distância Total Estimada: " + (data[2]["distance"]).toFixed(1).replace(".",",") + " km";
+          dfp.setAttribute("style","font-weight:bold;position:absolute;left:255px;top:210px;width:600px;height:25px;");
+          dfp.innerHTML = "Distância Total Estimada: " + (data[2]["distance"]).toFixed(1).replace(".",",") + " km  -  Ultimo Motorista : " +(data[2]["lastdriver"]);
           closeloading();
           
         });

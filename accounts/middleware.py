@@ -48,7 +48,7 @@ class FirstLoginMiddleware(object):
  
     def process_request(self, request):
         
-        if request.user.is_authenticated() and request.session["dont_check_first_login"] == False:
+        if request.user.is_authenticated() and request.session.has_key("dont_check_first_login") and request.session["dont_check_first_login"] == False:
             
             request.session["dont_check_first_login"] = True
             profile = UserProfile.objects.get(profile=request.user)

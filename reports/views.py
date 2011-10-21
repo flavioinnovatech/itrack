@@ -23,6 +23,8 @@ from itrack.system.models import System
 from itrack.vehicles.models import Vehicle
 from itrack.system.tools import lowestDepth,findParents,findChild,serializeChild,findChildInstance
 from itrack.pygeocoder import Geocoder
+from itrack.drivers.models import Driver
+
 
 import math
 
@@ -306,7 +308,39 @@ def report(request,offset):
             except Exception as err:
                 #print(err.args)
                 pass
-                
+            lastdriver = ""
+            dname = " (informacao nao disponivel) "
+            #print("# OK K1")
+            try:
+                trackings = Tracking.objects.filter(equipment=vehicle.equipment,equipment__system=s)
+                datas = TrackingData.objects.select_related('tracking').filter(tracking__in=trackings,type__tag=u"DriverCheck")
+                tdata_dict2 = {}
+                for tdata in datas:
+                    tdata_dict2.setdefault(str(tdata.tracking.eventdate), []).append(tdata)
+                tdata_dk = tdata_dict2.keys()
+                tdata_dk.sort()
+                #print("# OK K4")
+                if len(tdata_dk) > 0 :
+                    lastdriver = tdata_dict2[tdata_dk[0]][0].value
+                    driver = Driver.objects.get(cardid=lastdriver)
+                    driver2 = Driver.objects.get(vehicle=vehicle,cardid=lastdriver)
+                    #print("# OK K5")
+                    # test to assert if equipment(cardid login) has a driver with the same cardid
+                    #print(driver)
+                    # test to assert if driver has permission to that vehicle
+                    #print(driver2)
+                    
+                    
+                    try:
+                        dname = driver.name
+                    except:
+                        pass
+                    if dname == "":
+                        dname = "Motorista com cartao nao cadastrado."
+                    #print("# OK K6")
+            except Exception as err:
+                print("#DRIVER : " + str(err.args))
+                pass
             if request.POST['type'] == 'CSV':
                 #print("# TESTE 022 ")
                 #main loop for each tracking found
@@ -394,8 +428,8 @@ def report(request,offset):
 
                 
             elif request.POST['type'] == 'HTML':
-                for title_col in title_row:
-                    print("HTML* :" + unicode(title_col).encode("utf-8"))
+                #for title_col in title_row:
+                #    print("HTML* :" + unicode(title_col).encode("utf-8"))
                     
                 request.session['download'] = 'done'
                 response = HttpResponse(mimetype='text/xml')
@@ -453,12 +487,6 @@ def report(request,offset):
                 mount2 += "<brand>" + str_marca + "</brand>" 
                 mount2 += "<bodyframe>" + str_chassi + "</bodyframe>"
                 
-                
-                
-                
-                list_info = [ mount2 ]
-                
-                
                 #field_list = {}
                 #customnames = CustomFieldName.objects.select_related(depth=1).filter(Q(system=system)&Q(custom_field__system=system)).distinct()
                 '''
@@ -475,10 +503,15 @@ def report(request,offset):
                 mount3 = ""
                 
                 for title_col in title_row:
-                    print("HTML :" + unicode(title_col).encode("utf-8"))
+                    #print("HTML :" + unicode(title_col).encode("utf-8"))
                     if title_col == "Placa" or title_col == u"Tipo de veículo" or title_col == "Ano" or title_col == "Cor" or title_col=="Modelo" or title_col == "Fabricante" or title_col == "Chassi" or title_col == "Sistema" : continue
                     title_col2 = translate_table_xstl(title_col)
                     mount3 += "<coltitle>" + unicode(title_col2).encode("utf-8") + "</coltitle>"
+                    
+                
+                mount2 += "<driver>" + dname + "</driver>"
+                
+                list_info = [ mount2 ]
                 
                 list_head = [ mount3 ]
                 
@@ -495,15 +528,15 @@ def report(request,offset):
                     
                     for y in tdata:
                         if y.type.name == "Longitude":
-                            print(unicode(y.type.name) +  " :: " + unicode(y.value))
+                            #print(unicode(y.type.name) +  " :: " + unicode(y.value))
                             geodist_cur_lon = y.value
                             geodist_state += 1
                         elif y.type.name == "Latitude":
-                            print(unicode(y.type.name) +  " :: " + unicode(y.value))
+                            #print(unicode(y.type.name) +  " :: " + unicode(y.value))
                             geodist_cur_lat = y.value
                             geodist_state += 1000
                     if geodist_started:
-                        print("before:" + str(geodist_total))
+                        #print("before:" + str(geodist_total))
                         if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
                             try:
                                 geodist_plus = geoDistance(float(geodist_last_lat),float(geodist_last_lon),float(geodist_cur_lat),float(geodist_cur_lon))
@@ -514,7 +547,7 @@ def report(request,offset):
                                     geodist_last_lon = geodist_cur_lon
                             except Exception as err:
                                 raise err
-                        print("after:" + str(geodist_total))
+                        #print("after:" + str(geodist_total))
                     else:
                         if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
                             geodist_started = True
@@ -653,15 +686,15 @@ def report(request,offset):
                             count += 1
                     
                     placa_first = True
-                    size = 28
-                    print("len tdata dk : " + str(len(tdata_dk)) )
-                    print("size : " + str(size) )
+                    size = 27
+                    #print("len tdata dk : " + str(len(tdata_dk)) )
+                    #print("size : " + str(size) )
                     
                     totalpages = math.ceil(float(len(tdata_dk))/float((size)))
                     
                     str_tp = "%(dist).0f" % {"dist":totalpages}
-                    print("result len/size : " + str_tp)
-                    print("result len%size : " + str(int(len(tdata_dk)) % int(size)))
+                    #print("result len/size : " + str_tp)
+                    #print("result len%size : " + str(int(len(tdata_dk)) % int(size)))
                     
                     if int(len(tdata_dk)) % int(size) == 0:
                         totalpages -= 1
@@ -715,16 +748,19 @@ def report(request,offset):
                             doc.setFont("Helvetica",10)
                             try:
                                 if request.POST.has_key("period_start"):
-                                    doc.drawString(left+logow+50,top-45,"A partir : " + request.POST["period_start"])
+                                    doc.drawString(left,top-93,"A partir : " + request.POST["period_start"])
                             except Exception as err:
-                                print(err.args)
+                                #print(err.args)
+                                pass
                             try:
                                 if request.POST.has_key("period_end"):
-                                    doc.drawString(left+logow+50,top-57,u"Até : " + unicode(request.POST["period_end"]))
+                                    doc.drawString(left+140,top-93,u"Até : " + unicode(request.POST["period_end"]))
                             except Exception as err:
-                                print(err.args)
-                            doc.drawString(left+logow+50,top-69,"Emitido em : " + str(datetime.now())[:19])
-                               
+                                #print(err.args)
+                                pass
+                            doc.drawString(left+260,top-93,"Emitido em : " + str(datetime.now())[:19])
+                            doc.drawString(left+420,top-93,"Motorista : " + dname)
+                            
                             #doc.rect(200,770,380,55,fill=0)
                             doc.setFont("Helvetica",11)
                             doc.drawString(logow + 290,top-30 ,"Dados do veículo:")
@@ -761,8 +797,8 @@ def report(request,offset):
                                 pass
                             '''
                                 
-                            doc.drawString(20,top-50-logoh,"Data")
-                            doc.drawString(125,top-50-logoh,"Endereço")
+                            doc.drawString(20,top-62-logoh,"Data")
+                            doc.drawString(125,top-62-logoh,"Endereço")
                             tcount = 0
                             '''
                             for title_col in title_row:
@@ -772,7 +808,7 @@ def report(request,offset):
                                     if tcount > 4 : break
                             '''        
                             
-                            doc.line(0,top-logoh-55,842,top-logoh-55)
+                            doc.line(0,top-logoh-67,842,top-logoh-67)
                             doc.rect(logow+280,top-75,370,60,fill=0)
                             tcount = 0
                             doc.setFont("Helvetica",8)
@@ -785,10 +821,10 @@ def report(request,offset):
                                 #print("OK@@")
                                 K = simpleSplit(unicode(title_col).encode("utf-8"),doc._fontname,doc._fontsize,space_A-5)
                                 if len(K) > 1 :
-                                    doc.drawString(left+470+space_A*tcount,top-50-logoh,"[" + str(scount+1) + "]")
+                                    doc.drawString(left+470+space_A*tcount,top-62-logoh,"[" + str(scount+1) + "]")
                                     scount += 1
                                 else:
-                                    doc.drawString(left+470+space_A*tcount,top-50-logoh,unicode(title_col).encode("utf-8"))
+                                    doc.drawString(left+470+space_A*tcount,top-62-logoh,unicode(title_col).encode("utf-8"))
                                     printed.append(unicode(title_col))
                                 tcount += 1
                                 if tcount > 15 : break
@@ -817,8 +853,8 @@ def report(request,offset):
                             
                             page += 1
                             FirstOnPage = True
-                            print("start:" + str(start))
-                            print("end:" + str(end))
+                            #print("start:" + str(start))
+                            #print("end:" + str(end))
                             
                             for date in tdata_dk[start:end]:
                             
@@ -898,10 +934,10 @@ def report(request,offset):
                                         pass
                                 doc.setFont("Helvetica",10)
                                 #doc.drawString(left+100,top - 70 - logoh -16*count,addrs)
-                                doc.drawString(left,top - 70 - logoh -16*count,str_date)
+                                doc.drawString(left,top - 82 - logoh -16*count,str_date)
                                 
                                 L = simpleSplit(addrs,doc._fontname,doc._fontsize,370)
-                                tmp_y = top - 70 - logoh - 16 * count
+                                tmp_y = top - 82 - logoh - 16 * count
                                 
                                 addr_line = 0
                                 for t in L:
@@ -928,29 +964,31 @@ def report(request,offset):
                                                             val_data = 0.00
                                                         else:
                                                             val_data = float(y.value)
-                                                        doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"{0:.2f}".format(val_data))                                                      
+                                                        doc.drawString(left+470+space_A*dfcount,top - 82 - logoh -16*count,"{0:.2f}".format(val_data))                                                      
                                                     else:
                                                         #print(unicode(y.type.name) +  " :: " + unicode(y.value))
                                                         if unicode(y.value) == u"OFF":
-                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"O")
+                                                            doc.drawString(left+470+space_A*dfcount,top - 82 - logoh -16*count,"O")
                                                         elif unicode(y.value) == u"ON":
-                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"X")
+                                                            doc.drawString(left+470+space_A*dfcount,top - 82 - logoh -16*count,"X")
                                                         elif unicode(y.value) == u"1":
-                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"X")    
+                                                            doc.drawString(left+470+space_A*dfcount,top - 82 - logoh -16*count,"X")    
                                                         elif unicode(y.value) == u"0":
-                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,"O")
+                                                            doc.drawString(left+470+space_A*dfcount,top - 82 - logoh -16*count,"O")
                                                         else:
-                                                            doc.drawString(left+470+space_A*dfcount,top - 70 - logoh -16*count,unicode(y.value).encode("utf-8"))
+                                                            doc.drawString(left+470+space_A*dfcount,top - 82 - logoh -16*count,unicode(y.value).encode("utf-8"))
                                                     check = True
                                                     break
                                         except Exception as err:
-                                            print(err.args)
+                                            #print(err.args)
+                                            pass
                                         if not check:
-                                            doc.drawString(left+470 + space_A*dfcount,top - 70 - logoh -16*count,"O")    
+                                            doc.drawString(left+470 + space_A*dfcount,top - 82 - logoh -16*count,"O")    
                                         dfcount += 1
                                         if dfcount>15 : break
                                 except Exception as err:
-                                    print(err.args)
+                                    #print(err.args)
+                                    pass
                                 count += (1 + offset_pagina)
                                 offset_geral += offset_pagina
                                 offset_pagina = 0
@@ -958,7 +996,7 @@ def report(request,offset):
                                     break
                             fdist = "%(dist).3f" % {"dist":geodist_total}
                             fdist = fdist.replace(".",",")
-                            doc.drawString(left+logow+50,top-81,"Distancia Percorrida*: "+unicode(fdist).encode("utf-8")+" km")
+                            doc.drawString(left+600,top-93,"Distancia Percorrida*: "+unicode(fdist).encode("utf-8")+" km")
                             
                             doc.showPage()
                             
@@ -966,13 +1004,15 @@ def report(request,offset):
                             end += (size - offset_geral)
                             offset_geral = 0
                     except Exception as err:
-                        print(err.args)
+                        #print(err.args)
+                        pass
                     
                     
                     
                     doc.save()
                 except Exception as err:
-                    print(err.args)
+                    #print(err.args)
+                    pass
                 return response
             if request.POST['type'] == 'HTML':
                 response = HttpResponse(mimetype='text/html')

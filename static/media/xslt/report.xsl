@@ -34,7 +34,7 @@
   At&#233; : <xsl:value-of select="dateend"/> <br/>
   Emitido em : <xsl:value-of select="datenow"/><br/>
   Dist&#226;ncia Percorrida* : <xsl:value-of select="totaldistance"/> km<br/>
-  
+  Motorista : <xsl:value-of select="driver"/><br/>
   </div>
   
   </td>

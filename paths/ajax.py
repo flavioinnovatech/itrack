@@ -12,6 +12,7 @@ from vehicles.models import Vehicle
 from geofence.models import Geofence
 from system.tools import lowestDepth,findParents
 from system.models import System
+from drivers.models import Driver
 
 import math
 
@@ -133,7 +134,7 @@ def load(request):
             )
         print trackings
             
-        datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings) & (Q(type__tag='Lat')|Q(type__tag='Long')))
+        datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings) & (Q(type__tag='Lat')|Q(type__tag='Long')|Q(type__tag='DriverCheck')))
         
         tdata_dict = {}
         for tdata in datas:
@@ -155,6 +156,7 @@ def load(request):
                 geodist_cur_lon = 0
                 
                 for y in tdata:
+#                    print(y.tracking.equipment.serial)
                     if y.type.name == "Longitude":
                         #print(unicode(y.type.name) +  " :: " + unicode(y.value))
                         geodist_cur_lon = y.value
@@ -163,6 +165,8 @@ def load(request):
                         #print(unicode(y.type.name) +  " :: " + unicode(y.value))
                         geodist_cur_lat = y.value
                         geodist_state += 1000
+                    else:
+                        print(y.type.name)
                 if geodist_started:
 
                     if ((geodist_state / 1000) >= 1) and ((geodist_state - math.floor(geodist_state/1000)) >= 1):
@@ -197,10 +201,55 @@ def load(request):
         #mounting the json list
         pathdata = {}
         for key,value in tdata_dict.items():
+            _lat = ""
+            _lon = ""
+            for v in value:
+                if v.type.name == "Latitude":
+                    _lat = v.value
+                elif v.type.name == "Longitude":
+                    _lon = v.value
+                else:
+                    print(v.type.name)
             try:
-                pathdata[key]= (value[1].value,value[0].value)
+                pathdata[key]= (_lat,_lon)
             except:
                 pass    
-
-        json = simplejson.dumps([pathdata,geofencedata,{"distance":geodist_total}])
+        lastdriver = ""
+        dname = " (informacao nao disponivel) "
+        print("# OK K1")
+        try:
+            trackings = Tracking.objects.filter(equipment=vehicle.equipment,equipment__system=s)
+            datas = TrackingData.objects.select_related('tracking').filter(tracking__in=trackings,type__tag=u"DriverCheck")
+            tdata_dict2 = {}
+            for tdata in datas:
+                tdata_dict2.setdefault(str(tdata.tracking.eventdate), []).append(tdata)
+            tdata_dk = tdata_dict2.keys()
+            tdata_dk.sort()
+            print("# OK K4")
+            if len(tdata_dk) > 0 :
+                lastdriver = tdata_dict2[tdata_dk[0]][0].value
+                driver = Driver.objects.get(cardid=lastdriver)
+                driver2 = Driver.objects.get(vehicle=vehicle,cardid=lastdriver)
+                print("# OK K5")
+                # test to assert if equipment(cardid login) has a driver with the same cardid
+                print(driver)
+                # test to assert if driver has permission to that vehicle
+                print(driver2)
+                
+                
+                try:
+                    dname = driver.name
+                except:
+                    pass
+                if dname == "":
+                    dname = "Motorista com cartao nao cadastrado."
+                print("# OK K6")
+        except Exception as err:
+            print("#DRIVER : " + err.args)
+            
+        try:
+            json = simplejson.dumps([pathdata,geofencedata,{"distance":geodist_total,"lastdriver":dname}])
+        except Exception as err:
+            print("#JSON : " + err.args)
+            
     return HttpResponse(json, mimetype='application/json')

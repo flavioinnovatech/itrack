@@ -245,8 +245,7 @@ class ReaderBuffer(threading.Thread):
                     #print("")
                     #print("#MSG::[" + msg + "]")
                     #print("")
-                    formatted_output['Identification']['CardId'] = hexstringbytelist(msg)[1:5] 
-                    
+                    formatted_output['Identification']['CardId'] = msg[2:10] 
                     formatted_output['Data'] = {}
                     formatted_output['Data']['Value'] = xmldict['Frame']['Message']
                 elif xmldict['Header']['Id'] == '199':

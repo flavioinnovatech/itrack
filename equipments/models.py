@@ -42,8 +42,9 @@ class Equipment(models.Model):
    serial = models.CharField(max_length=50, default='000017E8',null=True,unique= True)
    type = models.ForeignKey(EquipmentType)
    available = models.BooleanField()
-   lasttrack_data = models.IntegerField(default=-1,null=False,editable=False)
-   lasttrack_update = models.IntegerField(default=-1,null=False,editable=False)
+   lasttrack_data = models.IntegerField(default=-1,null=False,editable=False) # id to tracking
+   lasttrack_update = models.IntegerField(default=-1,null=False,editable=False) # id to tracking
+   lastdriver = models.IntegerField(default=-1,null=False,editable=True) # id to tracking, might change and we also need a log of drivers
    simcard = models.CharField(max_length=20,verbose_name="SIMcard",null=True,blank=True)
    
    def __unicode__(self):

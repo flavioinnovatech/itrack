@@ -169,6 +169,7 @@ INSTALLED_APPS = (
 	 'geofence',
 	 'drivers',
 	 'geocodecache',
+	 'paths'
 
 )
 
