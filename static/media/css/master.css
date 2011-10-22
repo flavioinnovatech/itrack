@@ -71,8 +71,8 @@ a {
   height:65px;
 }
 
-#content table {
-  margin: 0 auto;
+table.formtable {
+	margin:0 auto;
 }
 
 #content {

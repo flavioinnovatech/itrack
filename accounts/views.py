@@ -94,10 +94,7 @@ def create_user(request,offset):
           new_user = form_user.save()
           user = User.objects.get(username__exact=new_user)
           password = user.password
-          confirm = user.confirm_password
-          
-          
-          
+
           user.set_password(password)
           
           message = u"Você foi cadastrado no sistema Infotrack com sucesso. \n\n"
@@ -133,6 +130,7 @@ def create_user(request,offset):
           
           new_profile = form_profile.save(commit=False)
           new_profile.profile_id = new_user.id
+          new_profile.is_first_login = True
           new_profile.save()
           
           system.users.add(new_user)
@@ -148,7 +146,7 @@ def create_user(request,offset):
     else:
         #form_user = UserForm()
         #form_profile = UserProfileForm()
-        form = UserCompleteForm(user = None)
+        form = UserCompleteForm(profile = None)
         form.fields["Administrador"] = forms.CharField(widget=forms.CheckboxInput(),help_text="Marque a caixa para atribuir privilégios administrativos ao usuário")
         return render_to_response("accounts/templates/create.html",locals(),context_instance=RequestContext(request),)
         
@@ -225,6 +223,7 @@ def login(request):
         request.session["dont_check_first_login"] = False
 
         if (profile.is_first_login == True):
+            request.session["dont_check_first_login"] = True
             return HttpResponseRedirect("/accounts/edit/" + str(user.id) + "/")
             #return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
               
@@ -265,9 +264,9 @@ def edit(request,offset):
   user = User.objects.get(pk=int(offset))
   profile = UserProfile.objects.get(profile=int(offset))
   first_login = profile.is_first_login
-  request.session["dont_check_first_login"] = False
   if request.method == 'POST':
-    form = UserCompleteForm(request.POST,instance=user)
+    request.session["dont_check_first_login"] = True
+    form = UserCompleteForm(request.POST,instance= user,profile=profile)
     form_user = UserForm(request.POST, instance = user)
     form_profile = UserProfileForm(request.POST, instance = profile)
     
@@ -310,15 +309,14 @@ def edit(request,offset):
         if (first_login == False):
             return HttpResponseRedirect ("/accounts/edit/finish")
         else:
-            user.first_login == False
-            user.save()
+            profile.is_first_login == False
+            profile.save()
             return HttpResponseRedirect ("/accounts/edit/finish_firstlogin")
-
 
     return render_to_response("accounts/templates/edit.html",locals(),context_instance=RequestContext(request))
     
   else:
-    
+    request.session["dont_check_first_login"] = False
     system = request.session['system']
     users = User.objects.filter(system=system)
     profile = UserProfile.objects.get(profile=user)
@@ -328,7 +326,8 @@ def edit(request,offset):
     except:
         s = System.objects.get(administrator__id = user.id)
     if isChild(s.id,[system,findChild(system)]):
-        form = UserCompleteForm(instance = user,user = profile)
+
+        form = UserCompleteForm(instance = user,profile = profile)
       
         # ROOOTS BLOODY ROOTS
         if profile.is_first_login == False:

@@ -48,15 +48,17 @@ class FirstLoginMiddleware(object):
  
     def process_request(self, request):
         
-        if not request.session.has_key("dont_check_first_login"):
+        if not request.session.has_key("dont_check_first_login") or request.method == 'POST':
             return
         
-        if request.user.is_authenticated() and request.session["dont_check_first_login"] == False:
-            
-            request.session["dont_check_first_login"] = True
+        if request.user.is_authenticated():
             profile = UserProfile.objects.get(profile=request.user)
             
             if profile.is_first_login:
+            
+                if request.session["dont_check_first_login"] == False:
+            
+                    request.session["dont_check_first_login"] = True
                 
-                return HttpResponseRedirect('/accounts/edit/' + str(request.user.id) + '/')
+                    return HttpResponseRedirect('/accounts/edit/' + str(request.user.id) + '/')
             
