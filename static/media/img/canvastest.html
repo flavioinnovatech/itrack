@@ -1,0 +1,26 @@
+<html>
+<head>
+<script>
+
+window.onload = function() {
+    c = document.getElementById("canvas_");
+    g = c.getContext("2d");
+    g.fillStyle =  "rgb(255,255,255)";
+    g.fillRect(0,0,349,83);
+    var img = new Image();
+    img.src = 'logo.png';
+    g.drawImage(img,0,0);
+}
+
+</script>
+</head>
+<body>
+
+<canvas id="canvas_" width=349 height=83>
+
+</canvas>
+
+
+</body>
+</html>
+

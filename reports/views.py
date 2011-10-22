@@ -24,6 +24,7 @@ from itrack.vehicles.models import Vehicle
 from itrack.system.tools import lowestDepth,findParents,findChild,serializeChild,findChildInstance
 from itrack.pygeocoder import Geocoder
 from itrack.drivers.models import Driver
+import time
 
 
 import math
@@ -198,12 +199,18 @@ def report(request,offset):
 
         if form.is_valid():
             #print("# TESTE 006 ");
+            print(time.clock())
             system = request.session["system"]
+            print(time.clock())
             s = System.objects.get(pk=system)
+            print(time.clock())
             parents = findParents(s,[s])
+            print(time.clock())
             parents = serializeChild(findChild(system),[])
+            print(time.clock())
             #print parents
             d1 = datetime.now()
+            print(time.clock())
             #TODO: A business logic pra cá ficou assim:
             #TODO: criar campo indicando se o veículo foi deletado no model do veículo, e sumir com os veículos apagados
             #TODO: apenas por esse campo. Aqui vamos ter a busca sem checar esse campo, assim o sistema pode consultar infos
@@ -213,6 +220,7 @@ def report(request,offset):
             try:
 #                form.cleaned_data["vehicle"]
                 vehicle = Vehicle.objects.get(pk=int(request.POST["vehicle"]))
+                print(time.clock())
             except:
                 #print("# TESTE 013 ")
                 if request.POST['type'] == 'HTML':
@@ -228,7 +236,8 @@ def report(request,offset):
             if s.parent == None:
                 #print("# TESTE 015 ")
                 equip_system = s.name
-                trackings = Tracking.objects.filter(
+                
+                trackings = Tracking.objects.select_related(depth=2).filter(
                     Q(eventdate__gte=form.cleaned_data['period_start'])  
                     &Q(eventdate__lte=form.cleaned_data['period_end'])
                     &(
@@ -236,12 +245,13 @@ def report(request,offset):
                         &Q(trackingdata__value = vehicle.id)
                     )
                 )
+                print(time.clock())
                 #print("# TESTE 016 ")
             else:
                 #print("# TESTE 017 ")
                 equip_system = lowestDepth(vehicle.equipment.system.all()).name
                 #print vehicle.id
-                trackings = Tracking.objects.filter(
+                trackings = Tracking.objects.select_related(depth=2).filter(
                     Q(eventdate__gte=form.cleaned_data['period_start'])  
                     &Q(eventdate__lte=form.cleaned_data['period_end'])
                     &(
@@ -252,6 +262,7 @@ def report(request,offset):
                     Q(trackingdata__type__type = 'System')
                     &Q(trackingdata__value__in = parents)
                 )
+                print(time.clock())
             
             if trackings.count() == 0:
                 #print("# TESTE 018 ")
@@ -267,13 +278,13 @@ def report(request,offset):
             #print("# TESTE 019 ")
 
             request.session['download'] = 'started'
-            datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings))
-
+            datas = TrackingData.objects.select_related(depth=2).select_related('tracking').filter(Q(tracking__in=trackings))
+            print(time.clock())
             #print("# TESTE 020 ")
             tdata_dict = {}
             for tdata in datas:
                 tdata_dict.setdefault(tdata.tracking.eventdate, []).append(tdata)
-            
+                print(time.clock())
             d2 = datetime.now()
             #print tdata_dict
             
@@ -312,8 +323,10 @@ def report(request,offset):
             dname = " (informacao nao disponivel) "
             #print("# OK K1")
             try:
-                trackings = Tracking.objects.filter(equipment=vehicle.equipment,equipment__system=s)
-                datas = TrackingData.objects.select_related('tracking').filter(tracking__in=trackings,type__tag=u"DriverCheck")
+                trackings = Tracking.objects.select_related(depth=2).filter(equipment=vehicle.equipment,equipment__system=s)
+                print(time.clock())
+                datas = TrackingData.objects.select_related(depth=2).select_related('tracking').filter(tracking__in=trackings,type__tag=u"DriverCheck")
+                print(time.clock())
                 tdata_dict2 = {}
                 for tdata in datas:
                     tdata_dict2.setdefault(str(tdata.tracking.eventdate), []).append(tdata)
@@ -323,7 +336,9 @@ def report(request,offset):
                 if len(tdata_dk) > 0 :
                     lastdriver = tdata_dict2[tdata_dk[0]][0].value
                     driver = Driver.objects.get(cardid=lastdriver)
+                    print(time.clock())
                     driver2 = Driver.objects.get(vehicle=vehicle,cardid=lastdriver)
+                    print(time.clock())
                     #print("# OK K5")
                     # test to assert if equipment(cardid login) has a driver with the same cardid
                     #print(driver)
@@ -338,9 +353,11 @@ def report(request,offset):
                     if dname == "":
                         dname = "Motorista com cartao nao cadastrado."
                     #print("# OK K6")
+                    
             except Exception as err:
                 print("#DRIVER : " + str(err.args))
                 pass
+                
             if request.POST['type'] == 'CSV':
                 #print("# TESTE 022 ")
                 #main loop for each tracking found
@@ -748,38 +765,35 @@ def report(request,offset):
                             doc.setFont("Helvetica",10)
                             try:
                                 if request.POST.has_key("period_start"):
-                                    doc.drawString(left,top-93,"A partir : " + request.POST["period_start"])
+                                    doc.drawString(left+logow+30,top-69,"A partir : " + request.POST["period_start"])
                             except Exception as err:
                                 #print(err.args)
                                 pass
                             try:
                                 if request.POST.has_key("period_end"):
-                                    doc.drawString(left+140,top-93,u"Até : " + unicode(request.POST["period_end"]))
+                                    doc.drawString(left+logow+230,top-69,u"Até : " + unicode(request.POST["period_end"]))
                             except Exception as err:
                                 #print(err.args)
                                 pass
-                            doc.drawString(left+260,top-93,"Emitido em : " + str(datetime.now())[:19])
-                            doc.drawString(left+420,top-93,"Motorista : " + dname)
+                            doc.drawString(left+logow+430,top-69,"Emitido em : " + str(datetime.now())[:19])
+                            doc.drawString(left+logow+30,top-81,"Motorista : " + dname)
                             
                             #doc.rect(200,770,380,55,fill=0)
-                            doc.setFont("Helvetica",11)
-                            doc.drawString(logow + 290,top-30 ,"Dados do veículo:")
                             doc.setFont("Helvetica",10)
-                            doc.drawString(logow + 295,top-45,"Placa:")
-                            doc.drawString(logow + 395,top-45,"Cor:")
-                            doc.drawString(logow + 495,top-45,"Ano:")
-                            doc.drawString(logow + 295,top-57,"Tipo:")
-                            doc.drawString(logow + 375,top-57,"Modelo:")
-                            doc.drawString(logow + 515,top-57,"Fabricante:")
-                            doc.drawString(logow + 295,top-69,"Chassi:")
-                            doc.drawString(logow + 325,top-45,str_placa)
-                            doc.drawString(logow + 420,top-45,str_cor)
-                            doc.drawString(logow + 520,top-45,str_ano)
-                            doc.drawString(logow + 320,top-57,str_tipo)
-                            doc.drawString(logow + 413,top-57,str_modelo)
-                            doc.drawString(logow + 568,top-57,str_marca)
-                            doc.drawString(logow + 333,top-69,str_chassi)
-
+                            doc.drawString(left+logow + 30,top-45,"Placa:")
+                            doc.drawString(left+logow + 130,top-45,"Cor:")
+                            doc.drawString(left+logow + 230,top-45,"Ano:")
+                            doc.drawString(left+logow + 330,top-45,"Tipo:")
+                            doc.drawString(left+logow + 30,top-57,"Modelo:")
+                            doc.drawString(left+logow + 230,top-57,"Fabricante:")
+                            doc.drawString(left+logow + 430,top-57,"Chassi:")
+                            doc.drawString(left+logow + 60,top-45,str_placa)
+                            doc.drawString(left+logow + 155,top-45,str_cor)
+                            doc.drawString(left+logow + 255,top-45,str_ano)
+                            doc.drawString(left+logow + 355,top-45,str_tipo)
+                            doc.drawString(left+logow + 68,top-57,str_modelo)
+                            doc.drawString(left+logow + 283,top-57,str_marca)
+                            doc.drawString(left+logow + 468,top-57,str_chassi)
                             
                             '''
                             id = request.GET.get('id', '')
@@ -809,7 +823,7 @@ def report(request,offset):
                             '''        
                             
                             doc.line(0,top-logoh-67,842,top-logoh-67)
-                            doc.rect(logow+280,top-75,370,60,fill=0)
+                            doc.rect(left+logow+15,top-65-left,600,70,fill=0)
                             tcount = 0
                             doc.setFont("Helvetica",8)
                             printed = []
@@ -996,8 +1010,7 @@ def report(request,offset):
                                     break
                             fdist = "%(dist).3f" % {"dist":geodist_total}
                             fdist = fdist.replace(".",",")
-                            doc.drawString(left+600,top-93,"Distancia Percorrida*: "+unicode(fdist).encode("utf-8")+" km")
-                            
+                            doc.drawString(left+logow+230,top-81,"Distancia Percorrida*: "+unicode(fdist).encode("utf-8")+" km")
                             doc.showPage()
                             
                             start += (size - offset_geral)
