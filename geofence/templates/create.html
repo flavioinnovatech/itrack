@@ -142,6 +142,7 @@ Infotrack - Cercas Eletrônicas
 
 </script>
 <script type="text/javascript" src="/media/js/wms.js"></script>
+<script type="text/javascript" src="/media/js/loading.js"></script>
 <script type="text/javascript" src="/media/js/geofence_circle.js"></script>
 <script type="text/javascript" src="/media/js/geofence_polygon.js"></script>
 <script type="text/javascript" src="/media/js/geofence_route.js"></script>
@@ -578,8 +579,8 @@ Estado: <select class="routeselect">
 		{% endif %}
 
 		{% if offset2 == "2" %} {# Input the addresses #}
-		<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
-			<form  action="" class="steps" style="width:70%"
+		<div class="divsteps" style="margin-bottom:10px;overflow:hidden;width:30%;float:left;">
+			<form  action="" class="steps" style="width:100%"
 				{% if offset == "3" %} id="step1route" {% endif %}
 				{% if offset == "1" %} id="step1circle" {% endif %}
 				{% if offset == "2" %} id="step1polygon" {% endif %}
@@ -614,7 +615,7 @@ Estado: <select class="routeselect">
 								<input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
 								n.º
 								<input class="routenumber" placeholder="" type="number" style="width:40px" />
-								Cidade:
+								<br/>Cidade:
 								<input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
 								Estado:
 								<select class="routestate">
@@ -654,7 +655,7 @@ Estado: <select class="routeselect">
 								<input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
 								n.º
 								<input class="routenumber" placeholder="" type="number" style="width:40px" />
-								Cidade:
+								<br/>Cidade:
 								<input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
 								Estado:
 								<select class="routestate">
@@ -748,8 +749,8 @@ Estado: <select class="routeselect">
 				</fieldset>
 			</form>
 		</div>
-		<div id="map1" style="float:left;width:100%;height:300px;"></div>
-		<div id="map2" style="float:left;width:100%;height:300px;"></div>
+		<div id="map1" style="float:right;width:69%;height:100%;position:relative;z-index:0;"></div>
+		<div id="map2" style="float:left;width:100%;height:300px;display:none;"></div>
 		<div id="maplink" style="display:none"></div>
 		{% endif %}
 		{% endif %}

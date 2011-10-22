@@ -10,10 +10,15 @@ body {
 	font: normal .8em/1.5em Arial, Helvetica, sans-serif;
 	margin: 10px auto;
 	overflow-x: hidden;
+	height:100%;
 	
 }
 a {
 	color: #333;
+}
+
+html {
+	height:100%;
 }
 
 #login {
@@ -62,6 +67,7 @@ a {
 }
 .centerContainer {
 	margin: 0 auto;
+	height:100%;
 }
 
 #topContainer {
@@ -385,7 +391,8 @@ html[xmlns] #nav {
     padding: 20px;
     min-height:400px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-    overflow:auto;
+    overflow:hidden;
+    height:100%;
     
     background: -moz-linear-gradient(center top , #FFFFFF, #CFCFCF) repeat scroll 0 0 transparent;
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CFCFCF'); /* for IE */

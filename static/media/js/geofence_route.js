@@ -118,7 +118,7 @@ $(document).ready(function(){
 						routePointAux.routeStop = r;
 						rp.push(routePointAux);
 					});
-					alert(rp.toSource());
+					//alert(rp.toSource());
 					//Thank god I think it's over. Now we're gonna finally calculate the route.
 					
 					rm = new MRouteMannager(mapa);
@@ -126,7 +126,7 @@ $(document).ready(function(){
 					
 					//rc1 = new MRouteControl(mapa, rs, ro, "#FF5555", function(result) {
 					rm.createRoute(rp, ro, null, function(result){
-						setTimeout("drawRoute()",20000);
+						setTimeout("drawRoute()",3000);
 					});
 
 	
@@ -138,7 +138,7 @@ $(document).ready(function(){
 
 	}
   	
-  	closeloading();
+  	closeloading(4000);
   	
   	return false;
   });
