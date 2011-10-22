@@ -17,13 +17,19 @@
   var need_to_confirm = true;
   window.onbeforeunload = confirmExit;
   function confirmExit()
-  {
+  { 
     if(need_to_confirm) return "A criação do sistema ainda não foi terminada, e ele não será salvo se você sair do assistente agora. Tem certeza que deseja sair?";
   }
   
     $(document).ready(function(){
         $('.submit').click(function(){
             need_to_confirm = false;
+          });
+          
+        $('.voltar').click(function(){
+            need_to_confirm = false;
+            parent.history.back();
+        	return false;
           });
   });
   
@@ -127,8 +133,15 @@
 <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
 {{ previous_fields|safe }}
 
-<input type="submit" value="Prosseguir" class="submit" onclick="confirm_to_exit = false;">
-<input type="button" value="Cancelar" class="submit" onClick="window.location = '/system/';"/>
+<div id="actions" style="margin:0 auto;width:190px;">
+{% if step == 1 %}
+<input type="button" value="Cancelar" class="submit" onClick="window.location = '/system/';" style="float:right;"/>
+{% else %}
+<input type="button" class="submit voltar" value=" Voltar " style="float:right;"/>
+{% endif %}
+<input type="submit" value="Prosseguir" class="submit" onclick="confirm_to_exit = false;" style="float:left;">
+
+</div>
 <p class="clear">
 </form>
 
