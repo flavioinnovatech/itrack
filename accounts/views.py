@@ -94,7 +94,10 @@ def create_user(request,offset):
           new_user = form_user.save()
           user = User.objects.get(username__exact=new_user)
           password = user.password
-
+          confirm = user.confirm_password
+          
+          
+          
           user.set_password(password)
           
           message = u"Você foi cadastrado no sistema Infotrack com sucesso. \n\n"

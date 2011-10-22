@@ -72,6 +72,7 @@ Infotrack - Cercas Eletrônicas
 	var g;
 	var offset;
 	var markers;
+	var rm;
 	jQuery(document).ready(function() {
 
 		if('{{g}}' != 'False') {
@@ -572,7 +573,7 @@ Estado: <select class="routeselect">
 
 
 		<div id="map1" style="float:left;width:100%;height:300px;"></div>
-		<div id="maplink" style="display:none"></div>
+		
 		
 		{% endif %}
 
@@ -748,6 +749,8 @@ Estado: <select class="routeselect">
 			</form>
 		</div>
 		<div id="map1" style="float:left;width:100%;height:300px;"></div>
+		<div id="map2" style="float:left;width:100%;height:300px;"></div>
+		<div id="maplink" style="display:none"></div>
 		{% endif %}
 		{% endif %}
 		{% if offset2 == "2" or offset2 == "1" %}
