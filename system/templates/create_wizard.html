@@ -12,6 +12,7 @@
 <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 <script type="text/javascript" src="/media/js/jsi18n.js"></script>
+<script type="text/javascript" src="/media/js/jquery.maskedinput-1.3.min.js"></script>
 
 <script type="text/javascript">
   var need_to_confirm = true;
@@ -31,6 +32,9 @@
             parent.history.back();
         	return false;
           });
+          
+        $("#id_0-telephone").mask("(99) 9999-9999");
+        $("#id_0-cellphone").mask("(99) 9999-9999");
   });
   
 </script>

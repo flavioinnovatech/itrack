@@ -30,7 +30,7 @@ class Settings(models.Model):
     system.default = 1
     
     title = models.CharField(max_length=200)
-    logo = models.ImageField(upload_to='img/')
+    logo = models.ImageField(upload_to='img/',help_text="Formato jpg ou png. Altura de pelo menos 100px.")
     logo.default = 'img/logo.png'
     
     color_site_background = models.CharField(max_length=50, verbose_name='Cor de fundo do site')

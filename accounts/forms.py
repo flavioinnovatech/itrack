@@ -12,10 +12,13 @@ class UserProfileForm(ModelForm):
 class UserForm(ModelForm):
     class Meta:
             model = User
-
             exclude = ('is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined','groups','user_permissions')
+
+    
     email = forms.EmailField(required=True)
     password = forms.CharField(widget=forms.PasswordInput(render_value=True),max_length=100,label='Senha')
+    
+    confirm_password = forms.CharField(widget=forms.PasswordInput(render_value=True),max_length=100,label='Confirmar Senha')
     
 class UserTailForm(forms.ModelForm):
     telephone = forms.CharField(max_length=20, label = "Telefone",required=False)
