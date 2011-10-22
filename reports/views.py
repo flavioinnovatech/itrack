@@ -24,6 +24,7 @@ from itrack.vehicles.models import Vehicle
 from itrack.system.tools import lowestDepth,findParents,findChild,serializeChild,findChildInstance
 from itrack.pygeocoder import Geocoder
 from itrack.drivers.models import Driver
+import time
 
 
 import math
@@ -179,31 +180,43 @@ def checkready(request):
 def report(request,offset):
     request.session['download'] = 'wait'
     no_information = 0
-    
+    print("# TESTE 100")
     if request.method != 'POST':
         form = ReportForm(int(offset))
     else:
-
+        print("# TESTE 101")
         try:
             
             if request.POST.has_key("vehicle_other"):
+                print("# TESTE 102")
                 #print("# TESTE 001 ");
                 v = Vehicle.objects.get(license_plate=request.POST["vehicle"])
                 request.POST["vehicle"] = str(v.id)
         except ObjectDoesNotExist:
             #print("# TESTE 004 ");
             pass
+        print("# TESTE 103")
         form = ReportForm(int(offset),request.POST)    
         #print("# TESTE 005 ");
 
         if form.is_valid():
+            print("# TESTE 104")
             #print("# TESTE 006 ");
+            try:
+                print("#1#" + str(time.clock()))
+            except Exception as err:
+                print(err.args)
             system = request.session["system"]
+            print("#2#" + str(time.clock()))
             s = System.objects.get(pk=system)
+            print("#3#" + str(time.clock()))
             parents = findParents(s,[s])
+            print("#4#" + str(time.clock()))
             parents = serializeChild(findChild(system),[])
+            print("#5#" + str(time.clock()))
             #print parents
             d1 = datetime.now()
+            print("#6#" + str(time.clock()))
             #TODO: A business logic pra cá ficou assim:
             #TODO: criar campo indicando se o veículo foi deletado no model do veículo, e sumir com os veículos apagados
             #TODO: apenas por esse campo. Aqui vamos ter a busca sem checar esse campo, assim o sistema pode consultar infos
@@ -213,6 +226,7 @@ def report(request,offset):
             try:
 #                form.cleaned_data["vehicle"]
                 vehicle = Vehicle.objects.get(pk=int(request.POST["vehicle"]))
+                print(time.clock())
             except:
                 #print("# TESTE 013 ")
                 if request.POST['type'] == 'HTML':
@@ -224,65 +238,9 @@ def report(request,offset):
                     no_information = 1
                     request.session['download'] = 'done'
                     return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
-            #print("# TESTE 014 ");            
-            if s.parent == None:
-                #print("# TESTE 015 ")
-                equip_system = s.name
-                trackings = Tracking.objects.filter(
-                    Q(eventdate__gte=form.cleaned_data['period_start'])  
-                    &Q(eventdate__lte=form.cleaned_data['period_end'])
-                    &(
-                        Q(trackingdata__type__type = 'Vehicle')
-                        &Q(trackingdata__value = vehicle.id)
-                    )
-                )
-                #print("# TESTE 016 ")
-            else:
-                #print("# TESTE 017 ")
-                equip_system = lowestDepth(vehicle.equipment.system.all()).name
-                #print vehicle.id
-                trackings = Tracking.objects.filter(
-                    Q(eventdate__gte=form.cleaned_data['period_start'])  
-                    &Q(eventdate__lte=form.cleaned_data['period_end'])
-                    &(
-                        Q(trackingdata__type__type = 'Vehicle')
-                        &Q(trackingdata__value = vehicle.id)
-                     )   
-                ).filter( #extra filter for the system
-                    Q(trackingdata__type__type = 'System')
-                    &Q(trackingdata__value__in = parents)
-                )
+            #print("# TESTE 014 ");       
             
-            if trackings.count() == 0:
-                #print("# TESTE 018 ")
-                if request.POST['type'] == 'HTML':
-                    no_information = 1
-                    message = "Não foram encontrados dados para a busca realizada."
-                    request.session['download'] = 'done'
-                    return render_to_response("reports/templates/htmlreporterror.html",locals(),context_instance=RequestContext(request),)                    
-                else:
-                    no_information = 1
-                    request.session['download'] = 'done'
-                    return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
-            #print("# TESTE 019 ")
-
-            request.session['download'] = 'started'
-            datas = TrackingData.objects.select_related('tracking').filter(Q(tracking__in=trackings))
-
-            #print("# TESTE 020 ")
-            tdata_dict = {}
-            for tdata in datas:
-                tdata_dict.setdefault(tdata.tracking.eventdate, []).append(tdata)
             
-            d2 = datetime.now()
-            #print tdata_dict
-            
-            #initializing the resources that are going to be used to mount the table
-            table_content = []
-            list_table = []
-            
-
-                
             try:
                 #print(form.cleaned_data["vehicle_fields"])
                 #print(request.POST.getlist("vehicle_fields"))
@@ -308,28 +266,92 @@ def report(request,offset):
             except Exception as err:
                 #print(err.args)
                 pass
+            print(type(title_row))
+            print(title_row)
+            
+                 
+            if s.parent == None:
+                #print("# TESTE 015 ")
+                equip_system = s.name
+                
+                trackings = Tracking.objects.select_related(depth=2).filter(
+                    Q(eventdate__gte=form.cleaned_data['period_start'])  
+                    &Q(eventdate__lte=form.cleaned_data['period_end'])
+                    &(
+                        Q(trackingdata__type__type = 'Vehicle')
+                        &Q(trackingdata__value = vehicle.id)
+                    )
+                )
+                print("#7#" + str(time.clock()))
+                #print("# TESTE 016 ")
+            else:
+                #print("# TESTE 017 ")
+                equip_system = lowestDepth(vehicle.equipment.system.all()).name
+                #print vehicle.id
+                trackings = Tracking.objects.select_related(depth=2).filter(
+                    Q(eventdate__gte=form.cleaned_data['period_start'])  
+                    &Q(eventdate__lte=form.cleaned_data['period_end'])
+                    &(
+                        Q(trackingdata__type__type = 'Vehicle')
+                        &Q(trackingdata__value = vehicle.id)
+                     )   
+                ).filter( #extra filter for the system
+                    Q(trackingdata__type__type = 'System')
+                    &Q(trackingdata__value__in = parents)
+                )
+                print("#8#" + str(time.clock()))
+            
+            if trackings.count() == 0:
+                #print("# TESTE 018 ")
+                if request.POST['type'] == 'HTML':
+                    no_information = 1
+                    message = "Não foram encontrados dados para a busca realizada."
+                    request.session['download'] = 'done'
+                    return render_to_response("reports/templates/htmlreporterror.html",locals(),context_instance=RequestContext(request),)                    
+                else:
+                    no_information = 1
+                    request.session['download'] = 'done'
+                    return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)
+            #print("# TESTE 019 ")
+
+            request.session['download'] = 'started'
+            
+            try:
+                datas = TrackingData.objects.select_related(depth=2).select_related('tracking').filter(Q(tracking__in=trackings)&Q(type__name__in=title_row))
+            except Exception as err:
+                print(err.args)
+            print("#9#" + str(time.clock()))
+            #print("# TESTE 020 ")
+            tdata_dict = {}
+            for tdata in datas:
+                tdata_dict.setdefault(tdata.tracking.eventdate, []).append(tdata)
+            print("#10#" + str(time.clock()))
+            d2 = datetime.now()
+            #print tdata_dict
+            
+            #initializing the resources that are going to be used to mount the table
+            table_content = []
+            list_table = []
+            
+
+            
             lastdriver = ""
             dname = " (informacao nao disponivel) "
             #print("# OK K1")
             try:
-                trackings = Tracking.objects.filter(equipment=vehicle.equipment,equipment__system=s)
-                datas = TrackingData.objects.select_related('tracking').filter(tracking__in=trackings,type__tag=u"DriverCheck")
+                trackings = Tracking.objects.select_related(depth=2).filter(equipment=vehicle.equipment,equipment__system=s)
+                datas = TrackingData.objects.select_related(depth=2).select_related('tracking').filter(tracking__in=trackings,type__tag=u"DriverCheck")
                 tdata_dict2 = {}
                 for tdata in datas:
                     tdata_dict2.setdefault(str(tdata.tracking.eventdate), []).append(tdata)
                 tdata_dk = tdata_dict2.keys()
                 tdata_dk.sort()
                 #print("# OK K4")
+                print("#12#" + str(time.clock()))
                 if len(tdata_dk) > 0 :
                     lastdriver = tdata_dict2[tdata_dk[0]][0].value
                     driver = Driver.objects.get(cardid=lastdriver)
                     driver2 = Driver.objects.get(vehicle=vehicle,cardid=lastdriver)
-                    #print("# OK K5")
-                    # test to assert if equipment(cardid login) has a driver with the same cardid
-                    #print(driver)
-                    # test to assert if driver has permission to that vehicle
-                    #print(driver2)
-                    
                     
                     try:
                         dname = driver.name
@@ -338,9 +360,11 @@ def report(request,offset):
                     if dname == "":
                         dname = "Motorista com cartao nao cadastrado."
                     #print("# OK K6")
+                    
             except Exception as err:
                 print("#DRIVER : " + str(err.args))
                 pass
+            print("#13#" + str(time.clock()))
             if request.POST['type'] == 'CSV':
                 #print("# TESTE 022 ")
                 #main loop for each tracking found
@@ -643,14 +667,17 @@ def report(request,offset):
                 request.session['download'] = 'done'
                 response = HttpResponse(mimetype='application/pdf')
                 response['Content-Disposition'] = 'attachment; filename=relatorio.pdf'
+                print("#PRE PAGE 14#" + str(time.clock()))
+
                 try:
                     doc = canvas.Canvas(response)
-
+                    print(time.clock())
                     field_list = {}
                     customnames = CustomFieldName.objects.select_related(depth=1).filter(Q(system=system)&Q(custom_field__system=system)).distinct()
+                    print(time.clock())
                     tdata_dk = tdata_dict.keys()
                     tdata_dk.sort()
-
+                    print(time.clock())
                     
                     page_count = 0
                     str_placa = ""
@@ -664,9 +691,10 @@ def report(request,offset):
                     mount = ""
                     lWidth, lHeight = A4
                     doc.setPageSize((lHeight, lWidth))
-                    
+                    print("#PRE PAGE 15#" + str(time.clock()))
                     count = 0
                     for data in form.cleaned_data['vehicle_fields']:
+                        print(time.clock())
                         if data != "address" and data != "date" and data !="system":
                             if count == 0 : #placa
                                 str_placa = unicode(vehicle.__dict__[data]).encode("UTF-8")
@@ -718,6 +746,7 @@ def report(request,offset):
                             space_A = 360
                         else:
                             space_A = 360 / (len(display_fields))
+                    print("#16#" + str(time.clock()))
                     try:
                     
                         page = 1
@@ -731,6 +760,7 @@ def report(request,offset):
                             #print(str(cfns1) + " % " + str(type(cfns1)))
                         
                         while True:
+                            print("#PAGE 17#" + str(time.clock()))
                             if start > len(tdata_dk) : break
                             if start == end or start == len(tdata_dk) : break
                             
@@ -748,38 +778,36 @@ def report(request,offset):
                             doc.setFont("Helvetica",10)
                             try:
                                 if request.POST.has_key("period_start"):
-                                    doc.drawString(left,top-93,"A partir : " + request.POST["period_start"])
+                                    doc.drawString(left+logow+30,top-69,"A partir : " + request.POST["period_start"])
                             except Exception as err:
                                 #print(err.args)
                                 pass
                             try:
                                 if request.POST.has_key("period_end"):
-                                    doc.drawString(left+140,top-93,u"Até : " + unicode(request.POST["period_end"]))
+                                    doc.drawString(left+logow+230,top-69,u"Até : " + unicode(request.POST["period_end"]))
                             except Exception as err:
                                 #print(err.args)
                                 pass
-                            doc.drawString(left+260,top-93,"Emitido em : " + str(datetime.now())[:19])
-                            doc.drawString(left+420,top-93,"Motorista : " + dname)
+                            doc.drawString(left+logow+430,top-69,"Emitido em : " + str(datetime.now())[:19])
+                            doc.drawString(left+logow+30,top-81,"Motorista : " + dname)
+                            
                             
                             #doc.rect(200,770,380,55,fill=0)
-                            doc.setFont("Helvetica",11)
-                            doc.drawString(logow + 290,top-30 ,"Dados do veículo:")
                             doc.setFont("Helvetica",10)
-                            doc.drawString(logow + 295,top-45,"Placa:")
-                            doc.drawString(logow + 395,top-45,"Cor:")
-                            doc.drawString(logow + 495,top-45,"Ano:")
-                            doc.drawString(logow + 295,top-57,"Tipo:")
-                            doc.drawString(logow + 375,top-57,"Modelo:")
-                            doc.drawString(logow + 515,top-57,"Fabricante:")
-                            doc.drawString(logow + 295,top-69,"Chassi:")
-                            doc.drawString(logow + 325,top-45,str_placa)
-                            doc.drawString(logow + 420,top-45,str_cor)
-                            doc.drawString(logow + 520,top-45,str_ano)
-                            doc.drawString(logow + 320,top-57,str_tipo)
-                            doc.drawString(logow + 413,top-57,str_modelo)
-                            doc.drawString(logow + 568,top-57,str_marca)
-                            doc.drawString(logow + 333,top-69,str_chassi)
-
+                            doc.drawString(left+logow + 30,top-45,"Placa:")
+                            doc.drawString(left+logow + 130,top-45,"Cor:")
+                            doc.drawString(left+logow + 230,top-45,"Ano:")
+                            doc.drawString(left+logow + 330,top-45,"Tipo:")
+                            doc.drawString(left+logow + 30,top-57,"Modelo:")
+                            doc.drawString(left+logow + 230,top-57,"Fabricante:")
+                            doc.drawString(left+logow + 430,top-57,"Chassi:")
+                            doc.drawString(left+logow + 60,top-45,str_placa)
+                            doc.drawString(left+logow + 155,top-45,str_cor)
+                            doc.drawString(left+logow + 255,top-45,str_ano)
+                            doc.drawString(left+logow + 355,top-45,str_tipo)
+                            doc.drawString(left+logow + 68,top-57,str_modelo)
+                            doc.drawString(left+logow + 283,top-57,str_marca)
+                            doc.drawString(left+logow + 468,top-57,str_chassi)
                             
                             '''
                             id = request.GET.get('id', '')
@@ -809,7 +837,7 @@ def report(request,offset):
                             '''        
                             
                             doc.line(0,top-logoh-67,842,top-logoh-67)
-                            doc.rect(logow+280,top-75,370,60,fill=0)
+                            doc.rect(left+logow+15,top-65-left,600,70,fill=0)
                             tcount = 0
                             doc.setFont("Helvetica",8)
                             printed = []
@@ -855,9 +883,10 @@ def report(request,offset):
                             FirstOnPage = True
                             #print("start:" + str(start))
                             #print("end:" + str(end))
+                            print("#PAGE 19#" + str(time.clock()))
                             
                             for date in tdata_dk[start:end]:
-                            
+                                print("#PAGE 20#" + str(time.clock()))
                                 #print("OK")
                                 tdata = tdata_dict[date]
                                 geodist_state = 0
@@ -890,7 +919,7 @@ def report(request,offset):
                                         geodist_started = True
                                         geodist_last_lat = geodist_cur_lat
                                         geodist_last_lon = geodist_cur_lon
-
+                                print("#PAGE 21#" + str(time.clock()))
                                 if placa_first:
                                     placa_first = False
                                 try:
@@ -921,6 +950,7 @@ def report(request,offset):
                                     except Exception as err:
                                         #print(err.args)
                                         addrs = ""
+                                print("#PAGE 22#" + str(time.clock()))
                                 str_date = ""
                                 if addrs == "":
                                     addrs = str(geodist_cur_lat) + " , " + str(geodist_cur_lat)
@@ -949,15 +979,15 @@ def report(request,offset):
                                 #doc.line(21,680-16*count,575,680-16*count)
                                 tcount = 0
                                 dfcount = 0
+                                print("#PAGE 23#" + str(time.clock()))
                                 try:
-                                    for x in display_fields:
+                                    for y in tdata_dict[date]:
                                         check = False
                                         try:
-                                            for y in tdata_dict[date]:
+                                            for x in display_fields:
                                                 # y tracking data
                                                 # tracking data is instance of custom field
                                                 if y.type == x:
-
                                                     if unicode(y.type.name) == u"Velocidade Tacógrafo" or unicode(y.type.name) == u"Voltagem de Alimentação" or unicode(y.type.name) == u"Odômetro" or unicode(y.type.name) == u"Velocidade GPS" or unicode(y.type.name) == u"RPM":
                                                         val_data = 0.00
                                                         if unicode(y.value) == u"OFF":
@@ -994,10 +1024,10 @@ def report(request,offset):
                                 offset_pagina = 0
                                 if count >= size:
                                     break
+                            print("#PAGE 25#" + str(time.clock()))
                             fdist = "%(dist).3f" % {"dist":geodist_total}
                             fdist = fdist.replace(".",",")
-                            doc.drawString(left+600,top-93,"Distancia Percorrida*: "+unicode(fdist).encode("utf-8")+" km")
-                            
+                            doc.drawString(left+logow+230,top-81,"Distancia Percorrida*: "+unicode(fdist).encode("utf-8")+" km")
                             doc.showPage()
                             
                             start += (size - offset_geral)
@@ -1030,7 +1060,9 @@ def report(request,offset):
                 return render_to_response("reports/templates/htmlreporterror.html",locals(),context_instance=RequestContext(request),)                    
             else:
                 no_information = 2
+        print("# TESTE 200")
 
+    print("# TESTE 105")
     request.session['download'] = 'done'
     
     return render_to_response("reports/templates/form.html",locals(),context_instance=RequestContext(request),)

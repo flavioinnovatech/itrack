@@ -1,0 +1,24 @@
+<html>
+<head>
+<script>
+
+window.onload = function() {
+    c = document.getElementById("canvas_");
+    g = c.getContext("2d");
+    g.fillStyle =  "rgb(255,255,255)";
+    g.fillRect(0,0,640,480);
+    g.drawImage("logo.png",0,0);
+}
+
+</script>
+</head>
+<body>
+
+<canvas id="canvas_" width=640 height=480>
+
+</canvas>
+
+
+</body>
+</html>
+
