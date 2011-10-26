@@ -36,6 +36,13 @@ Infotrack - Cercas Eletrônicas
 		list-style-type: decimal;
 		list-style-position: inside;
 	}
+	fieldset hr {
+	    background-color: #999;
+	    border: 0 none;
+	    color: #999;
+	    height: 1px;
+	    margin:10px 0;
+    }
 	.ptracker {
 		margin-left: auto;
 		margin-right: auto;
@@ -134,330 +141,10 @@ Infotrack - Cercas Eletrônicas
 
 {% endblock %}
 
-{% block content %} <!--
-<div id="geofence-tabs">
-<ul>
-<li><a href="#tabs-1">Círculo</a></li>
-<li><a href="#tabs-2">Polígono</a></li>
-<li><a href="#tabs-3">Rota</a></li>
-</ul>
-<div id="tabs-1" style="overflow:hidden;">
-<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
-<form id="step1" class="steps">
-<fieldset>
-<legend>1º Passo - Escolha um tamanho para o raio</legend>
-<p>Digite abaixo um tamanho para o raio em quilômetros:</p>
-<p align="center"><input type="number" min="0" id="radius" placeholder="Digite um raio" autofocus></input> km</p>
-</fieldset>
-</form>
-<form id="step2circle" class="steps" action="">
-<fieldset>
-<legend>2º Passo - Escolha um local para o centro</legend>
-<p>Digite o endereço completo para o centro do círculo:</p>
-<table style="border-spacing:5px">
-<tr>
-<td>
-Endereço:
-</td>
-<td>
-<input id="circleaddress" placeholder="Ex.:Rua Anchieta" type="text" style="width:140px;"/> n.º <input id="circlenumber" placeholder="" type="number" style="width:40px" />
-</td>
-</tr>
-<tr>
-<td>
-Cidade:
-</td>
-<td>
-<input id="circlecity" placeholder="Ex.:Campinas" type="text"></input>
-</td>
-
-</tr>
-<tr>
-<td>
-Estado:
-</td>
-<td>
-<select id="circleselect">
-<option value="0" selected="selected">&nbsp;</option>
-<option value="AC">Acre</option>
-<option value="AL">Alagoas</option>
-<option value="AP">Amapá</option>
-<option value="AM">Amazonas</option>
-<option value="BA">Bahia</option>
-<option value="CE">Ceará</option>
-<option value="DF">Distrito Federal</option>
-<option value="ES">Espírito Santo</option>
-<option value="GO">Goias</option>
-<option value="MA">Maranhão</option>
-<option value="MT">Mato Grosso</option>
-<option value="MS">Mato Grosso do Sul</option>
-<option value="MG">Minas Gerais</option>
-<option value="PA">Pará</option>
-<option value="PB">Paraíba</option>
-<option value="PR">Paraná</option>
-<option value="PE">Pernambuco</option>
-<option value="PI">Piauí</option>
-<option value="RJ">Rio de Janeiro</option>
-<option value="RN">Rio Grande do Norte</option>
-<option value="RS">Rio Grande do Sul</option>
-<option value="RO">Rondônia</option>
-<option value="RR">Roraima</option>
-<option value="SC">Santa Catarina</option>
-<option value="SP">São Paulo</option>
-<option value="SE">Sergipe</option>
-<option value="TO">Tocantins</option>
-</select>
-</td>
-
-</tr>
-</table>
-
-<p align="center"><input id="caddresssubmit" type="submit" value="Buscar endereço" style="padding:4px 12px;" /></p>
-</fieldset>
-</form>
-<form id="step3" class="steps">
-<fieldset>
-<legend>3º Passo - Salvar cerca eletrônica</legend>
-<p>Após confirmar a visualização da cerca no mapa e sua área, digite um nome para a cerca e clique em salvar:</p>
-<p align="center"><b>Área da cerca eletrônica selecionada:</b></p><div align="center" id="circlearea"></div>
-<p align="center"><input id="circlename" placeholder="Digite um nome para a cerca" type="text" required value="{{g.name}}"></input><input id="circlesave" type="button" value="Salvar" style="padding:4px 12px;"></p>
-</fieldset>
-</form>
-</div>
-<div id="map3" style="float:left;width:100%;height:300px;"></div>
-</div>
-<div id="tabs-2" style="overflow:hidden;">
-<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
-<form id="step1polygon" class="steps" style="width:70%" action="">
-<fieldset>
-<legend>1º Passo - Escolha os pontos para os vértices do polígono</legend>
-<p>Digite o endereço para os vértices (mínimo 3):</p>
-<div id="polygoninputs" style="overflow: auto; height: 101px;">
-<ol class="decimal">
-<li>
-<span>Endereço: </span><input class="polygoninput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-n.º <input class="polygonnumber" placeholder="" type="number" style="width:40px" />
-Cidade: <input class="polygoncity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
-Estado: <select class="polygonselect">
-<option value="0" selected="selected">&nbsp;</option>
-<option value="AC">Acre</option>
-<option value="AL">Alagoas</option>
-<option value="AP">Amapá</option>
-<option value="AM">Amazonas</option>
-<option value="BA">Bahia</option>
-<option value="CE">Ceará</option>
-<option value="DF">Distrito Federal</option>
-<option value="ES">Espírito Santo</option>
-<option value="GO">Goias</option>
-<option value="MA">Maranhão</option>
-<option value="MT">Mato Grosso</option>
-<option value="MS">Mato Grosso do Sul</option>
-<option value="MG">Minas Gerais</option>
-<option value="PA">Pará</option>
-<option value="PB">Paraíba</option>
-<option value="PR">Paraná</option>
-<option value="PE">Pernambuco</option>
-<option value="PI">Piauí</option>
-<option value="RJ">Rio de Janeiro</option>
-<option value="RN">Rio Grande do Norte</option>
-<option value="RS">Rio Grande do Sul</option>
-<option value="RO">Rondônia</option>
-<option value="RR">Roraima</option>
-<option value="SC">Santa Catarina</option>
-<option value="SP">São Paulo</option>
-<option value="SE">Sergipe</option>
-<option value="TO">Tocantins</option>
-</select>
-</li>
-<li>
-<span>Endereço: </span><input class="polygoninput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-n.º <input class="polygonnumber" placeholder="" type="number" style="width:40px" />
-Cidade: <input class="polygoncity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
-Estado: <select class="polygonselect">
-<option value="0" selected="selected">&nbsp;</option>
-<option value="AC">Acre</option>
-<option value="AL">Alagoas</option>
-<option value="AP">Amapá</option>
-<option value="AM">Amazonas</option>
-<option value="BA">Bahia</option>
-<option value="CE">Ceará</option>
-<option value="DF">Distrito Federal</option>
-<option value="ES">Espírito Santo</option>
-<option value="GO">Goias</option>
-<option value="MA">Maranhão</option>
-<option value="MT">Mato Grosso</option>
-<option value="MS">Mato Grosso do Sul</option>
-<option value="MG">Minas Gerais</option>
-<option value="PA">Pará</option>
-<option value="PB">Paraíba</option>
-<option value="PR">Paraná</option>
-<option value="PE">Pernambuco</option>
-<option value="PI">Piauí</option>
-<option value="RJ">Rio de Janeiro</option>
-<option value="RN">Rio Grande do Norte</option>
-<option value="RS">Rio Grande do Sul</option>
-<option value="RO">Rondônia</option>
-<option value="RR">Roraima</option>
-<option value="SC">Santa Catarina</option>
-<option value="SP">São Paulo</option>
-<option value="SE">Sergipe</option>
-<option value="TO">Tocantins</option>
-</select>
-</li>
-<li>
-<span>Endereço: </span><input class="polygoninput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-n.º <input class="polygonnumber" placeholder="" type="number" style="width:40px" />
-Cidade: <input class="polygoncity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
-Estado: <select class="polygonselect">
-<option value="0" selected="selected">&nbsp;</option>
-<option value="AC">Acre</option>
-<option value="AL">Alagoas</option>
-<option value="AP">Amapá</option>
-<option value="AM">Amazonas</option>
-<option value="BA">Bahia</option>
-<option value="CE">Ceará</option>
-<option value="DF">Distrito Federal</option>
-<option value="ES">Espírito Santo</option>
-<option value="GO">Goias</option>
-<option value="MA">Maranhão</option>
-<option value="MT">Mato Grosso</option>
-<option value="MS">Mato Grosso do Sul</option>
-<option value="MG">Minas Gerais</option>
-<option value="PA">Pará</option>
-<option value="PB">Paraíba</option>
-<option value="PR">Paraná</option>
-<option value="PE">Pernambuco</option>
-<option value="PI">Piauí</option>
-<option value="RJ">Rio de Janeiro</option>
-<option value="RN">Rio Grande do Norte</option>
-<option value="RS">Rio Grande do Sul</option>
-<option value="RO">Rondônia</option>
-<option value="RR">Roraima</option>
-<option value="SC">Santa Catarina</option>
-<option value="SP">São Paulo</option>
-<option value="SE">Sergipe</option>
-<option value="TO">Tocantins</option>
-</select>
-</li>
-
-</ol>
-</div>
-<p align="center"><span id="addpoint"> + Adicionar ponto</span></p>
-<p align="center"><input type="submit" id="polygonsubmit" value="Montar polígono com os endereços acima"/></p>
-</fieldset>
-</form>
-<form id="step2" class="steps" style="width:28%" action="">
-<fieldset>
-<legend>2º Passo - Salvar cerca eletrônica</legend>
-<p>Após confirmar a visualização da cerca no mapa e sua área, digite um nome para a cerca e clique em salvar:</p><br/>
-<p align="center"><b>Área da cerca eletrônica selecionada:</b></p><div align="center" id="polygonarea"></div>
-<p align="center"><input id="polygoname" placeholder="Digite um nome para a cerca" type="text" required value="{{g.name}}"></input><input id="polygonsave" type="button" value="Salvar" style="padding:4px 12px;"></p>
-</fieldset>
-</form>
-</div>
-<div id="map2" style="float:left;width:100%;height:300px;"></div>
-</div>
-<div id="tabs-3" style="overflow:hidden">
-<div class="divsteps" style="margin-bottom:10px;overflow:hidden;">
-<form id="step1route" action="" class="steps" style="width:70%">
-<fieldset>
-<legend>1º Passo - Escolha os pontos para os vértices da rota e um espaço de tolerância</legend>
-<p>Digite um espaço de tolerância (distância máxima que o veículo pode se afastar da rota): <input id="routetolerance" type="number" style="width:50px"/> metros</p>
-<p>Digite o endereço para os vértices da rota (mínimo 2):</p>
-<div id="routeinputs" style="overflow: auto; height: 81px;">
-<ol class="decimal">
-<li>
-<span>Endereço: </span><input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-n.º <input class="routenumber" placeholder="" type="number" style="width:40px" />
-Cidade: <input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
-Estado: <select class="circleselect">
-<option value="0" selected="selected">&nbsp;</option>
-<option value="AC">Acre</option>
-<option value="AL">Alagoas</option>
-<option value="AP">Amapá</option>
-<option value="AM">Amazonas</option>
-<option value="BA">Bahia</option>
-<option value="CE">Ceará</option>
-<option value="DF">Distrito Federal</option>
-<option value="ES">Espírito Santo</option>
-<option value="GO">Goias</option>
-<option value="MA">Maranhão</option>
-<option value="MT">Mato Grosso</option>
-<option value="MS">Mato Grosso do Sul</option>
-<option value="MG">Minas Gerais</option>
-<option value="PA">Pará</option>
-<option value="PB">Paraíba</option>
-<option value="PR">Paraná</option>
-<option value="PE">Pernambuco</option>
-<option value="PI">Piauí</option>
-<option value="RJ">Rio de Janeiro</option>
-<option value="RN">Rio Grande do Norte</option>
-<option value="RS">Rio Grande do Sul</option>
-<option value="RO">Rondônia</option>
-<option value="RR">Roraima</option>
-<option value="SC">Santa Catarina</option>
-<option value="SP">São Paulo</option>
-<option value="SE">Sergipe</option>
-<option value="TO">Tocantins</option>
-</select>
-</li>
-<li>
-<span>Endereço: </span><input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
-n.º <input class="routenumber" placeholder="" type="number" style="width:40px" />
-Cidade: <input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
-Estado: <select class="routeselect">
-<option value="0" selected="selected">&nbsp;</option>
-<option value="AC">Acre</option>
-<option value="AL">Alagoas</option>
-<option value="AP">Amapá</option>
-<option value="AM">Amazonas</option>
-<option value="BA">Bahia</option>
-<option value="CE">Ceará</option>
-<option value="DF">Distrito Federal</option>
-<option value="ES">Espírito Santo</option>
-<option value="GO">Goias</option>
-<option value="MA">Maranhão</option>
-<option value="MT">Mato Grosso</option>
-<option value="MS">Mato Grosso do Sul</option>
-<option value="MG">Minas Gerais</option>
-<option value="PA">Pará</option>
-<option value="PB">Paraíba</option>
-<option value="PR">Paraná</option>
-<option value="PE">Pernambuco</option>
-<option value="PI">Piauí</option>
-<option value="RJ">Rio de Janeiro</option>
-<option value="RN">Rio Grande do Norte</option>
-<option value="RS">Rio Grande do Sul</option>
-<option value="RO">Rondônia</option>
-<option value="RR">Roraima</option>
-<option value="SC">Santa Catarina</option>
-<option value="SP">São Paulo</option>
-<option value="SE">Sergipe</option>
-<option value="TO">Tocantins</option>
-</select>
-</li>
-
-</ol>
-</div>
-<p align="center"><span id="addpointroute" style="cursor:pointer;"> + Adicionar ponto</span></p>
-<p align="center"><input type="submit" value="Montar polígono com os endereços acima"/></p>
-</fieldset>
-</form>
-<form id="step2route" action="" class="steps" style="width:28%;">
-<fieldset>
-<legend>2º Passo - Salvar cerca eletrônica</legend>
-<p>Após confirmar a visualização da cerca no mapa e sua distância, digite um nome para a cerca e clique em salvar:</p><br/>
-<p align="center"><b>Área da cerca eletrônica selecionada:</b></p><div align="center" id="polygonarea"></div>
-<p align="center"><input id="polygoname" placeholder="Digite um nome para a cerca" type="text" required value="{{g.name}}"></input><input id="polygonsave" type="button" value="Salvar" style="padding:4px 12px;"></p>
-</fieldset>
-</form>
-</div>
-<div id="map1" style="float:left;width:100%;height:300px;"></div>
-</div>
-</div>
--->
+{% block content %} 
 <div id="content">
 	<div class="main-form">
+		<div id="divaux" style="height:100%;">
 		<h1><img class="icon" src="/media/img/vehicle.png">
 			{% if g %}Edição de Cerca Eletrônica 
 			{% else %}
@@ -556,14 +243,14 @@ Estado: <select class="routeselect">
 		{% if offset2 == "1" %} {# OpenLayers Drawing feature #}
 
 
-		<div id="map1" style="float:left;width:100%;height:300px;"></div>
+		<div id="map1" style="float:left;width:100%;height:600px;"></div>
 		
 		
 		{% endif %}
 
 		{% if offset2 == "2" %} {# Input the addresses #}
-		<div class="divsteps" style="margin-bottom:10px;overflow:hidden;width:30%;float:left;">
-			<form  action="" class="steps" style="width:100%;margin-top:0;" 
+		<div class="divsteps" style="margin-bottom:10px;overflow:hidden;width:30%;float:left;height:100%;">
+			<form  action="" class="steps" style="width:100%;margin-top:0;height:100%;" 
 				{% if offset == "3" %} id="step1route" {% endif %}
 				{% if offset == "1" %} id="step1circle" {% endif %}
 				{% if offset == "2" %} id="step1polygon" {% endif %}
@@ -580,7 +267,7 @@ Estado: <select class="routeselect">
 						<input id="routetolerance" type="number" style="width:50px"/>
 						metros
 					</p>
-					<hr style="margin:10px 0;color:#CCC;background-color:#CCC;border:0;height:1px;"/>
+					<hr/>
 					{% endif %}
 					{% if offset == "1" %}
 					<p>
@@ -592,7 +279,7 @@ Estado: <select class="routeselect">
 					<p style="font-size:11px;">
 						{% if offset == "3" %} <b>Digite o endereço para os vértices da rota:</b><br/><span style="font-size:10px;color:#888;">Mínimo 2 endereços</span> {% endif %}
 					</p>
-					<div id="routeinputs" style="height: 100%;font-size:11px;overflow:auto;">
+					<div id="routeinputs" style="font-size:11px;overflow:auto;height:300px;">
 						<ol class="decimal">
 							<li>
 								<span>Endereço: </span><br/>
@@ -723,23 +410,55 @@ Estado: <select class="routeselect">
 					</p>
 					{% endif %}
 					<p align="center">
-						<input type="submit" 
+						<input id="geofence-button" type="button" 
 							{% if offset == "3" %}  value="Montar rota com os endereços acima" {% endif %}
 							{% if offset == "2" %}  value="Montar polígono com os endereços acima" {% endif %}
 							{% if offset == "1" %}  value="Montar círculo no endereço com o raio digitado acima" {% endif %} 
 						/>
 						ou <a href="{% url geofence.views.create %}">Voltar</a>
 					</p>
+					<hr/>
+						<p style="font-size:11px;font-weight:bold;">
+							{% if offset != "3" %}Área da Cerca Eletrônica:{% endif %}
+							{% if offset == "3" %}Distância da Cerca Eletrônica:{% endif %}
+						</p>
+						<p class="field" id="circlearea">
+							<i>Nenhuma cerca eletrônica selecionada.</i>
+						</p>
+						<br/>
+						<p style="font-size:11px;font-weight:bold;">
+							Nome da Cerca Eletrônica:
+						</p>
+						<p class="field">
+							<input type="text" value="" required="" placeholder="Digite um nome" id="circlename">
+						</p>
+						<div id="actions" style="margin-top:10px;">
+								<p align="center"></p>
+								<p align="center">
+									<input type="button" style="padding:4px 12px;" value="Salvar"
+									{% if offset == "1" %}
+									id="circlesave"
+									{% endif %}
+									{% if offset == "2" %}
+									id="polygonsave"
+									{% endif %}
+									{% if offset == "3" %}
+									id="routesave"
+									{% endif %}
+									>
+								</p>
+							</div>
 				</fieldset>
 			</form>
 		</div>
-		<div id="map1" style="float:right;width:69%;height:100%;position:relative;z-index:0;"></div>
-		<div id="map2" style="float:left;width:100%;height:300px;display:none;"></div>
+		<div id="map1" style="float:right;width:69%;height:600px;z-index:0;"></div>
+		
+		<!--<div id="map2" style="float:left;width:100%;height:300px;"></div>-->
 		<div id="maplink" style="display:none"></div>
 		{% endif %}
 		{% endif %}
 		{% if offset2 == "2" or offset2 == "1" %}
-		<div style="width:920px;float:left;">
+		<div style="width:920px;float:left;display:none;">
 			<form action="" style="margin:0 auto;">
 				<table>
 					<tbody>
@@ -807,5 +526,6 @@ Estado: <select class="routeselect">
 		</div>
 		{% endif %}
 	</div>
+	</div> <!-- end div aux -->
 </div>
 {% endblock %} 

@@ -28,7 +28,7 @@
             overflow: hidden;
             position: absolute;</style>
     <link href="../css/estilo.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="http://webservices.maplink2.com.br/maplinkapi2/api.ashx?v=4&key=yxd0a03YeKHKN1z4yvdwRxpDaAkFRmLnzJVNa03OPuOFeZONeuO2P0Zuc0HITu9pzYLaT0SxGAkFRDSk"></script>
+    <script type="text/javascript" src="http://services.maplink.com.br/maplinkapi2/api.ashx?v=4&key=yxd0a03YeKHKN1z4yvdwRxpDaAkFRmLnzJVNa03OPuOFeZONeuO2P0Zuc0HITu9pzYLaT0SxGAkFRDSk"></script>
 </head>
 <body onload="getRoute();">
     <div id="topo">
@@ -57,7 +57,7 @@
 	var mapa;
 	alert("Geração da rota com delay de 3 segundos.");
 	function testePontos(){
-		var poly = new MPolyline(rm.routeControl.routeCoords.points, "#003355", 3, 1);
+		var poly = new MPolyline(rm.routeControl.routeCoords.points, "#000", 3, 1);
         mapa.addOverlay(poly);
 		alert("Observe que a polyline traçada tem exatamente o mesmo desenho da rota!");
 	}
@@ -109,8 +109,8 @@
 
 		rm = new MRouteMannager(mapa);
 		rm.createRoute(rp, ro, null, function(result){ 
-			testePontos();
-			//setTimeout("testePontos()",3000); 
+			//testePontos();
+			setTimeout("testePontos()",4000); 
 		});
 		
 		

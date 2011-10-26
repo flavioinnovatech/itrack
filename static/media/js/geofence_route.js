@@ -6,20 +6,22 @@ var mapa;
 //TODO: make the map visible only when the submit is submited and for paths too
 //TODO: make the name and area fields visible when the above is done
 $(document).ready(function(){
-
+	
 	loadmap();
 	mapa = new MMap2(document.getElementById('map2'));
 	
-	$("#addpointroute").click(function(){
-    var i = $("input[id^=routeinput]").size() + 1;
-    
-    var content =  ($("#routeinputs ol li").html());
-    
-    $("<li>"+content+"</li>").appendTo('#routeinputs ol');
-    i++;
-  });
+	$("#addpointroute").click(function() {
+		var i = $("input[id^=routeinput]").size() + 1;
+
+		var content = ($("#routeinputs ol li").html());
+
+		$("<li>" + content + "</li>").appendTo('#routeinputs ol');
+		i++;
+	});
+
+
   
-  $("#step1route").submit(function(){
+  $("#geofence-button").click(function(){
   	
   	openloading();
   	  	
