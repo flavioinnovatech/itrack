@@ -356,7 +356,7 @@ function insertDataJqgrid2(){
 		}
 		
 		// Please don't mess this again
-		jQuery("#list").jqGrid('addRowData',i,myData[i]);
+		jQuery("#list").jqGrid('addRowData',myData[i].id,myData[i]);
 		i = i + 1;
 	});
 	}

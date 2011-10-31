@@ -137,7 +137,7 @@ Infotrack - Cercas Eletrônicas
 <script type="text/javascript" src="/media/js/geofence_polygon.js"></script>
 <script type="text/javascript" src="/media/js/geofence_route.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-<script type="text/javascript" src="http://webservices-lb.apontador.com.br/maplinkapi2/api.ashx?v=4&key=yxd0a03YeKHKN1z4yvdwRxpDaAkFRmLnzJVNa03OPuOFeZONeuO2P0Zuc0HITu9pzYLaT0SxGAkFRDSk"></script>
+<script type="text/javascript" src="http://services.maplink.com.br/maplinkapi2/api.ashx?v=4&key=yxd0a03YeKHKN1z4yvdwRxpDaAkFRmLnzJVNa03OPuOFeZONeuO2P0Zuc0HITu9pzYLaT0SxGAkFRDSk"></script>
 
 {% endblock %}
 
@@ -233,8 +233,8 @@ Infotrack - Cercas Eletrônicas
 			</table>
 			<input type="hidden" value="" name="">
 			<div align="center" id="actions" style="margin-top:10px;">
-				<input type="Submit" value="Confirmar">
-				<a onclick="history.back();">Cancelar</a>
+				<input type="submit" value="Prosseguir">
+				<input type="button" onclick="history.back();" value="Cancelar">
 			</div>
 		</form>
 		{% endif %}
@@ -279,7 +279,12 @@ Infotrack - Cercas Eletrônicas
 					<p style="font-size:11px;">
 						{% if offset == "3" %} <b>Digite o endereço para os vértices da rota:</b><br/><span style="font-size:10px;color:#888;">Mínimo 2 endereços</span> {% endif %}
 					</p>
-					<div id="routeinputs" style="font-size:11px;overflow:auto;height:300px;">
+					<div id="routeinputs" style="font-size:11px;overflow:auto;
+						{% if offset == "1" %} height:150px;"{% endif %}
+						{% if offset == "2" %} height:450px;"{% endif %}
+						{% if offset == "3" %} height:300px;"{% endif %}
+						
+					>
 						<ol class="decimal">
 							<li>
 								<span>Endereço: </span><br/>
@@ -323,11 +328,11 @@ Infotrack - Cercas Eletrônicas
 							{% if offset != "1" %} 
 							<li>
 								<span>Endereço: </span><br/>
-								<input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+								<input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:133px;"/>
 								n.º
 								<input class="routenumber" placeholder="" type="number" style="width:40px" />
 								<br/>Cidade:<br/>
-								<input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" /><br/>
+								<input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:133px;" /><br/>
 								Estado:<br/>
 								<select class="routestate">
 									<option value="0" selected="selected">&nbsp;</option>
@@ -363,13 +368,13 @@ Infotrack - Cercas Eletrônicas
 							{% endif %}
 							{% if offset == "2" %}
 							<li>
-								<span>Endereço: </span>
-								<input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:100px;"/>
+								<span>Endereço: </span><br/>
+								<input class="routeinput" placeholder="Ex.:Rua Anchieta" type="text" style="width:133px;"/>
 								n.º
-								<input class="routenumber" placeholder="" type="number" style="width:40px" />
-								Cidade:
-								<input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:100px;" />
-								Estado:
+								<input class="routenumber" placeholder="" type="number" style="width:40px" /><br/>
+								Cidade:<br/>
+								<input class="routecity" placeholder="Ex.:Campinas" type="text" style="width:133px;" /><br/>
+								Estado:<br/>
 								<select class="routestate">
 									<option value="0" selected="selected">&nbsp;</option>
 									<option value="AC">Acre</option>
@@ -406,14 +411,14 @@ Infotrack - Cercas Eletrônicas
 					</div>
 					{% if offset != "1" %} 
 					<p align="center">
-						<span id="addpointroute" style="cursor:pointer;"> + Adicionar ponto</span>
+						<a href="#" id="addpointroute" style="cursor:pointer;"> + Adicionar ponto</a>
 					</p>
 					{% endif %}
 					<p align="center">
-						<input id="geofence-button" type="button" 
-							{% if offset == "3" %}  value="Montar rota com os endereços acima" {% endif %}
-							{% if offset == "2" %}  value="Montar polígono com os endereços acima" {% endif %}
-							{% if offset == "1" %}  value="Montar círculo no endereço com o raio digitado acima" {% endif %} 
+						<input type="button" 
+							{% if offset == "3" %} id="route-button" value="Mostrar rota no mapa" {% endif %}
+							{% if offset == "2" %} id="polygon-button" value="Mostrar polígono no mapa" {% endif %}
+							{% if offset == "1" %} id="circle-button"  value="Mostrar círculo no mapa" {% endif %} 
 						/>
 						ou <a href="{% url geofence.views.create %}">Voltar</a>
 					</p>
@@ -453,12 +458,12 @@ Infotrack - Cercas Eletrônicas
 		</div>
 		<div id="map1" style="float:right;width:69%;height:600px;z-index:0;"></div>
 		
-		<!--<div id="map2" style="float:left;width:100%;height:300px;"></div>-->
+		<div id="map2" style="float:left;width:100%;height:300px;display:none"></div>
 		<div id="maplink" style="display:none"></div>
 		{% endif %}
 		{% endif %}
-		{% if offset2 == "2" or offset2 == "1" %}
-		<div style="width:920px;float:left;display:none;">
+		{% if offset2 == "1" %}
+		<div style="width:920px;float:left;display:block;">
 			<form action="" style="margin:0 auto;">
 				<table>
 					<tbody>
