@@ -68,12 +68,13 @@
 	function teste() {
 
 	    tam2 = rm.routeControl.routeCoords.points.length;
-	    $("#test").html(tam2);
+
+	    $("#test").append(tam2);
 	    
 	    //if (tam2 > tam1) {
 	    //    tam1 = tam2;
 	        
-	        setTimeout("teste()",2000);
+	        setTimeout("teste()",1000);
 	    //}
 	    
 	    //else {
@@ -133,7 +134,7 @@
 		rm.createRoute(rp, ro, null, function(result){ 
 			
 			tam1 = rm.routeControl.routeCoords.points.length;
-			$("#test").html(tam1);
+			$("#test").append(tam1);
 			
 			setTimeout("teste()",2000);
 			
