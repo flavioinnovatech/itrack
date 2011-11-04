@@ -28,6 +28,7 @@
             overflow: hidden;
             position: absolute;</style>
     <link href="../css/estilo.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <script type="text/javascript" src="http://services.maplink.com.br/maplinkapi2/api.ashx?v=4&key=yxd0a03YeKHKN1z4yvdwRxpDaAkFRmLnzJVNa03OPuOFeZONeuO2P0Zuc0HITu9pzYLaT0SxGAkFRDSk"></script>
 </head>
 <body onload="getRoute();">
@@ -38,9 +39,8 @@
             LBS Local - Web service</h2>
     </div>
     <br />
-    <div style="clear: both; padding: 10px">
-        Exemplo de como traçar uma rota usando a API4
-		<input type="button" name="tracaoNovaPoly" id="tracaoNovaPoly"	onclick="testePontos()" value="RealizarTeste" />
+    <div id="test" style="clear: both; padding: 10px">
+
     </div>
     <table align="left" cellpadding="0" cellspacing="0" style="font: 12px arial; padding:10px">
         <tr>
@@ -55,12 +55,34 @@
 <script type="text/javascript">
 	var rm;
 	var mapa;
-	alert("Geração da rota com delay de 3 segundos.");
+	var tam1;
+	var tam2;
+
 	function testePontos(){
+	
 		var poly = new MPolyline(rm.routeControl.routeCoords.points, "#000", 3, 1);
         mapa.addOverlay(poly);
-		alert("Observe que a polyline traçada tem exatamente o mesmo desenho da rota!");
+
 	}
+	
+	function teste() {
+
+	    tam2 = rm.routeControl.routeCoords.points.length;
+
+	    $("#test").append(tam2);
+	    
+	    //if (tam2 > tam1) {
+	    //    tam1 = tam2;
+	        
+	        setTimeout("teste()",1000);
+	    //}
+	    
+	    //else {
+	    //    testePontos();
+	    //s}
+	    
+	}
+	
 	function getRoute(){
 		mapa = new MMap2(document.getElementById('divMap'));
 		
@@ -106,11 +128,17 @@
 	    routePointAux = new MRoutePoint();
 	    routePointAux.routeStop = rs[1];
 	    rp.push(routePointAux);
+	    
 
 		rm = new MRouteMannager(mapa);
 		rm.createRoute(rp, ro, null, function(result){ 
-			//testePontos();
-			setTimeout("testePontos()",4000); 
+			
+			tam1 = rm.routeControl.routeCoords.points.length;
+			$("#test").append(tam1);
+			
+			setTimeout("teste()",2000);
+			
+			//setTimeout("testePontos()",10000); 
 		});
 		
 		

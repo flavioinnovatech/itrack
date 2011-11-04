@@ -64,8 +64,6 @@ jQuery(document).ready(function(){
   loadData();
   loadmaps();
   
-
-  
   jQuery("img[id=maptools]").tipTip();
   jQuery("img[class=fullscreen]").tipTip();
   
@@ -91,6 +89,7 @@ jQuery(document).ready(function(){
   
   jQuery('.searchfield').keyup(function() {
   	loadData(jQuery('.searchfield').attr("value"));
+  	insertDataJqgrid();
 
   });
   
@@ -136,7 +135,6 @@ function loadData(plate) {
         {plate:plate},
         
 		function(data){
-
           globaldata = data;
           loadGrid();
           loadlateralgrid();
@@ -148,11 +146,7 @@ function loadData(plate) {
 
 //var globaldata;
 var olddata = null;
-
-
-
 function loadGrid() {
-
           var data = globaldata;
           var colModel = [];
           colNames = [];
@@ -364,14 +358,6 @@ function showMarkersInMap(){
 
 	});
 	
-	
-	/*
-	multispectral.updateSize();
-	multispectral.zoomToExtent(markers.getDataExtent(),1);
-	multispectral.updateSize();
-	multispectral.zoomOut();
-	multispectral.updateSize();
-	*/
 }
 
 function insertDataJqgrid(){
@@ -380,24 +366,17 @@ function insertDataJqgrid(){
 	object = new Object;
 
 	if(olddata != null) {
+			
 		jQuery.each(olddata, function(key2, olditem) {
+			//alert (olditem.id);
 			jQuery("#list4").jqGrid('delRowData', olditem.id);
-
 		});
+		
+
 	}
 	nequips = 0;
 	jQuery.each(globaldata, function(key, equip) {
-		if(olddata != null) {
 
-			//Deleta info antiga e repoe info nova
-			/*
-			 jQuery.each(olddata, function(key2,olditem) {
-			 if (olditem.id == equip.id) {
-			 jQuery("#list4").jqGrid('delRowData', olditem.id);
-			 }
-			 });
-			 */
-		}
 		object = {};
 
 		jQuery.each(colNames, function(keyx, name) {
@@ -435,14 +414,14 @@ function insertDataJqgrid(){
 
 		});
 		nequips++;
-		object['id'] = nequips;
+		object['id'] = equip.id;
 		myData.push(clone(object));
 	});
 
 	var i = 0;
 	jQuery.each(myData, function(key, item) {
 		// Please don't mess this again
-		jQuery("#list4").jqGrid('addRowData', i, myData[i]);
+		jQuery("#list4").jqGrid('addRowData', myData[i].id, myData[i]);
 		i = i + 1;
 	});
 

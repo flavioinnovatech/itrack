@@ -21,8 +21,8 @@ $(document).ready(function(){
 
 
   
-  $("#geofence-button").click(function(){
-  	
+  $("#route-button").click(function(){
+
   	openloading();
   	  	
   	vlayer3.destroyFeatures();
@@ -86,7 +86,7 @@ $(document).ready(function(){
 					// points : points,
 					// tolerance:tolerance
 				// }, function(data) {
-					//Now we're in a presence of an kludge-oriented programming
+
 					
 					var rd = new MRouteDetails();
 			        rd.optimizeRoute = false;
@@ -106,7 +106,7 @@ $(document).ready(function(){
 								
 					var rs = [];
 					var rp = [];
-					//We have to adapt the points of the route to this new kludge
+
 					$.each(points, function(key, value) {
 						var r = new MRouteStop();
 						var point = new MPoint();
@@ -120,17 +120,16 @@ $(document).ready(function(){
 						routePointAux.routeStop = r;
 						rp.push(routePointAux);
 					});
-					//alert(rp.toSource());
-					//Thank god I think it's over. Now we're gonna finally calculate the route.
+
 					
 					rm = new MRouteMannager(mapa);
 					
 					
 					//rc1 = new MRouteControl(mapa, rs, ro, "#FF5555", function(result) {
 					rm.createRoute(rp, ro, null, function(result){
-						setTimeout("drawRoute()",3000);
+						
+						setTimeout("drawRoute()",5000);
 					});
-
 	
 				// },'json');
 				
@@ -140,7 +139,7 @@ $(document).ready(function(){
 
 	}
   	
-  	closeloading(4000);
+  	
   	
   	return false;
   });
@@ -323,7 +322,7 @@ function loadmap(){
 
 function drawRoute() {
 
-	var poly = new MPolyline(rm.routeControl.routeCoords.points, "#003355", 3, .5);
+	var poly = new MPolyline(rm.routeControl.routeCoords.points, "#000", 3, .5);
         mapa.addOverlay(poly);
 
 	var data = [];
@@ -379,4 +378,6 @@ function drawRoute() {
 
 	vlayer3.addFeatures([polygonFeature]);
 	multispectral1.zoomToExtent(markers.getDataExtent(), 1);
+	
+	closeloading();
 }

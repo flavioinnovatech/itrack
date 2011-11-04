@@ -43,6 +43,7 @@ def loadData(request):
             Q(system=system)&
             Q(vehicle__system=system)
         ).annotate(last_tracking=Max('tracking__id'))
+        print 'aiudhauidhuiad'
     else:
         equipments = Equipment.objects.filter(
             Q(system=system)&

@@ -26,7 +26,7 @@ jQuery(document).ready(function(){
   // }
   
 
-  $("#step1polygon").submit(function(){
+  $("#polygon-button").click(function(){
   	openloading();
   	
   	routeaddresses = [];

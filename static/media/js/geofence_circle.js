@@ -14,7 +14,7 @@ jQuery(document).ready(function(){
   // }
 	
   //calculates the center of the circle
-  $('#step1circle').submit(function() {
+  $('#circle-button').click(function() {
   	openloading();
   	
   	address =  $('.routeinput').attr("value");
