@@ -499,7 +499,7 @@ class Command(BaseCommand):
         server.listen(5)
         print "Data processor is starting. Please wait..."
 
-#        OutputThread().start()
+        OutputThread().start()
         # Have the server serve "forever":
         while True:
             try:
